@@ -1,0 +1,26 @@
+.profile-side {
+    .#{$prefix}panel-inner,
+    .#{$prefix}panel-body {
+        background: rgb(250, 250, 250);
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1) !important;
+        margin-bottom: 8px;
+        padding: 8px;
+    }
+}
+
+.profile-side-icon {
+    @include border-radius(50%);
+    @include background-size(cover);
+
+    background-position: center center;
+    background-repeat: no-repeat;
+    border: 6px solid rgba(0, 0, 0, 0.05);
+}
+
+.profile-side-name {
+    text-align: center;
+}
+
+.#{$prefix}calendar-list-icon {
+    @include border-radius(50%);
+}
