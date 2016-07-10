@@ -1,0 +1,41 @@
+.stretch-html .x-innerhtml {
+    height: 100%;
+}
+
+.proxy-source {
+    width: 120px;
+    height: 120px;
+    padding: 5px;
+    position: absolute;
+    text-align: center;
+    color: #FFF;
+    @include border-radius(5px);
+    @include user-select(none);
+    cursor: move;
+}
+
+.proxy-none {
+    background-color: #ED7D31;  
+    left: 10px;
+    top: 10px;
+}
+
+.proxy-original {
+    background-color: #6CAE3F;
+    left: 10px;
+    top: 140px;
+}
+
+.proxy-placeholder {
+    background-color: #4071CA;
+    left: 10px; 
+    top: 270px;
+}
+
+.proxy-drag-custom {
+    width: 70px;
+    height: 70px;
+    border: 3px dotted #17456D;
+    padding: 5px;
+    text-align: center;
+}
