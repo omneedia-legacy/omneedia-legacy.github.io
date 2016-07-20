@@ -3721,7 +3721,7 @@ Ext.define("omneedia.App", {
 		, APP: {}
 		, libs: []
 		, namespace: ""
-		, Date: function(g, n, A, p) {
+		/*, Date: function(g, n, A, p) {
     		function f() {
         var a = this instanceof f ? this : new f,
             c = arguments,
@@ -4098,6 +4098,7 @@ Ext.define("omneedia.App", {
     });
     return f
 }(Date, Math, Array)
+		*/
 		, getArray: function(obj,field) {
 				var data=[];
 				for (var i=0;i<obj.length;i++) {
@@ -4731,10 +4732,6 @@ Ext.define("omneedia.App", {
 					}
 				};
 
-				function _guid() {
-					return ("M" + (Math.random() * Math.pow(36, 4) << 0).toString(36)).slice(-4)
-				};
-				var guid = _guid();
 				if (name instanceof Object == true) {
 					var cfg = {};
 					cfg = name;
@@ -4743,7 +4740,7 @@ Ext.define("omneedia.App", {
 					if (Ext.ux.Scheduler) var sch = "Ext.ux.Scheduler.data.ResourceStore";
 					if (Ext.ux.Scheduler2) var sch = "Ext.ux.Scheduler2.data.ResourceStore";					
 					if (name.indexOf('://') > -1) {
-						if (Settings.TYPE == "mobile")
+						if ((Settings.TYPE == "mobile") && (Ext.getVersion().major < 5))
 							App.model.define(guid, {
 								config: {
 									api: {
@@ -4753,7 +4750,7 @@ Ext.define("omneedia.App", {
 										__SQL__: name
 									}
 								}
-							}, sch+".model.Event");
+							}, sch);
 						else
 							App.model.define(guid, {
 								api: {
@@ -4762,7 +4759,7 @@ Ext.define("omneedia.App", {
 								, extraParams: {
 									__SQL__: name
 								}
-							}, sch+".model.Event");
+							}, sch);
 
 						cfg.model = APP_NAMESPACE + ".model." + guid;
 						cfg.require = [];
