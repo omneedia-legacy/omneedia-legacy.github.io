@@ -1,5 +1,5 @@
 /**
- * Version: 0.9.8p
+ * Version: 0.9.8pi
  * Build Date: 18-Jul-2016
  * Copyright (c) 2006-2015, Omneedia. (http://www.omneedia.com/). All rights reserved.
  * License: GPL.
@@ -4335,13 +4335,13 @@ Ext.define("omneedia.App", {
 			},
 			'events': {
 				name: "eventstore",
-				model: "Ext.ux.Scheduler2.model.Event", 
-				store: "Ext.ux.Scheduler2.data.EventStore"
+				model: "Ext.ux.Scheduler.model.Event", 
+				store: "Ext.ux.Scheduler.data.EventStore"
 			},
 			'resources': {
 				name: "resourcestore",
-				model: "Ext.ux.Scheduler2.model.Resource", 
-				store: "Ext.ux.Scheduler2.data.ResourceStore"
+				model: "Ext.ux.Scheduler.model.Resource", 
+				store: "Ext.ux.Scheduler.data.ResourceStore"
 			}
 		}
 		, blur: function () {
@@ -4909,17 +4909,23 @@ Ext.define("omneedia.App", {
                     if (cfg) xtd=cfg;
                     if (typeof xtd=="string") {
                         if (App.STOREMODELS[xtd]) xtd=App.STOREMODELS[xtd]; else throw "Unknown store model";
-                    };                    
+                    };               
+                    if (!xtd) var xtd={
+                        store: "Ext.data.Store"
+                    };
 					cfg = name;
 				} else {
                     // if not cfg then cfg is an empty object
-					if (!cfg) var cfg = {};
+					if (!cfg) var cfg = {}; else {
+						if (typeof cfg!="object") var xtd=cfg;	
+					};
                     if (!xtd) var xtd={
                         store: "Ext.data.Store"
                     };
                     if (typeof xtd=="string") {
                         if (App.STOREMODELS[xtd]) xtd=App.STOREMODELS[xtd]; else throw "Unknown store model";
                     };                    
+					
                     // *** UQL string
 					if (name.indexOf('://') > -1) {
 						if ((Settings.TYPE == "mobile") && (Ext.getVersion().major < 5))
@@ -4942,7 +4948,7 @@ Ext.define("omneedia.App", {
 									__SQL__: name
 								}
 							},xtd.model);
-
+						if (typeof cfg=='string') cfg={};
 						cfg.model = APP_NAMESPACE + ".model." + guid;
 						cfg.require = [];
 						cfg.require[0] = APP_NAMESPACE + ".model." + guid;
@@ -4962,22 +4968,22 @@ Ext.define("omneedia.App", {
 									read: name
 								}
 				            },xtd.model);
+							if (typeof cfg=='string') cfg={};
 							cfg.model = APP_NAMESPACE + ".model." + guid;
 							cfg.require = [];
-							cfg.require[0] = APP_NAMESPACE + ".model." + guid;
+							cfg.require.push(APP_NAMESPACE + ".model." + guid);
 						} else {
+							if (typeof cfg=='string') cfg={};
 							cfg.model = APP_NAMESPACE + ".model." + name;
 							cfg.require = [];
 							cfg.require[0] = APP_NAMESPACE + ".model." + name;
 						}
 					}
 				};
-                console.log(xtd);
 				try {
 					var myStore = Ext.create(xtd.store, cfg);
 					if (!myStore.getProxy().extraParams) myStore.getProxy().extraParams = {};
 					myStore.getProxy().extraParams.__SQL__ = name;
-					console.log(myStore);
 				} catch (e) {
 					console.log(e);
 				};

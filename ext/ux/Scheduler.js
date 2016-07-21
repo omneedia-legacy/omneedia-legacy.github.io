@@ -14071,7 +14071,7 @@ Ext.define('Ext.ux.Scheduler.mixin.AbstractTimelineView', {
     }
 });
 
-Ext.apply(Sch, {
+Ext.apply(Ext.ux.Scheduler, {
     VERSION: '4.2.3'
 });
 
@@ -17848,7 +17848,7 @@ Ext.define('Ext.ux.Scheduler.mixin.TimelinePanel', {
     }
 }, function() {
     var _0x33f5x2 = '6.0.0';
-    Ext.apply(Sch, {
+    Ext.apply(Ext.ux.Scheduler, {
         VERSION: '4.2.3'
     });
     if (Ext['versions']['extjs']['isLessThan'](_0x33f5x2)) {
