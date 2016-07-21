@@ -4329,6 +4329,21 @@ Ext.define("omneedia.App", {
 		, create: function () {
 
 		}
+		, STOREMODELS: {
+			'tree': {
+				store: "Ext.data.TreeStore"
+			},
+			'events': {
+				name: "eventstore",
+				model: "Ext.ux.Scheduler2.model.Event", 
+				store: "Ext.ux.Scheduler2.data.EventStore"
+			},
+			'resources': {
+				name: "resourcestore",
+				model: "Ext.ux.Scheduler2.model.Resource", 
+				store: "Ext.ux.Scheduler2.data.ResourceStore"
+			}
+		}
 		, blur: function () {
 			$('.omneedia-overlay').show();
 			if (!App._vague) {
@@ -4359,7 +4374,7 @@ Ext.define("omneedia.App", {
 				return Ext.define('MODEL_' + Math.uuid(), cfg);
 			}
 			, define: function (name, o, z) {
-				if (!z) o.extend = "Ext.data.Model";
+				if (!z) o.extend = "Ext.data.Model";				
 				else o.extend = z;
 				if (o.config) {
 					if (o.config.api) {
@@ -4481,6 +4496,9 @@ Ext.define("omneedia.App", {
 		, override: function (name, o) {
 			return Ext.define(APP_NAMESPACE + '.overrides.' + name, o);
 		}
+		/*
+		!!!!!!!!!!!!!! OBSOLETE
+		
 		, treestore: {
 			define: function (name, o) {
 				o.extend = "Ext.data.TreeStore";
@@ -4794,6 +4812,7 @@ Ext.define("omneedia.App", {
 				return myStore;
 			}
 		}
+		*/
 		, store: {
 			createColumns: function (grid, cb) {
 				var store = grid.getStore();
@@ -4879,16 +4898,29 @@ Ext.define("omneedia.App", {
 				eval('var _p=' + APP_NAMESPACE + ".store." + name);
 				return _p;
 			}
-			, create: function (name, cfg) {
+			, create: function (name, cfg,xtd) {
+				// generate uniqueid for temp model class
 				function _guid() {
 					return ("M" + (Math.random() * Math.pow(36, 4) << 0).toString(36)).slice(-4)
 				};
 				var guid = _guid();
+                // if arg0 (name) is an object then the second argument (if any) is xtd
 				if (name instanceof Object == true) {
-					var cfg = {};
+                    if (cfg) xtd=cfg;
+                    if (typeof xtd=="string") {
+                        if (App.STOREMODELS[xtd]) xtd=App.STOREMODELS[xtd]; else throw "Unknown store model";
+                    };                    
 					cfg = name;
 				} else {
+                    // if not cfg then cfg is an empty object
 					if (!cfg) var cfg = {};
+                    if (!xtd) var xtd={
+                        store: "Ext.data.Store"
+                    };
+                    if (typeof xtd=="string") {
+                        if (App.STOREMODELS[xtd]) xtd=App.STOREMODELS[xtd]; else throw "Unknown store model";
+                    };                    
+                    // *** UQL string
 					if (name.indexOf('://') > -1) {
 						if ((Settings.TYPE == "mobile") && (Ext.getVersion().major < 5))
 							App.model.define(guid, {
@@ -4900,7 +4932,7 @@ Ext.define("omneedia.App", {
 										__SQL__: name
 									}
 								}
-							});
+							},xtd.model);
 						else
 							App.model.define(guid, {
 								api: {
@@ -4909,27 +4941,27 @@ Ext.define("omneedia.App", {
 								, extraParams: {
 									__SQL__: name
 								}
-							});
+							},xtd.model);
 
 						cfg.model = APP_NAMESPACE + ".model." + guid;
 						cfg.require = [];
 						cfg.require[0] = APP_NAMESPACE + ".model." + guid;
 					} else {
+                        // *** WebService
 						if (name.indexOf('.') > -1) {
-							if (Settings.TYPE == "mobile")
+							if ((Settings.TYPE == "mobile") && (Ext.getVersion().major < 5))
 								App.model.define(guid, {
 									config: {
 										api: {
 											read: name
 										}
 									}
-								});
-							else
-								App.model.define(guid, {
-									api: {
-										read: name
-									}
-								});
+								},xtd.model);
+							else App.model.define(guid, {
+								api: {
+									read: name
+								}
+				            },xtd.model);
 							cfg.model = APP_NAMESPACE + ".model." + guid;
 							cfg.require = [];
 							cfg.require[0] = APP_NAMESPACE + ".model." + guid;
@@ -4940,10 +4972,12 @@ Ext.define("omneedia.App", {
 						}
 					}
 				};
+                console.log(xtd);
 				try {
-					var myStore = Ext.create("Ext.data.Store", cfg);
+					var myStore = Ext.create(xtd.store, cfg);
 					if (!myStore.getProxy().extraParams) myStore.getProxy().extraParams = {};
 					myStore.getProxy().extraParams.__SQL__ = name;
+					console.log(myStore);
 				} catch (e) {
 					console.log(e);
 				};
