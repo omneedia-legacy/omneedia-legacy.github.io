@@ -4331,6 +4331,7 @@ Ext.define("omneedia.App", {
 		}
 		, STOREMODELS: {
 			'tree': {
+				name: "treestore",
 				store: "Ext.data.TreeStore"
 			},
 			'events': {
@@ -4376,6 +4377,8 @@ Ext.define("omneedia.App", {
 			, define: function (name, o, z) {
 				if (!z) o.extend = "Ext.data.Model";				
 				else o.extend = z;
+				//console.log('=='+z);
+				//alert(o.extend);
 				if (o.config) {
 					if (o.config.api) {
 						if (o.config.api instanceof Object) {
@@ -4898,33 +4901,23 @@ Ext.define("omneedia.App", {
 				eval('var _p=' + APP_NAMESPACE + ".store." + name);
 				return _p;
 			}
-			, create: function (name, cfg,xtd) {
+			, create: function (name, cfg) {
 				// generate uniqueid for temp model class
 				function _guid() {
 					return ("M" + (Math.random() * Math.pow(36, 4) << 0).toString(36)).slice(-4)
 				};
 				var guid = _guid();
-                // if arg0 (name) is an object then the second argument (if any) is xtd
+
 				if (name instanceof Object == true) {
-                    if (cfg) xtd=cfg;
-                    if (typeof xtd=="string") {
-                        if (App.STOREMODELS[xtd]) xtd=App.STOREMODELS[xtd]; else throw "Unknown store model";
-                    };               
-                    if (!xtd) var xtd={
-                        store: "Ext.data.Store"
-                    };
 					cfg = name;
+					if (cfg.type) var xtd=App.STOREMODELS[cfg.type]; else var xtd={name:"store",model:"Ext.data.Model",store:"Ext.data.Store"};
 				} else {
-                    // if not cfg then cfg is an empty object
-					if (!cfg) var cfg = {}; else {
-						if (typeof cfg!="object") var xtd=cfg;	
+					if (cfg) {
+						if (cfg.type) var xtd=App.STOREMODELS[cfg.type]; else var xtd={name:"store",model:"Ext.data.Model",store:"Ext.data.Store"};
+					} else {
+						var xtd={name:"store",model:"Ext.data.Model",store:"Ext.data.Store"};
+						var cfg={};
 					};
-                    if (!xtd) var xtd={
-                        store: "Ext.data.Store"
-                    };
-                    if (typeof xtd=="string") {
-                        if (App.STOREMODELS[xtd]) xtd=App.STOREMODELS[xtd]; else throw "Unknown store model";
-                    };                    
 					
                     // *** UQL string
 					if (name.indexOf('://') > -1) {
@@ -4955,20 +4948,20 @@ Ext.define("omneedia.App", {
 					} else {
                         // *** WebService
 						if (name.indexOf('.') > -1) {
+							
 							if ((Settings.TYPE == "mobile") && (Ext.getVersion().major < 5))
-								App.model.define(guid, {
-									config: {
-										api: {
-											read: name
-										}
-									}
-								},xtd.model);
-							else App.model.define(guid, {
+							App.model.define(guid,{config: {
 								api: {
 									read: name
 								}
-				            },xtd.model);
-							if (typeof cfg=='string') cfg={};
+							}},xtd.model);
+							else 
+							App.model.define(guid,{
+								api: {
+									read: name
+								}
+							},xtd.model);
+							
 							cfg.model = APP_NAMESPACE + ".model." + guid;
 							cfg.require = [];
 							cfg.require.push(APP_NAMESPACE + ".model." + guid);
