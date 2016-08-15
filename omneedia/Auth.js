@@ -95,7 +95,7 @@ Ext.define("omneedia.Auth", {
 			$('.CSignOn').hide();
 			
 			if (Settings.REMOTE_AUTH)
-			var win = window.open(Settings.REMOTE_AUTH+"/auth/cas", "_blank","location=no");
+			var win = window.open(Settings.REMOTE_AUTH+"/auth/facebook", "_blank","location=no");
 			else {
 				var win = window.open("/auth/facebook", "_blank");
 				win.focus();
@@ -104,18 +104,17 @@ Ext.define("omneedia.Auth", {
 			
 			},1000);
 		});
-		$('.button_passport.cas').click(function() {
+		// omneedia
+		$('.button_passport.omneedia').click(function() {
 			$('.CWaitSignOn').show();
 			$('.CSignOn').hide();
-			
 			if (Settings.REMOTE_AUTH)
-			var win = window.open(Settings.REMOTE_AUTH+"/auth/cas", "_blank","location=no");
+			var win = window.open(Settings.REMOTE_AUTH+"/auth/omneedia", "_blank","location=no");
 			else {
-				var win = window.open("/auth/cas", "_blank");
+				var win = window.open("/auth/omneedia", "_blank");
 				win.focus();
 			};
 			
-			//if (Settings.DEBUG) {
 			if (document.socket) {
 			   document.socket.on('#auth',function(response) {
 					Auth.User=JSON.parse(response);
@@ -162,7 +161,32 @@ Ext.define("omneedia.Auth", {
 					});		
 				},1000);				
 			}
-			/*} else {			
+		});
+		// cas
+		$('.button_passport.cas').click(function() {
+			$('.CWaitSignOn').show();
+			$('.CSignOn').hide();
+			
+			if (Settings.REMOTE_AUTH)
+			var win = window.open(Settings.REMOTE_AUTH+"/auth/cas", "_blank","location=no");
+			else {
+				var win = window.open("/auth/cas", "_blank");
+				win.focus();
+			};
+			if (document.socket) {
+			   document.socket.on('#auth',function(response) {
+					Auth.User=JSON.parse(response);
+					$('.QxOverlay').remove();
+					Auth._vague.unblur();						
+					$('.QxLoginBox').addClass('bounceOutDown');
+					window.setTimeout(function(){$('.QxLoginBox').remove();},1000);					
+					if (Settings.TYPE!="mobile") {
+				Ext.getCmp('GlobalMenuUser').setText(Auth.User.mail.split('@')[0]);
+						Ext.getCmp('GlobalMenuUser').show();
+					};
+					if (fn) fn(Auth.User);
+				});				
+			} else {
 				__INTERVAL__=window.setInterval(function(){
 					if (Settings.REMOTE_AUTH) var a_auth=Settings.REMOTE_AUTH; else var a_auth="";
 					Ext.Ajax.request({
@@ -179,7 +203,7 @@ Ext.define("omneedia.Auth", {
 							Auth._vague.unblur();						
 							$('.QxLoginBox').addClass('bounceOutDown');														
 							window.setTimeout(function(){$('.QxLoginBox').remove();},1000);
-							
+
 							if (Settings.TYPE!="mobile") {
 								console.log(Auth.User);
 								Ext.getCmp('GlobalMenuUser').setText(Auth.User.mail.split('@')[0]);
@@ -190,11 +214,12 @@ Ext.define("omneedia.Auth", {
 
 						},
 						failure: function(response,opts) {
-							
+
 						}
 					});		
-				},1000);
-			}*/
+				},1000);				
+			}
+
 		});
 		$('.button_passport.google').click(function() {
 
