@@ -3812,6 +3812,18 @@ body .ux-notification-light {
 	background-color            : #DDDDDD;
 }
 
+.button_passport.omneedia
+{
+	background-color            : lightskyblue;
+	color                       : black;
+	background-image            : url(webapp/omneedia.png);
+}
+
+.button_passport.omneedia:hover
+{
+	background-color            : lightcyan;
+}
+
 .button_passport.twitter
 {
 	background-color            : #55ACEE;
