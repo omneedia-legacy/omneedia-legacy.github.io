@@ -1109,6 +1109,7 @@ Math.uuid = function () {
 if (Settings.DEBUG) {
 	var io_start=function(io) {
 		document.socket = io.connect(Settings.REMOTE_API);
+		
 		document.socket.on('connect', function () {
 			var sessionid = document.socket.io.engine.id;
 
@@ -4256,7 +4257,7 @@ Ext.define("omneedia.App", {
 				var all = getAllChildren(obj);
 				var witness = 0;
 				for (var i = 0; i < all.length; i++) {
-					if (all[i].bind) {
+					if (all[i].bindTo) {
 						if (all[i].getValue) {
 							/*if (!all[i].allowBlank) {
 								if ((all[i].getValue()=="") || (!all[i].getValue())) {
@@ -4264,7 +4265,7 @@ Ext.define("omneedia.App", {
 									if (all[i].fieldLabel) missingfields.push(all[i].fieldLabel); else missingfields.push(all[i].bind);
 								}
 							};*/
-							data[all[i].bind] = all[i].getValue();
+							data[all[i].bindTo] = all[i].getValue();
 						}
 					} else {
 						if (all[i].getValue) {
@@ -5576,10 +5577,11 @@ Ext.define("omneedia.DB", {
 					if (o.data.length >= 1) o = o.data[0];
 					var all = getAllChildren(cb);
 					for (var i = 0; i < all.length; i++) {
-						if (all[i].bind) {
-							if ((all[i].setValue) && (o[all[i].bind])) {
-								if (all[i].xtype.indexOf('date') > -1) o[all[i].bind] = o[all[i].bind].toDate();
-								all[i].setValue(o[all[i].bind]);
+						if (all[i].bindTo) {
+								
+							if ((all[i].setValue) && (o[all[i].bindTo])) {
+								if (all[i].xtype.indexOf('date') > -1) o[all[i].bindTo] = o[all[i].bindTo].toDate();
+								all[i].setValue(o[all[i].bindTo]);
 							}
 						};
 					};
@@ -5631,7 +5633,7 @@ Ext.define("omneedia.DB", {
 				console.log(all);
 				var witness = 0;
 				for (var i = 0; i < all.length; i++) {
-					if (all[i].bind) {
+					if (all[i].bindTo) {
 						if (all[i].getValue) {
 							/*if (!all[i].allowBlank) {
 								if ((all[i].getValue()=="") || (!all[i].getValue())) {
@@ -5639,7 +5641,7 @@ Ext.define("omneedia.DB", {
 									if (all[i].fieldLabel) missingfields.push(all[i].fieldLabel); else missingfields.push(all[i].bind);
 								}
 							};*/
-							data[all[i].bind] = all[i].getValue();
+							data[all[i].bindTo] = all[i].getValue();
 						}
 					};
 				};
