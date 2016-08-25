@@ -5105,11 +5105,16 @@ Ext.define("omneedia.App", {
 					});
 
 				};
-				var kickstarter = Ext.create(APP_NAMESPACE + '.view.' + o);
-				kickstarter.on('render', function (me) {
-					if (fn) fn(me);
+				Ext.require(APP_NAMESPACE + '.view.' + o);
+				Ext.onReady(function() {
+					
+					var kickstarter = Ext.create(APP_NAMESPACE + '.view.' + o);
+					
+					kickstarter.on('render', function (me) {
+						if (fn) fn(me);
+					});
+					_p.FORMS.add(kickstarter);
 				});
-				_p.FORMS.add(kickstarter);
 			});
 
 		}
