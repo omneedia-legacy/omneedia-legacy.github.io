@@ -1,0 +1,12 @@
+/* line 1, ../../sass/src/Sheet.scss */
+.x-sheet-action {
+  padding: 15px;
+}
+/* line 4, ../../sass/src/Sheet.scss */
+.x-sheet-action .x-button {
+  margin-bottom: 15px;
+}
+/* line 7, ../../sass/src/Sheet.scss */
+.x-sheet-action .x-button:last-child {
+  margin-bottom: 0;
+}

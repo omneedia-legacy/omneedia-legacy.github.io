@@ -1,0 +1,8 @@
+/**
+ * @class Ext.Sheet
+ */
+/* line 6, ../../sass/src/Sheet.scss */
+.x-sheet,
+.x-sheet-action {
+  height: auto;
+}

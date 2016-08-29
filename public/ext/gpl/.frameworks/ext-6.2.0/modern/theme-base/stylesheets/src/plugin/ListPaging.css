@@ -1,0 +1,21 @@
+/**
+ * @class Ext.plugin.ListPaging
+ */
+/* line 6, ../../../sass/src/plugin/ListPaging.scss */
+.x-list-paging .x-loading-spinner {
+  display: none;
+  margin: auto;
+}
+/* line 11, ../../../sass/src/plugin/ListPaging.scss */
+.x-list-paging .x-list-paging-msg {
+  text-align: center;
+  clear: both;
+}
+/* line 17, ../../../sass/src/plugin/ListPaging.scss */
+.x-list-paging.x-loading .x-loading-spinner {
+  display: block;
+}
+/* line 21, ../../../sass/src/plugin/ListPaging.scss */
+.x-list-paging.x-loading .x-list-paging-msg {
+  display: none;
+}

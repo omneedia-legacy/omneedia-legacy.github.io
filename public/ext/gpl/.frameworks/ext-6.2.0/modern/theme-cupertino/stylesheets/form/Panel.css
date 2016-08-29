@@ -1,0 +1,42 @@
+/**
+ * @class Ext.form.Panel
+ */
+/* line 6, ../../sass/src/form/Panel.scss */
+.x-form .x-scroll-container {
+  background-color: #edebf1;
+}
+/* line 10, ../../sass/src/form/Panel.scss */
+.x-form > input[type=submit] {
+  display: none;
+}
+/* line 14, ../../sass/src/form/Panel.scss */
+.x-form .x-field .x-input,
+.x-form .x-field .x-input-el {
+  font-weight: 300;
+}
+/* line 20, ../../sass/src/form/Panel.scss */
+.x-form.x-floating .x-input-el {
+  padding-top: .5em;
+}
+/* line 25, ../../sass/src/form/Panel.scss */
+.x-form .x-field .x-input {
+  border: 0px;
+  background-color: transparent;
+}
+
+/* line 31, ../../sass/src/form/Panel.scss */
+.x-field-label {
+  padding: .6em .6em .6em 1em;
+}
+/* line 34, ../../sass/src/form/Panel.scss */
+.x-field-label span {
+  font-size: 1.1em;
+  font-weight: 400;
+}
+
+/* line 40, ../../sass/src/form/Panel.scss */
+.x-form-fieldset .x-form-fieldset-inner {
+  border-top: 1px solid #d9d9d9;
+  border-bottom: 1px solid #d9d9d9;
+  overflow: hidden;
+}

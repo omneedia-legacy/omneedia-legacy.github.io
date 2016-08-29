@@ -1,0 +1,16 @@
+/**
+ * @class Ext.field.Select
+ */
+/* line 5, ../../sass/src/field/Select.scss */
+.x-panel.x-selectfield-overlay {
+  padding: 8px;
+  background-color: #fff;
+}
+/* line 9, ../../sass/src/field/Select.scss */
+.x-panel.x-selectfield-overlay > .x-panel-inner {
+  overflow: hidden;
+}
+/* line 13, ../../sass/src/field/Select.scss */
+.x-panel.x-selectfield-overlay .x-list {
+  background: transparent !important;
+}

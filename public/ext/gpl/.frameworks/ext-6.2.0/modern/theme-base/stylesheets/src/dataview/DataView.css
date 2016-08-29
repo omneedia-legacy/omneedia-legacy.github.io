@@ -1,0 +1,18 @@
+/* line 2, ../../../sass/src/dataview/DataView.scss */
+.x-dataview-inlineblock > .x-scroller > .x-dataview-inner {
+  display: table;
+}
+/* line 7, ../../../sass/src/dataview/DataView.scss */
+.x-dataview-inlineblock .x-dataview-item, .x-dataview-inlineblock .x-data-item {
+  display: inline-block;
+}
+
+/* line 13, ../../../sass/src/dataview/DataView.scss */
+.x-dataview-nowrap .x-dataview-container {
+  white-space: nowrap !important;
+}
+
+/* line 19, ../../../sass/src/dataview/DataView.scss */
+.x-dataview-nowrap .x-container.x-dataview {
+  white-space: nowrap !important;
+}

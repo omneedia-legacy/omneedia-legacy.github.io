@@ -1,0 +1,26 @@
+/**
+ * @class Ext.Map
+ */
+/* line 5, ../../sass/src/Map.scss */
+.x-map {
+  background-color: #edeae2;
+}
+/* line 8, ../../sass/src/Map.scss */
+.x-map * {
+  -webkit-box-sizing: content-box;
+  box-sizing: content-box;
+}
+
+/* line 14, ../../sass/src/Map.scss */
+.x-mask-map {
+  background: transparent !important;
+}
+
+/* line 18, ../../sass/src/Map.scss */
+.x-map-container {
+  position: absolute !important;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
