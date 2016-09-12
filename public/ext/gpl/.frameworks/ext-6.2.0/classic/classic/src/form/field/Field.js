@@ -507,7 +507,7 @@ Ext.define('Ext.form.field.Field', {
         return isValid;
     },
 
-    /*
+    /**
      * @private 
      */
     setValidationField: function(value, record) {

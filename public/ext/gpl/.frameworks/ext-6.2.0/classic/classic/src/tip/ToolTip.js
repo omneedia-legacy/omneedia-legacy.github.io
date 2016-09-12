@@ -225,12 +225,68 @@ Ext.define('Ext.tip.ToolTip', {
 
     /**
      * @cfg {String} defaultAlign
-     * The default {@link Ext.util.Positionable#alignTo} orientation if no {@link #anchor} position
-     * was specified.
+     * A string which specifies how this ToolTip is to align with regard to its
+     * {@link #currentTarget} by means of identifying the point of the tooltip to
+     * join to the point of the target.
+     *
+     * By default, the tooltip shows at {@link #mouseOffset} pixels from the
+     * triggering pointer event. Using this config anchors the ToolTip to its target
+     * instead.
+     *
+     * This may take the following forms:
+     * 
+     * - **Blank**: Defaults to aligning the element's top-left corner to the target's
+     *   bottom-left corner ("tl-bl").
+     * - **Two anchors**: If two values from the table below are passed separated by a dash,
+     *   the first value is used as the element's anchor point, and the second value is
+     *   used as the target's anchor point.
+     * - **Two edge/offset descriptors:** An edge/offset descriptor is an edge initial
+     *   (`t`/`r`/`b`/`l`) followed by a percentage along that side. This describes a
+     *   point to align with a similar point in the target. So `'t0-b0'` would be
+     *   the same as `'tl-bl'`, `'l0-r50'` would place the top left corner of this item
+     *   halfway down the right edge of the target item. This allows more flexibility
+     *   and also describes which two edges are considered adjacent when positioning a tip pointer. 
+     *
+     * By default, tooltips are constrained to the viewport, but if {@link #constrain}
+     * is configured as `false`, the position parameter also supports the "?"
+     * character. If "?" is passed at the end of the position string, the element will
+     * attempt to align as specified, but the position will be adjusted to constrain to
+     * the viewport if necessary. Note that the element being aligned might be swapped to
+     * align to a different position than that specified in order to enforce the viewport
+     * constraints. Following are all of the supported anchor positions:
+     *
+     *      Value  Description
+     *      -----  -----------------------------
+     *      tl     The top left corner
+     *      t      The center of the top edge
+     *      tr     The top right corner
+     *      l      The center of the left edge
+     *      c      The center
+     *      r      The center of the right edge
+     *      bl     The bottom left corner
+     *      b      The center of the bottom edge
+     *      br     The bottom right corner
+     *
+     * Example Usage:
+     *
+     *     // align the top left corner of the tooltip with the top right corner of its target.
+     *     defaultAlign: 'tl-tr'
+     *
+     *     // align the bottom right corner of the tooltip with the center left edge of its target.
+     *     defaultAlign: 'br-l'
+     *
+     *     // align the top center of the tooltip with the bottom left corner of its target.
+     *     defaultAlign: 't-bl'
+     *
+     *     // align the 25% point on the bottom edge of this tooltip
+     *     // with the 75% point on the top edge of its target.
+     *     defaultAlign: 'b25-c75'
      */
     defaultAlign: 'bl-tl',
 
     ariaRole: 'tooltip',
+
+    alwaysOnTop: true,
 
     initComponent: function() {
         var me = this;
@@ -346,8 +402,9 @@ Ext.define('Ext.tip.ToolTip', {
 
         // Here, we're either trackMouse: true, or we're not anchored to the target
         // element, so we should show offset from the mouse.
+        // If we are being shown programatically, use 0, 0
         else {
-            target = me.pointerEvent.getPoint().adjust(-mouseOffset[1], mouseOffset[0], mouseOffset[1], -mouseOffset[0]);
+            target = me.pointerEvent ? me.pointerEvent.getPoint().adjust(-mouseOffset[1], mouseOffset[0], mouseOffset[1], -mouseOffset[0]) : new Ext.util.Point();
             if (!me.anchor) {
                 overlap = true;
                 if (mouseOffset[0] > 0) {
@@ -441,12 +498,12 @@ Ext.define('Ext.tip.ToolTip', {
             }
             newTarget = e.getTarget(delegate);
             // Move inside a delegate with no currentTarget
-            if (newTarget && newTarget.contains(e.fromElement)) {
+            if (newTarget && Ext.fly(newTarget).contains(e.fromElement)) {
                 return;
             }
         }
         // Moved from outside the target
-        else if (!me.target.contains(e.fromElement)) {
+        else if (!me.target.contains(fromElement)) {
             newTarget = me.target.dom;
         }
         // Moving inside the target
@@ -508,6 +565,7 @@ Ext.define('Ext.tip.ToolTip', {
         // Need to check this here since onDisable only gets called after render, which
         // the show call below may trigger
         if (!me.disabled) {
+            me.fireEvent('hovertarget', me, me.currentTarget, me.currentTarget.dom);
             if (me.isVisible()) {
                 me.handleAfterShow();
             } else {
@@ -615,6 +673,11 @@ Ext.define('Ext.tip.ToolTip', {
         if (timer) {
             clearTimeout(timer);
             me[propName] = null;
+
+            // We were going to show against the target, but now not.
+            if (name === 'show' && me.isHidden()) {
+                me.currentTarget.detach();
+            }
         }
     },
 
@@ -666,16 +729,15 @@ Ext.define('Ext.tip.ToolTip', {
         this.hide();
     },
 
-    beforeDestroy: function() {
+    doDestroy: function() {
         var me = this;
+        
         me.clearTimers();
-        me.anchorEl = me.target = me.alignTarget = me.triggerElement = Ext.destroy(me.anchorEl);
+        Ext.getDoc().un('mousedown', me.onDocMouseDown, me);
+        
+        Ext.destroy(me.anchorEl);
+        
         me.callParent();
-    },
-
-    onDestroy: function() {
-        Ext.getDoc().un('mousedown', this.onDocMouseDown, this);
-        this.callParent();
     },
 
     privates: {

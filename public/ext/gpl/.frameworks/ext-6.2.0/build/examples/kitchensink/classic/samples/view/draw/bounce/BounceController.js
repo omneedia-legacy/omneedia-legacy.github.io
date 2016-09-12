@@ -126,8 +126,9 @@ Ext.define('KitchenSink.view.draw.bounce.BounceController', {
 
     },
 
-    onDestroy: function () {
+    destroy: function () {
         Ext.AnimationQueue.stop(this.onRender, this);
+        this.callParent();
     }
 
 });

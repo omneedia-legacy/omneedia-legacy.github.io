@@ -147,6 +147,19 @@ describe('Ext.app.bind.Template', function () {
             expect(s).toBe('Hello -1.00!');
         });
 
+        it('should parse @ unary operator', function(){
+            var tpl = new BindTemplate('Hello {@Ext.justTemp}!');
+
+            Ext.justTemp = 'foo';
+            var s = tpl.apply();
+            expect(s).toBe('Hello foo!');
+            Ext.justTemp = 'bar';
+            s = tpl.apply();
+            expect(s).toBe('Hello bar!');
+            expect(tpl.isStatic()).toBe(false);
+            Ext.justTemp = null;
+        });
+
     });
 
     describe('binary operators', function(){

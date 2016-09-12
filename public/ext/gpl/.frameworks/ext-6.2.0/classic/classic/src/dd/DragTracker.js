@@ -198,7 +198,9 @@ Ext.define('Ext.dd.DragTracker', {
      */
     initEl: function(el) {
         var me = this,
-            delegate = me.delegate;
+            delegate = me.delegate,
+            elCmp,
+            touchScrollable;
 
         me.el = el = Ext.get(el);
 
@@ -213,6 +215,25 @@ Ext.define('Ext.dd.DragTracker', {
         // If delegate specified an actual element to listen on, we do not use the delegate listener option
         me.delegate = me.handle ? undefined : me.delegate;
 
+        // See if the handle or delegates are inside the scrolling part of the component.
+        // If they are, we will need to use longpress to trigger the dragstart.
+        if (Ext.supports.Touch) {
+            elCmp = Ext.ComponentManager.fromElement(el);
+            touchScrollable = elCmp && elCmp.getScrollable();
+            if (touchScrollable) {
+                elCmp = touchScrollable.getElement();
+                if (me.handle && !elCmp.contains(me.handle)) {
+                    touchScrollable = false;
+                }
+                else if (me.delegate && !elCmp.down(me.delegate)) {
+                    touchScrollable = false;
+                }
+                else {
+                    touchScrollable = touchScrollable.getX() || touchScrollable.getY();
+                }
+            }
+        }
+
         if (!me.handle) {
             me.handle = el;
         }
@@ -225,8 +246,10 @@ Ext.define('Ext.dd.DragTracker', {
             dragstart: me.onDragStart
         };
 
-        // Also trigger dragselect on longpress in case there's no mouse
-        if (Ext.supports.Touch) {
+        // If the element is part of a component which is scrollable by touch
+        // then we have to use a longpress to trigger drag.
+        // In this case, we also use untranslated mousedown because of multi input platforms.
+        if (touchScrollable) {
             me.handleListeners.longpress = me.onMouseDown;
             me.handleListeners.mousedown = {
                 fn: me.onMouseDown,
@@ -341,10 +364,13 @@ Ext.define('Ext.dd.DragTracker', {
     },
 
     onMouseDown: function(e, target){
-        var me = this;
+        var me = this,
+            // If this is a translated event, the event object is chained, so
+            // we need to track on the parentEvent if it exists.
+            trackEvent = e.parentEvent || e;
 
         // If this is disabled, or the mousedown has been processed by an upstream DragTracker, return
-        if (me.disabled ||e.dragTracked) {
+        if (me.disabled || trackEvent.dragTracked) {
             return;
         }
 
@@ -364,7 +390,7 @@ Ext.define('Ext.dd.DragTracker', {
         me.mouseIsDown = true;
 
         // Flag for downstream DragTracker instances that the mouse is being tracked.
-        e.dragTracked = true;
+        trackEvent.dragTracked = true;
 
         // See Ext.dd.DragDropManager::handleMouseDown
         //<feature legacyBrowser>
@@ -372,7 +398,7 @@ Ext.define('Ext.dd.DragTracker', {
         //</feature>
 
         e.stopPropagation();
-        if (me.preventDefault !== false) {
+        if (me.preventDefault !== false || e.pointerType === 'touch') {
             e.preventDefault();
         }
         Ext.getDoc().on({

@@ -150,7 +150,7 @@ describe("Ext.form.RadioGroup", function() {
                         }]
                     });
                     
-                    jasmine.expectAriaAttr(group2, 'aria-required', 'true');
+                    expect(group2).toHaveAttr('aria-required', 'true');
                     
                     Ext.destroy(group2);
                     group2 = null;

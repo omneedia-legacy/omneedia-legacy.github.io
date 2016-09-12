@@ -1,10 +1,10 @@
-// Display of table will allow for the correct height for dynamic content
-.#{$prefix}grid-rowbody {
-  display: table;
-  width: 100%;
-  padding: $grid-row-body-padding;
+.#{$prefix}rowbody {
+    @include st-box;
+
+    .#{$prefix}grid:not(.#{$prefix}has-rowexpander) & {
+        .#{$prefix}spacer-el {
+            display: none;
+        }
+    }
 }
 
-.#{$prefix}has-row-expander-column .#{$prefix}grid-rowbody {
-  padding-left: $grid-row-body-indent
-}

@@ -1,38 +1,31 @@
-.#{$prefix}panel {
-
-    .#{$prefix}innerhtml {
-        padding: $content-padding/2 $content-padding 0 $content-padding;
-    }
-}
-
 // toolbar inputs inside a panel header
 .#{$prefix}panel-header {
     .#{$prefix}field {
         background-color: transparent;
         border-bottom-color: $reverse-disabled-color;
-    }
 
-    .#{$prefix}field-label {
-        color: $accent-color;
-    }
+        .#{$prefix}label-el {
+            color: $accent-color;
+        }
 
-    .#{$prefix}field-focused {
-        border-bottom-color: $accent-color;
+        &.#{$prefix}focused {
+            border-bottom-color: $accent-color;
+        }
     }
 
     .#{$prefix}input {
-        .#{$prefix}clear-icon {
-            color: $reverse-color;
+        .#{$prefix}cleartrigger .#{$prefix}icon-el {
+            color: $base-foreground-color;
         }
 
         // Normal text inputs
         .#{$prefix}input-el {
-            -webkit-text-fill-color: $reverse-color;
+            -webkit-text-fill-color: $base-foreground-color;
         }
     }
 
     //Toggle Buttons in toolbars
-    .#{$prefix}toggle-on {
+    .#{$prefix}toggleslider.#{$prefix}on {
         background-color: $accent-pressed-color;
 
         .#{$prefix}thumb {

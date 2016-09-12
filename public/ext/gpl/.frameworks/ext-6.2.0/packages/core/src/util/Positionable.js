@@ -10,6 +10,12 @@ Ext.define('Ext.util.Positionable', {
 
     // Stub implementation called after positioning.
     // May be implemented in subclasses. Component has an implementation.
+
+    // Hardware acceleration due to the transform:translateZ(0) flickering
+    // when painting clipped elements. This class allows that to be turned off
+    // while elements are in a clipped state.
+    clippedCls: Ext.baseCSSPrefix + 'clipped',
+
     afterSetPosition: Ext.emptyFn,
 
     //<debug>
@@ -937,6 +943,7 @@ Ext.define('Ext.util.Positionable', {
                 overflow,
                 i,
                 clipValues = [],
+                clippedCls = this.clippedCls,
                 clipStyle,
                 clipped,
                 shadow;
@@ -988,6 +995,10 @@ Ext.define('Ext.util.Positionable', {
             }
             el.dom.style.clip = clipStyle;
 
+            // hardware acceleration causes flickering problems on clipped elements.
+            // disable it while an element is clipped.
+            el.addCls(clippedCls);
+
             // Clip/unclip shadow too.
             // TODO: As SOON as IE8 retires, refactor Ext.dom.Shadow to use CSS3BoxShadow directly on its el
             // Then we won't have to bother clipping the shadow as well. We'll just have to adjust the clipping on the
@@ -1010,6 +1021,10 @@ Ext.define('Ext.util.Positionable', {
                     el.dom.style.display = 'none';
                 } else {
                     el.dom.style.display = '';
+
+                    // hardware acceleration causes flickering problems on clipped elements.
+                    // disable it while an element is clipped.
+                    el.addCls(clippedCls);
                 }
             }
         },
@@ -1019,9 +1034,14 @@ Ext.define('Ext.util.Positionable', {
          * @private
          */
         clearClip: function() {
-            var el = this.el;
+            var el = this.el,
+                clippedCls = this.clippedCls;
 
             el.dom.style.clip = Ext.isIE8 ? 'auto' : '';
+
+            // hardware acceleration causes flickering problems on clipped elements.
+            // re-enable it when an element is unclipped.
+            el.removeCls(clippedCls);
 
             // unclip shadow too.
             if (el.shadow && el.shadow.el && el.shadow.el.dom) {
@@ -1031,6 +1051,10 @@ Ext.define('Ext.util.Positionable', {
                 // TODO: As SOON as IE8 retires, refactor Ext.dom.Shadow to use CSS3BoxShadow directly on its el
                 if (!Ext.supports.CSS3BoxShadow) {
                     el.dom.style.display = '';
+
+                    // hardware acceleration causes flickering problems on clipped elements.
+                    // re-enable it when an element is unclipped.
+                    el.removeCls(clippedCls);
                 }
             }
         }

@@ -42,12 +42,12 @@ Ext.define('Ext.app.bind.Stub', {
         if (formula) {
             formula.destroy();
         }
+        
         if (storeBinding) {
             storeBinding.destroy();
         }
+        
         me.detachBound();
-
-        me.parentValue = me.formula = me.storeBinding = null;
         
         me.callParent();
     },
@@ -246,7 +246,8 @@ Ext.define('Ext.app.bind.Stub', {
             parent = me.parent,
             name = me.name,
             formula = me.formula,
-            parentData, associations, association, formulaStub;
+            parentData, associations,
+            association, formulaStub, setterName;
 
         if (formula && !formula.settingValue && formula.set) {
             formula.setValue(value);
@@ -273,7 +274,10 @@ Ext.define('Ext.app.bind.Stub', {
 
             if (associations && (name in associations)) {
                 association = associations[name];
-                parentData[association.setterName](value);
+                setterName = association.setterName;
+                if (setterName) {
+                    parentData[setterName](value);
+                }
                 // We may be setting a record here, force the value to recalculate
                 me.invalidate(true);
             } else {
@@ -524,7 +528,14 @@ Ext.define('Ext.app.bind.Stub', {
                         }
                         // We only want to listen for the first load, since the actual
                         // store object won't change from then on
-                        boundValue.on('load', me.onStoreLoad, me, {single: true});
+                        boundValue.on({
+                            scope: me,
+                            load: {
+                                fn: 'onStoreLoad',
+                                single: true
+                            },
+                            destroy: 'onDestroyBound'
+                        });
                     }
                 }
                 me.boundValue = boundValue;
@@ -540,8 +551,18 @@ Ext.define('Ext.app.bind.Stub', {
                 if (current.isModel) {
                     current.unjoin(me);
                 } else {
-                    current.un('load', me.onStoreLoad, me);
+                    current.un({
+                        scope: me,
+                        load: 'onStoreLoad',
+                        destroy: 'onDestroyBound'
+                    });
                 }
+            }
+        },
+        
+        onDestroyBound: function() {
+            if (!this.owner.destroying) {
+                this.set(null);
             }
         },
 

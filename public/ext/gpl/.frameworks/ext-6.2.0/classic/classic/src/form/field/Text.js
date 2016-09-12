@@ -377,7 +377,6 @@ Ext.define('Ext.form.field.Text', {
      * element itself as the raw value. This means that older browsers will obfuscate the {@link #emptyText} value for
      * password input fields.
      */
-
     emptyText : '',
 
     /**
@@ -386,6 +385,13 @@ Ext.define('Ext.form.field.Text', {
      * This class is automatically added and removed as needed depending on the current field value.
      */
     emptyCls : Ext.baseCSSPrefix + 'form-empty-field',
+
+    /**
+     * @private
+     * The default CSS class for the placeholder label cover need when the browser
+     * does not support a Placeholder.
+     */
+     placeholderCoverCls: Ext.baseCSSPrefix + 'placeholder-label',
 
     /**
      * @cfg {String} [requiredCls='x-form-required-field']
@@ -397,11 +403,6 @@ Ext.define('Ext.form.field.Text', {
      * @cfg {Boolean} [enableKeyEvents=false]
      * true to enable the proxying of key events for the HTML input field
      */
-
-    /**
-     * @private
-     */
-    valueContainsPlaceholder : false,
 
     ariaRole: 'textbox',
 
@@ -448,6 +449,12 @@ Ext.define('Ext.form.field.Text', {
     inputWrapFocusCls: Ext.baseCSSPrefix + 'form-text-wrap-focus',
     inputWrapInvalidCls: Ext.baseCSSPrefix + 'form-text-wrap-invalid',
     growCls: Ext.baseCSSPrefix + 'form-text-grow',
+
+    /* 
+     * @private
+     * This property will hold all elements that require emtpyCls to be applied to them
+     */
+    emptyClsElements: null,
     
     needArrowKeys: true,
 
@@ -458,7 +465,7 @@ Ext.define('Ext.form.field.Text', {
         mouseup: function(e) {
             if (this.selectOnFocus) {
                 this.inputEl.dom.select();
-            }            
+            }
         },
         translate: false,
         single: true,
@@ -478,7 +485,9 @@ Ext.define('Ext.form.field.Text', {
          * A reference to the element that wraps the input element. Only set after the
          * field has been rendered.
          */
-        'inputWrap'
+        'inputWrap',
+
+        'placeholderLabel'
     ],
 
     preSubTpl: [
@@ -494,6 +503,9 @@ Ext.define('Ext.form.field.Text', {
     ],
 
     postSubTpl: [
+            '<tpl if="!Ext.supports.Placeholder">',
+            '<label id="{cmpId}-placeholderLabel" data-ref="placeholderLabel" for="{id}" class="{placeholderCoverCls} {placeholderCoverCls}-{ui}">{placeholder}</label>',
+            '</tpl>',
             '</div>', // end inputWrap
             '<tpl for="triggers">{[values.renderTrigger(parent)]}</tpl>',
         '</div>' // end triggerWrap
@@ -572,10 +584,10 @@ Ext.define('Ext.form.field.Text', {
         // Workaround for https://code.google.com/p/chromium/issues/detail?id=4505
         // On mousedown, add a single: true mouseup listener which prevents default.
         // That will prevent deselection of the text that was selected in the onFocus method.
-        if(me.selectOnFocus || me.emptyText){
+        if (me.selectOnFocus || me.emptyText) {
             me.mon(el, 'mousedown', me.onMouseDown, me);
         }
-        if(me.maskRe || (me.vtype && me.disableKeyFilter !== true && (me.maskRe = Ext.form.field.VTypes[me.vtype+'Mask']))){
+        if (me.maskRe || (me.vtype && me.disableKeyFilter !== true && (me.maskRe = Ext.form.field.VTypes[me.vtype+'Mask']))){
             me.mon(el, 'keypress', me.filterKeys, me);
         }
 
@@ -602,7 +614,7 @@ Ext.define('Ext.form.field.Text', {
      * If grow=true, invoke the autoSize method when the field's value is changed.
      */
     onChange: function(newVal, oldVal) {
-        this.callParent(arguments);
+        this.callParent([newVal, oldVal]);
         this.autoSize();
     },
 
@@ -624,24 +636,20 @@ Ext.define('Ext.form.field.Text', {
             maxLength = undefined;
         }
 
-        if (isEmpty) {
-            if (Ext.supports.Placeholder) {
-                placeholder = me.emptyText;
-            } else {
-                value = me.emptyText;
-                me.valueContainsPlaceholder = true;
-            }
+        if (me.emptyText) {
+            placeholder = me.emptyText;
         }
 
         data = Ext.apply(me.callParent([fieldData]), {
             triggerWrapCls: me.triggerWrapCls,
             inputWrapCls: me.inputWrapCls,
+            placeholderCoverCls: me.placeholderCoverCls,
             triggers: me.orderedTriggers,
             maxLength: maxLength,
             readOnly: !me.editable || me.readOnly,
             placeholder: placeholder,
             value: value,
-            fieldCls: me.fieldCls + ((isEmpty && (placeholder || value)) ? ' ' + me.emptyUICls : '') + (me.allowBlank ? '' :  ' ' + me.requiredCls)
+            fieldCls: me.fieldCls + (me.allowBlank ? '' :  ' ' + me.requiredCls) + (isEmpty ? ' ' + me.emptyUICls : '')
         });
         
         inputElAttr = data.inputElAriaAttributes;
@@ -657,7 +665,7 @@ Ext.define('Ext.form.field.Text', {
         var me = this,
             triggers = me.getTriggers(),
             elements = [],
-            id, triggerEl;
+            id;
 
         if (Ext.supports.FixedTableWidthBug) {
             // Workaround for https://bugs.webkit.org/show_bug.cgi?id=130239 and
@@ -681,7 +689,7 @@ Ext.define('Ext.form.field.Text', {
                 elements.push(triggers[id].el);
             }
             // for 4.x compat, also set triggerCell
-            triggerEl = me.triggerEl = me.triggerCell = new Ext.CompositeElement(elements, true);
+            me.triggerEl = me.triggerCell = new Ext.CompositeElement(elements, true);
         }
 
         /**
@@ -693,12 +701,13 @@ Ext.define('Ext.form.field.Text', {
         me.inputCell = me.inputWrap;
     },
 
-    afterRender: function(){
+    afterRender: function() {
         var me = this;
 
         me.autoSize();
         me.callParent();
         me.invokeTriggers('afterFieldRender');
+        me.emptyClsElements = [me.inputEl];
     },
 
     onMouseDown: function(){
@@ -743,7 +752,7 @@ Ext.define('Ext.form.field.Text', {
             }
 
             // Assignment in conditional test is deliberate here
-            for (i = 1; triggerCls = me['trigger' + i + 'Cls']; i++) { // jshint ignore:line
+            for (i = 1; (triggerCls = me['trigger' + i + 'Cls']); i++) { // jshint ignore:line
                 triggers['trigger' + i] = {
                     cls: triggerCls,
                     extraCls: Ext.baseCSSPrefix + 'trigger-index-' + i,
@@ -938,46 +947,10 @@ Ext.define('Ext.form.field.Text', {
     },
 
     /**
-     * Resets the current field value to the originally-loaded value and clears any validation messages.
-     * Also adds **{@link #emptyText}** and **{@link #emptyCls}** if the original value was blank.
-     */
-    reset : function(){
-        this.callParent();
-        this.applyEmptyText();
-    },
-
-    applyEmptyText: function(){
-        var me = this,
-            emptyText = me.emptyText,
-            isEmpty;
-
-        if (me.rendered && emptyText) {
-            isEmpty = me.getRawValue().length < 1 && !me.hasFocus;
-
-            if (Ext.supports.Placeholder) {
-                me.inputEl.dom.placeholder = emptyText;
-            } else if (isEmpty) {
-                me.setRawValue(emptyText);
-                me.valueContainsPlaceholder = true;
-            }
-
-            //all browsers need this because of a styling issue with chrome + placeholders.
-            //the text isnt vertically aligned when empty (and using the placeholder)
-            if (isEmpty) {
-                me.inputEl.addCls(me.emptyUICls);
-            }
-            else {
-                me.inputEl.removeCls(me.emptyUICls);
-            }
-
-            me.autoSize();
-        }
-    },
-    /**
      * Returns the value of this field's {@link #cfg-emptyText}
      * @return {String} The value of this field's emptyText
      */
-    getEmptyText : function () {
+    getEmptyText: function() {
         return this.emptyText;
     },
     
@@ -988,30 +961,26 @@ Ext.define('Ext.form.field.Text', {
      */
     setEmptyText: function(value) {
         var me = this,
-            inputEl = me.inputEl,
-            inputDom = inputEl && inputEl.dom,
-            emptyText = value || '';
+            inputEl = me.inputEl;
 
-        if (value) {
-            me.emptyText = emptyText;
-            me.applyEmptyText();
-        } else if (inputDom) {
-            if (Ext.supports.Placeholder) {
-                inputDom.removeAttribute('placeholder');
-            } else {
-                if (inputDom.value !== me.getRawValue()) {
-                    // only way these are !== is if emptyText is in the dom.value
-                    inputDom.value = '';
-                    inputEl.removeCls(me.emptyUICls);
+        value = value || '';
+
+        me.emptyText = value;
+
+        if (me.rendered) {
+            if (Ext.supports.Placeholder && !me.simulatePlaceholder) {
+                if (value) {
+                    inputEl.dom.setAttribute('placeholder', value);
+                } else  {
+                    inputEl.dom.removeAttribute('placeholder');
                 }
+            } else {
+                me.placeholderLabel.setHtml(value);
             }
-            // value is null so it cannot be the input value:
-            me.valueContainsPlaceholder = false;
+            me.refreshEmptyText();
         }
-        // This has to be added at the end because getRawValue depends on
-        // the emptyText value to return an empty string or not in legacy browsers.
-        me.emptyText = emptyText;
-        return me;
+
+        return this;
     },
 
     afterFirstLayout: function() {
@@ -1036,30 +1005,57 @@ Ext.define('Ext.form.field.Text', {
         this.inputWrap[method](this.inputWrapInvalidCls);
     },
 
-    beforeFocus: function(){
+    onFieldMutation: function(e) {
+        this.refreshEmptyText();
+        this.callParent([e]);
+    },
+
+    refreshEmptyText: function() {
         var me = this,
             inputEl = me.inputEl,
-            emptyText = me.emptyText,
-            isEmpty;
+            emptyClsElements = me.emptyClsElements,
+            value, isEmpty, i;
 
-        me.callParent(arguments);
-        if ((emptyText && !Ext.supports.Placeholder) && (inputEl.dom.value === me.emptyText && me.valueContainsPlaceholder)) {
-            me.setRawValue('');
-            isEmpty = true;
-            inputEl.removeCls(me.emptyUICls);
-            me.valueContainsPlaceholder = false;
-        } else if (Ext.supports.Placeholder) {
-            inputEl.removeCls(me.emptyUICls);
+        if (inputEl) {
+            value = me.getValue();
+            isEmpty = !(inputEl.dom.value || (Ext.isArray(value) && value.length));
+            
+            if (me.placeholderLabel) {
+                me.placeholderLabel.setDisplayed(isEmpty);
+            }
+
+            for (i=0; i < emptyClsElements.length; i++) {
+                emptyClsElements[i].toggleCls(me.emptyUICls, isEmpty);
+            }
         }
+
+    },
+
+    setValue: function(value) {
+        value = this.callParent([value]);
+
+        this.refreshEmptyText();
+
+        return value;
     },
 
     onFocus: function(e) {
-        var me = this;
+        var me = this,
+            len;
 
-        me.callParent(arguments);
-        if (me.selectOnFocus) {
-            me.inputEl.dom.select();
-        }
+        me.callParent([e]);
+        
+        // This handler may be called when the focus has already shifted to another element;
+        // calling inputEl.select() will forcibly focus again it which in turn might set up
+        // a nasty circular race condition if focusEl !== inputEl.
+        Ext.asap(function() {
+            // This ensures the carret will be at the end of the input element
+            // while tabbing between editors.
+            if (!me.destroyed && document.activeElement === me.inputEl.dom) {
+                len = me.inputEl.dom.value.length;
+                me.selectText(me.selectOnFocus ? 0 : len, len);
+            }
+        });
 
         if (me.emptyText) {
             me.autoSize();
@@ -1077,17 +1073,12 @@ Ext.define('Ext.form.field.Text', {
     onBlur: function(e) {
         var me = this;
 
-        me.callParent(arguments);
+        me.callParent([e]);
 
         me.removeCls(me.fieldFocusCls);
         me.triggerWrap.removeCls(me.triggerWrapFocusCls);
         me.inputWrap.removeCls(me.inputWrapFocusCls);
         me.invokeTriggers('onFieldBlur', [e]);
-    },
-
-    completeEdit: function(e) {
-        this.callParent([e]);
-        this.applyEmptyText();
     },
 
     /**
@@ -1115,46 +1106,10 @@ Ext.define('Ext.form.field.Text', {
     },
 
     applyState: function(state) {
-        this.callParent(arguments);
-        if(state.hasOwnProperty('value')) {
+        this.callParent([state]);
+        if (state.hasOwnProperty('value')) {
             this.setValue(state.value);
         }
-    },
-
-    /**
-     * Returns the raw String value of the field, without performing any normalization, conversion, or validation. Gets
-     * the current value of the input element if the field has been rendered, ignoring the value if it is the
-     * {@link #emptyText}. To get a normalized and converted value see {@link #getValue}.
-     * @return {String} The raw String value of the field
-     */
-    getRawValue: function() {
-        var me = this,
-            v = me.callParent();
-        if (v === me.emptyText && me.valueContainsPlaceholder) {
-            v = '';
-        }
-        return v;
-    },
-
-    /**
-     * Sets a data value into the field and runs the change detection and validation. Also applies any configured
-     * {@link #emptyText} for text fields. To set the value directly without these inspections see {@link #setRawValue}.
-     * @param {Object} value The value to set
-     * @return {Ext.form.field.Text} this
-     */
-    setValue: function(value) {
-        var me = this,
-            inputEl = me.inputEl;
-
-        if (inputEl && me.emptyText && !Ext.isEmpty(value)) {
-            inputEl.removeCls(me.emptyUICls);
-            me.valueContainsPlaceholder = false;
-        }
-
-        me.callParent(arguments);
-
-        me.applyEmptyText();
-        return me;
     },
 
     /**
@@ -1232,7 +1187,7 @@ Ext.define('Ext.form.field.Text', {
 
         trimmed = me.allowOnlyWhitespace ? value : Ext.String.trim(value);
 
-        if (trimmed.length < 1 || (value === me.emptyText && me.valueContainsPlaceholder)) {
+        if (trimmed.length < 1) {
             if (!me.allowBlank) {
                 errors.push(me.blankText);
             }
@@ -1338,7 +1293,7 @@ Ext.define('Ext.form.field.Text', {
         }
     },
 
-    onDestroy: function(){
+    doDestroy: function() {
         var me = this;
 
         me.invokeTriggers('destroy');

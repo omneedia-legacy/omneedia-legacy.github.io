@@ -384,7 +384,7 @@ Ext.define('Ext.resizer.Splitter', {
             }
 
             if (toggle) {
-                if (cmp.collapsed) {
+                if (cmp.collapsed || cmp.floatedFromCollapse) {
                     cmp.expand();
                 } else if (cmp.collapseDirection) {
                     cmp.collapse();
@@ -406,8 +406,9 @@ Ext.define('Ext.resizer.Splitter', {
         }
     },
     
-    beforeDestroy: function(){
+    doDestroy: function() {
         Ext.destroy(this.tracker);
+        
         this.callParent();
     }
 });

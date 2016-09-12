@@ -8,8 +8,13 @@ Ext.define('Ext.grid.HeaderContainer', {
     xtype: 'headercontainer',
 
     config: {
-        baseCls: Ext.baseCSSPrefix + 'grid-header-container',
         docked: 'top',
+
+        /**
+         * A default {@link #ui ui} to use for {@link Ext.grid.Column columns} in this header.
+         */
+        defaultColumnUI: null,
+
         defaultType: 'column',
         layout: {
             type: 'hbox',
@@ -29,6 +34,8 @@ Ext.define('Ext.grid.HeaderContainer', {
 
         grid: null
     },
+
+    classCls: Ext.baseCSSPrefix + 'headercontainer',
 
     initialize: function() {
         var me = this;
@@ -128,7 +135,7 @@ Ext.define('Ext.grid.HeaderContainer', {
         var me = this,
             columns = me.columns,
             columnIndex = me.getAbsoluteColumnIndex(column),
-            groupColumns, ln, i;
+            groupColumns, ln, i, ui;
 
         if (column.isHeaderGroup) {
             groupColumns = column.getItems().items;
@@ -137,6 +144,12 @@ Ext.define('Ext.grid.HeaderContainer', {
                 me.doColumnAdd(groupColumns[i], column);
             }
         } else {
+            ui = column.getUi();
+
+            if (ui == null) {
+                column.setUi(me.getDefaultColumnUI());
+            }
+
             columns.splice(columnIndex, 0, column);
             me.fireEvent('columnadd', me, column, group);
         }
@@ -271,9 +284,17 @@ Ext.define('Ext.grid.HeaderContainer', {
         this.parent = grid;
     },
 
-    destroy: function() {
-        this.setGrid(null);
-        this.callParent();
+    doDestroy: function() {
+        var me = this,
+            task = me.spacerTask;
+
+        if (task) {
+            task.cancel();
+            me.spacerTask = null;
+        }
+        
+        me.setGrid(null);
+        me.callParent();
     },
 
     privates: {

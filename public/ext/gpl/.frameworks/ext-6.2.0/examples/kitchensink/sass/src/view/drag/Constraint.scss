@@ -20,7 +20,7 @@
     position: absolute;
     left: 10px;
     top: 10px;
-    border: 5px solid #A0A0A0;
+    border: 5px solid #BDBDBD;
 
     .x-phone & {
         width: 60vw;
@@ -29,13 +29,13 @@
 }
 
 .constrain-parent {
-    background-color: #ED7D31;
+    background-color: #FF5722;
     left: 50px;
     top: 50px;
 }
 
 .constrain-vertical {
-    background-color: #6CAE3F;
+    background-color: #43A047;
     left: 280px;
     top: 10px;
 
@@ -45,7 +45,7 @@
 }
 
 .constrain-horizontal {
-    background-color: #4071CA;
+    background-color: #1E88E5;
     left: 280px;
     top: 100px;
 
@@ -56,7 +56,7 @@
 }
 
 .constrain-snap {
-    background-color: #FFC61F;
+    background-color: #E91E63;
     left: 280px;
     top: 190px;
 

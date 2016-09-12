@@ -4,14 +4,6 @@ describe("Ext.util.FocusableContainer", function() {
     var forward = true,
         backward = false,
         autoId = 0,
-        focusAndWait = jasmine.focusAndWait,
-        pressTab = jasmine.pressTabKey,
-        pressArrow = jasmine.pressArrowKey,
-        waitForFocus = jasmine.waitForFocus,
-        expectFocused = jasmine.expectFocused,
-        focusAndExpect = jasmine.focusAndExpect,
-        expectAria = jasmine.expectAriaAttr,
-        expectNoAria = jasmine.expectNoAriaAttr,
         Container, fc, fcEl;
     
     function makeButton(config) {
@@ -62,7 +54,7 @@ describe("Ext.util.FocusableContainer", function() {
         }
         
         fc = new Container(config);
-        fcEl = fc.getFocusableContainerEl();
+        fcEl = fc.focusableContainerEl;
         
         return fc;
     }
@@ -73,7 +65,13 @@ describe("Ext.util.FocusableContainer", function() {
             
             mixins: [
                 'Ext.util.FocusableContainer'
-            ]
+            ],
+            
+            // This is implemented at widget class level, not base Container
+            renderTpl:
+                '<tpl if="hasTabGuard">{% this.renderTabGuard(out, values, \'before\'); %}</tpl>' +
+                '{% this.renderContainer(out,values) %}' +
+                '<tpl if="hasTabGuard">{% this.renderTabGuard(out, values, \'after\'); %}</tpl>'
         });
     });
     
@@ -87,7 +85,8 @@ describe("Ext.util.FocusableContainer", function() {
     });
     
     describe("init/destroy", function() {
-        var proto, first, second, third;
+        var proto, first, second, third,
+            initSpy, destroySpy;
         
         function setupContainer(config) {
             config = Ext.apply({
@@ -121,12 +120,12 @@ describe("Ext.util.FocusableContainer", function() {
         beforeEach(function() {
             proto = Container.prototype;
             
-            spyOn(proto, 'doInitFocusableContainer').andCallThrough();
-            spyOn(proto, 'doDestroyFocusableContainer').andCallThrough();
+            initSpy = spyOn(proto, 'doInitFocusableContainer').andCallThrough();
+            destroySpy = spyOn(proto, 'doDestroyFocusableContainer').andCallThrough();
         });
         
         afterEach(function() {
-            proto = first = second = third = null;
+            proto = first = second = third = initSpy = destroySpy = null;
         });
         
         describe("enableFocusableContainer === true (default)", function() {
@@ -136,11 +135,12 @@ describe("Ext.util.FocusableContainer", function() {
                 });
                 
                 it("should call init", function() {
-                    expect(fc.doInitFocusableContainer).toHaveBeenCalled();
+                    expect(initSpy).toHaveBeenCalled();
                 });
                 
-                it("should place tabindex on container el", function() {
-                    expectAria(fc, 'tabIndex', '42');
+                it("should place tabindex on container tab guards", function() {
+                    expect(fc.tabGuardBeforeEl).toHaveAttr('tabIndex', '42');
+                    expect(fc.tabGuardAfterEl).toHaveAttr('tabIndex', '42');
                 });
                 
                 it("should create keyNav", function() {
@@ -148,21 +148,21 @@ describe("Ext.util.FocusableContainer", function() {
                 });
                 
                 it("should set tabindex on the first child", function() {
-                    expectAria(first, 'tabIndex', '-1');
+                    expect(first).toHaveAttr('tabIndex', '-1');
                 });
                 
                 it("should NOT set tabindex on the second child", function() {
-                    expectNoAria(second, 'tabIndex');
+                    expect(second).not.toHaveAttr('tabIndex');
                 });
                 
                 it("should set tabindex on the third child", function() {
-                    expectAria(third, 'tabIndex', '-1');
+                    expect(third).toHaveAttr('tabIndex', '-1');
                 });
                 
                 it("should call destroy", function() {
                     fc.destroy();
                     
-                    expect(fc.doDestroyFocusableContainer).toHaveBeenCalled();
+                    expect(destroySpy).toHaveBeenCalled();
                 });
             });
             
@@ -177,11 +177,12 @@ describe("Ext.util.FocusableContainer", function() {
                 });
                 
                 it("should call init", function() {
-                    expect(fc.doInitFocusableContainer).toHaveBeenCalled();
+                    expect(initSpy).toHaveBeenCalled();
                 });
                 
-                it("should NOT set tabindex on container el", function() {
-                    expectNoAria(fc, 'tabIndex');
+                it("should NOT set tabindex on tab guards", function() {
+                    expect(fc.tabGuardBeforeEl).not.toHaveAttr('tabIndex');
+                    expect(fc.tabGuardAfterEl).not.toHaveAttr('tabIndex');
                 });
                 
                 it("should create keyNav", function() {
@@ -189,21 +190,21 @@ describe("Ext.util.FocusableContainer", function() {
                 });
                 
                 it("should not set tabindex on the first child", function() {
-                    expectNoAria(first, 'tabIndex');
+                    expect(first).not.toHaveAttr('tabIndex');
                 });
                 
                 it("should not set tabindex on the second child", function() {
-                    expectNoAria(second, 'tabIndex');
+                    expect(second).not.toHaveAttr('tabIndex');
                 });
                 
                 it("should not set tabindex on the third child", function() {
-                    expectNoAria(third, 'tabIndex');
+                    expect(third).not.toHaveAttr('tabIndex');
                 });
                 
                 it("should call destroy", function() {
                     fc.destroy();
                     
-                    expect(fc.doDestroyFocusableContainer).toHaveBeenCalled();
+                    expect(destroySpy).toHaveBeenCalled();
                 });
             });
             
@@ -218,11 +219,12 @@ describe("Ext.util.FocusableContainer", function() {
                 });
                 
                 it("should not call init", function() {
-                    expect(fc.doInitFocusableContainer).not.toHaveBeenCalled();
+                    expect(initSpy).not.toHaveBeenCalled();
                 });
                 
-                it("should not place tabindex on container el", function() {
-                    expectNoAria(fc, 'tabIndex');
+                it("should not place tabindex on tab guards", function() {
+                    expect(fc.tabGuardBeforeEl).not.toHaveAttr('tabIndex');
+                    expect(fc.tabGuardAfterEl).not.toHaveAttr('tabIndex');
                 });
                 
                 it("should not create keyNav", function() {
@@ -230,17 +232,17 @@ describe("Ext.util.FocusableContainer", function() {
                 });
                 
                 it("should not add tabindex to second child", function() {
-                    expectNoAria(second, 'tabIndex');
+                    expect(second).not.toHaveAttr('tabIndex');
                 });
                 
                 it("should not alter tabindex on last child", function() {
-                    expectAria(third, 'tabIndex', '-10');
+                    expect(third).toHaveAttr('tabIndex', '-10');
                 });
                 
                 it("should not call destroy", function() {
                     fc.destroy();
                     
-                    expect(fc.doDestroyFocusableContainer).not.toHaveBeenCalled();
+                    expect(destroySpy).not.toHaveBeenCalled();
                 });
             });
             
@@ -251,7 +253,7 @@ describe("Ext.util.FocusableContainer", function() {
                         setupContainer({ items: [] });
                     });
                     
-                    it("should have tabindex after adding children", function() {
+                    it("should have tabindex on tab guards after adding children", function() {
                         fc.add([
                             { xtype: 'button', text: 'foo' },
                             { xtype: 'button', text: 'bar' }
@@ -259,7 +261,8 @@ describe("Ext.util.FocusableContainer", function() {
                         
                         fc.initFocusableContainer();
                         
-                        expectAria(fc, 'tabIndex', '42');
+                        expect(fc.tabGuardBeforeEl).toHaveAttr('tabIndex', '42');
+                        expect(fc.tabGuardAfterEl).toHaveAttr('tabIndex', '42');
                     });
                 });
                 
@@ -268,11 +271,12 @@ describe("Ext.util.FocusableContainer", function() {
                         setupContainer();
                     });
                     
-                    it("should not have tabindex after removing children", function() {
+                    it("should not have tabindex on tab guards after removing children", function() {
                         fc.removeAll();
                         fc.initFocusableContainer();
                         
-                        expectNoAria(fc, 'tabIndex');
+                        expect(fc.tabGuardBeforeEl).not.toHaveAttr('tabIndex');
+                        expect(fc.tabGuardAfterEl).not.toHaveAttr('tabIndex');
                     });
                 });
             });
@@ -284,11 +288,12 @@ describe("Ext.util.FocusableContainer", function() {
             });
             
             it("should not call init", function() {
-                expect(fc.doInitFocusableContainer).not.toHaveBeenCalled();
+                expect(initSpy).not.toHaveBeenCalled();
             });
             
-            it("should not place tabindex on container el", function() {
-                expectNoAria(fc, 'tabIndex');
+            it("should not place tabindex on tab guards", function() {
+                expect(fc.tabGuardBeforeEl).not.toHaveAttr('tabIndex');
+                expect(fc.tabGuardAfterEl).not.toHaveAttr('tabIndex');
             });
             
             it("should not create keyNav", function() {
@@ -296,21 +301,114 @@ describe("Ext.util.FocusableContainer", function() {
             });
             
             it("should not alter tabindex on first child", function() {
-                expectAria(first, 'tabIndex', '0');
+                expect(first).toHaveAttr('tabIndex', '0');
             });
             
             it("should not add tabindex to second child", function() {
-                expectNoAria(second, 'tabIndex');
+                expect(second).not.toHaveAttr('tabIndex');
             });
             
             it("should not alter tabindex on last child", function() {
-                expectAria(third, 'tabIndex', '-10');
+                expect(third).toHaveAttr('tabIndex', '-10');
             });
             
             it("should not call destroy", function() {
                 fc.destroy();
                 
-                expect(fc.doDestroyFocusableContainer).not.toHaveBeenCalled();
+                expect(destroySpy).not.toHaveBeenCalled();
+            });
+        });
+    });
+    
+    describe("add/remove children", function() {
+        describe("adding", function() {
+            beforeEach(function() {
+                makeContainer();
+            });
+            
+            it("should not activate tab guards after adding non-focusable child", function() {
+                fc.add({
+                    xtype: 'component',
+                    html: 'foo'
+                });
+                
+                expect(fc.tabGuardBeforeEl).not.toHaveAttr('tabIndex');
+                expect(fc.tabGuardAfterEl).not.toHaveAttr('tabIndex');
+            });
+            
+            it("should activate tab guards after adding non-focusable and then focusable child", function() {
+                fc.add({
+                    xtype: 'component',
+                    html: 'foo'
+                });
+                
+                fc.add({
+                    xtype: 'button',
+                    text: 'bar'
+                });
+                
+                expect(fc.tabGuardBeforeEl).toHaveAttr('tabIndex', '0');
+                expect(fc.tabGuardAfterEl).toHaveAttr('tabIndex', '0');
+            });
+            
+            it("should activate tab guards after adding focusable child", function() {
+                fc.add({
+                    xtype: 'button',
+                    text: 'bar'
+                });
+                
+                expect(fc.tabGuardBeforeEl).toHaveAttr('tabIndex', '0');
+                expect(fc.tabGuardAfterEl).toHaveAttr('tabIndex', '0');
+            });
+            
+            it("should not deactivate tab guards when adding non-focusable child after focusable", function() {
+                fc.add({
+                    xtype: 'button',
+                    text: 'bar'
+                });
+                
+                fc.add({
+                    xtype: 'component',
+                    html: 'foo'
+                });
+                
+                expect(fc.tabGuardBeforeEl).toHaveAttr('tabIndex', '0');
+                expect(fc.tabGuardAfterEl).toHaveAttr('tabIndex', '0');
+            });
+        });
+        
+        describe("removing", function() {
+            beforeEach(function() {
+                makeContainer({
+                    items: [{
+                        xtype: 'component',
+                        html: 'zumbo'
+                    }, {
+                        xtype: 'button',
+                        text: 'throbbe'
+                    }]
+                });
+            });
+                
+            it("should not deactivate tab guards when with focusable children left", function() {
+                fc.remove(0);
+                
+                expect(fc.tabGuardBeforeEl).toHaveAttr('tabIndex', '0');
+                expect(fc.tabGuardAfterEl).toHaveAttr('tabIndex', '0');
+            });
+            
+            it("should deactivate tab guards when no focusable children left", function() {
+                fc.remove(1);
+                
+                expect(fc.tabGuardBeforeEl).not.toHaveAttr('tabIndex');
+                expect(fc.tabGuardAfterEl).not.toHaveAttr('tabIndex');
+            });
+            
+            it("should deactivate tab guards when no children left", function() {
+                fc.removeAll()
+                
+                expect(fc.tabGuardBeforeEl).not.toHaveAttr('tabIndex');
+                expect(fc.tabGuardAfterEl).not.toHaveAttr('tabIndex');
             });
         });
     });
@@ -325,12 +423,14 @@ describe("Ext.util.FocusableContainer", function() {
             });
         });
         
-        it("should reactivate FC el upon show", function() {
+        it("should reactivate tab guards upon show", function() {
             fc.hide();
-            fc.el.set({ tabIndex: -1 });
+            fc.tabGuardBeforeEl.set({ tabIndex: -1 });
+            fc.tabGuardAfterEl.set({ tabIndex: -1 });
             fc.show();
             
-            expect(fc.el.dom.getAttribute('tabIndex')).toBe('0');
+            expect(fc.tabGuardBeforeEl).toHaveAttr('tabIndex', '0');
+            expect(fc.tabGuardAfterEl).toHaveAttr('tabIndex', '0');
         });
     });
     
@@ -356,12 +456,25 @@ describe("Ext.util.FocusableContainer", function() {
                 button = null;
             });
             
-            it("should return true by default", function() {
+            it("should return true with tabbable guards", function() {
                 expectActive(true);
             });
             
-            it("should return false when container el is not tabbable", function() {
-                fcEl.dom.removeAttribute('tabIndex');
+            it("should return true with no tab guards but tabbable el", function() {
+                delete fc.tabGuardBeforeEl;
+                fcEl.dom.setAttribute('tabIndex', 0);
+                
+                expectActive(true);
+            });
+            
+            it("should return false when tab guards are not tabbable", function() {
+                fc.tabGuardBeforeEl.dom.removeAttribute('tabIndex');
+                
+                expectActive(false);
+            });
+            
+            it("should return false when no tab guards and el is not tabbable", function() {
+                delete fc.tabGuardBeforeEl;
                 
                 expectActive(false);
             });
@@ -766,15 +879,17 @@ describe("Ext.util.FocusableContainer", function() {
                 second = fc.down('#second');
             });
             
-            it("should activate container el", function() {
-                expectAria(fc, 'tabIndex', '0');
+            it("should activate container", function() {
+                expect(fc.tabGuardBeforeEl).toHaveAttr('tabIndex', '0');
+                expect(fc.tabGuardAfterEl).toHaveAttr('tabIndex', '0');
             });
             
-            it("should deactivate container el when all children become disabled", function() {
+            it("should deactivate container when all children become disabled", function() {
                 first.disable();
                 second.disable();
                 
-                expectNoAria(fc, 'tabIndex');
+                expect(fc.tabGuardBeforeEl).not.toHaveAttr('tabIndex');
+                expect(fc.tabGuardAfterEl).not.toHaveAttr('tabIndex');
             });
         });
         
@@ -796,14 +911,16 @@ describe("Ext.util.FocusableContainer", function() {
                 second = fc.down('#second');
             });
             
-            it("should not activate container el", function() {
-                expectNoAria(fc, 'tabIndex');
+            it("should not activate container", function() {
+                expect(fc.tabGuardBeforeEl).not.toHaveAttr('tabIndex');
+                expect(fc.tabGuardAfterEl).not.toHaveAttr('tabIndex');
             });
             
-            it("should activate container el when one child becomes enabled", function() {
+            it("should activate container when one child becomes enabled", function() {
                 first.enable();
                 
-                expectAria(fc, 'tabIndex', '0');
+                expect(fc.tabGuardBeforeEl).toHaveAttr('tabIndex', '0');
+                expect(fc.tabGuardAfterEl).toHaveAttr('tabIndex', '0');
             });
         });
         
@@ -838,16 +955,17 @@ describe("Ext.util.FocusableContainer", function() {
                         second.disable();
                     });
                     
-                    it("should deactivate container el", function() {
-                        expectNoAria(fc, 'tabIndex');
+                    it("should deactivate container", function() {
+                        expect(fc.tabGuardBeforeEl).not.toHaveAttr('tabIndex');
+                        expect(fc.tabGuardAfterEl).not.toHaveAttr('tabIndex');
                     });
                     
                     it("should not reset first child tabIndex", function() {
-                        expectNoAria(first, 'tabIndex');
+                        expect(first).not.toHaveAttr('tabIndex');
                     });
                     
                     it("should not reset second child tabIndex", function() {
-                        expectNoAria(second, 'tabIndex');
+                        expect(second).not.toHaveAttr('tabIndex');
                     });
                     
                     describe("one child becoming enabled", function() {
@@ -855,16 +973,17 @@ describe("Ext.util.FocusableContainer", function() {
                             second.enable();
                         });
                         
-                        it("should activate container el", function() {
-                            expectAria(fc, 'tabIndex', '0');
+                        it("should activate container", function() {
+                            expect(fc.tabGuardBeforeEl).toHaveAttr('tabIndex', '0');
+                            expect(fc.tabGuardAfterEl).toHaveAttr('tabIndex', '0');
                         });
                         
                         it("should not reset first child tabIndex", function() {
-                            expectNoAria(first, 'tabIndex');
+                            expect(first).not.toHaveAttr('tabIndex');
                         });
                         
                         it("should reset second child tabIndex", function() {
-                            expectAria(second, 'tabIndex', '-1');
+                            expect(second).toHaveAttr('tabIndex', '-1');
                         });
                     });
                     
@@ -874,16 +993,17 @@ describe("Ext.util.FocusableContainer", function() {
                             second.enable();
                         });
                         
-                        it("should activate container el", function() {
-                            expectAria(fc, 'tabIndex', '0');
+                        it("should activate container", function() {
+                            expect(fc.tabGuardBeforeEl).toHaveAttr('tabIndex', '0');
+                            expect(fc.tabGuardAfterEl).toHaveAttr('tabIndex', '0');
                         });
                         
                         it("should reset first child tabIndex", function() {
-                            expectAria(first, 'tabIndex', '-1');
+                            expect(first).toHaveAttr('tabIndex', '-1');
                         });
                         
                         it("should reset second child tabIndex", function() {
-                            expectAria(second, 'tabIndex', '-1');
+                            expect(second).toHaveAttr('tabIndex', '-1');
                         });
                     });
                 });
@@ -905,12 +1025,13 @@ describe("Ext.util.FocusableContainer", function() {
                         expect(fc.lastFocusedChild).toBe(second);
                     });
                     
-                    it("should deactivate container el", function() {
-                        expectNoAria(fc, 'tabIndex');
+                    it("should deactivate container", function() {
+                        expect(fc.tabGuardBeforeEl).not.toHaveAttr('tabIndex');
+                        expect(fc.tabGuardAfterEl).not.toHaveAttr('tabIndex');
                     });
                     
                     it("should not reset tabIndex on the child", function() {
-                        expectNoAria(second, 'tabIndex');
+                        expect(second).not.toHaveAttr('tabIndex');
                     });
                     
                     describe("becoming enabled again", function() {
@@ -919,12 +1040,13 @@ describe("Ext.util.FocusableContainer", function() {
                             second.enable();
                         });
                         
-                        it("should not activate container el", function() {
-                            expectNoAria(fc, 'tabIndex');
+                        it("should not activate container", function() {
+                            expect(fc.tabGuardBeforeEl).not.toHaveAttr('tabIndex');
+                            expect(fc.tabGuardAfterEl).not.toHaveAttr('tabIndex');
                         });
                         
                         it("should not interfere with child tabIndex", function() {
-                            expectAria(second, 'tabIndex', '42');
+                            expect(second).toHaveAttr('tabIndex', '42');
                         });
                     });
                     
@@ -936,16 +1058,17 @@ describe("Ext.util.FocusableContainer", function() {
                             first.enable();
                         });
                         
-                        it("should not activate container el", function() {
-                            expectNoAria(fc, 'tabIndex');
+                        it("should not activate container", function() {
+                            expect(fc.tabGuardBeforeEl).not.toHaveAttr('tabIndex');
+                            expect(fc.tabGuardAfterEl).not.toHaveAttr('tabIndex');
                         });
                         
                         it("should reset first child tabIndex", function() {
-                            expectAria(first, 'tabIndex', '-1');
+                            expect(first).toHaveAttr('tabIndex', '-1');
                         });
                         
                         it("should not interfere with second child tabIndex", function() {
-                            expectAria(second, 'tabIndex', '102');
+                            expect(second).toHaveAttr('tabIndex', '102');
                         });
                     });
                 });
@@ -961,16 +1084,17 @@ describe("Ext.util.FocusableContainer", function() {
                         second.hide();
                     });
                     
-                    it("should deactivate container el", function() {
-                        expectNoAria(fc, 'tabIndex');
+                    it("should deactivate container", function() {
+                        expect(fc.tabGuardBeforeEl).not.toHaveAttr('tabIndex');
+                        expect(fc.tabGuardAfterEl).not.toHaveAttr('tabIndex');
                     });
                     
                     it("should not reset first child tabIndex", function() {
-                        expectAria(first, 'tabIndex', '11');
+                        expect(first).toHaveAttr('tabIndex', '11');
                     });
                     
                     it("should not reset second child tabIndex", function() {
-                        expectAria(second, 'tabIndex', '12');
+                        expect(second).toHaveAttr('tabIndex', '12');
                     });
                     
                     describe("one child becoming shown", function() {
@@ -978,16 +1102,17 @@ describe("Ext.util.FocusableContainer", function() {
                             second.show();
                         });
                         
-                        it("should activate container el", function() {
-                            expectAria(fc, 'tabIndex', '0');
+                        it("should activate container", function() {
+                            expect(fc.tabGuardBeforeEl).toHaveAttr('tabIndex', '0');
+                            expect(fc.tabGuardAfterEl).toHaveAttr('tabIndex', '0');
                         });
                         
                         it("should not reset first child tabIndex", function() {
-                            expectAria(first, 'tabIndex', '11');
+                            expect(first).toHaveAttr('tabIndex', '11');
                         });
                         
                         it("should reset second child tabIndex", function() {
-                            expectAria(second, 'tabIndex', '-1');
+                            expect(second).toHaveAttr('tabIndex', '-1');
                         });
                     });
                     
@@ -997,16 +1122,17 @@ describe("Ext.util.FocusableContainer", function() {
                             second.show();
                         });
                         
-                        it("should activate container el", function() {
-                            expectAria(fc, 'tabIndex', '0');
+                        it("should activate container", function() {
+                            expect(fc.tabGuardBeforeEl).toHaveAttr('tabIndex', '0');
+                            expect(fc.tabGuardAfterEl).toHaveAttr('tabIndex', '0');
                         });
                         
                         it("should reset first child tabIndex", function() {
-                            expectAria(first, 'tabIndex', '-1');
+                            expect(first).toHaveAttr('tabIndex', '-1');
                         });
                         
                         it("should reset second child tabIndex", function() {
-                            expectAria(second, 'tabIndex', '-1');
+                            expect(second).toHaveAttr('tabIndex', '-1');
                         });
                     });
                 });
@@ -1028,8 +1154,9 @@ describe("Ext.util.FocusableContainer", function() {
                         expect(fc.lastFocusedChild).toBe(second);
                     });
                     
-                    it("should deactivate container el", function() {
-                        expectNoAria(fc, 'tabIndex');
+                    it("should deactivate container", function() {
+                        expect(fc.tabGuardBeforeEl).not.toHaveAttr('tabIndex');
+                        expect(fc.tabGuardAfterEl).not.toHaveAttr('tabIndex');
                     });
                     
                     describe("becoming shown again", function() {
@@ -1037,8 +1164,9 @@ describe("Ext.util.FocusableContainer", function() {
                             second.show();
                         });
                         
-                        it("should not activate container el", function() {
-                            expectNoAria(fc, 'tabIndex');
+                        it("should not activate container", function() {
+                            expect(fc.tabGuardBeforeEl).not.toHaveAttr('tabIndex');
+                            expect(fc.tabGuardAfterEl).not.toHaveAttr('tabIndex');
                         });
                     });
                     
@@ -1048,12 +1176,13 @@ describe("Ext.util.FocusableContainer", function() {
                             first.show();
                         });
                         
-                        it("should not activate container el", function() {
-                            expectNoAria(fc, 'tabIndex');
+                        it("should not activate container", function() {
+                            expect(fc.tabGuardBeforeEl).not.toHaveAttr('tabIndex');
+                            expect(fc.tabGuardAfterEl).not.toHaveAttr('tabIndex');
                         });
                         
                         it("should reset first child tabIndex", function() {
-                            expectAria(first, 'tabIndex', '-1');
+                            expect(first).toHaveAttr('tabIndex', '-1');
                         });
                     });
                 });
@@ -1091,11 +1220,12 @@ describe("Ext.util.FocusableContainer", function() {
                 focusAndWait(fooBtn);
             });
             
-            it("should not activate fcEl on focusleave", function() {
+            it("should not activate container on focusleave", function() {
                 focusAndWait(beforeBtn);
                 
                 runs(function() {
-                    expectNoAria(fcEl, 'tabIndex');
+                    expect(fc.tabGuardBeforeEl).not.toHaveAttr('tabIndex');
+                    expect(fc.tabGuardAfterEl).not.toHaveAttr('tabIndex');
                 });
             });
         });
@@ -1113,7 +1243,236 @@ describe("Ext.util.FocusableContainer", function() {
                 barBtn = fc.down('button[text=barBtn]');
             });
             
+            describe("focusing container tab guards", function() {
+                describe("before guard", function() {
+                    describe("static set of children", function() {
+                        beforeEach(function() {
+                            focusAndWait(fc.tabGuardBeforeEl, fooBtn);
+                        });
+                        
+                        describe("in FocusableContainer", function() {
+                            it("should focus first child", function() {
+                                expectFocused(fooBtn);
+                            });
+                            
+                            it("should make first child tabbable", function() {
+                                expect(fooBtn).toHaveAttr('tabIndex', '0');
+                            });
+                            
+                            it("should deactivate container", function() {
+                                expect(fc.tabGuardBeforeEl).not.toHaveAttr('tabIndex');
+                                expect(fc.tabGuardAfterEl).not.toHaveAttr('tabIndex');
+                            });
+                        });
+                    
+                        describe("out of FocusableContainer", function() {
+                            beforeEach(function() {
+                                focusAndWait(beforeBtn);
+                            });
+                            
+                            it("should keep first child tabbable", function() {
+                                expect(fooBtn).toHaveAttr('tabIndex', '0');
+                            });
+                            
+                            it("should not make itself tabbable", function() {
+                                expect(fc.tabGuardBeforeEl).not.toHaveAttr('tabIndex');
+                                expect(fc.tabGuardAfterEl).not.toHaveAttr('tabIndex');
+                            });
+                        });
+                    });
+                    
+                    describe("dynamically added children", function() {
+                        var bazBtn;
+                        
+                        function addButton(cfg) {
+                            cfg = Ext.apply({
+                                xtype: 'button',
+                                text: 'bazBtn'
+                            }, cfg);
+                            
+                            fc.insert(0, cfg);
+                            
+                            bazBtn = fc.down('button[text=bazBtn]');
+                        }
+                        
+                        afterEach(function() {
+                            bazBtn = null;
+                        });
+                        
+                        describe("normal", function() {
+                            beforeEach(function() {
+                                addButton();
+                            });
+                            
+                            it("should focus new child", function() {
+                                focusAndExpect(fc.tabGuardBeforeEl, bazBtn);
+                            });
+                            
+                            it("should not focus new child after disabling", function() {
+                                bazBtn.disable();
+                                
+                                focusAndExpect(fc.tabGuardBeforeEl, fooBtn);
+                            });
+                            
+                            it("should not focus new child after hiding", function() {
+                                bazBtn.hide();
+                                
+                                focusAndExpect(fc.tabGuardBeforeEl, fooBtn);
+                            });
+                        });
+                        
+                        describe("disabled", function() {
+                            beforeEach(function() {
+                                addButton({ disabled: true });
+                            });
+                            
+                            it("should not focus new child", function() {
+                                focusAndExpect(fc.tabGuardBeforeEl, fooBtn);
+                            });
+                            
+                            it("should focus new disabled child after enabling", function() {
+                                bazBtn.enable();
+                                
+                                focusAndExpect(fc.tabGuardBeforeEl, bazBtn);
+                            });
+                        });
+                        
+                        describe("hidden", function() {
+                            beforeEach(function() {
+                                addButton({ hidden: true });
+                            });
+                            
+                            it("should not focus a new hidden child", function() {
+                                focusAndExpect(fc.tabGuardBeforeEl, fooBtn);
+                            });
+                            
+                            it("should focus new hidden child after showing", function() {
+                                bazBtn.show();
+                                
+                                focusAndExpect(fc.tabGuardBeforeEl, bazBtn);
+                            });
+                        });
+                    });
+                });
+                
+                describe("after guard", function() {
+                    describe("static set of children", function() {
+                        beforeEach(function() {
+                            focusAndWait(fc.tabGuardAfterEl, fooBtn);
+                        });
+                        
+                        describe("in FocusableContainer", function() {
+                            it("should focus the first child", function() {
+                                expectFocused(fooBtn);
+                            });
+                            
+                            it("should make first child tabbable", function() {
+                                expect(fooBtn).toHaveAttr('tabIndex', '0');
+                            });
+                            
+                            it("should deactivate container", function() {
+                                expect(fc.tabGuardBeforeEl).not.toHaveAttr('tabIndex');
+                                expect(fc.tabGuardAfterEl).not.toHaveAttr('tabIndex');
+                            });
+                        });
+                    
+                        describe("out of FocusableContainer", function() {
+                            beforeEach(function() {
+                                focusAndWait(beforeBtn);
+                            });
+                            
+                            it("should keep the first child tabbable", function() {
+                                expect(fooBtn).toHaveAttr('tabIndex', '0');
+                            });
+                            
+                            it("should not make itself tabbable", function() {
+                                expect(fc.tabGuardBeforeEl).not.toHaveAttr('tabIndex');
+                                expect(fc.tabGuardAfterEl).not.toHaveAttr('tabIndex');
+                            });
+                        });
+                    });
+                    
+                    describe("dynamically added children", function() {
+                        var bazBtn;
+                        
+                        function addButton(cfg) {
+                            cfg = Ext.apply({
+                                xtype: 'button',
+                                text: 'bazBtn'
+                            }, cfg);
+                            
+                            fc.insert(0, cfg);
+                            
+                            bazBtn = fc.down('button[text=bazBtn]');
+                        }
+                        
+                        afterEach(function() {
+                            bazBtn = null;
+                        });
+                        
+                        describe("normal", function() {
+                            beforeEach(function() {
+                                addButton();
+                            });
+                            
+                            it("should focus new child", function() {
+                                focusAndExpect(fc.tabGuardAfterEl, bazBtn);
+                            });
+                            
+                            it("should not focus new child after disabling", function() {
+                                bazBtn.disable();
+                                
+                                focusAndExpect(fc.tabGuardAfterEl, fooBtn);
+                            });
+                            
+                            it("should not focus new child after hiding", function() {
+                                bazBtn.hide();
+                                
+                                focusAndExpect(fc.tabGuardAfterEl, fooBtn);
+                            });
+                        });
+                        
+                        describe("disabled", function() {
+                            beforeEach(function() {
+                                addButton({ disabled: true });
+                            });
+                            
+                            it("should not focus new child", function() {
+                                focusAndExpect(fc.tabGuardAfterEl, fooBtn);
+                            });
+                            
+                            it("should focus new disabled child after enabling", function() {
+                                bazBtn.enable();
+                                
+                                focusAndExpect(fc.tabGuardAfterEl, bazBtn);
+                            });
+                        });
+                        
+                        describe("hidden", function() {
+                            beforeEach(function() {
+                                addButton({ hidden: true });
+                            });
+                            
+                            it("should not focus a new hidden child", function() {
+                                focusAndExpect(fc.tabGuardAfterEl, fooBtn);
+                            });
+                            
+                            it("should focus new hidden child after showing", function() {
+                                bazBtn.show();
+                                
+                                focusAndExpect(fc.tabGuardAfterEl, bazBtn);
+                            });
+                        });
+                    });
+                });
+            });
+            
             describe("focusing container el", function() {
+                beforeEach(function() {
+                    fc.activateFocusableContainer(false);
+                    fcEl.dom.setAttribute('tabIndex', '-1');
+                });
+                
                 describe("static set of children", function() {
                     beforeEach(function() {
                         focusAndWait(fcEl, fooBtn);
@@ -1125,11 +1484,12 @@ describe("Ext.util.FocusableContainer", function() {
                         });
                         
                         it("should make first child tabbable", function() {
-                            expectAria(fooBtn, 'tabIndex', '0');
+                            expect(fooBtn).toHaveAttr('tabIndex', '0');
                         });
                         
-                        it("should make itself untabbable", function() {
-                            expectNoAria(fc, 'tabIndex');
+                        it("should deactivate container", function() {
+                            expect(fc.tabGuardBeforeEl).not.toHaveAttr('tabIndex');
+                            expect(fc.tabGuardAfterEl).not.toHaveAttr('tabIndex');
                         });
                     });
                 
@@ -1139,11 +1499,12 @@ describe("Ext.util.FocusableContainer", function() {
                         });
                         
                         it("should keep first child tabbable", function() {
-                            expectAria(fooBtn, 'tabIndex', '0');
+                            expect(fooBtn).toHaveAttr('tabIndex', '0');
                         });
                         
                         it("should not make itself tabbable", function() {
-                            expectNoAria(fc, 'tabIndex');
+                            expect(fc.tabGuardBeforeEl).not.toHaveAttr('tabIndex');
+                            expect(fc.tabGuardAfterEl).not.toHaveAttr('tabIndex');
                         });
                     });
                 });
@@ -1233,11 +1594,12 @@ describe("Ext.util.FocusableContainer", function() {
                     });
                     
                     it("should make the child tabbable", function() {
-                        expectAria(fooBtn, 'tabIndex', '0');
+                        expect(fooBtn).toHaveAttr('tabIndex', '0');
                     });
                     
-                    it("should make its el untabbable", function() {
-                        expectNoAria(fc, 'tabIndex');
+                    it("should make deactivate container", function() {
+                        expect(fc.tabGuardBeforeEl).not.toHaveAttr('tabIndex');
+                        expect(fc.tabGuardAfterEl).not.toHaveAttr('tabIndex');
                     });
                 });
                 
@@ -1251,11 +1613,12 @@ describe("Ext.util.FocusableContainer", function() {
                     });
                     
                     it("should keep the child tabbable", function() {
-                        expectAria(fooBtn, 'tabIndex', '0');
+                        expect(fooBtn).toHaveAttr('tabIndex', '0');
                     });
                     
-                    it("should keep its el untabbable", function() {
-                        expectNoAria(fc, 'tabIndex');
+                    it("should not activate container", function() {
+                        expect(fc.tabGuardBeforeEl).not.toHaveAttr('tabIndex');
+                        expect(fc.tabGuardAfterEl).not.toHaveAttr('tabIndex');
                     });
                 });
             });
@@ -1274,8 +1637,9 @@ describe("Ext.util.FocusableContainer", function() {
                         expectFocused(barBtn);
                     });
                     
-                    it("should not make container el focusable", function() {
-                        expectNoAria(fcEl, 'tabIndex');
+                    it("should not activate container", function() {
+                        expect(fc.tabGuardBeforeEl).not.toHaveAttr('tabIndex');
+                        expect(fc.tabGuardAfterEl).not.toHaveAttr('tabIndex');
                     });
                     
                     it("should update lastFocusedChild", function() {
@@ -1298,8 +1662,9 @@ describe("Ext.util.FocusableContainer", function() {
                         expectFocused(beforeBtn);
                     });
                     
-                    it("should deactivate container el", function() {
-                        expectNoAria(fc, 'tabIndex');
+                    it("should deactivate container", function() {
+                        expect(fc.tabGuardBeforeEl).not.toHaveAttr('tabIndex');
+                        expect(fc.tabGuardAfterEl).not.toHaveAttr('tabIndex');
                     });
                     
                     it("should not update lastFocusedChild", function() {
@@ -1320,7 +1685,7 @@ describe("Ext.util.FocusableContainer", function() {
 //                     fooBtn = fc.down('button[text=fooBtn]');
 //                     barBtn = fc.down('button[text=barBtn]');
 //                     
-                    focusAndWait(fcEl, fooBtn);
+                    focusAndWait(fc.tabGuardBeforeEl, fooBtn);
                     focusAndWait(beforeBtn);
                 });
                 
@@ -1330,124 +1695,25 @@ describe("Ext.util.FocusableContainer", function() {
                     }
                 });
                 
-                it("should make container el tabbable when last focused child is removed", function() {
+                it("should activate container when last focused child is removed", function() {
                     fc.remove(fooBtn, false);
                     
-                    expectAria(fcEl, 'tabIndex', '0');
+                    expect(fc.tabGuardBeforeEl).toHaveAttr('tabIndex', '0');
+                    expect(fc.tabGuardAfterEl).toHaveAttr('tabIndex', '0');
                 });
                 
-                it("should make container el tabbable when last focused child is disabled", function() {
+                it("should activate container when last focused child is disabled", function() {
                     fooBtn.disable();
                     
-                    expectAria(fcEl, 'tabIndex', '0');
+                    expect(fc.tabGuardBeforeEl).toHaveAttr('tabIndex', '0');
+                    expect(fc.tabGuardAfterEl).toHaveAttr('tabIndex', '0');
                 });
                 
-                it("should make container el tabbable when last focused child is hidden", function() {
+                it("should activate container when last focused child is hidden", function() {
                     fooBtn.hide();
                     
-                    expectAria(fcEl, 'tabIndex', '0');
-                });
-            });
-        });
-    });
-    
-    describe("mouse event handling", function() {
-        var beforeBtn, text, fooBtn, input;
-        
-        beforeEach(function() {
-            beforeBtn = makeButton({ text: 'beforeBtn' });
-            
-            makeContainer({
-                style: {
-                    'margin-left': '100px'
-                },
-                items: [
-                    { xtype: 'tbtext', text: '****' },
-                    { xtype: 'button', text: 'fooBtn' },
-                    { xtype: 'textfield', fieldLabel: 'fooInput' }
-                ]
-            });
-            
-            text   = fc.down('tbtext');
-            fooBtn = fc.down('button');
-            input  = fc.down('textfield');
-        });
-        
-        afterEach(function() {
-            beforeBtn.destroy();
-            
-            beforeBtn = null;
-        });
-        
-        it("should ignore left click on container body el", function() {
-            focusAndWait(beforeBtn);
-            
-            runs(function() {
-                jasmine.fireMouseEvent(fc.el, 'click');
-            });
-            
-            expectFocused(beforeBtn);
-        });
-        
-        it("should ignore right click on container body el", function() {
-            focusAndWait(beforeBtn);
-            
-            runs(function() {
-                jasmine.fireMouseEvent(fc.el, 'click', null, null, 1);
-            });
-            
-            expectFocused(beforeBtn);
-        });
-        
-        it("should not react to clicks in non-focusable children", function() {
-            focusAndWait(beforeBtn);
-            
-            runs(function() {
-                jasmine.fireMouseEvent(text.el, 'click');
-            });
-            
-            expectFocused(beforeBtn);
-        });
-        
-        describe("clicks on focusable child", function() {
-            var spy;
-            
-            // We're listening to mousedown instead of click here because Ext 5/Touch
-            // event system is doing crazy translation of touch/mouse/pointer events
-            // that is browser specific. Click is translated from 'tap' in IE10+
-            // but for some reason firing 'tap' event doesn't seem to be reaching
-            // the proper event plumbing in the Button, so Button's click event never fires.
-            // Mousedown on the element works, and that's good enough for this case.
-            beforeEach(function() {
-                spy = jasmine.createSpy('click');
-                
-                fooBtn.on('click', spy);
-                
-                // Right clicks are blocked by Button's code
-                fooBtn.el.on('mousedown', spy);
-            });
-            
-            it("should not block left click", function() {
-                runs(function() {
-                    jasmine.fireMouseEvent(fooBtn.el, 'click');
-                });
-                
-                waitsForSpy(spy, 'left click', 100);
-                
-                runs(function() {
-                    expect(spy).toHaveBeenCalled();
-                });
-            });
-            
-            it("should not block right click", function() {
-                runs(function() {
-                    jasmine.fireMouseEvent(fooBtn.el, 'click', null, null, 1);
-                });
-                
-                waitsForSpy(spy, 'right click', 100);
-                
-                runs(function() {
-                    expect(spy).toHaveBeenCalled();
+                    expect(fc.tabGuardBeforeEl).toHaveAttr('tabIndex', '0');
+                    expect(fc.tabGuardAfterEl).toHaveAttr('tabIndex', '0');
                 });
             });
         });
@@ -1460,13 +1726,13 @@ describe("Ext.util.FocusableContainer", function() {
             disabledBtn1, disabledBtn2;
         
         function tabAndExpect(from, direction, to, debug) {
-            pressTab(from, direction);
+            pressTabKey(from, direction);
             
             expectFocused(to);
         }
         
         function arrowAndExpect(from, arrow, to) {
-            pressArrow(from, arrow);
+            pressKey(from, arrow);
             
             expectFocused(to);
         }
@@ -1509,7 +1775,7 @@ describe("Ext.util.FocusableContainer", function() {
             });
             
             it("should preventDefault on the Up arrow key", function() {
-                pressArrow(barBtn, 'up');
+                pressKey(barBtn, 'up');
                 
                 waitForFocus(fooBtn);
                 
@@ -1519,7 +1785,7 @@ describe("Ext.util.FocusableContainer", function() {
             });
             
             it("should preventDefault on the Down arrow key", function() {
-                pressArrow(fooBtn, 'down');
+                pressKey(fooBtn, 'down');
                 
                 waitForFocus(barBtn);
                 
@@ -1529,7 +1795,7 @@ describe("Ext.util.FocusableContainer", function() {
             });
             
             it("should preventDefault on the Right arrow key", function() {
-                pressArrow(fooBtn, 'right');
+                pressKey(fooBtn, 'right');
                 
                 waitForFocus(barBtn);
                 
@@ -1539,7 +1805,7 @@ describe("Ext.util.FocusableContainer", function() {
             });
             
             it("should preventDefault on the Left arrow key", function() {
-                pressArrow(barBtn, 'left');
+                pressKey(barBtn, 'left');
                 
                 waitForFocus(fooBtn);
                 
@@ -1718,7 +1984,7 @@ describe("Ext.util.FocusableContainer", function() {
                                     slider.on('change', function() { changed = true; });
                                 });
                                 
-                                pressArrow(slider, key);
+                                pressKey(slider, key);
                                 
                                 runs(function() {
                                     expect(changed).toBeTruthy();
@@ -1748,7 +2014,7 @@ describe("Ext.util.FocusableContainer", function() {
                         });
                         
                         it("should not block down arrow key", function() {
-                            pressArrow(barInput, 'down');
+                            pressKey(barInput, 'down');
                             
                             runs(function() {
                                 expect(barInput.isExpanded).toBeTruthy();
@@ -1933,7 +2199,7 @@ describe("Ext.util.FocusableContainer", function() {
                                 slider.on('change', function() { changed = true; });
                             });
                             
-                            pressArrow(slider, key);
+                            pressKey(slider, key);
                             
                             runs(function() {
                                 expect(changed).toBeTruthy();
@@ -1963,7 +2229,7 @@ describe("Ext.util.FocusableContainer", function() {
                     });
                     
                     it("should not block down arrow key", function() {
-                        pressArrow(barInput, 'down');
+                        pressKey(barInput, 'down');
                         
                         runs(function() {
                             expect(barInput.isExpanded).toBeTruthy();

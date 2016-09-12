@@ -7,7 +7,7 @@
         @include st-box-align(stretch);
     }
 
-    .#{$prefix}field-body {
+    .#{$prefix}body-el {
         @include st-box;
         @include st-box-orient(vertical);
     }
@@ -17,7 +17,7 @@
         @include st-box-align(stretch);
     }
 
-    .#{$prefix}textarea {
+    .#{$prefix}input-el {
         resize: none;
     }
 }

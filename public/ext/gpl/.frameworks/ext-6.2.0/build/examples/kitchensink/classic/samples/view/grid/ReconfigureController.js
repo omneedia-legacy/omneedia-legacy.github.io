@@ -12,6 +12,8 @@ Ext.define('KitchenSink.view.grid.ReconfigureController', {
             name = btn.itemId,
             view = me.getView(),
             grid = me.lookup('reconGrid'),
+            showOffices = me.lookup('showOffices'),
+            showEmployees = me.lookup('showEmployees'),
             vm = me.getViewModel(),
             etc = view.etc[name],
             store = me[etc.store]();
@@ -21,6 +23,16 @@ Ext.define('KitchenSink.view.grid.ReconfigureController', {
         vm.set({
             nowShowing: name
         });
+
+        // The other button must be enabled BEFORE the clicked button is
+        // disabled so that automatic focus handling can find an enabled sibling.
+        if (btn === showEmployees) {
+            showOffices.enable();
+        } else {
+            showEmployees.enable();
+        }
+
+        btn.disable();
     },
 
     createEmployeeStore: function(){

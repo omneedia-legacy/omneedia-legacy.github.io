@@ -2,7 +2,7 @@
  * Controls the exporter examples.
  */
 Ext.define('KitchenSink.view.pivot.ExporterController', {
-    extend: 'Ext.app.ViewController',
+    extend: 'KitchenSink.view.pivot.PivotController',
 
     alias: 'controller.pivotexport',
 
@@ -13,6 +13,8 @@ Ext.define('KitchenSink.view.pivot.ExporterController', {
         'Ext.exporter.excel.Xml',
         'Ext.exporter.excel.Xlsx'
     ],
+
+    events: ['beforedocumentsave', 'documentsave', 'dataready'],
 
     exportAllToXml: function(){
         this.doExport({
@@ -100,7 +102,11 @@ Ext.define('KitchenSink.view.pivot.ExporterController', {
     },
 
     doExport: function(config){
-        this.getView().saveDocumentAs(config);
+        this.getView().saveDocumentAs(config).then(null, this.onError);
+    },
+
+    onError: function(error){
+        Ext.Msg.alert('Error', typeof error === 'string' ? error : 'Unknown error');
     },
 
     onBeforeDocumentSave: function(view){

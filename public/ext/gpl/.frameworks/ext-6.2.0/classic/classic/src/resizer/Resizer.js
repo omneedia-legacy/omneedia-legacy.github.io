@@ -524,7 +524,5 @@ Ext.define('Ext.resizer.Resizer', {
         }
         
         me.callParent();
-        
-        me.resizeTracker = null;
     }
 });

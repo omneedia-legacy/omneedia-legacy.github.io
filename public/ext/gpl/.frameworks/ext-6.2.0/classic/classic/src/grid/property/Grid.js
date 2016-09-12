@@ -544,12 +544,13 @@ Ext.define('Ext.grid.property.Grid', {
         return editor;
     },
 
-    beforeDestroy: function() {
+    doDestroy: function() {
         var me = this;
-        me.callParent();
+        
         me.destroyEditors(me.editors);
         me.destroyEditors(me.customEditors);
-        delete me.source;
+        
+        me.callParent();
     },
 
     destroyEditors: function (editors) {

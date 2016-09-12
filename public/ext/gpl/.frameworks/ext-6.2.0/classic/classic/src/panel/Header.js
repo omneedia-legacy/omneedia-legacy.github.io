@@ -410,7 +410,8 @@ Ext.define('Ext.panel.Header', {
         }
         
         if (haveFocusableTool) {
-            if (!me.hasOwnProperty('enableFocusableContainer') || !me.enableFocusableContainer) {
+            if (!me.initialConfig.hasOwnProperty('enableFocusableContainer') ||
+                me.enableFocusableContainer) {
                 me.ariaRole = 'toolbar';
                 me.enableFocusableContainer = true;
                 
@@ -550,18 +551,6 @@ Ext.define('Ext.panel.Header', {
 
         onDblClick: function(e){
             this.fireClickEvent('dblclick', e);
-        },
-        
-        onFocusableContainerMousedown: function(e, target) {
-            var targetCmp = Ext.Component.fromElement(target);
-            
-            // We don't want to focus the header on mousedown
-            if (targetCmp === this) {
-                e.preventDefault();
-            }
-            else {
-                this.mixins.focusablecontainer.onFocusableContainerMousedown.apply(this, arguments);
-            }
         },
 
         syncBeforeAfterTitleClasses: function(force) {

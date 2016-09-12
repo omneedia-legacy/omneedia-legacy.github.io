@@ -3,7 +3,7 @@
 describe("Ext.form.field.ComboBox", function() {
     var component, store, CBTestModel,
         itNotIE = Ext.isIE ? xit : it,
-        itNotIE8 = Ext.isIE8 ? xit : it,
+        itNotIE9m = Ext.isIE9m ? xit : it,
         synchronousLoad = true,
         storeLoad = Ext.data.ProxyStore.prototype.load,
         storeFlushLoad = Ext.data.ProxyStore.prototype.flushLoad,
@@ -14,10 +14,6 @@ describe("Ext.form.field.ComboBox", function() {
             }
             return this;
         };
-    
-    function expectAria(attr, value) {
-        jasmine.expectAriaAttr(component, attr, value);
-    }
 
     function spyOnEvent(object, eventName, fn) {
         var obj = {
@@ -1661,6 +1657,32 @@ describe("Ext.form.field.ComboBox", function() {
             
             expect(Ext.fly(firstNode).hasCls('x-boundlist-item-over')).toBe(true);
         });
+
+        it("should autoSelect if you type an blur", function() {
+            makeComponent({
+                autoSelectLast: false,
+                queryMode: 'local',
+                value: 'value 32',
+                renderTo: Ext.getBody()
+            });
+            component.expand();
+            jasmine.focusAndWait(component);
+
+            runs(function() {
+                doTyping('text 34');
+            });
+
+            jasmine.blurAndWait(component);
+
+            waitsFor(function() {
+                return !component.hasFocus;
+            });
+
+            runs(function() {
+                component.expand();
+                expect(component.picker.getSelectionModel().lastSelected.get('val')).toBe('value 34');
+            });
+        });
     });
 
     describe("doRawQuery method", function() {
@@ -2256,6 +2278,42 @@ describe("Ext.form.field.ComboBox", function() {
                         expect(component.getValue()).toBeNull();
                     });
                 });
+
+                itNotIE9m("should not clear the combobox with custom displayTpl on blur after setValue", function() {
+                    component.destroy();
+                    makeComponent({
+                        displayField: 'text',
+                        valueField: 'val',
+                        forceSelection: true,
+                        queryMode: 'local',
+                        renderTo: Ext.getBody(),
+                        displayTpl: '<tpl for=".">Id= {val} - {text}</tpl>'
+                    });
+                    jasmine.focusAndWait(component);
+                    runs(function() {
+                        component.setValue('value 2');
+                    });
+                    jasmine.blurAndWait(component);
+
+                    waitsFor(function() {
+                        return !component.hasFocus;
+                    });
+                    jasmine.focusAndWait(component);
+
+                    waitsFor(function() {
+                        return component.hasFocus;
+                    });
+
+                    jasmine.blurAndWait(component);
+
+                    waitsFor(function() {
+                        return !component.hasFocus;
+                    });
+
+                    runs(function() {
+                        expect(component.inputEl.dom.value).not.toBe('');
+                    });
+                });
             });
 
             describe("with a current value", function() {
@@ -2350,7 +2408,8 @@ describe("Ext.form.field.ComboBox", function() {
                         });
                     });
                     
-                    itNotIE8('should not clear the combobox custom displayTpl and calling setValue on blur', function() {
+                    itNotIE9m('should not clear the combobox custom displayTpl and calling setValue on blur', function() {
+
                         makeWithValue('value 1',{
                             displayTpl: '<tpl for=".">Id= {val} - {text}</tpl>'
                         });
@@ -4449,7 +4508,6 @@ describe("Ext.form.field.ComboBox", function() {
                                 { dataIndex: 'price', text: 'Price' }
                             ],
                             store: new Ext.data.ArrayStore({
-                                storeId: 'baz',
                                 fields: [
                                     {name: 'company'},
                                     {name: 'price', type: 'float'}
@@ -5046,8 +5104,8 @@ describe("Ext.form.field.ComboBox", function() {
                 valueField: 'val'
             });
             component.on('select', function() {
-                component.destroy();
-            });
+                this.destroy();
+            }, component);
             expect(function() {
                 clickListItem('value 2');
             }).not.toThrow();

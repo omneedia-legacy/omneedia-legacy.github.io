@@ -357,8 +357,6 @@ Ext.define('Ext.data.Store', {
 
         me.callParent([config]);
 
-        me.getData().addObserver(me);
-
         // See applyData for the details.
         data = me.inlineData;
         if (data) {
@@ -763,8 +761,14 @@ Ext.define('Ext.data.Store', {
     },
 
     onFilterEndUpdate: function() {
-        this.callParent(arguments);
-        this.callObservers('Filter');
+        var me = this;
+        
+        if (me.destroying || me.destroyed) {
+            return;
+        }
+        
+        me.callParent(arguments);
+        me.callObservers('Filter');
     },
 
     /**
@@ -1021,8 +1025,15 @@ Ext.define('Ext.data.Store', {
 
         ++me.loadCount;
         me.complete = true;
-        me.fireEvent('datachanged', me);
-        me.fireEvent('refresh', me);
+        
+        if (me.hasListeners.datachanged) {
+            me.fireEvent('datachanged', me);
+        }
+        
+        if (me.hasListeners.refresh) {
+            me.fireEvent('refresh', me);
+        }
+        
         me.callObservers('AfterPopulate');
     },
 
@@ -1207,7 +1218,7 @@ Ext.define('Ext.data.Store', {
         Ext.resumeLayouts(true);
     },
 
-    onDestroy: function() {
+    doDestroy: function() {
         var me = this,
             task = me.loadTask,
             data = me.getData(),
@@ -1215,16 +1226,19 @@ Ext.define('Ext.data.Store', {
         
         // clearData ensures everything is unjoined
         me.clearData();
-        me.callParent();
         me.setSession(null);
         me.observers = null;
+        
         if (task) {
             task.cancel();
             me.loadTask = null;
         }
+        
         if (source) {
             source.destroy();
         }
+
+        me.callParent();
     },
 
     privates: {

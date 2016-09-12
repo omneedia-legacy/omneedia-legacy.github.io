@@ -1,3 +1,11 @@
+/**
+ * Another use of heatmap to visualize sales per employee by day.
+ * This example also shows off the use of a polylinear scale, where
+ * three range colors are specified and the (automatically calculated)
+ * domain is split into two equal size segments that correspond to
+ * color subranges. One can also specify the domain manually if segments
+ * of irregular size are desired.
+ */
 Ext.define('KitchenSink.view.d3.heatmap.Sales', {
     extend: 'Ext.panel.Panel',
     xtype: 'd3-view-heatmap-sales',
@@ -11,6 +19,10 @@ Ext.define('KitchenSink.view.d3.heatmap.Sales', {
     // Content between example tags is omitted from code preview.
     otherContent: [
         {
+            type: 'Controller',
+            path: 'classic/samples/view/d3/heatmap/SalesController.js'
+        },
+        {
             type: 'Store',
             path: 'classic/samples/store/SalesPerEmployee.js'
         }
@@ -19,9 +31,7 @@ Ext.define('KitchenSink.view.d3.heatmap.Sales', {
 
     width: 960,
     height: 600,
-
     layout: 'fit',
-    resizable: true,
 
     tbar: [
         '->',
@@ -108,18 +118,8 @@ Ext.define('KitchenSink.view.d3.heatmap.Sales', {
             attr: {
                 'stroke': '#081d58',
                 'stroke-width': 2
-            },
-            labels: true
-        },
-
-        title: {
-            docked: 'top',
-            title: {
-                text: 'Sales per Employee per Day'
-            },
-            subtitle: {
-                text: ''
             }
         }
     }
+
 });

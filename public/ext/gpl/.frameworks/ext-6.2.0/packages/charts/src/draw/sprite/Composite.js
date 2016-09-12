@@ -187,13 +187,13 @@ Ext.define('Ext.draw.sprite.Composite', {
             ln = sprites.length,
             i;
 
-        me.callParent();
-
         for (i = 0; i < ln; i++) {
             sprites[i].destroy();
         }
 
         sprites.length = 0;
+
+        me.callParent();
     }
 
 });

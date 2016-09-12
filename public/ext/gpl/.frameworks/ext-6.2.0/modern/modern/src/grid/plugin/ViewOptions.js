@@ -80,7 +80,7 @@ Ext.define('Ext.grid.plugin.ViewOptions', {
          * The configuration of the menu
          */
         sheet: {
-            baseCls: Ext.baseCSSPrefix + 'grid-viewoptions',
+            baseCls: Ext.baseCSSPrefix + 'gridviewoptions',
             xtype: 'sheet',
             items: [{
                 docked: 'top',
@@ -112,7 +112,7 @@ Ext.define('Ext.grid.plugin.ViewOptions', {
          */
         columnList: {
             xtype: 'nestedlist',
-            title: 'Column',
+            title: 'Columns',
             listConfig: {
                 plugins: [{
                     type: 'sortablelist',
@@ -123,17 +123,17 @@ Ext.define('Ext.grid.plugin.ViewOptions', {
                 itemTpl: [
                     '<div class="' + Ext.baseCSSPrefix + 'column-options-itemwrap<tpl if="hidden"> {hiddenCls}</tpl>',
                             '<tpl if="grouped"> {groupedCls}</tpl>">',
-                        '<div class="' + Ext.baseCSSPrefix + 'column-options-sortablehandle"></div>',
+                        '<div class="' + Ext.baseCSSPrefix + 'column-options-sortablehandle ' + Ext.baseCSSPrefix + 'font-icon"></div>',
                         '<tpl if="header">',
-                            '<div class="' + Ext.baseCSSPrefix + 'column-options-folder"></div>',
+                            '<div class="' + Ext.baseCSSPrefix + 'column-options-folder ' + Ext.baseCSSPrefix + 'font-icon"></div>',
                         '<tpl else>',
-                            '<div class="' + Ext.baseCSSPrefix + 'column-options-leaf"></div>',
+                            '<div class="' + Ext.baseCSSPrefix + 'column-options-leaf ' + Ext.baseCSSPrefix + 'font-icon"></div>',
                         '</tpl>',
                         '<div class="' + Ext.baseCSSPrefix + 'column-options-text">{text}</div>',
                         '<tpl if="groupable && dataIndex">',
-                            '<div class="' + Ext.baseCSSPrefix + 'column-options-groupindicator"></div>',
+                            '<div class="' + Ext.baseCSSPrefix + 'column-options-groupindicator ' + Ext.baseCSSPrefix + 'font-icon"></div>',
                         '</tpl>',
-                        '<div class="' + Ext.baseCSSPrefix + 'column-options-visibleindicator"></div>',
+                        '<div class="' + Ext.baseCSSPrefix + 'column-options-visibleindicator ' + Ext.baseCSSPrefix + 'font-icon"></div>',
                     '</div>'
                 ],
                 triggerEvent: null,
@@ -188,13 +188,16 @@ Ext.define('Ext.grid.plugin.ViewOptions', {
     updateGrid: function(grid, oldGrid) {
         if (oldGrid) {
             oldGrid.getHeaderContainer().renderElement.un({
+                contextmenu: 'onHeaderContextMenu',
                 longpress: 'onHeaderLongPress',
                 scope: this
             });
-            oldGrid.getHeaderContainer().un({
+            oldGrid.un({
                 columnadd: 'onColumnAdd',
                 columnmove: 'onColumnMove',
                 columnremove: 'onColumnRemove',
+                columnhide: 'onColumnHide',
+                columnshow: 'onColumnShow',
                 scope: this
             });
         }
@@ -203,14 +206,6 @@ Ext.define('Ext.grid.plugin.ViewOptions', {
             grid.getHeaderContainer().renderElement.on({
                 contextmenu: 'onHeaderContextMenu',
                 longpress: 'onHeaderLongPress',
-                scope: this
-            });
-            grid.getHeaderContainer().on({
-                columnadd: 'onColumnAdd',
-                columnmove: 'onColumnMove',
-                columnremove: 'onColumnRemove',
-                columnhide: 'onColumnHide',
-                columnshow: 'onColumnShow',
                 scope: this
             });
         }
@@ -250,8 +245,8 @@ Ext.define('Ext.grid.plugin.ViewOptions', {
 
     updateSheet: function(sheet) {
         sheet.setWidth(this.getSheetWidth());
-
         sheet.add(this.getColumnList());
+        sheet.on('hide', 'onSheetHide', this);
     },
 
     onDoneButtonTap: function() {
@@ -335,23 +330,20 @@ Ext.define('Ext.grid.plugin.ViewOptions', {
     onGroupIndicatorTap: function(row, record) {
         var me = this,
             grouped = !record.get('grouped'),
-            store = me.getGrid().getStore(),
-            groupedRecord = me._groupedRecord;
+            store = me.getGrid().getStore();
 
-        if (groupedRecord) {
-            groupedRecord.set('grouped', false);
-        }
+        // Clear everything
+        this.getListRoot().cascade(function(node) {
+            node.set('grouped', false);
+        });
 
         if (grouped) {
             store.setGrouper({
                 property: record.get('dataIndex')
             });
-            me._groupedRecord = record;
             record.set('grouped', true);
         } else {
             store.setGrouper(null);
-            me._groupedRecord = null;
-            record.set('grouped', false);
         }
     },
 
@@ -377,17 +369,18 @@ Ext.define('Ext.grid.plugin.ViewOptions', {
         }
     },
 
-    onColumnAdd: function(headerContainer, column, header) {
+    onColumnAdd: function(grid, column) {
         if (column.getIgnore() || this.isMoving) {
             return;
         }
 
         var me = this,
             nestedList = me.getColumnList(),
+            mainHeaderCt = grid.getHeaderContainer(),
+            header = column.getParent(),
             store = nestedList.getStore(),
             parentNode = store.getRoot(),
             hiddenCls = me._hiddenColumnCls,
-            grid = me.getGrid(),
             isGridGrouped = grid.getGrouped(),
             grouper = grid.getStore().getGrouper(),
             dataIndex = column.getDataIndex(),
@@ -403,7 +396,7 @@ Ext.define('Ext.grid.plugin.ViewOptions', {
                 leaf: true
             }, idx, headerNode;
 
-        if (header) {
+        if (header !== mainHeaderCt) {
             headerNode = parentNode.findChild('id', header.getId());
             if (!headerNode) {
                 idx = header.getParent().indexOf(header);
@@ -419,7 +412,7 @@ Ext.define('Ext.grid.plugin.ViewOptions', {
             idx = header.indexOf(column);
             parentNode = headerNode;
         } else {
-            idx = headerContainer.indexOf(column);
+            idx = mainHeaderCt.indexOf(column);
         }
 
         parentNode.insertChild(idx, data);
@@ -435,7 +428,7 @@ Ext.define('Ext.grid.plugin.ViewOptions', {
             return;
         }
 
-        var root = this.getColumnList().getStore().getRoot(),
+        var root = this.getListRoot(),
             record = root.findChild('id', column.getId(), true);
 
         if (record) {
@@ -455,25 +448,33 @@ Ext.define('Ext.grid.plugin.ViewOptions', {
     },
 
     hideViewOptions: function() {
-        var sheet = this.getSheet();
+        var me = this,
+            sheet = me.getSheet();
 
-        this.getGrid().getHeaderContainer().setSortable(true);
+        me.getGrid().getHeaderContainer().setSortable(me.cachedSortable);
+        delete me.cachedSortable;
 
         sheet.hide();
+    },
+
+    onSheetHide: function() {
+        this.hideViewOptions();
     },
 
     showViewOptions: function() {
         var me = this,
             sheet = me.getSheet(),
-            modal = null;
+            header;
 
         me.setup();
 
-        if (!me.getSheet().isVisible()) {
+        if (!sheet.isVisible()) {
             // Since we may have shown the header in response to a longpress we don't
             // want the succeeeding "tap" to trigger column sorting, so we temporarily
             // disable sort-on-tap while the ViewOptions are shown
-            me.getGrid().getHeaderContainer().setSortable(false);
+            header = me.getGrid().getHeaderContainer();
+            me.cachedSortable = header.getSortable();
+            header.setSortable(false);
 
             me.updateListInfo();
 
@@ -482,17 +483,42 @@ Ext.define('Ext.grid.plugin.ViewOptions', {
     },
 
     privates: {
+        getListRoot: function() {
+            return this.getColumnList().getStore().getRoot();
+        },
+
         setup: function() {
             var me = this,
-                sheet;
+                grid = me.getGrid(),
+                sheet, root;
 
             if (me.doneSetup) {
                 return;
             }
             me.doneSetup = true;
 
+            root = this.getListRoot();
+
+            root.removeAll();
+
+            grid.getColumns().forEach(function(leaf) {
+                me.onColumnAdd(grid, leaf);
+            });
+
+            // Don't track the events until the first show, it's easier to
+            // build it from scratch.
+            grid.on({
+                columnadd: 'onColumnAdd',
+                columnmove: 'onColumnMove',
+                columnremove: 'onColumnRemove',
+                columnhide: 'onColumnHide',
+                columnshow: 'onColumnShow',
+                scope: me
+            });
+
+
             sheet = me.getSheet();
-            me.getGrid().add(sheet);
+            grid.add(sheet);
             sheet.translate(me.getSheetWidth());
 
             sheet.down('button[role=donebutton]').on({
@@ -505,12 +531,19 @@ Ext.define('Ext.grid.plugin.ViewOptions', {
             var grid = this.getGrid(),
                 store = grid.getStore(),
                 grouper = store.getGrouper(),
+                isGridGrouped = grid.getGrouped(),
                 grouperProp = grouper && grouper.getProperty(),
                 headerContainer = grid.getHeaderContainer();
 
-            this.getColumnList().getStore().getRoot().cascadeBy(function(node) {
-                var dataIndex = node.get('dataIndex');
-                node.set('grouped', dataIndex && dataIndex === grouperProp);
+            this.getColumnList().getStore().getRoot().cascade(function(node) {
+                var grouped = false,
+                    dataIndex;
+
+                if (isGridGrouped) {
+                    dataIndex = node.get('dataIndex');
+                    grouped = dataIndex && dataIndex === grouperProp;
+                }
+                node.set('grouped', dataIndex && grouped);
             });
         }
     }

@@ -19,10 +19,6 @@ describe("Ext.resizer.Splitter", function () {
             renderTo: Ext.getBody()
         });
     }
-    
-    function expectAria(attr, value) {
-        jasmine.expectAriaAttr(splitter, attr, value);
-    }
 
     afterEach(function () {
         if (c) {
@@ -160,11 +156,11 @@ describe("Ext.resizer.Splitter", function () {
         });
         
         it("should have separator role", function() {
-            expectAria('role', 'separator');
+            expect(splitter).toHaveAttr('role', 'separator');
         });
         
         it("should have aria-orientation", function() {
-            expectAria('aria-orientation', 'vertical');
+            expect(splitter).toHaveAttr('aria-orientation', 'vertical');
         });
     });
 });

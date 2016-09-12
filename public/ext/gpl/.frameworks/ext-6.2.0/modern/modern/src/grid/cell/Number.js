@@ -20,6 +20,8 @@ Ext.define('Ext.grid.cell.Number', {
         format: '0,000.00'
     },
 
+    classCls: Ext.baseCSSPrefix + 'numbercell',
+
     zeroValue: null,
 
     updateColumn: function (column, oldColumn) {
@@ -43,9 +45,9 @@ Ext.define('Ext.grid.cell.Number', {
             hasValue = value || value === 0,
             zeroValue;
 
-        if(value === 0 && (zeroValue = this.geZeroValue()) != null) {
+        if(value === 0 && (zeroValue = this.getZeroValue()) != null) {
             value = zeroValue;
-        }else{
+        } else {
             value = hasValue ? Ext.util.Format.number(value, this.getFormat()) : null;
         }
         this.setRawValue(value);

@@ -1,17 +1,10 @@
 .#{$prefix}form-field-separators {
     > .#{$prefix}field {
-        border-bottom: 1px solid bottom($field-border-color);
-        margin-bottom: $field-separator-vertical-spacing;
-
-        @if $enable-big {
-            .#{$prefix}big {
-                margin-bottom: $field-separator-vertical-spacing-big;
-            }
-        }
+        border-bottom: 1px solid bottom($textfield-input-border-color);
     }
 
     > .#{$prefix}textfield {
-        &.#{$prefix}field-focused {
+        &.#{$prefix}focused {
             @include border(
                 bottom($textfield-focused-input-border-width),
                 bottom($textfield-focused-input-border-style),
@@ -19,7 +12,7 @@
             );
         }
 
-        &.#{$prefix}field-invalid {
+        &.#{$prefix}invalid {
             @include border(
                 bottom($textfield-invalid-input-border-width),
                 bottom($textfield-invalid-input-border-style),

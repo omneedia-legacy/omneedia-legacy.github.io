@@ -26,7 +26,7 @@ Ext.define('Admin.view.dashboard.Todos', {
             },
 
             plugins: {
-                type: 'gridmultiselection',
+                type: 'multiselection',
 
                 selectionColumn: {
                     hidden: false,
@@ -37,7 +37,6 @@ Ext.define('Admin.view.dashboard.Todos', {
             columns: [
                 {
                     text: 'Task',
-                    //width: 200,
                     flex: 1,
                     dataIndex: 'task'
                 }
@@ -45,8 +44,6 @@ Ext.define('Admin.view.dashboard.Todos', {
         },
         {
             xtype: 'toolbar',
-            //layout: 'hbox',
-            border: 0,
             padding: '10 0 0 0',
             items: [
                 {

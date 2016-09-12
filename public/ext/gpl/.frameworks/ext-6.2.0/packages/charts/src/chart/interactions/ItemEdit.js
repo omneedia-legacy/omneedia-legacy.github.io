@@ -68,11 +68,6 @@ Ext.define('Ext.chart.interactions.ItemEdit', {
             ewResize: 'ew-resize',
             nsResize: 'ns-resize',
             move: 'move'
-        },
-
-        touchAction: {
-            panX: false,
-            panY: false
         }
 
         /**
@@ -108,7 +103,7 @@ Ext.define('Ext.chart.interactions.ItemEdit', {
                 shrinkWrapDock: true,
                 autoHide: true,
                 trackMouse: true,
-                mouseOffset: [10, 10]
+                mouseOffset: [20, 20]
             });
 
             tooltip = new Ext.tip.ToolTip(config);

@@ -364,7 +364,20 @@ describe("Ext.form.field.Date", function() {
                 component.setValue(new Date(2010, 10, 6)); // 5th nov 2010
                 expect(spy.callCount).toBe(1);
                 expect(spy.mostRecentCall.args[1]).toEqual(new Date(2010, 10, 6));
-                
+            });
+
+            it("should work after setRawValue", function(){
+                var date = new Date('01/01/1999');
+                date = Ext.Date.clearTime(date);
+
+                makeComponent({
+                    format: 'm/d/y'
+                });
+                component.setRawValue('01/01/99');
+                expect(component.getValue()).toEqual(date);
+                date.setYear('2099');
+                component.setValue(date);
+                expect(component.getValue()).toEqual(date);
             });
         });
     });
@@ -697,7 +710,7 @@ describe("Ext.form.field.Date", function() {
                         renderTo: Ext.getBody()
                     });
                     clickTrigger(); //inits the picker
-                    var spy = spyOn(component.picker, 'setDisabledDays');
+                    spyOn(component.picker, 'setDisabledDays');
                     component.setDisabledDays([3, 6]);
                     expect(component.picker.setDisabledDays).toHaveBeenCalledWith([3, 6]);
                 });
@@ -751,7 +764,7 @@ describe("Ext.form.field.Date", function() {
                         renderTo: Ext.getBody()
                     });
                     clickTrigger(); //inits the picker
-                    var spy = spyOn(component.picker, 'setDisabledDates');
+                    spyOn(component.picker, 'setDisabledDates');
                     component.setDisabledDates(['1978/02/04']);
                     expect(component.picker.setDisabledDates).toHaveBeenCalledWith(component.disabledDatesRE);
                 });
@@ -804,7 +817,6 @@ describe("Ext.form.field.Date", function() {
                 return component.hasFocus; 
             });
             runs(function() {
-                var c = component;
                 spy = spyOnEvent(component, 'change').andCallThrough();
                 component.inputEl.dom.value = '';
                 jasmine.fireKeyEvent(component.inputEl.dom, 'keyup', 66);
@@ -815,38 +827,88 @@ describe("Ext.form.field.Date", function() {
             });
             runs(function() {
                 expect(component.hasFocus).toBe(false);
-                expect(component.getValue()).toBeNull()
+                expect(component.getValue()).toBeNull();
             });
         });
     });
 
+    describe("rawValue", function() {
+        var newDate, rawString;
+        beforeEach(function() {
+            newDate = new Date();
+            newDate = Ext.Date.clearTime(newDate);
+            rawString = Ext.Date.format(newDate, 'm/d/Y');
+
+            makeComponent({
+                renderTo: Ext.getBody()
+            });
+        });
+
+        it("should set the value when there is no value", function() {
+            component.setRawValue(rawString);
+            expect(component.getValue()).toEqual(newDate);
+        });
+
+        it("should replace the current value", function() {
+            component.setRawValue(rawString);
+            component.setValue('05/31/1985');
+            component.setRawValue(rawString);
+            expect(component.getValue()).toEqual(newDate);
+        });
+    });
+
     describe("blur", function() {
-        var webkitIt = Ext.isWebKit ? it : xit;
-        webkitIt("should call rawToValue inside blur", function() {
+        it("should call rawToValue inside blur", function() {
             var rawToValueCount = 0;
+
             makeComponent({
                 renderTo: Ext.getBody(),
                 format: 'Y-m-d',
-                rawToValue: function(rawValue) {
+                rawToValue: function() {
                     rawToValueCount++;
                 }
             });
+
             component.setValue('2010-04-15');
             rawToValueCount = 0;
-            component.focus();
-            component.blur();
-            expect(rawToValueCount).toBe(1);
+
+            jasmine.focusAndWait(component);
+
+            waitsFor(function(){
+                return component.hasFocus;
+            });
+
+            jasmine.blurAndWait(component);
+            
+            waitsFor(function() {
+                return !component.hasFocus;
+            });
+
+            runs(function() {
+                expect(rawToValueCount).toBeGreaterThan(0);
+            });
         });
 
-        webkitIt("should not blank the textfield for an invalid date", function() {
+        it("should not blank the textfield for an invalid date", function() {
             makeComponent({
                 renderTo: Ext.getBody(),
                 format: 'Y-m-d'
             });
             component.inputEl.dom.value = 'foo';
-            component.focus();
-            component.blur();
-            expect(component.inputEl.getValue()).toBe('foo');
+            jasmine.focusAndWait(component);
+
+            waitsFor(function(){
+                return component.hasFocus;
+            });
+
+            jasmine.blurAndWait(component);
+            
+            waitsFor(function() {
+                return !component.hasFocus;
+            });
+            runs(function() {
+                expect(component.inputEl.getValue()).toBe('foo');
+            });
         });
     });
 });

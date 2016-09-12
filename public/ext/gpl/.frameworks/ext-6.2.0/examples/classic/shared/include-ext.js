@@ -49,7 +49,6 @@
             triton: 1,
             classic: 1,
             gray: 1,
-            triton: 1,
             'neptune-touch': 1,
             crisp: 1,
             'crisp-touch': 1
@@ -78,8 +77,10 @@
     if (includeCSS) {
         loadCss(themePackageDir + 'resources/theme-' + themeName + '-all' + cssSuffix);
         loadCss(extPackagesRoot + '/packages/charts/classic/' + themeName + '/resources/charts-all' + cssSuffix);
-        // loadCss(extPackagesRoot + '/packages/d3/classic/' + themeName + '/resources/d3-all' + cssSuffix);
         loadCss(extPackagesRoot + '/packages/ux/classic/' + themeName + '/resources/ux-all' + cssSuffix);
+        if (Ext.devMode === 2) {
+            loadCss(extPackagesRoot + '/packages/d3/classic/' + themeName + '/resources/d3-all' + cssSuffix);
+        }
     }
 
     extPrefix = useDebug ? '/ext' : '/ext-all';
@@ -112,7 +113,9 @@
             // ux and charts js are not needed in dev mode because they are included in bootstrap
             loadScript(uxJS);
             loadScript(chartsJS);
-            loadScript(d3JS);
+            if (Ext.devMode === 2) {
+                loadScript(d3JS);
+            }
         }
     }
 

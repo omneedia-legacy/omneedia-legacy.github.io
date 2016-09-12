@@ -478,8 +478,7 @@ Ext.define('Ext.draw.modifier.Animation', {
     },
 
     destroy: function () {
-        this.animatingPool.length = 0;
-        this.animating = 0;
+        this.stop();
         this.callParent();
     }
 });

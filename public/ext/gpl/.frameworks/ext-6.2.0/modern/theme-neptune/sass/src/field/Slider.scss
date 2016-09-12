@@ -3,8 +3,13 @@
  */
 
 .x-sliderfield {
-    border: $sliderfield-border;
-    .x-field-body {
+    .x-body-el {
         padding: $sliderfield-padding;
+
+        @if $enable-big {
+            .#{$prefix}big & {
+                padding: $sliderfield-padding-big;
+            }
+        }
     }
 }

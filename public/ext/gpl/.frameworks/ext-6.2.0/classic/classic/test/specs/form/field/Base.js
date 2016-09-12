@@ -534,7 +534,7 @@ describe("Ext.form.field.Base", function() {
                 it("should not exist by default", function() {
                     createField();
                     
-                    expect(c).toHaveAttr('aria-label', null);
+                    expect(c).not.toHaveAttr('aria-label');
                 });
                 
                 it("should be rendered when set", function() {

@@ -238,7 +238,7 @@ Ext.define('KitchenSink.view.form.CustomErrorHandling', {
         }]
     }],
 
-    beforeDestroy: function() {
+    doDestroy: function() {
         var error = this.lookupReference('formErrorState');
         if (error) {
             Ext.destroy(error.tip);

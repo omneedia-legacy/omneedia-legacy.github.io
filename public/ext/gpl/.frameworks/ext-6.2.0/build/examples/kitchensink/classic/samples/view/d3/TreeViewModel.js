@@ -12,6 +12,7 @@ Ext.define('KitchenSink.view.d3.TreeViewModel', {
         store: {
             type: 'tree',
             model: 'KitchenSink.model.Tree',
+            rootVisible: true,
             autoLoad: true
         }
     },

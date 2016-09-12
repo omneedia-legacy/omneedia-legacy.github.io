@@ -385,13 +385,10 @@ Ext.define('Ext.window.MessageBox', {
     },
 
     onClose: function() {
-        var btn = this.header.child('[type=close]');
-        
+        var btn = this.msgButtons[3];
+
         if (btn) {
-            // Give a temporary itemId so it can act like the cancel button
-            btn.itemId = 'cancel';
             this.btnCallback(btn);
-            delete btn.itemId;
         }
     },
 
@@ -416,6 +413,7 @@ Ext.define('Ext.window.MessageBox', {
             header = me.header,
             headerCfg = header && !header.isHeader,
             message = cfg && (cfg.message || cfg.msg),
+            buttonTips = cfg.buttonTips,
             title, iconCls, resizeTracker, width, height, i, textArea,
             textField, msg, progressBar, msgButtons, wait, tool;
 
@@ -503,6 +501,10 @@ Ext.define('Ext.window.MessageBox', {
             buttons = Ext.isNumber(cfg.buttons) ? cfg.buttons : 0;
         }
 
+        Ext.each(me.buttonIds, function (buttonId) {
+            me.msgButtons[buttonId].setTooltip((buttonTips && buttonTips[buttonId]) || null);
+        });
+
         // Apply custom-configured buttonText
         // Infer additional buttons from the specified property names in the buttonText object
         buttons = buttons | me.updateButtonText();
@@ -523,7 +525,6 @@ Ext.define('Ext.window.MessageBox', {
                 me.setHeight(height);
             }
         }
-        me.hidden = false;
         if (!me.rendered) {
             me.render(Ext.getBody());
         }
@@ -749,6 +750,14 @@ Ext.define('Ext.window.MessageBox', {
      * - no
      * - cancel
      *
+     * @param {Object} [config.buttonTips] An object keyed by the button ids containing
+     * {@link Ext.button.Button#tooltip tooltip} configurations for each button. eg:
+     *
+     *     {
+     *         ok: 'Commit the record',
+     *         cancel: 'Discard the record'
+     *     }
+     *
      * @param {Object} [config.scope]
      * The scope (`this` reference) in which the function will be executed.
      *
@@ -854,9 +863,6 @@ Ext.define('Ext.window.MessageBox', {
         visibleFocusables = me.query('textfield:not([hidden]),textarea:not([hidden]),button:not([hidden])');
         me.preventFocusOnActivate = !visibleFocusables.length;
 
-        // Set the flag, so that the parent show method performs the show procedure that we need.
-        // ie: animation from animTarget, onShow processing and focusing.
-        me.hidden = true;
         me.callParent();
         return me;
     },

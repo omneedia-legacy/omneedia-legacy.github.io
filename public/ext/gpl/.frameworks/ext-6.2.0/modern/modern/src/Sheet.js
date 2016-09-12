@@ -9,15 +9,9 @@ Ext.define('Ext.Sheet', {
 
     xtype: 'sheet',
 
-    requires: ['Ext.Button', 'Ext.fx.Animation'],
+    requires: ['Ext.fx.Animation'],
 
     config: {
-        /**
-         * @cfg
-         * @inheritdoc
-         */
-        baseCls: Ext.baseCSSPrefix + 'sheet',
-
         /**
          * @cfg
          * @inheritdoc
@@ -74,14 +68,14 @@ Ext.define('Ext.Sheet', {
             type: 'slideOut',
             duration: 250,
             easing: 'ease-in'
-        },
-
-        /**
-         * @cfg
-         * @inheritdoc
-         */
-        border: null
+        }
     },
+
+    baseCls: Ext.baseCSSPrefix + 'sheet',
+
+    border: null,
+
+    bodyBorder: false,
 
     floated: true,
 
@@ -102,12 +96,7 @@ Ext.define('Ext.Sheet', {
                 type: 'slideOut'
             };
         }
-        if (Ext.isString(config)) {
-            config = {
-                type: config
-            };
-        }
-        var anim = Ext.factory(config, Ext.fx.Animation);
+        var anim = this.callParent([config]);
 
         if (anim) {
             if (exit === 'bottom') {
@@ -134,12 +123,7 @@ Ext.define('Ext.Sheet', {
                 type: 'slideIn'
             };
         }
-        if (Ext.isString(config)) {
-            config = {
-                type: config
-            };
-        }
-        var anim = Ext.factory(config, Ext.fx.Animation);
+        var anim = this.callParent([config]);
 
         if (anim) {
             if (enter === 'bottom') {

@@ -64,6 +64,23 @@ Ext.define('Ext.grid.column.Check', {
      */
     triggerEvent: 'click',
 
+    /**
+     * @cfg {Boolean} invert
+     * Use `true` to display a check when the value is `false` instead of when the value
+     * is `true`.
+     */
+    invert: false,
+
+    /**
+     * @cfg {String} tooltip
+     * The tooltip text to show upon hover of a checked cell.
+     */
+
+    /**
+     * @cfg {String} checkedTooltip
+     * The tooltip text to show upon hover of an unchecked cell.
+     */
+
     ignoreExport: true,
 
     /**
@@ -92,6 +109,8 @@ Ext.define('Ext.grid.column.Check', {
     clickTargetName: 'el',
 
     defaultFilterType: 'boolean',
+    
+    checkboxAriaRole: 'button',
 
     /**
      * @event beforecheckchange
@@ -148,6 +167,10 @@ Ext.define('Ext.grid.column.Check', {
 
         me.callParent(arguments);
 
+        if (me.useAriaElements && me.headerCheckbox) {
+            me.updateHeaderAriaDescription(me.areAllChecked());
+        }
+
         // Only do this once
         if (!me.storeListeners) {
             // Ensure initial rendered state is correct.
@@ -177,18 +200,29 @@ Ext.define('Ext.grid.column.Check', {
     },
 
     updateHeaderCheckbox: function(headerCheckbox) {
-        var cls = Ext.baseCSSPrefix + 'column-header-checkbox';
+        var me = this,
+            cls = Ext.baseCSSPrefix + 'column-header-checkbox';
+        
         if (headerCheckbox) {
-            this.addCls(cls);
-
+            me.addCls(cls);
+            
             // So that SPACE/ENTER does not sort, but routes to the checkbox
-            this.sortable = false;
-        } else {
-            this.removeCls(cls);
+            me.sortable = false;
+            
+            if (me.useAriaElements) {
+                me.updateHeaderAriaDescription(me.areAllChecked());
+            }
+        }
+        else {
+            me.removeCls(cls);
+            
+            if (me.useAriaElements && me.ariaEl.dom) {
+                me.ariaEl.dom.removeAttribute('aria-describedby');
+            }
         }
 
         // Keep the header checkbox up to date
-        this.updateHeaderState();
+        me.updateHeaderState();
     },
 
     /**
@@ -244,7 +278,7 @@ Ext.define('Ext.grid.column.Check', {
             view = me.getView(),
             store = view.getStore(),
             checked = !me.allChecked,
-            position;
+            position, text, anncEl;
 
         if (me.fireEvent('beforeheadercheckchange', me, checked, e) !== false) {
 
@@ -269,7 +303,14 @@ Ext.define('Ext.grid.column.Check', {
         // Will fire initially due to allChecked being undefined and using !==
         if (me.allChecked !== checked) {
             me.allChecked = checked;
-            me[checked ? 'addCls' : 'removeCls'](me.headerCheckedCls);
+            
+            if (me.headerCheckbox) {
+                me[checked ? 'addCls' : 'removeCls'](me.headerCheckedCls);
+                
+                if (me.useAriaElements) {
+                    me.updateHeaderAriaDescription(checked);
+                }
+            }
         }
     },
 
@@ -309,24 +350,35 @@ Ext.define('Ext.grid.column.Check', {
         }
     },
 
-    // Note: class names are not placed on the prototype bc renderer scope
-    // is not in the header.
-    defaultRenderer : function(value, cellValues) {
+    defaultRenderer: function(value, cellValues) {
         var me = this,
-            cls = me.checkboxCls;
+            cls = me.checkboxCls,
+            tip = me.tooltip;
 
+        if (me.invert) {
+            value = !value;
+        }
         if (me.disabled) {
             cellValues.tdCls += ' ' + me.disabledCls;
         }
+        
         if (value) {
             cls += ' ' + me.checkboxCheckedCls;
+            tip = me.checkedTooltip || tip;
+        }
+        
+        if (me.useAriaElements) {
+            cellValues.tdAttr += ' aria-describedby="' + me.id + '-cell-description' +
+                                 (!value ? '-not' : '') + '-selected"';
         }
 
         // This will update the header state on the next animation frame
         // after all rows have been rendered.
         me.updateHeaderState();
 
-        return '<span class="' + cls + '" role="button" tabIndex="0"></span>';
+        return '<span ' + (tip || '') + ' class="' + cls + '" role="' + me.checkboxAriaRole + '"' +
+                (!me.ariaStaticRoles[me.checkboxAriaRole] ? ' tabIndex="0"' : '') +
+               '></span>';
     },
 
     isRecordChecked: function (record) {
@@ -371,15 +423,60 @@ Ext.define('Ext.grid.column.Check', {
     },
 
     updater: function (cell, value) {
-        var me = this;
+        var me = this,
+            tip = me.tooltip;
 
+        if (me.invert) {
+            value = !value;
+        }
+        if (value) {
+            tip = me.checkedTooltip || tip;
+        }
+        if (tip) {
+            cell.setAttribute('data-qtip', tip);
+        } else {
+            cell.removeAttribute('data-qtip');
+        }
         cell = Ext.fly(cell);
+
+        if (me.useAriaElements) {
+            me.updateCellAriaDescription(null, value, cell);
+        }
+        
         cell[me.disabled ? 'addCls' : 'removeCls'](me.disabledCls);
         Ext.fly(cell.down(me.getView().innerSelector, true).firstChild)[value ? 'addCls' : 'removeCls'](Ext.baseCSSPrefix + 'grid-checkcolumn-checked');
 
         // This will update the header state on the next animation frame
         // after all rows have been updated.
         me.updateHeaderState();
+    },
+    
+    /**
+     * @private
+     */
+    updateHeaderAriaDescription: function(isSelected) {
+        var me = this;
+        
+        if (me.useAriaElements && me.ariaEl.dom) {
+            me.ariaEl.dom.setAttribute('aria-describedby', me.id + '-header-description' +
+                                       (!isSelected ? '-not' : '') + '-selected');
+        }
+    },
+    
+    /**
+     * @private
+     */
+    updateCellAriaDescription: function(record, isSelected, cell) {
+        var me = this;
+        
+        if (me.useAriaElements) {
+            cell = cell || me.getView().getCell(record, me);
+            
+            if (cell) {
+                cell.dom.setAttribute('aria-describedby', me.id + '-cell-description' + 
+                                        (!isSelected ? '-not' : '') + '-selected');
+            }
+        }
     },
 
     privates: {
@@ -391,7 +488,25 @@ Ext.define('Ext.grid.column.Check', {
          * @private
          */
         afterText: function(out, values) {
-            out.push('<span class="', this.headerCheckboxCls, '"></span>');
+            var me = this,
+                id = me.id;
+            
+            out.push('<span role="presentation" class="', me.headerCheckboxCls, '"></span>');
+            
+            if (me.useAriaElements) {
+                out.push(
+                    '<span id="' + id + '-header-description-selected" class="' +
+                        Ext.baseCSSPrefix + 'hidden-offsets">' + me.headerDeselectText + '</span>' +
+                    '<span id="' + id + '-header-description-not-selected" class="' +
+                        Ext.baseCSSPrefix + 'hidden-offsets">' + me.headerSelectText + '</span>' +
+                    '<span id="' + id + '-cell-description-selected" class="' +
+                        Ext.baseCSSPrefix + 'hidden-offsets">' + me.rowDeselectText +
+                    '</span>' +
+                    '<span id="' + id + '-cell-description-not-selected" class="' +
+                        Ext.baseCSSPrefix + 'hidden-offsets">' + me.rowSelectText +
+                    '</span>'
+                );
+            }
         }
     }
 });

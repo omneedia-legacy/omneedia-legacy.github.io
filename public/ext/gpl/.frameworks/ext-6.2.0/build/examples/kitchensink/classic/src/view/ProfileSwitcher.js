@@ -1,7 +1,7 @@
 Ext.define('KitchenSink.view.ProfileSwitcher', {
     extend: 'Ext.Component',
     xtype: 'profileSwitcher',
-    cls: [ 'ks-profile-switcher', 'fa', 'fa-bars' ],
+    cls: [ 'ks-profile-switcher', 'x-fa', 'fa-bars' ],
 
     readProfileInfo: function() {
         // These come from index.html
@@ -9,7 +9,7 @@ Ext.define('KitchenSink.view.ProfileSwitcher', {
         this.locale = KitchenSink.locale;
     },
 
-    setQueryParam: function(name, value, preserveHash) {
+    setQueryParam: function (name, value, preserveHash) {
         var query = Ext.Object.fromQueryString(location.search),
             queryString;
 
@@ -35,12 +35,6 @@ Ext.define('KitchenSink.view.ProfileSwitcher', {
                 classic: 'Classic',
                 gray: 'Gray'
             },
-            modernProfiles = {
-                'modern-triton': 'Modern Triton',
-                'modern-neptune': 'Modern Neptune',
-                material: 'Material'//,
-                //ios: 'iOS'
-            },
             menu, profileId;
 
         me.readProfileInfo();
@@ -56,7 +50,7 @@ Ext.define('KitchenSink.view.ProfileSwitcher', {
                 checked: checked,
                 handler: function () {
                     if (!checked) {
-                        if(paramName === 'profile') {
+                        if (paramName === 'profile') {
                             me.setQueryParam('profile', value, value in classicProfiles);
                         } else {
                             me.setQueryParam('locale', value);
@@ -71,15 +65,16 @@ Ext.define('KitchenSink.view.ProfileSwitcher', {
         }
 
         menuItems.push('-');
-
-        for (profileId in modernProfiles) {
-            menuItems.push(makeItem(profileId, modernProfiles[profileId]));
-        }
-
-        menuItems.push('-');
-
         menuItems.push(makeItem('en', 'English', 'locale'));
         menuItems.push(makeItem('he', 'Hebrew', 'locale'));
+
+        menuItems.push('-', {
+            text: 'Modern Toolkit',
+            iconCls: 'x-fa fa-external-link',
+            handler: function () {
+                window.location = location.pathname + '?modern';
+            }
+        });
 
         menu = new Ext.menu.Menu({
             items: menuItems

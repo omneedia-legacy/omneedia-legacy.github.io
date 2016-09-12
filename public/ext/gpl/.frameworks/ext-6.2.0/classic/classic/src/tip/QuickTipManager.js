@@ -149,6 +149,10 @@ Ext.define('Ext.tip.QuickTipManager', {
             }
 
             me.tip = Ext.create(className || 'Ext.tip.QuickTip', tipConfig);
+            
+            // Prevent the tip from being accidentally destroyed.
+            // It should stick around pretty much forever.
+            me.tip.destroy = Ext.emptyFn;
 
             // private.
             // Need a globally accessible way of testing whether QuickTipsManager is 
@@ -161,8 +165,15 @@ Ext.define('Ext.tip.QuickTipManager', {
      * Destroys the QuickTips instance.
      */
     destroy: function() {
-        Ext.destroy(this.tip);
-        this.tip = undefined;
+        var tip = this.tip;
+        
+        // The tip should only be destroyed by the Manager
+        if (tip) {
+            delete tip.destroy;
+            tip.destroy();
+            this.tip = null;
+        }
+        
         Ext.quickTipsActive = false;
 
         // Don't callparent here, we're a singleton

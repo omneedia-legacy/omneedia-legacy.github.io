@@ -13,7 +13,20 @@ Ext.define('KitchenSink.view.pivot.Configurator', {
         'Ext.pivot.plugin.Configurator'
     ],
 
+    // <example>
+    otherContent: [{
+        type: 'Controller',
+        path: 'modern/src/view/pivot/ConfiguratorController.js'
+    }, {
+        type: 'Store',
+        path: 'modern/src/store/Sales.js'
+    }],
+    // </example>
+    
     controller: 'pivotconfig',
+
+    cls: 'demo-solid-background',
+    shadow: true,
 
     plugins: [{
         type: 'pivotconfigurator',
@@ -118,47 +131,43 @@ Ext.define('KitchenSink.view.pivot.Configurator', {
         }]
     }],
 
-    matrixConfig: {
+    matrix: {
         type: 'local',
         store: {
             type: 'sales'
-        }
+        },
+
+        // Configure the aggregate dimensions. Multiple dimensions are supported.
+        aggregate: [{
+            dataIndex:  'value',
+            header:     'Value',
+            aggregator: 'avg',
+            width:      120
+        }],
+
+        // Configure the left axis dimensions that will be used to generate the grid rows
+        leftAxis: [{
+            dataIndex:  'person',
+            header:     'Person',
+            width:      120
+        },{
+            dataIndex:  'company',
+            header:     'Company',
+            sortable:   false
+        }],
+
+        /**
+         * Configure the top axis dimensions that will be used to generate the columns.
+         * When columns are generated the aggregate dimensions are also used. If multiple aggregation dimensions
+         * are defined then each top axis result will have in the end a column header with children
+         * columns for each aggregate dimension defined.
+         */
+        topAxis: [{
+            dataIndex:  'year',
+            header:     'Year',
+            labelRenderer: 'yearLabelRenderer'
+        }]
     },
-
-    listeners: {
-        // Define here a function that can add custom menu items to the configurator field menu
-        beforeshowconfigmenu: 'getCustomMenus'
-    },
-
-    // Configure the aggregate dimensions. Multiple dimensions are supported.
-    aggregate: [{
-        dataIndex:  'value',
-        header:     'Value',
-        aggregator: 'avg'
-    }],
-
-    // Configure the left axis dimensions that will be used to generate the grid rows
-    leftAxis: [{
-        dataIndex:  'person',
-        header:     'Person',
-        width:      120
-    },{
-        dataIndex:  'company',
-        header:     'Company',
-        sortable:   false
-    }],
-
-    /**
-     * Configure the top axis dimensions that will be used to generate the columns.
-     * When columns are generated the aggregate dimensions are also used. If multiple aggregation dimensions
-     * are defined then each top axis result will have in the end a column header with children
-     * columns for each aggregate dimension defined.
-     */
-    topAxis: [{
-        dataIndex:  'year',
-        header:     'Year',
-        labelRenderer: 'yearLabelRenderer'
-    }],
 
     items: [{
         xtype: 'toolbar',

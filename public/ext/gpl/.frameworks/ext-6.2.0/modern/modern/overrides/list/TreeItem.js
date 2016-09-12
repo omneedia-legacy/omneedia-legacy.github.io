@@ -1,3 +1,6 @@
+/**
+ * @class Ext.list.TreeItem
+ */
 Ext.define('Ext.overrides.list.TreeItem', {
     override: 'Ext.list.TreeItem',
 
@@ -38,7 +41,7 @@ Ext.define('Ext.overrides.list.TreeItem', {
             }
             me.callParent([floated, wasFloated]);
             if (floated) {
-                ownerTree = me.up('treelist');
+                ownerTree = me.getOwner();
 
                 // Need an extra wrapping el to carry the necessary CSS classes
                 // for the theming to apply to the item.

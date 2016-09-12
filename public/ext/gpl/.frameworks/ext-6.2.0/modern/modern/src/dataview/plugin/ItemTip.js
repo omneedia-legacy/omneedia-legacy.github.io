@@ -38,6 +38,14 @@ Ext.define('Ext.dataview.plugin.ItemTip', {
         });
     },
 
+    destroy: function() {
+        // We need to null out the parent very early, otherwise
+        // it will try and call remove() when this isn't really
+        // a child item.
+        this.parent = null;
+        this.callParent();
+    },
+
     applyData: function(data) {
         if (data.isEntity) {
             data = data.getData(true);

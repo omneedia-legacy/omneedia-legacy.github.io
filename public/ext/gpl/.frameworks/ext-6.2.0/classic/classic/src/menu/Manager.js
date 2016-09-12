@@ -24,13 +24,9 @@ Ext.define('Ext.menu.Manager', {
 
         // Lazily create the mousedown listener on first menu show
         me.onShow = function () {
-            delete me.onShow; // remove this hook
-            // Use the global mousedown event that gets fired even if propagation is stopped
-            Ext.on({
-                mousedown: me.checkActiveMenus,
-                scroll: me.onGlobalScroll,
-                scope: me
-            });
+            // This is a separate method to allow calling eagerly in unit tests
+            me.registerGlobalListeners();
+            
             return me.onShow.apply(me, arguments); // do the real thing
         };
     },
@@ -188,5 +184,21 @@ Ext.define('Ext.menu.Manager', {
                 }
             }
         }
+    },
+    
+    /**
+     * @private
+     */
+    registerGlobalListeners: function() {
+        var me = this;
+
+        delete me.onShow; // remove the lazy-init hook
+
+        // Use the global mousedown event that gets fired even if propagation is stopped
+        Ext.on({
+            mousedown: me.checkActiveMenus,
+            scroll: me.onGlobalScroll,
+            scope: me
+        });
     }
 });

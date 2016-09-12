@@ -1,27 +1,27 @@
-.x-grid-column {
-    .x-innerhtml {
+.#{$prefix}gridcolumn {
+    position: relative;
+    @include st-box;
+    @include st-box-align(stretch);
+    flex-shrink: 0;
+
+    .#{$prefix}title-el {
+        max-width: 100%;
+        @include st-box;
+        @include st-box-align(center);
+    }
+
+    .#{$prefix}text-el {
+        white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
-
-        display: flex;
-
-        // Vertically center text
-        justify-content: center;
-
-        // Boxes run downwards
-        flex-direction: column;
+        @include st-box-flex(1, 'auto');
     }
-}
 
-.x-grid-column,
-.x-grid-headergroup {
-    // prevents columns from being crushed in FF/IE11 when there is not enough space
-    // TODO: this should be a config of Ext.layout.FlexBox
-    flex-shrink: 0;
-}
+    &.#{$prefix}align-right {
+        @include st-box-pack(end);
+    }
 
-.x-grid-column-trigger {
-    position: absolute;
-    right: 0;
-    cursor: pointer;
+    &.#{$prefix}align-center {
+        @include st-box-pack(center);
+    }
 }

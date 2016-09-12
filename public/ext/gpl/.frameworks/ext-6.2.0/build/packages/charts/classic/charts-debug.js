@@ -84,6 +84,9 @@ Ext.define('Ext.draw.ContainerBase', {
     preview: function() {
         var image = this.getImage(),
             items;
+        if (Ext.isIE8) {
+            return false;
+        }
         if (image.type === 'svg-markup') {
             items = {
                 xtype: 'container',
@@ -165,648 +168,6 @@ Ext.define('Ext.draw.SurfaceBase', {
 });
 
 /**
- * Represents an RGB color and provides helper functions on it e.g. to get
- * color components in HSL color space.
- */
-Ext.define('Ext.draw.Color', {
-    statics: {
-        colorToHexRe: /(.*?)rgb\((\d+),\s*(\d+),\s*(\d+)\)/,
-        rgbToHexRe: /\s*rgb\((\d+),\s*(\d+),\s*(\d+)\)/,
-        rgbaToHexRe: /\s*rgba\((\d+),\s*(\d+),\s*(\d+),\s*([\.\d]+)\)/,
-        hexRe: /\s*#([0-9a-fA-F][0-9a-fA-F]?)([0-9a-fA-F][0-9a-fA-F]?)([0-9a-fA-F][0-9a-fA-F]?)\s*/,
-        // Note that 'none' ia an invalid color string.
-        // When assigned to the fillStyle/strokeStyle/shadowColor properties
-        // of a Canvas context, those properties won't change their values.
-        NONE: 'none',
-        RGBA_NONE: 'rgba(0, 0, 0, 0)'
-    },
-    isColor: true,
-    /**
-     * @cfg {Number} lightnessFactor
-     *
-     * The default factor to compute the lighter or darker color.
-     */
-    lightnessFactor: 0.2,
-    /**
-     * @constructor
-     * @param {Number} red Red component (0..255)
-     * @param {Number} green Green component (0..255)
-     * @param {Number} blue Blue component (0..255)
-     * @param {Number} [alpha=1] (optional) Alpha component (0..1)
-     */
-    constructor: function(red, green, blue, alpha) {
-        this.setRGB(red, green, blue, alpha);
-    },
-    setRGB: function(red, green, blue, alpha) {
-        var me = this;
-        me.r = Math.min(255, Math.max(0, red));
-        me.g = Math.min(255, Math.max(0, green));
-        me.b = Math.min(255, Math.max(0, blue));
-        if (alpha === undefined) {
-            me.a = 1;
-        } else {
-            me.a = Math.min(1, Math.max(0, alpha));
-        }
-    },
-    /**
-     * Returns the gray value (0 to 255) of the color.
-     *
-     * The gray value is calculated using the formula r*0.3 + g*0.59 + b*0.11.
-     *
-     * @return {Number}
-     */
-    getGrayscale: function() {
-        // http://en.wikipedia.org/wiki/Grayscale#Converting_color_to_grayscale
-        return this.r * 0.3 + this.g * 0.59 + this.b * 0.11;
-    },
-    /**
-     * Get the equivalent HSL components of the color.
-     * @return {Number[]}
-     */
-    getHSL: function() {
-        var me = this,
-            r = me.r / 255,
-            g = me.g / 255,
-            b = me.b / 255,
-            max = Math.max(r, g, b),
-            min = Math.min(r, g, b),
-            delta = max - min,
-            h,
-            s = 0,
-            l = 0.5 * (max + min);
-        // min==max means achromatic (hue is undefined)
-        if (min !== max) {
-            s = (l <= 0.5) ? delta / (max + min) : delta / (2 - max - min);
-            if (r === max) {
-                h = 60 * (g - b) / delta;
-            } else if (g === max) {
-                h = 120 + 60 * (b - r) / delta;
-            } else {
-                h = 240 + 60 * (r - g) / delta;
-            }
-            if (h < 0) {
-                h += 360;
-            }
-            if (h >= 360) {
-                h -= 360;
-            }
-        }
-        return [
-            h,
-            s,
-            l
-        ];
-    },
-    /**
-     * Get the equivalent HSV components of the color.
-     * @return {Number[]}
-     */
-    getHSV: function() {
-        var me = this,
-            r = me.r / 255,
-            g = me.g / 255,
-            b = me.b / 255,
-            max = Math.max(r, g, b),
-            min = Math.min(r, g, b),
-            C = max - min,
-            h,
-            s = 0,
-            v = max;
-        // min == max means achromatic (hue is undefined)
-        if (min != max) {
-            s = v ? C / v : 0;
-            if (r === max) {
-                h = 60 * (g - b) / C;
-            } else if (g === max) {
-                h = 60 * (b - r) / C + 120;
-            } else {
-                h = 60 * (r - g) / C + 240;
-            }
-            if (h < 0) {
-                h += 360;
-            }
-            if (h >= 360) {
-                h -= 360;
-            }
-        }
-        return [
-            h,
-            s,
-            v
-        ];
-    },
-    /**
-     * Set current color based on the specified HSL values.
-     *
-     * @param {Number} h Hue component [0..360)
-     * @param {Number} s Saturation component [0..1]
-     * @param {Number} l Lightness component [0..1]
-     * @return {Ext.draw.Color}
-     */
-    setHSL: function(h, s, l) {
-        var me = this,
-            abs = Math.abs,
-            c, x, m;
-        h = (h % 360 + 360) % 360;
-        s = s > 1 ? 1 : s < 0 ? 0 : s;
-        l = l > 1 ? 1 : l < 0 ? 0 : l;
-        if (s === 0 || h === null) {
-            l *= 255;
-            me.setRGB(l, l, l);
-        } else {
-            // http://en.wikipedia.org/wiki/HSL_and_HSV#From_HSL
-            h /= 60;
-            c = s * (1 - abs(2 * l - 1));
-            // chroma
-            x = c * (1 - abs(h % 2 - 1));
-            // second largest component
-            m = l - c / 2;
-            // lightness adjustment
-            m *= 255;
-            c *= 255;
-            x *= 255;
-            switch (Math.floor(h)) {
-                case 0:
-                    me.setRGB(c + m, x + m, m);
-                    break;
-                case 1:
-                    me.setRGB(x + m, c + m, m);
-                    break;
-                case 2:
-                    me.setRGB(m, c + m, x + m);
-                    break;
-                case 3:
-                    me.setRGB(m, x + m, c + m);
-                    break;
-                case 4:
-                    me.setRGB(x + m, m, c + m);
-                    break;
-                case 5:
-                    me.setRGB(c + m, m, x + m);
-                    break;
-            }
-        }
-        return me;
-    },
-    /**
-     * Set current color based on the specified HSV values.
-     *
-     * @param {Number} h Hue component [0..360)
-     * @param {Number} s Saturation component [0..1]
-     * @param {Number} v Value component [0..1]
-     * @return {Ext.draw.Color}
-     */
-    setHSV: function(h, s, v) {
-        var me = this,
-            c, x, m;
-        h = (h % 360 + 360) % 360;
-        s = s > 1 ? 1 : s < 0 ? 0 : s;
-        v = v > 1 ? 1 : v < 0 ? 0 : v;
-        if (s === 0 || h === null) {
-            v *= 255;
-            me.setRGB(v, v, v);
-        } else {
-            // http://en.wikipedia.org/wiki/HSL_and_HSV#From_HSV
-            h /= 60;
-            c = v * s;
-            // chroma
-            x = c * (1 - Math.abs(h % 2 - 1));
-            // second largest component
-            m = v - c;
-            // value adjustment
-            m *= 255;
-            c *= 255;
-            x *= 255;
-            switch (Math.floor(h)) {
-                case 0:
-                    me.setRGB(c + m, x + m, m);
-                    break;
-                case 1:
-                    me.setRGB(x + m, c + m, m);
-                    break;
-                case 2:
-                    me.setRGB(m, c + m, x + m);
-                    break;
-                case 3:
-                    me.setRGB(m, x + m, c + m);
-                    break;
-                case 4:
-                    me.setRGB(x + m, m, c + m);
-                    break;
-                case 5:
-                    me.setRGB(c + m, m, x + m);
-                    break;
-            }
-        }
-        return me;
-    },
-    /**
-     * Returns a new color that is lighter than this color in the HSL color space.
-     * @param {Number} [factor=0.2] Lighter factor (0..1).
-     * @return {Ext.draw.Color}
-     */
-    createLighter: function(factor) {
-        if (!factor && factor !== 0) {
-            factor = this.lightnessFactor;
-        }
-        var hsl = this.getHSL();
-        hsl[2] = Ext.Number.constrain(hsl[2] + factor, 0, 1);
-        return Ext.draw.Color.fromHSL(hsl[0], hsl[1], hsl[2]);
-    },
-    /**
-     * Returns a new color that is darker than this color in the HSL color space.
-     * @param {Number} [factor=0.2] Darker factor (0..1).
-     * @return {Ext.draw.Color}
-     */
-    createDarker: function(factor) {
-        if (!factor && factor !== 0) {
-            factor = this.lightnessFactor;
-        }
-        return this.createLighter(-factor);
-    },
-    /**
-     * toString() returns a color in hex format ('#rrggbb') if the alpha is 1. If the 
-     * alpha is less than one, toString() returns the color in RGBA format ('rgba(255,0,0,0.3)').
-     * 
-     * @return {String}
-     */
-    toString: function() {
-        var me = this,
-            round = Math.round;
-        if (me.a === 1) {
-            var r = round(me.r).toString(16),
-                g = round(me.g).toString(16),
-                b = round(me.b).toString(16);
-            r = (r.length === 1) ? '0' + r : r;
-            g = (g.length === 1) ? '0' + g : g;
-            b = (b.length === 1) ? '0' + b : b;
-            return [
-                '#',
-                r,
-                g,
-                b
-            ].join('');
-        } else {
-            return 'rgba(' + [
-                round(me.r),
-                round(me.g),
-                round(me.b),
-                me.a === 0 ? 0 : me.a.toFixed(15)
-            ].join(', ') + ')';
-        }
-    },
-    // Even though things like 'rgba(0,0,0,0)' will probably get converted to
-    // 'rgba(0, 0, 0, 0)' when assigned to ctx.fillStyle or ctx.strokeStyle,
-    // we can't be sure this is the case for every browser, so for consistency
-    // with the Ext.draw.Color.RGBA_NONE (which is used a lot for checks)
-    // we join using the ', ' and not ',' here.
-    /**
-     * Convert a color to hexadecimal format.
-     *
-     * @param {String/Array} color The color value (i.e 'rgb(255, 255, 255)', 'color: #ffffff').
-     * Can also be an Array, in this case the function handles the first member.
-     * @return {String} The color in hexadecimal format.
-     */
-    toHex: function(color) {
-        if (Ext.isArray(color)) {
-            color = color[0];
-        }
-        if (!Ext.isString(color)) {
-            return '';
-        }
-        if (color.substr(0, 1) === '#') {
-            return color;
-        }
-        var digits = Ext.draw.Color.colorToHexRe.exec(color);
-        if (Ext.isArray(digits)) {
-            var red = parseInt(digits[2], 10),
-                green = parseInt(digits[3], 10),
-                blue = parseInt(digits[4], 10),
-                rgb = blue | (green << 8) | (red << 16);
-            return digits[1] + '#' + ("000000" + rgb.toString(16)).slice(-6);
-        } else {
-            return '';
-        }
-    },
-    /**
-     * Parse the string and set the current color.
-     *
-     * Supported formats: 
-     * 
-     * + '#rrggbb'
-     * + '#rgb', 'rgb(r,g,b)'
-     * + 'rgba(r,g,b,a)'
-     * + supported CSS color names (e.g., 'black', 'white', etc).
-     *
-     * If the string is not recognized, setFromString returns rgba(0,0,0,0).
-     *
-     * @param {String} Color Color as string.
-     * @return this
-     */
-    setFromString: function(str) {
-        var values, r, g, b,
-            a = 1,
-            parse = parseInt;
-        if (str === Ext.draw.Color.NONE) {
-            this.r = this.g = this.b = this.a = 0;
-            return this;
-        }
-        if ((str.length === 4 || str.length === 7) && str.substr(0, 1) === '#') {
-            values = str.match(Ext.draw.Color.hexRe);
-            if (values) {
-                r = parse(values[1], 16) >> 0;
-                g = parse(values[2], 16) >> 0;
-                b = parse(values[3], 16) >> 0;
-                if (str.length === 4) {
-                    r += (r * 16);
-                    g += (g * 16);
-                    b += (b * 16);
-                }
-            }
-        } else if ((values = str.match(Ext.draw.Color.rgbToHexRe))) {
-            r = +values[1];
-            g = +values[2];
-            b = +values[3];
-        } else if ((values = str.match(Ext.draw.Color.rgbaToHexRe))) {
-            r = +values[1];
-            g = +values[2];
-            b = +values[3];
-            a = +values[4];
-        } else {
-            if (Ext.draw.Color.ColorList.hasOwnProperty(str.toLowerCase())) {
-                return this.setFromString(Ext.draw.Color.ColorList[str.toLowerCase()]);
-            }
-        }
-        if (typeof r === 'undefined') {
-            return this;
-        }
-        this.r = r;
-        this.g = g;
-        this.b = b;
-        this.a = a;
-        return this;
-    }
-}, function() {
-    var flyColor = new this();
-    this.addStatics({
-        /**
-         * Returns a flyweight instance of Ext.draw.Color.
-         *
-         * Can be called with either a CSS color string or with separate
-         * arguments for red, green, blue, alpha.
-         *
-         * @param {Number/String} red Red component (0..255) or CSS color string.
-         * @param {Number} [green] Green component (0..255)
-         * @param {Number} [blue] Blue component (0..255)
-         * @param {Number} [alpha=1] Alpha component (0..1)
-         * @return {Ext.draw.Color}
-         * @static
-         */
-        fly: function(red, green, blue, alpha) {
-            switch (arguments.length) {
-                case 1:
-                    flyColor.setFromString(red);
-                    break;
-                case 3:
-                case 4:
-                    flyColor.setRGB(red, green, blue, alpha);
-                    break;
-                default:
-                    return null;
-            }
-            return flyColor;
-        },
-        ColorList: {
-            aliceblue: '#f0f8ff',
-            antiquewhite: '#faebd7',
-            aqua: '#00ffff',
-            aquamarine: '#7fffd4',
-            azure: '#f0ffff',
-            beige: '#f5f5dc',
-            bisque: '#ffe4c4',
-            black: '#000000',
-            blanchedalmond: '#ffebcd',
-            blue: '#0000ff',
-            blueviolet: '#8a2be2',
-            brown: '#a52a2a',
-            burlywood: '#deb887',
-            cadetblue: '#5f9ea0',
-            chartreuse: '#7fff00',
-            chocolate: '#d2691e',
-            coral: '#ff7f50',
-            cornflowerblue: '#6495ed',
-            cornsilk: '#fff8dc',
-            crimson: '#dc143c',
-            cyan: '#00ffff',
-            darkblue: '#00008b',
-            darkcyan: '#008b8b',
-            darkgoldenrod: '#b8860b',
-            darkgray: '#a9a9a9',
-            darkgreen: '#006400',
-            darkkhaki: '#bdb76b',
-            darkmagenta: '#8b008b',
-            darkolivegreen: '#556b2f',
-            darkorange: '#ff8c00',
-            darkorchid: '#9932cc',
-            darkred: '#8b0000',
-            darksalmon: '#e9967a',
-            darkseagreen: '#8fbc8f',
-            darkslateblue: '#483d8b',
-            darkslategray: '#2f4f4f',
-            darkturquoise: '#00ced1',
-            darkviolet: '#9400d3',
-            deeppink: '#ff1493',
-            deepskyblue: '#00bfff',
-            dimgray: '#696969',
-            dodgerblue: '#1e90ff',
-            firebrick: '#b22222',
-            floralwhite: '#fffaf0',
-            forestgreen: '#228b22',
-            fuchsia: '#ff00ff',
-            gainsboro: '#dcdcdc',
-            ghostwhite: '#f8f8ff',
-            gold: '#ffd700',
-            goldenrod: '#daa520',
-            gray: '#808080',
-            green: '#008000',
-            greenyellow: '#adff2f',
-            honeydew: '#f0fff0',
-            hotpink: '#ff69b4',
-            indianred: '#cd5c5c',
-            indigo: '#4b0082',
-            ivory: '#fffff0',
-            khaki: '#f0e68c',
-            lavender: '#e6e6fa',
-            lavenderblush: '#fff0f5',
-            lawngreen: '#7cfc00',
-            lemonchiffon: '#fffacd',
-            lightblue: '#add8e6',
-            lightcoral: '#f08080',
-            lightcyan: '#e0ffff',
-            lightgoldenrodyellow: '#fafad2',
-            lightgray: '#d3d3d3',
-            lightgrey: '#d3d3d3',
-            lightgreen: '#90ee90',
-            lightpink: '#ffb6c1',
-            lightsalmon: '#ffa07a',
-            lightseagreen: '#20b2aa',
-            lightskyblue: '#87cefa',
-            lightslategray: '#778899',
-            lightsteelblue: '#b0c4de',
-            lightyellow: '#ffffe0',
-            lime: '#00ff00',
-            limegreen: '#32cd32',
-            linen: '#faf0e6',
-            magenta: '#ff00ff',
-            maroon: '#800000',
-            mediumaquamarine: '#66cdaa',
-            mediumblue: '#0000cd',
-            mediumorchid: '#ba55d3',
-            mediumpurple: '#9370d8',
-            mediumseagreen: '#3cb371',
-            mediumslateblue: '#7b68ee',
-            mediumspringgreen: '#00fa9a',
-            mediumturquoise: '#48d1cc',
-            mediumvioletred: '#c71585',
-            midnightblue: '#191970',
-            mintcream: '#f5fffa',
-            mistyrose: '#ffe4e1',
-            moccasin: '#ffe4b5',
-            navajowhite: '#ffdead',
-            navy: '#000080',
-            oldlace: '#fdf5e6',
-            olive: '#808000',
-            olivedrab: '#6b8e23',
-            orange: '#ffa500',
-            orangered: '#ff4500',
-            orchid: '#da70d6',
-            palegoldenrod: '#eee8aa',
-            palegreen: '#98fb98',
-            paleturquoise: '#afeeee',
-            palevioletred: '#d87093',
-            papayawhip: '#ffefd5',
-            peachpuff: '#ffdab9',
-            peru: '#cd853f',
-            pink: '#ffc0cb',
-            plum: '#dda0dd',
-            powderblue: '#b0e0e6',
-            purple: '#800080',
-            red: '#ff0000',
-            rosybrown: '#bc8f8f',
-            royalblue: '#4169e1',
-            saddlebrown: '#8b4513',
-            salmon: '#fa8072',
-            sandybrown: '#f4a460',
-            seagreen: '#2e8b57',
-            seashell: '#fff5ee',
-            sienna: '#a0522d',
-            silver: '#c0c0c0',
-            skyblue: '#87ceeb',
-            slateblue: '#6a5acd',
-            slategray: '#708090',
-            snow: '#fffafa',
-            springgreen: '#00ff7f',
-            steelblue: '#4682b4',
-            tan: '#d2b48c',
-            teal: '#008080',
-            thistle: '#d8bfd8',
-            tomato: '#ff6347',
-            turquoise: '#40e0d0',
-            violet: '#ee82ee',
-            wheat: '#f5deb3',
-            white: '#ffffff',
-            whitesmoke: '#f5f5f5',
-            yellow: '#ffff00',
-            yellowgreen: '#9acd32'
-        },
-        /**
-         * Create a new color based on the specified HSL values.
-         *
-         * @param {Number} h Hue component [0..360)
-         * @param {Number} s Saturation component [0..1]
-         * @param {Number} l Lightness component [0..1]
-         * @return {Ext.draw.Color}
-         * @static
-         */
-        fromHSL: function(h, s, l) {
-            return (new this(0, 0, 0, 0)).setHSL(h, s, l);
-        },
-        /**
-         * Create a new color based on the specified HSV values.
-         *
-         * @param {Number} h Hue component [0..360)
-         * @param {Number} s Saturation component [0..1]
-         * @param {Number} v Value component [0..1]
-         * @return {Ext.draw.Color}
-         * @static
-         */
-        fromHSV: function(h, s, v) {
-            return (new this(0, 0, 0, 0)).setHSL(h, s, v);
-        },
-        /**
-         * Parse the string and create a new color.
-         *
-         * Supported formats: 
-         * 
-         * + '#rrggbb'
-         * + '#rgb', 'rgb(r,g,b)'
-         * + 'rgba(r,g,b,a)'
-         * + supported CSS color names (e.g., 'black', 'white', etc).
-         *
-         * If the string is not recognized, fromString returns rgba(0,0,0,0).
-         *
-         * @param {String} color Color as string.
-         * @return {Ext.draw.Color}
-         * @static
-         */
-        fromString: function(color) {
-            return (new this(0, 0, 0, 0)).setFromString(color);
-        },
-        /**
-         * Convenience method for creating a color.
-         *
-         * Can be called with several different combinations of arguments:
-         *
-         *     // Ext.draw.Color is returned unchanged.
-         *     Ext.draw.Color.create(new Ext.draw.color(255, 0, 0, 0));
-         *
-         *     // CSS color string.
-         *     Ext.draw.Color.create("red");
-         *
-         *     // Array of red, green, blue, alpha
-         *     Ext.draw.Color.create([255, 0, 0, 0]);
-         *
-         *     // Separate arguments of red, green, blue, alpha
-         *     Ext.draw.Color.create(255, 0, 0, 0);
-         *
-         *     // Returns black when no arguments given.
-         *     Ext.draw.Color.create();
-         *
-         * @param {Ext.draw.Color/String/Number[]/Number} [red] Red component (0..255),
-         * CSS color string or array of all components.
-         * @param {Number} [green] Green component (0..255)
-         * @param {Number} [blue] Blue component (0..255)
-         * @param {Number} [alpha=1] Alpha component (0..1)
-         * @return {Ext.draw.Color}
-         * @static
-         */
-        create: function(arg) {
-            if (arg instanceof this) {
-                return arg;
-            } else if (Ext.isArray(arg)) {
-                return new Ext.draw.Color(arg[0], arg[1], arg[2], arg[3]);
-            } else if (Ext.isString(arg)) {
-                return Ext.draw.Color.fromString(arg);
-            } else if (arguments.length > 2) {
-                return new Ext.draw.Color(arguments[0], arguments[1], arguments[2], arguments[3]);
-            } else {
-                return new Ext.draw.Color(0, 0, 0, 0);
-            }
-        }
-    });
-});
-
-/**
  * @private
  * @class Ext.draw.sprite.AnimationParser
  *
@@ -828,12 +189,12 @@ Ext.define('Ext.draw.sprite.AnimationParser', function() {
         color: {
             parseInitial: function(color1, color2) {
                 if (Ext.isString(color1)) {
-                    color1 = Ext.draw.Color.create(color1);
+                    color1 = Ext.util.Color.create(color1);
                 }
                 if (Ext.isString(color2)) {
-                    color2 = Ext.draw.Color.create(color2);
+                    color2 = Ext.util.Color.create(color2);
                 }
-                if ((color1 instanceof Ext.draw.Color) && (color2 instanceof Ext.draw.Color)) {
+                if ((color1 && color1.isColor) && (color2 && color2.isColor)) {
                     return [
                         [
                             color1.r,
@@ -868,7 +229,7 @@ Ext.define('Ext.draw.sprite.AnimationParser', function() {
                 }
             },
             serve: function(array) {
-                var color = Ext.draw.Color.fly(array[0], array[1], array[2], array[3]);
+                var color = Ext.util.Color.fly(array[0], array[1], array[2], array[3]);
                 return color.toString();
             }
         },
@@ -1297,7 +658,7 @@ Ext.define('Ext.draw.gradient.Gradient', {
             stop = newStops[i];
             color = stop.color;
             if (!(color && color.isColor)) {
-                color = Ext.draw.Color.fly(color || Ext.draw.Color.NONE);
+                color = Ext.util.Color.fly(color || Ext.util.Color.NONE);
             }
             stops.push({
                 offset: Math.min(1, Math.max(0, 'offset' in stop ? stop.offset : stop.position || 0)),
@@ -1323,7 +684,7 @@ Ext.define('Ext.draw.gradient.Gradient', {
      * Generates the gradient for the given context.
      * @param {Ext.draw.engine.SvgContext} ctx The context.
      * @param {Object} bbox
-     * @return {CanvasGradient/Ext.draw.engine.SvgContext.Gradient/Ext.draw.Color.NONE}
+     * @return {CanvasGradient/Ext.draw.engine.SvgContext.Gradient/Ext.util.Color.NONE}
      */
     generateGradient: Ext.emptyFn
 });
@@ -1412,12 +773,12 @@ Ext.define('Ext.draw.sprite.AttributeParser', {
         return !!n;
     },
     color: function(n) {
-        if (n instanceof Ext.draw.Color) {
+        if (n && n.isColor) {
             return n.toString();
-        } else if (n instanceof Ext.draw.gradient.Gradient) {
+        } else if (n && n.isGradient) {
             return n;
         } else if (!n) {
-            return Ext.draw.Color.NONE;
+            return Ext.util.Color.NONE;
         } else if (Ext.isString(n)) {
             if (n.substr(0, 3) === 'url') {
                 n = Ext.draw.gradient.GradientDefinition.get(n);
@@ -1425,7 +786,7 @@ Ext.define('Ext.draw.sprite.AttributeParser', {
                     return n;
                 }
             } else {
-                return Ext.draw.Color.fly(n).toString();
+                return Ext.util.Color.fly(n).toString();
             }
         }
         if (n.type === 'linear') {
@@ -1435,7 +796,7 @@ Ext.define('Ext.draw.sprite.AttributeParser', {
         } else if (n.type === 'pattern') {
             return Ext.create('Ext.draw.gradient.Pattern', n);
         } else {
-            return Ext.draw.Color.NONE;
+            return Ext.util.Color.NONE;
         }
     },
     limited: function(low, hi) {
@@ -3740,8 +3101,7 @@ Ext.define('Ext.draw.modifier.Animation', {
         Ext.draw.Animator.remove(me);
     },
     destroy: function() {
-        this.animatingPool.length = 0;
-        this.animating = 0;
+        this.stop();
         this.callParent();
     }
 });
@@ -4555,13 +3915,17 @@ Ext.define('Ext.draw.sprite.Sprite', {
      */
     config: {
         /**
+         * @private
          * @cfg {Ext.draw.Surface/Ext.draw.sprite.Instancing/Ext.draw.sprite.Composite} parent
          * The immediate parent of the sprite. Not necessarily a surface.
          */
         parent: null,
         /**
+         * @private
          * @cfg {Ext.draw.Surface} surface
          * The surface that this sprite is rendered into.
+         * This config is not meant to be used directly.
+         * Please use the {@link Ext.draw.Surface#add} method instead.
          */
         surface: null
     },
@@ -4731,6 +4095,7 @@ Ext.define('Ext.draw.sprite.Sprite', {
      * @param attr The attributes of a sprite or its instance.
      */
     callUpdaters: function(attr) {
+        attr = attr || this.attr;
         var me = this,
             pendingUpdaters = attr.pendingUpdaters,
             updaters = me.self.def.getUpdaters(),
@@ -4766,6 +4131,13 @@ Ext.define('Ext.draw.sprite.Sprite', {
     },
     /**
      * @private
+     */
+    callUpdater: function(attr, updater, triggers) {
+        this.scheduleUpdater(attr, updater, triggers);
+        this.callUpdaters(attr);
+    },
+    /**
+     * @private
      * Schedules specified updaters to be called.
      * Updaters are called implicitly as a result of a change to sprite attributes.
      * But sometimes it may be required to call an updater without setting an attribute,
@@ -4791,6 +4163,7 @@ Ext.define('Ext.draw.sprite.Sprite', {
      */
     scheduleUpdaters: function(attr, updaters, triggers) {
         var updater;
+        attr = attr || this.attr;
         if (triggers) {
             for (var i = 0,
                 ln = updaters.length; i < ln; i++) {
@@ -4812,6 +4185,7 @@ Ext.define('Ext.draw.sprite.Sprite', {
      */
     scheduleUpdater: function(attr, updater, triggers) {
         triggers = triggers || [];
+        attr = attr || this.attr;
         var pendingUpdaters = attr.pendingUpdaters;
         if (updater in pendingUpdaters) {
             if (triggers.length) {
@@ -5472,8 +4846,8 @@ Ext.define('Ext.draw.sprite.Sprite', {
             parent = this.getParent(),
             hasParent = parent && (parent.isSurface || parent.isVisible()),
             isSeen = hasParent && !attr.hidden && attr.globalAlpha,
-            none1 = Ext.draw.Color.NONE,
-            none2 = Ext.draw.Color.RGBA_NONE,
+            none1 = Ext.util.Color.NONE,
+            none2 = Ext.util.Color.RGBA_NONE,
             hasFill = attr.fillOpacity && attr.fillStyle !== none1 && attr.fillStyle !== none2,
             hasStroke = attr.strokeOpacity && attr.strokeStyle !== none1 && attr.strokeStyle !== none2,
             result = isSeen && (hasFill || hasStroke);
@@ -7030,7 +6404,7 @@ Ext.define('Ext.draw.overrides.hittest.sprite.Path', {
      */
     isPointInPath: function(x, y) {
         var attr = this.attr;
-        if (attr.fillStyle === Ext.draw.Color.RGBA_NONE) {
+        if (attr.fillStyle === Ext.util.Color.RGBA_NONE) {
             return this.isPointOnPath(x, y);
         }
         var path = attr.path,
@@ -7094,7 +6468,7 @@ Ext.define('Ext.draw.overrides.hittest.sprite.Path', {
             path.transform(attr.matrix);
         }
         if (options.fill && options.stroke) {
-            isFilled = attr.fillStyle !== Ext.draw.Color.NONE && attr.fillStyle !== Ext.draw.Color.RGBA_NONE;
+            isFilled = attr.fillStyle !== Ext.util.Color.NONE && attr.fillStyle !== Ext.util.Color.RGBA_NONE;
             if (isFilled) {
                 if (path.isPointInPath(x, y)) {
                     result = {
@@ -7558,11 +6932,11 @@ Ext.define('Ext.draw.sprite.Composite', {
             sprites = me.sprites,
             ln = sprites.length,
             i;
-        me.callParent();
         for (i = 0; i < ln; i++) {
             sprites[i].destroy();
         }
         sprites.length = 0;
+        me.callParent();
     }
 });
 
@@ -7988,7 +7362,7 @@ Ext.define('Ext.draw.sprite.Rect', {
 /**
  * @class Ext.draw.sprite.Image
  * @extends Ext.draw.sprite.Rect
- * 
+ *
  * A sprite that represents an image.
  */
 Ext.define('Ext.draw.sprite.Image', {
@@ -8010,6 +7384,12 @@ Ext.define('Ext.draw.sprite.Image', {
                  * @private
                  * @cfg {Number} radius
                  */
+            triggers: {
+                src: 'src'
+            },
+            updaters: {
+                src: 'updateSource'
+            },
             defaults: {
                 src: '',
                 /**
@@ -8029,22 +7409,24 @@ Ext.define('Ext.draw.sprite.Image', {
             }
         }
     },
-    render: function(surface, ctx) {
+    updateSurface: function(surface) {
+        if (surface) {
+            this.updateSource(this.attr);
+        }
+    },
+    updateSource: function(attr) {
         var me = this,
-            attr = me.attr,
-            mat = attr.matrix,
             src = attr.src,
-            x = attr.x,
-            y = attr.y,
+            surface = me.getSurface(),
+            loadingStub = Ext.draw.sprite.Image.imageLoaders[src],
             width = attr.width,
             height = attr.height,
-            loadingStub = Ext.draw.sprite.Image.imageLoaders[src],
-            imageLoader, image, i;
-        if (loadingStub && loadingStub.done) {
-            mat.toContext(ctx);
-            image = loadingStub.image;
-            ctx.drawImage(image, x, y, width || (image.naturalWidth || image.width) / surface.devicePixelRatio, height || (image.naturalHeight || image.height) / surface.devicePixelRatio);
-        } else if (!loadingStub) {
+            imageLoader, i;
+        if (!surface) {
+            // First time this is called the sprite won't have a surface yet.
+            return;
+        }
+        if (!loadingStub) {
             imageLoader = new Image();
             loadingStub = Ext.draw.sprite.Image.imageLoaders[src] = {
                 image: imageLoader,
@@ -8059,13 +7441,20 @@ Ext.define('Ext.draw.sprite.Image', {
             imageLoader.width = width;
             imageLoader.height = height;
             imageLoader.onload = function() {
+                var item;
                 if (!loadingStub.done) {
                     loadingStub.done = true;
                     for (i = 0; i < loadingStub.pendingSprites.length; i++) {
-                        loadingStub.pendingSprites[i].setDirty(true);
+                        item = loadingStub.pendingSprites[i];
+                        if (!item.destroyed) {
+                            item.setDirty(true);
+                        }
                     }
-                    for (i in loadingStub.pendingSurfaces) {
-                        loadingStub.pendingSurfaces[i].renderFrame();
+                    for (i = 0; i < loadingStub.pendingSurfaces.length; i++) {
+                        item = loadingStub.pendingSurfaces[i];
+                        if (!item.destroyed) {
+                            item.renderFrame();
+                        }
                     }
                 }
             };
@@ -8073,6 +7462,23 @@ Ext.define('Ext.draw.sprite.Image', {
         } else {
             Ext.Array.include(loadingStub.pendingSprites, me);
             Ext.Array.include(loadingStub.pendingSurfaces, surface);
+        }
+    },
+    render: function(surface, ctx) {
+        var me = this,
+            attr = me.attr,
+            mat = attr.matrix,
+            src = attr.src,
+            x = attr.x,
+            y = attr.y,
+            width = attr.width,
+            height = attr.height,
+            loadingStub = Ext.draw.sprite.Image.imageLoaders[src],
+            image;
+        if (loadingStub && loadingStub.done) {
+            mat.toContext(ctx);
+            image = loadingStub.image;
+            ctx.drawImage(image, x, y, width || (image.naturalWidth || image.width) / surface.devicePixelRatio, height || (image.naturalHeight || image.height) / surface.devicePixelRatio);
         }
         //<debug>
         var debug = attr.debug || this.statics().debug || Ext.draw.sprite.Sprite.debug;
@@ -8106,9 +7512,14 @@ Ext.define('Ext.draw.sprite.Instancing', {
     isInstancing: true,
     config: {
         /**
-         * @cfg {Object} [template=null] The sprite template used by all instances.
+         * @cfg {Object} [template] The sprite template used by all instances.
          */
-        template: null
+        template: null,
+        /**
+         * @cfg {Array} [instances]
+         * The instances of the {@link #template} sprite as configs of attributes.
+         */
+        instances: null
     },
     instances: null,
     applyTemplate: function(template) {
@@ -8144,9 +7555,18 @@ Ext.define('Ext.draw.sprite.Instancing', {
         template.ownAttr = template.attr;
         this.clearAll();
     },
+    updateInstances: function(instances) {
+        this.clearAll();
+        if (Ext.isArray(instances)) {
+            for (var i = 0,
+                ln = instances.length; i < ln; i++) {
+                this.add(instances[i]);
+            }
+        }
+    },
     updateSurface: function(surface) {
         var template = this.getTemplate();
-        if (template) {
+        if (template && !template.destroyed) {
             template.setSurface(surface);
         }
     },
@@ -8162,14 +7582,21 @@ Ext.define('Ext.draw.sprite.Instancing', {
         this.position = 0;
     },
     /**
+     * @deprecated 6.2.0
+     * Deprecated, use the {@link #add} method instead.
+     */
+    createInstance: function(config, bypassNormalization, avoidCopy) {
+        return this.add(config, bypassNormalization, avoidCopy);
+    },
+    /**
      * Creates a new sprite instance.
-     * 
+     *
      * @param {Object} config The configuration of the instance.
      * @param {Boolean} [bypassNormalization] 'true' to bypass attribute normalization.
      * @param {Boolean} [avoidCopy] 'true' to avoid copying the `config` object.
      * @return {Object} The attributes of the instance.
      */
-    createInstance: function(config, bypassNormalization, avoidCopy) {
+    add: function(config, bypassNormalization, avoidCopy) {
         var template = this.getTemplate(),
             originalAttr = template.attr,
             attr = Ext.Object.chain(originalAttr);
@@ -9432,7 +8859,7 @@ Ext.define('Ext.draw.sprite.Text', function() {
                 mat = Ext.draw.Matrix.fly(attr.matrix.elements.slice(0)),
                 bbox = me.getBBox(true),
                 dx = attr.textAlignOffsets,
-                none = Ext.draw.Color.RGBA_NONE,
+                none = Ext.util.Color.RGBA_NONE,
                 x, y, i, lines, lineHeight;
             if (attr.text.length === 0) {
                 return;
@@ -9681,7 +9108,7 @@ Ext.define('Ext.draw.gradient.Linear', {
             }
             return gradient;
         }
-        return Ext.draw.Color.NONE;
+        return Ext.util.Color.NONE;
     }
 });
 
@@ -9917,8 +9344,8 @@ Ext.define('Ext.draw.Surface', {
             }
         }
     },
+    cls: Ext.baseCSSPrefix + 'surface',
     config: {
-        cls: Ext.baseCSSPrefix + 'surface',
         /**
          * @cfg {Array}
          * The [x, y, width, height] rect of the surface related to its container.
@@ -10107,13 +9534,17 @@ Ext.define('Ext.draw.Surface', {
             argIsArray = Ext.isArray(args[0]),
             map = me.map,
             results = [],
-            items, item, sprite, i, ln;
+            items, item, sprite, oldSurface, i, ln;
         items = Ext.Array.clean(argIsArray ? args[0] : args);
         if (!items.length) {
             return results;
         }
         for (i = 0 , ln = items.length; i < ln; i++) {
             item = items[i];
+            if (!item || item.destroyed) {
+                
+                continue;
+            }
             sprite = null;
             if (item.isSprite && !map[item.getId()]) {
                 sprite = item;
@@ -10123,6 +9554,10 @@ Ext.define('Ext.draw.Surface', {
             if (sprite) {
                 map[sprite.getId()] = sprite;
                 results.push(sprite);
+                oldSurface = sprite.getSurface();
+                if (oldSurface && oldSurface.isSurface) {
+                    oldSurface.remove(sprite);
+                }
                 sprite.setParent(me);
                 sprite.setSurface(me);
                 me.onAdd(sprite);
@@ -10174,7 +9609,7 @@ Ext.define('Ext.draw.Surface', {
             if (!sprite || !sprite.isSprite) {
                 return null;
             }
-            id = sprite.getId();
+            id = sprite.id;
             isOwnSprite = me.map[id];
             delete me.map[id];
             if (sprite.destroyed || sprite.destroying) {
@@ -10185,14 +9620,17 @@ Ext.define('Ext.draw.Surface', {
                 }
                 return sprite;
             }
-            if (isDestroy) {
-                sprite.destroy();
-            }
             if (!isOwnSprite) {
+                if (isDestroy) {
+                    sprite.destroy();
+                }
                 return sprite;
             }
             sprite.setParent(null);
             sprite.setSurface(null);
+            if (isDestroy) {
+                sprite.destroy();
+            }
             if (!destroying) {
                 Ext.Array.remove(me.getItems(), sprite);
                 me.dirtyZIndex = true;
@@ -11196,7 +10634,7 @@ Ext.define('Ext.draw.engine.SvgContext.Gradient', {
         me.surface.setElementAttributes(stop, {
             "offset": (((1 - compression) * offset + compression) * 100).toFixed(2) + '%',
             "stop-color": color,
-            "stop-opacity": Ext.draw.Color.fly(color).a.toFixed(15)
+            "stop-opacity": Ext.util.Color.fly(color).a.toFixed(15)
         });
     },
     toString: function() {
@@ -12801,7 +12239,7 @@ Ext.define('Ext.draw.engine.Canvas', {
                     fillOpacity = this.fillOpacity,
                     alpha = this.globalAlpha,
                     bbox = this.bbox;
-                if (fillStyle !== Ext.draw.Color.RGBA_NONE && fillOpacity !== 0) {
+                if (fillStyle !== Ext.util.Color.RGBA_NONE && fillOpacity !== 0) {
                     if (fillGradient && bbox) {
                         this.fillStyle = fillGradient.generateGradient(this, bbox);
                     }
@@ -12827,7 +12265,7 @@ Ext.define('Ext.draw.engine.Canvas', {
                     strokeOpacity = this.strokeOpacity,
                     alpha = this.globalAlpha,
                     bbox = this.bbox;
-                if (strokeStyle !== Ext.draw.Color.RGBA_NONE && strokeOpacity !== 0) {
+                if (strokeStyle !== Ext.util.Color.RGBA_NONE && strokeOpacity !== 0) {
                     if (strokeGradient && bbox) {
                         this.strokeStyle = strokeGradient.generateGradient(this, bbox);
                     }
@@ -12854,7 +12292,7 @@ Ext.define('Ext.draw.engine.Canvas', {
                     strokeOpacity = this.strokeOpacity,
                     shadowColor = ctx.shadowColor,
                     shadowBlur = ctx.shadowBlur,
-                    none = Ext.draw.Color.RGBA_NONE;
+                    none = Ext.util.Color.RGBA_NONE;
                 if (transformFillStroke === undefined) {
                     transformFillStroke = attr.transformFillStroke;
                 }
@@ -12972,9 +12410,6 @@ Ext.define('Ext.draw.engine.Canvas', {
     ],
     element: {
         reference: 'element',
-        style: {
-            position: 'absolute'
-        },
         children: [
             {
                 reference: 'innerElement',
@@ -13431,11 +12866,10 @@ Ext.define('Ext.draw.engine.Canvas', {
                 me.applyDefaults(me.contexts[k]);
             }
         }
-        for (k += 1; k < canvases.length; k++) {
-            canvases[k].destroy();
+        me.activeCanvases = k = xSplits * ySplits;
+        while (canvases.length > k) {
+            canvases.pop().destroy();
         }
-        me.activeCanvases = xSplits * ySplits;
-        canvases.length = me.activeCanvases;
         me.clear();
     },
     /**
@@ -13560,7 +12994,7 @@ Ext.define('Ext.draw.engine.Canvas', {
         };
     },
     applyDefaults: function(ctx) {
-        var none = Ext.draw.Color.RGBA_NONE;
+        var none = Ext.util.Color.RGBA_NONE;
         ctx.strokeStyle = none;
         ctx.fillStyle = none;
         ctx.textAlign = 'start';
@@ -13587,15 +13021,15 @@ Ext.define('Ext.draw.engine.Canvas', {
      */
     destroy: function() {
         var me = this,
-            i,
-            ln = me.canvases.length;
+            canvases = me.canvases,
+            ln = canvases.length,
+            i;
         for (i = 0; i < ln; i++) {
             me.contexts[i] = null;
-            me.canvases[i].destroy();
-            me.canvases[i] = null;
+            canvases[i].destroy();
+            canvases[i] = null;
         }
-        delete me.contexts;
-        delete me.canvases;
+        me.contexts = me.canvases = null;
         me.callParent();
     },
     privates: {
@@ -13604,7 +13038,7 @@ Ext.define('Ext.draw.engine.Canvas', {
             me.callParent();
             me.canvases = [];
             me.contexts = [];
-            me.activeCanvases = (me.xSplits = 0) * (me.ySplits = 0);
+            me.activeCanvases = me.xSplits = me.ySplits = 0;
         }
     }
 }, function() {
@@ -13799,7 +13233,13 @@ Ext.define('Ext.draw.Container', {
          *         strokeStyle: 'url(#gradientId2)'
          *     });
          */
-        gradients: []
+        gradients: [],
+        touchAction: {
+            panX: false,
+            panY: false,
+            pinchZoom: false,
+            doubleTapZoom: false
+        }
     },
     /**
      * @property {String} [defaultDownloadServerUrl="http://svg.sencha.io"]
@@ -13886,6 +13326,7 @@ Ext.define('Ext.draw.Container', {
             if (!(surface && surface.isSurface)) {
                 if (Ext.isString(surface)) {
                     surface = this.getSurface(surface);
+                    delete sprite.surface;
                 } else {
                     surface = this.getSurface('main');
                 }
@@ -14049,7 +13490,7 @@ Ext.define('Ext.draw.Container', {
      * Downloads an image or PDF of the chart / drawing or opens it in a separate 
      * browser tab/window if the download can't be triggered. The exact behavior is 
      * platform and browser specific. For more consistent results on mobile devices use 
-     * the {@link #preview} method instead.
+     * the {@link #preview} method instead. This method doesn't work in IE8.
      *
      * @param {Object} [config] The following config options are supported:
      *
@@ -14124,6 +13565,9 @@ Ext.define('Ext.draw.Container', {
         var me = this,
             inputs = [],
             markup, name, value;
+        if (Ext.isIE8) {
+            return false;
+        }
         config = Ext.apply({
             version: 2,
             data: me.getImage().data
@@ -14182,9 +13626,11 @@ Ext.define('Ext.draw.Container', {
      * Displays an image of a Ext.draw.Container on screen.
      * On mobile devices this lets users tap-and-hold to bring up the menu
      * with image saving options.
-     * Note: some browsers won't save the preview image if it's SVG based
-     * (i.e. generated from a draw container that uses 'Ext.draw.engine.Svg' engine).
-     * And some platforms may not have the means of viewing successfully saved SVG images.
+     * Notes:
+     * - some browsers won't save the preview image if it's SVG based
+     *   (i.e. generated from a draw container that uses 'Ext.draw.engine.Svg' engine);
+     * - some platforms may not have the means of viewing successfully saved SVG images;
+     * - this method does not work on IE8.
      */
     destroy: function() {
         var me = this,
@@ -14246,7 +13692,7 @@ Ext.define('Ext.chart.theme.Base', {
     isTheme: true,
     config: {
         /**
-         * @cfg {String/Ext.draw.Color} baseColor
+         * @cfg {String/Ext.util.Color} baseColor
          * The base color used to generate the {@link Ext.chart.AbstractChart#colors} of the theme.
          */
         baseColor: null,
@@ -14567,7 +14013,7 @@ Ext.define('Ext.chart.theme.Base', {
     applyBaseColor: function(baseColor) {
         var midColor, midL;
         if (baseColor) {
-            midColor = baseColor.isColor ? baseColor : Ext.draw.Color.fromString(baseColor);
+            midColor = baseColor.isColor ? baseColor : Ext.util.Color.fromString(baseColor);
             midL = midColor.getHSL()[2];
             if (midL < 0.15) {
                 midColor = midColor.createLighter(0.3);
@@ -14613,7 +14059,7 @@ Ext.define('Ext.chart.theme.Base', {
             gradient, midColor, color, i, ln;
         if (Ext.isObject(gradients)) {
             for (i = 0 , ln = colors && colors.length || 0; i < ln; i++) {
-                midColor = Ext.draw.Color.fromString(colors[i]);
+                midColor = Ext.util.Color.fromString(colors[i]);
                 if (midColor) {
                     color = midColor.createLighter(0.15).toString();
                     gradient = Ext.apply(Ext.Object.chain(gradients), {
@@ -14648,7 +14094,7 @@ Ext.define('Ext.chart.theme.Base', {
             newSeriesThemes = {
                 fillStyle: Ext.Array.clone(colors),
                 strokeStyle: Ext.Array.map(colors, function(value) {
-                    var color = Ext.draw.Color.fromString(value.stops ? value.stops[0].color : value);
+                    var color = Ext.util.Color.fromString(value.stops ? value.stops[0].color : value);
                     return color.createDarker(0.15).toString();
                 })
             };
@@ -14737,7 +14183,7 @@ Ext.define('Ext.chart.Markers', {
         } else {
             categoryInstances[index] = me.getCount();
             // get the index of the instance created on next line
-            me.createInstance(attr, bypassNormalization);
+            me.add(attr, bypassNormalization);
         }
         instance = me.get(categoryInstances[index]);
         if (instance) {
@@ -15289,8 +14735,9 @@ Ext.define('Ext.chart.series.Series', {
          * An array of color values which is used, in order of appearance, by the series. Each series
          * can request one or more colors from the array. Radar, Scatter or Line charts require just
          * one color each. Candlestick and OHLC require two (1 for drops + 1 for rises). Pie charts
-         * and Stacked charts (like Column or Pie charts) require one color for each data category
-         * they represent, so one color for each slice of a Pie chart or each segment of a Column chart.
+         * and Stacked charts (like Bar or Pie charts) require one color for each data category
+         * they represent, so one color for each slice of a Pie chart or each segment (not bar) of
+         * a Bar chart.
          * It overrides the colors that are provided by the current theme.
          */
         colors: null,
@@ -15306,8 +14753,8 @@ Ext.define('Ext.chart.series.Series', {
          */
         useDarkerStrokeColor: true,
         /**
-         * @protected
-         * @cfg {Object} store The store of values used in the series.
+         * @cfg {Object} store The store to use for this series. If not specified,
+         * the series will use the chart's {@link Ext.chart.AbstractChart#store store}.
          */
         store: null,
         /**
@@ -15583,30 +15030,11 @@ Ext.define('Ext.chart.series.Series', {
             return this.callParent();
         }
     },
-    updateTitle: function(newTitle) {
+    updateTitle: function() {
         var me = this,
             chart = me.getChart();
-        if (!chart || chart.isInitializing) {
-            return;
-        }
-        newTitle = Ext.Array.from(newTitle);
-        var series = chart.getSeries(),
-            seriesIndex = Ext.Array.indexOf(series, me),
-            legendStore = chart.getLegendStore(),
-            itemCount = legendStore.getCount(),
-            yField = me.getYField(),
-            i, item, title, ln;
-        if (itemCount && seriesIndex !== -1) {
-            ln = yField ? Math.min(newTitle.length, yField.length) : newTitle.length;
-            for (i = 0; i < ln; i++) {
-                title = newTitle[i];
-                item = legendStore.getAt(seriesIndex + i);
-                if (title && item) {
-                    item.set('name', title);
-                }
-            }
-            // Remove unused records.
-            legendStore.removeAt(i, itemCount);
+        if (chart && !chart.isInitializing) {
+            chart.refreshLegendStore();
         }
     },
     applyHighlight: function(highlight, oldHighlight) {
@@ -15732,8 +15160,8 @@ Ext.define('Ext.chart.series.Series', {
                 shrinkWrapDock: true,
                 autoHide: true,
                 mouseOffset: [
-                    10,
-                    10
+                    20,
+                    20
                 ]
             }, tooltip);
         return Ext.create(config);
@@ -16105,18 +15533,26 @@ Ext.define('Ext.chart.series.Series', {
             }
         }
     },
-    applyLabel: function(newLabel, oldLabel) {
+    applyLabel: function(label, oldLabel) {
+        var template, chart;
         if (!oldLabel) {
             oldLabel = new Ext.chart.Markers({
                 zIndex: 10
             });
-            oldLabel.setTemplate(new Ext.chart.sprite.Label(newLabel));
+            oldLabel.setTemplate(new Ext.chart.sprite.Label(label));
         } else {
-            oldLabel.getTemplate().setAttributes(newLabel);
-            if (newLabel && newLabel.display) {
-                oldLabel.setAttributes({
-                    hidden: newLabel.display === 'none'
-                });
+            template = oldLabel.getTemplate();
+            template.setAttributes(label);
+            if (label) {
+                if (label.field) {
+                    template.setField(label.field);
+                    this.updateLabelData();
+                }
+                if (label.display) {
+                    oldLabel.setAttributes({
+                        hidden: label.display === 'none'
+                    });
+                }
             }
             oldLabel.setDirty(true);
             // inform the label about the template change
@@ -16366,7 +15802,7 @@ Ext.define('Ext.chart.series.Series', {
         if (darker) {
             strokeColors = Ext.Array.map(colors, function(color) {
                 color = Ext.isString(color) ? color : color.stops[0].color;
-                color = Ext.draw.Color.fromString(color);
+                color = Ext.util.Color.fromString(color);
                 return color.createDarker(darkerRatio).toString();
             });
         } else {
@@ -16393,7 +15829,7 @@ Ext.define('Ext.chart.series.Series', {
             seriesTheme = theme.getSeries(),
             initialConfig = me.getInitialConfig(),
             defaultConfig = me.defaultConfig,
-            configs = me.getConfigurator().configs,
+            configs = me.self.getConfigurator().configs,
             genericSeriesTheme = seriesTheme.defaults,
             specificSeriesTheme = seriesTheme[me.type],
             themeOnlyIfConfigured = me.themeOnlyIfConfigured,
@@ -16711,14 +16147,7 @@ Ext.define('Ext.chart.interactions.Abstract', {
         /**
          * @cfg {Boolean} enabled 'true' if the interaction is enabled.
          */
-        enabled: true,
-        /**
-         * @cfg {String/String[]/Object}
-         * touch-action to apply to the chart when this interaction is in use.
-         *
-         * See {@link Ext.Component#touchAction} for more details.
-         */
-        touchAction: null
+        enabled: true
     },
     /**
      * Android device is emerging too many events so if we re-render every frame it will take forever to finish a frame.
@@ -16741,8 +16170,7 @@ Ext.define('Ext.chart.interactions.Abstract', {
         me.mixins.observable.constructor.call(me, config);
     },
     updateChart: function(newChart, oldChart) {
-        var me = this,
-            touchAction;
+        var me = this;
         if (oldChart === newChart) {
             return;
         }
@@ -16753,10 +16181,6 @@ Ext.define('Ext.chart.interactions.Abstract', {
         if (newChart) {
             newChart.register(me);
             me.addChartListener();
-            touchAction = me.getTouchAction();
-            if (touchAction) {
-                newChart.setTouchAction(touchAction);
-            }
         }
     },
     updateEnabled: function(enabled) {
@@ -17256,6 +16680,7 @@ Ext.define('Ext.chart.axis.sprite.Axis', {
                 majorTickSize: 'bbox',
                 position: 'bbox,layout',
                 axisLine: 'bbox,layout',
+                minorTicks: 'layout',
                 min: 'layout',
                 max: 'layout',
                 length: 'layout',
@@ -17282,6 +16707,12 @@ Ext.define('Ext.chart.axis.sprite.Axis', {
          * returns a new string with the modified values.
          */
         label: null,
+        /**
+         * @cfg {Number} labelOffset
+         * The distance between the label and the edge of a major tick.
+         * Only applicable for 'gauge' and 'angular' axes.
+         */
+        labelOffset: 10,
         /**
          * @cfg {Object|Ext.chart.axis.layout.Layout} layout The layout configuration used by the axis.
          */
@@ -17496,7 +16927,8 @@ Ext.define('Ext.chart.axis.sprite.Axis', {
             tickPadding = Math.max(attr.majorTickSize, attr.minorTickSize) + attr.lineWidth,
             isBBoxIntersect = Ext.draw.Draw.isBBoxIntersect,
             label = me.getLabel(),
-            font, labelOffset,
+            font,
+            labelOffset = me.getLabelOffset(),
             lastLabelText = null,
             textSize = 0,
             textCount = 0,
@@ -17507,7 +16939,7 @@ Ext.define('Ext.chart.axis.sprite.Axis', {
             titleBBox = title && title.attr.text !== '' && title.getBBox(),
             labelInverseMatrix,
             lastBBox = null,
-            bbox, fly, text, titlePadding, translation;
+            bbox, fly, text, titlePadding, translation, gaugeAngles;
         if (majorTicks && label && !label.attr.hidden) {
             font = label.attr.font;
             if (ctx.font !== font) {
@@ -17686,7 +17118,7 @@ Ext.define('Ext.chart.axis.sprite.Axis', {
                     }
                 });
             } else if (docked === 'angular') {
-                labelOffset = attr.majorTickSize + attr.lineWidth * 0.5 + (parseInt(label.attr.fontSize, 10) || 10) / 2;
+                labelOffset += attr.majorTickSize + attr.lineWidth * 0.5;
                 me.iterate(majorTicks, function(position, labelText, i) {
                     if (labelText === undefined) {
                         return;
@@ -17722,7 +17154,8 @@ Ext.define('Ext.chart.axis.sprite.Axis', {
                     }
                 });
             } else if (docked === 'gauge') {
-                var gaugeAngles = me.getGaugeAngles();
+                gaugeAngles = me.getGaugeAngles();
+                labelOffset += attr.majorTickSize + attr.lineWidth * 0.5;
                 me.iterate(majorTicks, function(position, labelText, i) {
                     if (labelText === undefined) {
                         return;
@@ -17742,8 +17175,8 @@ Ext.define('Ext.chart.axis.sprite.Axis', {
                         var angle = (position - attr.min) / (attr.max - attr.min + 1) * attr.totalAngle - attr.totalAngle + gaugeAngles.start;
                         label.setAttributes({
                             text: String(text),
-                            translationX: attr.centerX + (attr.length + 10) * Math.cos(angle),
-                            translationY: attr.centerY + (attr.length + 10) * Math.sin(angle)
+                            translationX: attr.centerX + (attr.length + labelOffset) * Math.cos(angle),
+                            translationY: attr.centerY + (attr.length + labelOffset) * Math.sin(angle)
                         }, true);
                         label.applyTransformations();
                         bbox = label.attr.matrix.transformBBox(label.getBBox(true));
@@ -17941,7 +17374,7 @@ Ext.define('Ext.chart.axis.sprite.Axis', {
                 limit.line.strokeStyle = limit.line.strokeStyle || attr.strokeStyle;
                 me.putMarker('horizontal-limit-lines', limit.line, i, true);
                 if (limit.line.title) {
-                    titles.createInstance(limit.line.title);
+                    titles.add(limit.line.title);
                     titleBBox = titles.getBBoxFor(titles.position - 1);
                     titlePosition = limit.line.title.position || (position === 'left' ? 'start' : 'end');
                     switch (titlePosition) {
@@ -17973,7 +17406,7 @@ Ext.define('Ext.chart.axis.sprite.Axis', {
                 limit.line.strokeStyle = limit.line.strokeStyle || attr.strokeStyle;
                 me.putMarker('vertical-limit-lines', limit.line, i, true);
                 if (limit.line.title) {
-                    titles.createInstance(limit.line.title);
+                    titles.add(limit.line.title);
                     titleBBox = titles.getBBoxFor(titles.position - 1);
                     titlePosition = limit.line.title.position || (position === 'top' ? 'end' : 'start');
                     switch (titlePosition) {
@@ -18012,7 +17445,7 @@ Ext.define('Ext.chart.axis.sprite.Axis', {
                 limit.line.strokeStyle = limit.line.strokeStyle || attr.strokeStyle;
                 me.putMarker('circular-limit-lines', limit.line, i, true);
                 if (limit.line.title) {
-                    titles.createInstance(limit.line.title);
+                    titles.add(limit.line.title);
                     titleBBox = titles.getBBoxFor(titles.position - 1);
                     titles.setAttributesFor(titles.position - 1, {
                         x: attr.centerX,
@@ -18037,7 +17470,7 @@ Ext.define('Ext.chart.axis.sprite.Axis', {
                 limit.line.strokeStyle = limit.line.strokeStyle || attr.strokeStyle;
                 me.putMarker('radial-limit-lines', limit.line, i, true);
                 if (limit.line.title) {
-                    titles.createInstance(limit.line.title);
+                    titles.add(limit.line.title);
                     titleBBox = titles.getBBoxFor(titles.position - 1);
                     titleFlip = ((value > -0.5 * Math.PI && value < 0.5 * Math.PI) || (value > 1.5 * Math.PI && value < 2 * Math.PI)) ? 1 : -1;
                     titles.setAttributesFor(titles.position - 1, {
@@ -18292,7 +17725,15 @@ Ext.define('Ext.chart.axis.segmenter.Time', {
     config: {
         /**
          * @cfg {Object} step
-         * If specified, the will override the result of {@link #preferredStep}.
+         * @cfg {String} step.unit The unit of the step (Ext.Date.DAY, Ext.Date.MONTH, etc).
+         * @cfg {Number} step.step The number of units for the step (1, 2, etc).
+         * If specified, will override the result of {@link #preferredStep}.
+         * For example:
+         *     
+         *     step: {
+         *         unit: Ext.Date.HOUR,
+         *         step: 1
+         *     }
          */
         step: null
     },
@@ -18319,6 +17760,12 @@ Ext.define('Ext.chart.axis.segmenter.Time', {
             max = new Date(max);
         }
         return Ext.Date.diff(min, max, unit);
+    },
+    updateStep: function() {
+        var axis = this.getAxis();
+        if (axis && !this.isConfiguring) {
+            axis.performLayout();
+        }
     },
     align: function(date, step, unit) {
         if (unit === 'd' && step >= 7) {
@@ -18621,11 +18068,10 @@ Ext.define('Ext.chart.axis.layout.Discrete', {
             attr = context.attr,
             data = context.data,
             range = attr.max - attr.min,
-            zoom = range / Math.max(1, attr.length) * (attr.visibleMax - attr.visibleMin),
             viewMin = attr.min + range * attr.visibleMin,
             viewMax = attr.min + range * attr.visibleMax,
-            estStepSize = attr.estStepSize * zoom;
-        var out = me.snapEnds(context, Math.max(0, attr.min), Math.min(attr.max, data.length - 1), estStepSize);
+            out;
+        out = me.snapEnds(context, Math.max(0, attr.min), Math.min(attr.max, data.length - 1), 1);
         if (out) {
             me.trimByRange(context, out, viewMin, viewMax);
             context.majorTicks = out;
@@ -19350,6 +18796,21 @@ Ext.define('Ext.chart.axis.Axis', {
             }
         }
     },
+    updateMinorTickSteps: function(minorTickSteps) {
+        var me = this,
+            sprites = me.getSprites(),
+            axisSprite = sprites && sprites[0],
+            surface;
+        if (axisSprite) {
+            axisSprite.setAttributes({
+                minorTicks: !!minorTickSteps
+            });
+            surface = me.getSurface();
+            if (!me.isConfiguring && surface) {
+                surface.renderFrame();
+            }
+        }
+    },
     /**
      * @private
      */
@@ -19520,7 +18981,9 @@ Ext.define('Ext.chart.axis.Axis', {
             master[action]('rangechange', 'onMasterAxisRangeChange', slave);
         }
         if (me.masterAxis) {
-            link('un', me, me.masterAxis);
+            if (!me.masterAxis.destroyed) {
+                link('un', me, me.masterAxis);
+            }
             me.masterAxis = null;
         }
         if (masterAxis) {
@@ -19654,7 +19117,7 @@ Ext.define('Ext.chart.axis.Axis', {
                 segmenter.adjustByMajorUnit(majorTicks.step, majorTicks.unit.scale, me.range);
                 attr.min = me.range[0];
                 attr.max = me.range[1];
-                delete context.majorTicks;
+                context.majorTicks = null;
                 layout.calculateLayout(context);
                 majorTicks = context.majorTicks;
                 segmenter.adjustByMajorUnit(majorTicks.step, majorTicks.unit.scale, me.range);
@@ -19674,7 +19137,7 @@ Ext.define('Ext.chart.axis.Axis', {
      * @private
      */
     clearRange: function() {
-        delete this.hasClearRangePending;
+        this.hasClearRangePending = null;
         this.range = null;
     },
     /**
@@ -19721,7 +19184,7 @@ Ext.define('Ext.chart.axis.Axis', {
             position = me.getPosition(),
             initialConfig = me.getInitialConfig(),
             defaultConfig = me.defaultConfig,
-            configs = me.getConfigurator().configs,
+            configs = me.self.getConfigurator().configs,
             genericAxisTheme = axisTheme.defaults,
             specificAxisTheme = axisTheme[position],
             themeOnlyIfConfigured = me.themeOnlyIfConfigured,
@@ -19834,6 +19297,24 @@ Ext.define('Ext.chart.axis.Axis', {
             }
         }
         return me.sprites;
+    },
+    /**
+     * @private
+     */
+    performLayout: function() {
+        if (this.isConfiguring) {
+            return;
+        }
+        var me = this,
+            sprites = me.getSprites(),
+            surface = me.getSurface(),
+            chart = me.getChart(),
+            sprite = sprites && sprites.length && sprites[0];
+        if (chart && surface && sprite) {
+            sprite.callUpdater(null, 'layout');
+            // recalculate axis ticks
+            chart.scheduleLayout();
+        }
     },
     updateTitleSprite: function() {
         var me = this,
@@ -19972,6 +19453,10 @@ Ext.define('Ext.chart.legend.LegendBase', {
         tpl: [
             '<div class="',
             Ext.baseCSSPrefix,
+            'legend-inner">',
+            // for IE8 vertical centering
+            '<div class="',
+            Ext.baseCSSPrefix,
             'legend-container">',
             '<tpl for=".">',
             '<div class="',
@@ -19980,36 +19465,40 @@ Ext.define('Ext.chart.legend.LegendBase', {
             '<span ',
             'class="',
             Ext.baseCSSPrefix,
-            'legend-item-marker {[ values.disabled ? Ext.baseCSSPrefix + \'legend-inactive\' : \'\' ]}" ',
+            'legend-item-marker {[ values.disabled ? Ext.baseCSSPrefix + \'legend-item-inactive\' : \'\' ]}" ',
             'style="background:{mark};">',
             '</span>{name}',
             '</div>',
             '</tpl>',
+            '</div>',
             '</div>'
         ],
-        nodeContainerSelector: 'div.' + Ext.baseCSSPrefix + 'legend-container',
+        nodeContainerSelector: 'div.' + Ext.baseCSSPrefix + 'legend-inner',
+        // element that contains rows (see AbstractView)
         itemSelector: 'div.' + Ext.baseCSSPrefix + 'legend-item',
+        // row element (see AbstractView)
         docked: 'bottom'
     },
     setDocked: function(docked) {
+        // If we call the method 'updateDocked' instead of 'setDocked', the following error is thrown:
+        // "Ext.Component#setDocked" is deprecated. Please use "setDock" instead.
         var me = this,
-            panel = me.ownerCt,
-            layout;
-        me.docked = docked;
+            panel = me.ownerCt;
+        me.docked = me.dock = docked;
         switch (docked) {
             case 'top':
             case 'bottom':
-                me.addCls(Ext.baseCSSPrefix + 'horizontal');
-                layout = 'hbox';
+                me.addCls(me.horizontalCls);
+                me.removeCls(me.verticalCls);
                 break;
             case 'left':
             case 'right':
-                me.removeCls(Ext.baseCSSPrefix + 'horizontal');
-                layout = 'vbox';
+                me.addCls(me.verticalCls);
+                me.removeCls(me.horizontalCls);
                 break;
         }
         if (panel) {
-            panel.setDocked(docked);
+            panel.setDock(docked);
         }
     },
     setStore: function(store) {
@@ -20051,6 +19540,8 @@ Ext.define('Ext.chart.legend.Legend', {
          */
         toggleable: true
     },
+    horizontalCls: Ext.baseCSSPrefix + 'legend-horizontal',
+    verticalCls: Ext.baseCSSPrefix + 'legend-vertical',
     toggleItem: function(index) {
         if (!this.getToggleable()) {
             return;
@@ -21012,6 +20503,12 @@ Ext.define('Ext.chart.legend.SpriteLegend', {
              */
             case 'bottom':
             case 'top':
+                // surface must have a width before we can proceed to layout top/bottom
+                // docked legend.  width may be 0 if we are rendered into an inactive tab.
+                // see https://sencha.jira.com/browse/EXTJS-22454
+                if (!surfaceWidth) {
+                    return false;
+                };
                 columnSize = 0;
                 // Split legend items into columns until the width is suitable.
                 do {
@@ -21066,6 +20563,12 @@ Ext.define('Ext.chart.legend.SpriteLegend', {
              */
             case 'right':
             case 'left':
+                // surface must have a height before we can proceed to layout right/left
+                // docked legend.  height may be 0 if we are rendered into an inactive tab.
+                // see https://sencha.jira.com/browse/EXTJS-22454
+                if (!surfaceHeight) {
+                    return false;
+                };
                 columnSize = ln * 2;
                 // Split legend items into columns until the height is suitable.
                 do {
@@ -21331,7 +20834,7 @@ Ext.define('Ext.chart.legend.SpriteLegend', {
             sprites = surface.getItems(),
             legendTheme = theme.getLegend(),
             labelConfig = me.getLabel(),
-            configs = me.getConfigurator().configs,
+            configs = me.self.getConfigurator().configs,
             themeableConfigs = me.themeableConfigs,
             initialConfig = me.getInitialConfig(),
             defaultConfig = me.defaultConfig,
@@ -21472,6 +20975,43 @@ Ext.define('Ext.chart.legend.SpriteLegend', {
 });
 
 /**
+ * The data model for legend items.
+ */
+Ext.define('Ext.chart.legend.store.Item', {
+    extend: 'Ext.data.Model',
+    fields: [
+        'id',
+        'name',
+        // The series title.
+        'mark',
+        // The color of the series.
+        'disabled',
+        // The state of the series.
+        'series',
+        // A reference to the series instance.
+        'index'
+    ]
+});
+// A sprite index, e.g. for stacked or pie series.
+// For such series an individual component of the series
+// is hidden or shown when the legend item is toggled.
+
+/**
+ * The store type used for legend items.
+ */
+Ext.define('Ext.chart.legend.store.Store', {
+    extend: 'Ext.data.Store',
+    requires: [
+        'Ext.chart.legend.store.Item'
+    ],
+    model: 'Ext.chart.legend.store.Item',
+    isLegendStore: true,
+    config: {
+        autoDestroy: true
+    }
+});
+
+/**
  * The Ext.chart package provides the capability to visualize data.
  * Each chart binds directly to a {@link Ext.data.Store store} enabling automatic updates of the chart.
  * A chart configuration object has some overall styling options as well as an array of axes
@@ -21563,6 +21103,7 @@ Ext.define('Ext.chart.AbstractChart', {
         'Ext.data.StoreManager',
         'Ext.chart.legend.Legend',
         'Ext.chart.legend.SpriteLegend',
+        'Ext.chart.legend.store.Store',
         'Ext.data.Store'
     ],
     isChart: true,
@@ -21941,15 +21482,25 @@ Ext.define('Ext.chart.AbstractChart', {
      */
     surfaceZIndexes: {
         background: 0,
+        // Contains the backround 'rect' sprite.
         main: 1,
+        // Contains grid lines and CrossZoom overlay 'rect' sprite.
         grid: 2,
+        // Reserved (unused).
         series: 3,
+        // Contains series sprites.
         axis: 4,
+        // Reserved.
         chart: 5,
+        // Covers whole chart, minus the legend area.
         overlay: 6,
+        // This surface will typically contain chart labels
+        // and interaction sprites like crosshair lines.
         legend: 7,
+        // SpriteLegend surface.
         title: 8
     },
+    // Reserved.
     constructor: function(config) {
         var me = this;
         me.itemListeners = {};
@@ -21959,7 +21510,7 @@ Ext.define('Ext.chart.AbstractChart', {
         me.suspendChartLayout();
         me.animationSuspendCount++;
         me.callParent(arguments);
-        delete me.isInitializing;
+        me.isInitializing = false;
         me.getSurface('main');
         me.getSurface('chart').setFlipRtlText(me.getInherited().rtl);
         me.getSurface('overlay').waitFor(me.getSurface('series'));
@@ -22034,13 +21585,14 @@ Ext.define('Ext.chart.AbstractChart', {
      * Suspends chart's layout.
      */
     suspendChartLayout: function() {
-        this.chartLayoutSuspendCount++;
-        if (this.chartLayoutSuspendCount === 1) {
-            if (this.scheduledLayoutId) {
-                this.layoutInSuspension = true;
-                this.cancelChartLayout();
+        var me = this;
+        me.chartLayoutSuspendCount++;
+        if (me.chartLayoutSuspendCount === 1) {
+            if (me.scheduledLayoutId) {
+                me.layoutInSuspension = true;
+                me.cancelChartLayout();
             } else {
-                this.layoutInSuspension = false;
+                me.layoutInSuspension = false;
             }
         }
     },
@@ -22050,10 +21602,11 @@ Ext.define('Ext.chart.AbstractChart', {
      * a layout is scheduled.
      */
     resumeChartLayout: function() {
-        this.chartLayoutSuspendCount--;
-        if (this.chartLayoutSuspendCount === 0) {
-            if (this.layoutInSuspension) {
-                this.scheduleLayout();
+        var me = this;
+        me.chartLayoutSuspendCount--;
+        if (me.chartLayoutSuspendCount === 0) {
+            if (me.layoutInSuspension) {
+                me.scheduleLayout();
             }
         }
     },
@@ -22079,11 +21632,13 @@ Ext.define('Ext.chart.AbstractChart', {
         return true;
     },
     doScheduleLayout: function() {
-        if (this.chartLayoutSuspendCount) {
-            this.layoutInSuspension = true;
+        var me = this;
+        if (me.chartLayoutSuspendCount) {
+            me.layoutInSuspension = true;
         } else {
-            this.performLayout();
+            me.performLayout();
         }
+        me.scheduledLayoutId = null;
     },
     /**
      * Prevent axes from triggering chart layout when their thickness changes.
@@ -22228,19 +21783,6 @@ Ext.define('Ext.chart.AbstractChart', {
                 }
             }
             legendStore.setData(legendData);
-        }
-    },
-    resetLegendStore: function() {
-        var store = this.getLegendStore(),
-            data, i, len, record;
-        if (store) {
-            data = this.getLegendStore().getData().items;
-            for (i = 0 , len = data.length; i < len; i++) {
-                record = data[i];
-                record.beginEdit();
-                record.set('disabled', false);
-                record.commit();
-            }
         }
     },
     onUpdateLegendStore: function(store, record) {
@@ -22546,7 +22088,7 @@ Ext.define('Ext.chart.AbstractChart', {
             chartTheme = theme.getChart(),
             initialConfig = me.getInitialConfig(),
             defaultConfig = me.defaultConfig,
-            configs = me.getConfigurator().configs,
+            configs = me.self.getConfigurator().configs,
             genericChartTheme = chartTheme.defaults,
             specificChartTheme = chartTheme[me.xtype],
             themeOnlyIfConfigured = me.themeOnlyIfConfigured,
@@ -22699,7 +22241,7 @@ Ext.define('Ext.chart.AbstractChart', {
             result.map[series.getId()] = series;
         }
         for (i in oldMap) {
-            if (!result.map[oldMap[i].getId()]) {
+            if (!result.map[oldMap[i].id]) {
                 oldMap[i].destroy();
             }
         }
@@ -22815,7 +22357,7 @@ Ext.define('Ext.chart.AbstractChart', {
     },
     updateStore: function(newStore, oldStore) {
         var me = this;
-        if (oldStore) {
+        if (oldStore && !oldStore.destroyed) {
             oldStore.un({
                 datachanged: 'onDataChanged',
                 update: 'onDataChanged',
@@ -23173,25 +22715,12 @@ Ext.define('Ext.chart.AbstractChart', {
 Ext.define('Ext.chart.overrides.AbstractChart', {
     override: 'Ext.chart.AbstractChart',
     updateLegend: function(legend, oldLegend) {
-        var dock;
         this.callParent([
             legend,
             oldLegend
         ]);
         if (legend && legend.isDomLegend) {
-            dock = legend.docked;
-            this.addDocked({
-                dock: dock,
-                xtype: 'panel',
-                shrinkWrap: true,
-                scrollable: true,
-                layout: {
-                    type: dock === 'top' || dock === 'bottom' ? 'hbox' : 'vbox',
-                    pack: 'center'
-                },
-                items: legend,
-                cls: Ext.baseCSSPrefix + 'legend-panel'
-            });
+            this.addDocked(legend);
         }
     },
     performLayout: function() {
@@ -23213,9 +22742,9 @@ Ext.define('Ext.chart.overrides.AbstractChart', {
     allowSchedule: function() {
         return this.rendered;
     },
-    onDestroy: function() {
+    doDestroy: function() {
         this.destroyChart();
-        this.callParent(arguments);
+        this.callParent();
     }
 });
 
@@ -23423,7 +22952,6 @@ Ext.define('Ext.chart.CartesianChart', {
             --me.animationSuspendCount;
             return;
         }
-        me.suspendThicknessChanged();
         // 'chart' surface rect is the size of the chart's inner element
         // (see chart.getChartBox), i.e. the portion of the chart minus
         // the legend area (whether DOM or sprite based).
@@ -23446,6 +22974,7 @@ Ext.define('Ext.chart.CartesianChart', {
         if (width <= 0 || height <= 0) {
             return;
         }
+        me.suspendThicknessChanged();
         shrinkBox.left += chartRect[0];
         shrinkBox.top += chartRect[1];
         for (i = 0; i < axes.length; i++) {
@@ -23579,7 +23108,7 @@ Ext.define('Ext.chart.CartesianChart', {
             floating = axis.getFloating();
             value = floating ? floating.value : null;
             if (value === null) {
-                delete axis.floatingAtCoord;
+                axis.floatingAtCoord = null;
                 
                 continue;
             }
@@ -24685,9 +24214,16 @@ Ext.define('Ext.chart.axis.Time', {
          */
         calculateByLabelSize: true,
         /**
-         * @cfg {String/Boolean} dateFormat
-         * Indicates the format the date will be rendered on.
-         * For example: 'M d' will render the dates as 'Jan 30', etc.
+         * @cfg {String} dateFormat
+         * Indicates the format the date will be rendered in.
+         * For example: 'M d' will render the dates as 'Jan 30'.
+         * This config works by setting the {@link #renderer} config
+         * to a function that uses {@link Ext.Date#format} to format the dates
+         * using the given `dateFormat`.
+         * If the {@link #renderer} config was set by the user, changes to this config
+         * won't replace the user set renderer (until the user removes the renderer by
+         * setting the `renderer` config to `null`). In this case the way the `dateFormat`
+         * is used (if at all) is up to the user.
          */
         dateFormat: null,
         /**
@@ -24698,25 +24234,30 @@ Ext.define('Ext.chart.axis.Time', {
          * @cfg {Date} toDate The ending date for the time axis.
          */
         toDate: null,
-        /**
-         * @cfg {Array} [step=[Ext.Date.DAY, 1]] An array with two components:
-         *
-         * - The unit of the step (Ext.Date.DAY, Ext.Date.MONTH, etc).
-         * - The number of units for the step (1, 2, etc).
-         *
-         */
-        step: [
-            Ext.Date.DAY,
-            1
-        ],
         layout: 'continuous',
         segmenter: 'time',
         aggregator: 'time'
     },
     updateDateFormat: function(format) {
-        this.setRenderer(function(axis, date) {
-            return Ext.Date.format(new Date(date), format);
-        });
+        var renderer = this.getRenderer();
+        if (!renderer || renderer.isDefault) {
+            renderer = function(axis, date) {
+                return Ext.Date.format(new Date(date), format);
+            };
+            renderer.isDefault = true;
+            this.setRenderer(renderer);
+            this.performLayout();
+        }
+    },
+    updateRenderer: function(renderer) {
+        var dateFormat = this.getDateFormat();
+        if (renderer) {
+            this.performLayout();
+        } else if (dateFormat) {
+            // If the user removes custom `renderer` and `dateFormat` is set,
+            // set the `renderer` to the default one based on `dateFormat`.
+            this.updateDateFormat(dateFormat);
+        }
     },
     updateFromDate: function(date) {
         this.setMinimum(+date);
@@ -24764,17 +24305,6 @@ Ext.define('Ext.chart.axis.Time3D', {
          * @cfg {Date} toDate The ending date for the time axis.
          */
         toDate: null,
-        /**
-         * @cfg {Array} [step=[Ext.Date.DAY, 1]] An array with two components:
-         *
-         * - The unit of the step (Ext.Date.DAY, Ext.Date.MONTH, etc).
-         * - The number of units for the step (1, 2, etc).
-         *
-         */
-        step: [
-            Ext.Date.DAY,
-            1
-        ],
         layout: 'continuous',
         segmenter: 'time',
         aggregator: 'time'
@@ -25076,12 +24606,7 @@ Ext.define('Ext.chart.interactions.CrossZoom', {
             dragend: 'onGestureEnd',
             dblclick: 'onDoubleTap'
         },
-        undoButton: {},
-        touchAction: {
-            panX: false,
-            panY: false,
-            doubleTapZoom: false
-        }
+        undoButton: {}
     },
     stopAnimationBeforeSync: false,
     zoomAnimationInProgress: false,
@@ -25354,7 +24879,7 @@ Ext.define('Ext.chart.interactions.CrossZoom', {
     },
     destroy: function() {
         this.setUndoButton(null);
-        this.callParent(arguments);
+        this.callParent();
     }
 });
 
@@ -25548,11 +25073,7 @@ Ext.define('Ext.chart.interactions.Crosshair', {
          * @cfg {String} gesture
          * Specifies which gesture should be used for starting/maintaining/ending the interaction.
          */
-        gesture: 'drag',
-        touchAction: {
-            panX: false,
-            panY: false
-        }
+        gesture: 'drag'
     },
     applyAxes: function(axesConfig, oldAxesConfig) {
         return Ext.merge(oldAxesConfig || {}, axesConfig);
@@ -25967,10 +25488,6 @@ Ext.define('Ext.chart.interactions.ItemEdit', {
             ewResize: 'ew-resize',
             nsResize: 'ns-resize',
             move: 'move'
-        },
-        touchAction: {
-            panX: false,
-            panY: false
         }
     },
     /**
@@ -26003,8 +25520,8 @@ Ext.define('Ext.chart.interactions.ItemEdit', {
                     autoHide: true,
                     trackMouse: true,
                     mouseOffset: [
-                        10,
-                        10
+                        20,
+                        20
                     ]
                 });
             tooltip = new Ext.tip.ToolTip(config);
@@ -26508,15 +26025,9 @@ Ext.define('Ext.chart.interactions.PanZoom', {
                 }
             ]
         },
-        hideLabelInGesture: false,
-        // Ext.os.is.Android
-        touchAction: {
-            panX: false,
-            panY: false,
-            pinchZoom: false,
-            doubleTapZoom: false
-        }
+        hideLabelInGesture: false
     },
+    // Ext.os.is.Android
     stopAnimationBeforeSync: true,
     applyAxes: function(axesConfig, oldAxesConfig) {
         return Ext.merge(oldAxesConfig || {}, axesConfig);
@@ -26907,12 +26418,7 @@ Ext.define('Ext.chart.interactions.Rotate', {
          * Saves the current rotation of the series. Accepts negative values and values > 360 ( / 180 * Math.PI)
          * @private
          */
-        rotation: 0,
-        touchAction: {
-            panX: false,
-            panY: false,
-            pinchZoom: false
-        }
+        rotation: 0
     },
     oldRotations: null,
     getAngle: function(e) {
@@ -27044,7 +26550,7 @@ Ext.define('Ext.chart.interactions.RotatePie3D', {
         // interaction.
         for (; i < ln; i++) {
             series = seriesList[i];
-            if (series.isPie3D) {
+            if (series.is3D) {
                 seriesRadius = series.getRadius();
                 if (seriesRadius > radius) {
                     radius = seriesRadius;
@@ -27052,40 +26558,6 @@ Ext.define('Ext.chart.interactions.RotatePie3D', {
             }
         }
         return radius;
-    }
-});
-
-/**
- * The data model for legend items.
- */
-Ext.define('Ext.chart.legend.store.Item', {
-    extend: 'Ext.data.Model',
-    fields: [
-        'id',
-        'name',
-        // The series title.
-        'mark',
-        // The color of the series.
-        'disabled',
-        // The state of the series.
-        'series',
-        // A reference to the series instance.
-        'index'
-    ]
-});
-// A sprite index, e.g. for stacked or pie series.
-// For such series an individual component of the series
-// is hidden or shown when the legend item is toggled.
-
-/**
- * The store type used for legend items.
- */
-Ext.define('Ext.chart.legend.store.Store', {
-    extend: 'Ext.data.Store',
-    model: 'Ext.chart.legend.store.Item',
-    isLegendStore: true,
-    config: {
-        autoDestroy: true
     }
 });
 
@@ -27689,10 +27161,13 @@ Ext.define('Ext.chart.series.StackedCartesian', {
                 } else if (single) {
                     name = title;
                 }
-            } else if (Ext.isArray(field)) {
-                name = field[i];
-            } else {
-                name = me.getId();
+            }
+            if (!title || !name) {
+                if (Ext.isArray(field)) {
+                    name = field[i];
+                } else {
+                    name = me.getId();
+                }
             }
             target.push({
                 name: name,
@@ -28669,6 +28144,7 @@ Ext.define('Ext.chart.series.Bar', {
     alias: 'series.bar',
     type: 'bar',
     seriesType: 'barSeries',
+    isBar: true,
     requires: [
         'Ext.chart.series.sprite.Bar',
         'Ext.draw.sprite.Rect'
@@ -28704,8 +28180,13 @@ Ext.define('Ext.chart.series.Bar', {
             return me.callParent(arguments);
         }
     },
-    updateXAxis: function(axis) {
-        axis.setLabelInSpan(true);
+    updateXAxis: function(xAxis) {
+        //<debug>
+        if (!this.is3D && xAxis.type !== 'category') {
+            Ext.raise("'bar' series should be used with a 'category' axis. Please refer to the bar series docs.");
+        }
+        //</debug>
+        xAxis.setLabelInSpan(true);
         this.callParent(arguments);
     },
     updateHidden: function(hidden) {
@@ -28974,7 +28455,7 @@ Ext.define('Ext.chart.series.sprite.Box', {
             isHorizontal = attr.orientation === 'horizontal',
             isTransparent = attr.globalAlpha < 1,
             fillStyle = attr.fillStyle,
-            color = Ext.draw.Color.create(fillStyle.isGradient ? fillStyle.getStops()[0].color : fillStyle),
+            color = Ext.util.Color.create(fillStyle.isGradient ? fillStyle.getStops()[0].color : fillStyle),
             saturationFactor = attr.saturationFactor,
             brightnessFactor = attr.brightnessFactor,
             colorSpread = attr.colorSpread,
@@ -28982,7 +28463,7 @@ Ext.define('Ext.chart.series.sprite.Box', {
             bbox = {},
             roundX, roundY, temp;
         if (!attr.showStroke) {
-            ctx.strokeStyle = Ext.draw.Color.RGBA_NONE;
+            ctx.strokeStyle = Ext.util.Color.RGBA_NONE;
         }
         if (isNegative) {
             temp = top;
@@ -28994,22 +28475,22 @@ Ext.define('Ext.chart.series.sprite.Box', {
         me.topGradient.setStops([
             {
                 offset: 0,
-                color: Ext.draw.Color.fromHSV(hsv[0], Ext.Number.constrain(hsv[1] * saturationFactor, 0, 1), Ext.Number.constrain((0.5 + colorSpread * 0.1) * brightnessFactor, 0, 1))
+                color: Ext.util.Color.fromHSV(hsv[0], Ext.Number.constrain(hsv[1] * saturationFactor, 0, 1), Ext.Number.constrain((0.5 + colorSpread * 0.1) * brightnessFactor, 0, 1))
             },
             {
                 offset: 1,
-                color: Ext.draw.Color.fromHSV(hsv[0], Ext.Number.constrain(hsv[1] * saturationFactor, 0, 1), Ext.Number.constrain((0.5 - colorSpread * 0.11) * brightnessFactor, 0, 1))
+                color: Ext.util.Color.fromHSV(hsv[0], Ext.Number.constrain(hsv[1] * saturationFactor, 0, 1), Ext.Number.constrain((0.5 - colorSpread * 0.11) * brightnessFactor, 0, 1))
             }
         ]);
         me.rightGradient.setDegrees(isHorizontal ? 45 : 90);
         me.rightGradient.setStops([
             {
                 offset: 0,
-                color: Ext.draw.Color.fromHSV(hsv[0], Ext.Number.constrain(hsv[1] * saturationFactor, 0, 1), Ext.Number.constrain((0.5 - colorSpread * 0.14) * brightnessFactor, 0, 1))
+                color: Ext.util.Color.fromHSV(hsv[0], Ext.Number.constrain(hsv[1] * saturationFactor, 0, 1), Ext.Number.constrain((0.5 - colorSpread * 0.14) * brightnessFactor, 0, 1))
             },
             {
                 offset: 1,
-                color: Ext.draw.Color.fromHSV(hsv[0], Ext.Number.constrain(hsv[1] * (1 + colorSpread * 0.4) * saturationFactor, 0, 1), Ext.Number.constrain((0.5 - colorSpread * 0.32) * brightnessFactor, 0, 1))
+                color: Ext.util.Color.fromHSV(hsv[0], Ext.Number.constrain(hsv[1] * (1 + colorSpread * 0.4) * saturationFactor, 0, 1), Ext.Number.constrain((0.5 - colorSpread * 0.32) * brightnessFactor, 0, 1))
             }
         ]);
         if (isHorizontal) {
@@ -29021,11 +28502,11 @@ Ext.define('Ext.chart.series.sprite.Box', {
         me.frontGradient.setStops([
             {
                 offset: 0,
-                color: Ext.draw.Color.fromHSV(hsv[0], Ext.Number.constrain(hsv[1] * (1 - colorSpread * 0.1) * saturationFactor, 0, 1), Ext.Number.constrain((0.5 + colorSpread * 0.1) * brightnessFactor, 0, 1))
+                color: Ext.util.Color.fromHSV(hsv[0], Ext.Number.constrain(hsv[1] * (1 - colorSpread * 0.1) * saturationFactor, 0, 1), Ext.Number.constrain((0.5 + colorSpread * 0.1) * brightnessFactor, 0, 1))
             },
             {
                 offset: 1,
-                color: Ext.draw.Color.fromHSV(hsv[0], Ext.Number.constrain(hsv[1] * (1 + colorSpread * 0.1) * saturationFactor, 0, 1), Ext.Number.constrain((0.5 - colorSpread * 0.23) * brightnessFactor, 0, 1))
+                color: Ext.util.Color.fromHSV(hsv[0], Ext.Number.constrain(hsv[1] * (1 + colorSpread * 0.1) * saturationFactor, 0, 1), Ext.Number.constrain((0.5 - colorSpread * 0.23) * brightnessFactor, 0, 1))
             }
         ]);
         if (isTransparent || isNegative) {
@@ -29190,6 +28671,7 @@ Ext.define('Ext.chart.series.Bar3D', {
     alias: 'series.bar3d',
     type: 'bar3d',
     seriesType: 'bar3dSeries',
+    is3D: true,
     config: {
         itemInstancing: {
             type: 'box',
@@ -29206,6 +28688,17 @@ Ext.define('Ext.chart.series.Bar3D', {
         highlightCfg: {
             opacity: 0.8
         }
+    },
+    updateXAxis: function(xAxis, oldXAxis) {
+        //<debug>
+        if (xAxis.type !== 'category3d') {
+            Ext.raise("'bar3d' series should be used with a 'category3d' axis. Please refer to the 'bar3d' series docs.");
+        }
+        //</debug>
+        this.callParent([
+            xAxis,
+            oldXAxis
+        ]);
     },
     getSprites: function() {
         var sprites = this.callParent(arguments),
@@ -30316,7 +29809,7 @@ Ext.define('Ext.chart.series.Polar', {
     },
     constructor: function(config) {
         var me = this,
-            configurator = me.getConfigurator(),
+            configurator = me.self.getConfigurator(),
             configs = configurator.configs,
             p;
         if (config) {
@@ -31058,7 +30551,7 @@ Ext.define('Ext.chart.series.sprite.Line', {
             // Special case where we have an uninterrupted segment, followed
             // by a gap, then a valid point, then another gap. The uninterrupted
             // segment should be connenected with the dot situated between the gaps.
-            if (isConnect && lastValidPoint && isValidPoint && !isValidPoint1) {
+            if (isConnect && lastValidPoint && isValidPoint && !isValidPoint0) {
                 x0 = lastValidPoint[0];
                 y0 = lastValidPoint[1];
                 isValidPoint0 = true;
@@ -32055,6 +31548,7 @@ Ext.define('Ext.chart.series.Pie', {
     type: 'pie',
     alias: 'series.pie',
     seriesType: 'pieslice',
+    isPie: true,
     config: {
         /**
          * @cfg {String} radiusField
@@ -32388,8 +31882,15 @@ Ext.define('Ext.chart.series.Pie', {
         x %= pp;
         b %= pp;
         // Because 360 * n angles will be normalized to 0,
-        // we need to treat b === 0 as a special case.
-        return x < b || b === 0;
+        // we need to treat b ~= 0 as a special case.
+        return x < b || Ext.Number.isEqual(b, 0, 1.0E-8);
+    },
+    getItemByIndex: function(index, category) {
+        category = category || 'sprites';
+        return this.callParent([
+            index,
+            category
+        ]);
     },
     /**
      * Returns the pie slice for a given angle
@@ -32669,7 +32170,7 @@ Ext.define('Ext.chart.series.sprite.Pie3DPart', {
         }
     },
     partColorUpdater: function(attr) {
-        var color = Ext.draw.Color.fly(attr.baseColor),
+        var color = Ext.util.Color.fly(attr.baseColor),
             colorString = color.toString(),
             colorSpread = attr.colorSpread,
             fillStyle;
@@ -32900,7 +32401,7 @@ Ext.define('Ext.chart.series.sprite.Pie3DPart', {
     render: function(surface, ctx) {
         var me = this,
             attr = me.attr;
-        if (!attr.globalAlpha) {
+        if (!attr.globalAlpha || Ext.Number.isEqual(attr.startAngle, attr.endAngle, 1.0E-8)) {
             return;
         }
         me.callParent([
@@ -33000,7 +32501,7 @@ Ext.define('Ext.chart.series.sprite.Pie3DPart', {
     },
     bottomRenderer: function(path) {
         var attr = this.attr,
-            none = Ext.draw.Color.RGBA_NONE;
+            none = Ext.util.Color.RGBA_NONE;
         if (attr.globalAlpha < 1 || attr.fillOpacity < 1 || attr.shadowColor !== none) {
             this.lidRenderer(path, attr.thickness);
         }
@@ -33312,7 +32813,7 @@ Ext.define('Ext.chart.series.Pie3D', {
     type: 'pie3d',
     seriesType: 'pie3d',
     alias: 'series.pie3d',
-    isPie3D: true,
+    is3D: true,
     config: {
         rect: [
             0,
@@ -33394,7 +32895,7 @@ Ext.define('Ext.chart.series.Pie3D', {
             };
         } else if (!Ext.isObject(shadow)) {
             shadow = {
-                shadowColor: Ext.draw.Color.RGBA_NONE
+                shadowColor: Ext.util.Color.RGBA_NONE
             };
         }
         return shadow;

@@ -52,7 +52,7 @@ Ext.define('Ext.event.gesture.Tap', {
     onCancel: function(e) {
         this.fire('tapcancel', e, {
             touch: e.changedTouches[0]
-        });
+        }, true);
     },
 
     reset: function() {

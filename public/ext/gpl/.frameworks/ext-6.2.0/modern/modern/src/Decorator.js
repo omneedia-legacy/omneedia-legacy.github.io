@@ -45,9 +45,13 @@ Ext.define('Ext.Decorator', {
 
     config: {
         /**
-         * @cfg {Object} component The config object to factory the Component that this Decorator wraps around
+         * @cfg {Object} component
+         * The config object to factory the Component that this Decorator wraps around.
+         * @cmd-auto-dependency { aliasPrefix: 'widget.', typeProperty: 'xtype' }
          */
-        component: {}
+        component: {
+            xtype: 'component'
+        }
     },
 
     statics: {
@@ -110,7 +114,7 @@ Ext.define('Ext.Decorator', {
      * @private
      */
     applyComponent: function(config) {
-        return Ext.factory(config, Ext.Component);
+        return Ext.factory(config);
     },
 
     /**
@@ -192,7 +196,7 @@ Ext.define('Ext.Decorator', {
         this.getComponent().setDisabled(disabled);
     },
 
-    destroy: function() {
+    doDestroy: function() {
         Ext.destroy(this.getComponent());
         this.callParent();
     }

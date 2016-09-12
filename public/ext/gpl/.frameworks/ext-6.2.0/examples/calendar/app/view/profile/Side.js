@@ -1,16 +1,12 @@
 Ext.define('Calendar.view.profile.Side', {
-    extend: 'Ext.Panel',
+    extend: 'Ext.Container',
     xtype: 'app-profile-side',
-
-    config: {
-        user: null
-    },
 
     controller: 'app-side',
 
-    viewModel: { type: 'app-side' },
-
-    publishes: [ 'user' ],
+    viewModel: {
+        type: 'app-side'
+    },
 
     cls: 'profile-side',
 
@@ -30,6 +26,7 @@ Ext.define('Calendar.view.profile.Side', {
         cls: 'profile-side-icon',
         height: 128,
         width: 128,
+        alt: 'User Image',
         bind: {
             src: '{icon}'
         }

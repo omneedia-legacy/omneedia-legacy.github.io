@@ -75,7 +75,7 @@ Ext.define('Ext.window.Toast', {
     useXAxis: false,
 
     /**
-     * @cfg {"br"/"bl"/"tr"/"tl"/"t"/"l"/"b"/"r"} [align="br"]
+     * @cfg {"br"/"bl"/"tr"/"tl"/"t"/"l"/"b"/"r"} [align]
      * Specifies the basic alignment of the toast message with its {@link #anchor}. This 
      * controls many aspects of the toast animation as well. For fine grain control of 
      * the final placement of the toast and its `anchor` you may set 
@@ -92,7 +92,9 @@ Ext.define('Ext.window.Toast', {
      *  - b  - bottom
      *  - r  - right
      */
-    align: 'br',
+    align: 't',
+
+    alwaysOnTop: true,
 
     /**
      * @cfg {String} [anchorAlign]
@@ -472,8 +474,12 @@ Ext.define('Ext.window.Toast', {
     },
 
     afterPositioned: function() {
-        if (this.autoClose) {
-            this.closeTask.delay(this.autoCloseDelay);
+        var me = this;
+        
+        // This method can be called from afteranimation event being fired
+        // during destruction sequence.
+        if (!me.destroying && !me.destroyed && me.autoClose) {
+            me.closeTask.delay(me.autoCloseDelay);
         }
     },
 
@@ -551,6 +557,12 @@ Ext.define('Ext.window.Toast', {
             me.closeOnMouseOut = true;
         }
     },
+    
+    doDestroy: function() {
+        this.removeFromAnchor();
+        this.cancelAutoClose();
+        this.callParent();
+    },
 
     onMouseEnter: function () {
         this.mouseIsOver = true;
@@ -592,12 +604,10 @@ Ext.define('Ext.window.Toast', {
             el = me.el;
 
         me.cancelAutoClose();
-
+        
         if (me.isHiding) {
             if (!me.isFading) {
                 me.callParent(arguments);
-                // Must come after callParent() since it will pass through hide() again triggered by destroy()
-                me.removeFromAnchor();
                 me.isHiding = false;
             }
         }
@@ -609,15 +619,21 @@ Ext.define('Ext.window.Toast', {
             me.cancelAutoClose();
 
             if (el) {
-                if (me.enableAnimations) {
+                if (me.enableAnimations && !me.destroying && !me.destroyed) {
                     el.fadeOut({
                         opacity: 0,
                         easing: 'easeIn',
                         duration: me.hideDuration,
                         listeners: {
-                            afteranimate: function () {
+                            scope: me,
+                            afteranimate: function() {
+                                var me = this;
+                                
                                 me.isFading = false;
-                                me.hide(me.animateTarget, me.doClose, me);
+                                
+                                if (!me.destroying && !me.destroyed) {
+                                    me.hide(me.animateTarget, me.doClose, me);
+                                }
                             }
                         }
                     });

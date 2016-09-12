@@ -92,6 +92,7 @@ Ext.define('Ext.chart.AbstractChart', {
         'Ext.data.StoreManager',
         'Ext.chart.legend.Legend',
         'Ext.chart.legend.SpriteLegend',
+        'Ext.chart.legend.store.Store',
         'Ext.data.Store'
     ],
 
@@ -503,15 +504,16 @@ Ext.define('Ext.chart.AbstractChart', {
      * The z-indexes to use for the various surfaces
      */
     surfaceZIndexes: {
-        background: 0,
-        main: 1,
-        grid: 2,
-        series: 3,
-        axis: 4,
-        chart: 5,
-        overlay: 6,
-        legend: 7,
-        title: 8
+        background: 0, // Contains the backround 'rect' sprite.
+        main: 1,       // Contains grid lines and CrossZoom overlay 'rect' sprite.
+        grid: 2,       // Reserved (unused).
+        series: 3,     // Contains series sprites.
+        axis: 4,       // Reserved.
+        chart: 5,      // Covers whole chart, minus the legend area.
+        overlay: 6,    // This surface will typically contain chart labels
+                       // and interaction sprites like crosshair lines.
+        legend: 7,     // SpriteLegend surface.
+        title: 8       // Reserved.
     },
 
     constructor: function (config) {
@@ -528,7 +530,7 @@ Ext.define('Ext.chart.AbstractChart', {
 
         me.callParent(arguments);
 
-        delete me.isInitializing;
+        me.isInitializing = false;
 
         me.getSurface('main');
         me.getSurface('chart').setFlipRtlText(me.getInherited().rtl);
@@ -613,13 +615,15 @@ Ext.define('Ext.chart.AbstractChart', {
      * Suspends chart's layout.
      */
     suspendChartLayout: function () {
-        this.chartLayoutSuspendCount++;
-        if (this.chartLayoutSuspendCount === 1) {
-            if (this.scheduledLayoutId) {
-                this.layoutInSuspension = true;
-                this.cancelChartLayout();
+        var me = this;
+
+        me.chartLayoutSuspendCount++;
+        if (me.chartLayoutSuspendCount === 1) {
+            if (me.scheduledLayoutId) {
+                me.layoutInSuspension = true;
+                me.cancelChartLayout();
             } else {
-                this.layoutInSuspension = false;
+                me.layoutInSuspension = false;
             }
         }
     },
@@ -630,10 +634,12 @@ Ext.define('Ext.chart.AbstractChart', {
      * a layout is scheduled.
      */
     resumeChartLayout: function () {
-        this.chartLayoutSuspendCount--;
-        if (this.chartLayoutSuspendCount === 0) {
-            if (this.layoutInSuspension) {
-                this.scheduleLayout();
+        var me = this;
+
+        me.chartLayoutSuspendCount--;
+        if (me.chartLayoutSuspendCount === 0) {
+            if (me.layoutInSuspension) {
+                me.scheduleLayout();
             }
         }
     },
@@ -664,11 +670,14 @@ Ext.define('Ext.chart.AbstractChart', {
     },
 
     doScheduleLayout: function () {
-        if (this.chartLayoutSuspendCount) {
-            this.layoutInSuspension = true;
+        var me = this;
+
+        if (me.chartLayoutSuspendCount) {
+            me.layoutInSuspension = true;
         } else {
-            this.performLayout();
+            me.performLayout();
         }
+        me.scheduledLayoutId = null;
     },
 
     /**
@@ -829,22 +838,6 @@ Ext.define('Ext.chart.AbstractChart', {
                 }
             }
             legendStore.setData(legendData);
-        }
-    },
-
-    resetLegendStore: function () {
-        var store = this.getLegendStore(),
-            data, i, len, record;
-
-        if (store) {
-            data = this.getLegendStore().getData().items;
-
-            for (i = 0, len = data.length; i < len; i++) {
-                record = data[i];
-                record.beginEdit();
-                record.set('disabled', false);
-                record.commit();
-            }
         }
     },
 
@@ -1201,7 +1194,7 @@ Ext.define('Ext.chart.AbstractChart', {
             chartTheme = theme.getChart(),
             initialConfig = me.getInitialConfig(),
             defaultConfig = me.defaultConfig,
-            configs = me.getConfigurator().configs,
+            configs = me.self.getConfigurator().configs,
             genericChartTheme = chartTheme.defaults,
             specificChartTheme = chartTheme[me.xtype],
             themeOnlyIfConfigured = me.themeOnlyIfConfigured,
@@ -1376,7 +1369,7 @@ Ext.define('Ext.chart.AbstractChart', {
         }
 
         for (i in oldMap) {
-            if (!result.map[oldMap[i].getId()]) {
+            if (!result.map[oldMap[i].id]) {
                 oldMap[i].destroy();
             }
         }
@@ -1512,7 +1505,7 @@ Ext.define('Ext.chart.AbstractChart', {
     updateStore: function (newStore, oldStore) {
         var me = this;
 
-        if (oldStore) {
+        if (oldStore && !oldStore.destroyed) {
             oldStore.un({
                 datachanged: 'onDataChanged',
                 update: 'onDataChanged',

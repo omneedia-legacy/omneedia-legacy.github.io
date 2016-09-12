@@ -1,5 +1,5 @@
 /**
- *
+ * @class Ext.Widget
  */
 Ext.define('Ext.overrides.Widget', {
     override: 'Ext.Widget',
@@ -138,8 +138,9 @@ Ext.define('Ext.overrides.Widget', {
         y: null,
 
         /**
-         * @cfg {Boolean} [shadow=false]
-         * Configure as `true` for the component to have a drop shadow according to the current theme.
+         * @cfg {Boolean} [shadow]
+         * Configure as `true` for the component to have a drop shadow. 'false' will suppress any default shadow.
+         * By default the theme will determine the presence of a shadow.
          *
          * @since 6.2.0
          */
@@ -196,11 +197,18 @@ Ext.define('Ext.overrides.Widget', {
     floatedSelector: '.' + Ext.baseCSSPrefix + 'floated',
 
     /**
-     * @property {String} [shadowCls="x-shadow"] The CSS class to add to this component when it has a shadow.
+     * @property {String} [shadowCls] The CSS class to add to this component when it has a shadow.
      * @private
      * @readonly
      */
-    shadowCls: Ext.baseCSSPrefix + 'float-shadow',
+    shadowCls: Ext.baseCSSPrefix + 'shadow',
+
+    /**
+     * @property {String} [shadowCls] The CSS class to add to this component should not have a shadow.
+     * @private
+     * @readonly
+     */
+    noShadowCls: Ext.baseCSSPrefix + 'no-shadow',
     
     /**
      * @property {String} [floatWrapCls="x-float-wrap"] The CSS class to add to this component's floatWrap when it's created.
@@ -261,8 +269,15 @@ Ext.define('Ext.overrides.Widget', {
     beforeHide: Ext.emptyFn,
 
     afterHide: function() {
-        if (this.isFloated()) {
-            this.syncShim();
+        var me = this,
+            parent = me.getParent();
+
+        if (parent && parent.afterItemHide) {
+            parent.afterItemHide(me);
+        }
+
+        if (me.isFloated()) {
+            me.syncShim();
         }
     },
 
@@ -284,7 +299,14 @@ Ext.define('Ext.overrides.Widget', {
         }
     },
 
-    afterShow: Ext.emptyFn,
+    afterShow: function() {
+        var me = this,
+            parent = me.getParent();
+
+        if (parent && parent.afterItemShow) {
+            parent.afterItemShow(me);
+        }
+    },
 
     applyItemId: function(itemId) {
         return itemId || this.getId();
@@ -524,8 +546,9 @@ Ext.define('Ext.overrides.Widget', {
      * @protected
      */
     getAlignmentInfo: function (component, alignment){
-        var alignToBox = component.isRegion ? component : (component.isComponent ? component.renderElement : Ext.fly(component)).getBox(),
-            element = this.renderElement,
+        var me = this,
+            alignToBox = component.isRegion ? component : (component.isComponent ? component.renderElement : Ext.fly(component)).getBox(),
+            element = me.renderElement,
             box = element.getBox(),
             stats = {
                 alignToBox: alignToBox,
@@ -540,7 +563,7 @@ Ext.define('Ext.overrides.Widget', {
                 width: box.width,
                 height: box.height
             },
-            currentAlignmentInfo = this.getCurrentAlignmentInfo(),
+            currentAlignmentInfo = me.getCurrentAlignmentInfo(),
             isAligned = true;
 
         if (!Ext.isEmpty(currentAlignmentInfo)) {
@@ -580,12 +603,11 @@ Ext.define('Ext.overrides.Widget', {
     alignTo: function(component, alignment, options) {
         var me = this,
             alignmentInfo = me.getAlignmentInfo(component, alignment),
-            resultRegion,
             config = me.initialConfig,
-            oldHeight,
             positioned = me.isPositioned(),
             setX = positioned ? me.setLeft : me.setX,
-            setY = positioned ? me.setTop : me.setY;
+            setY = positioned ? me.setTop : me.setY,
+            oldHeight, resultRegion;
 
         if (alignmentInfo.isAligned) {
             return;
@@ -1107,6 +1129,7 @@ Ext.define('Ext.overrides.Widget', {
 
         updateShadow: function(shadow) {
             this.el.toggleCls(this.shadowCls, shadow);
+            this.el.toggleCls(this.noShadowCls, shadow === false);
         },
 
         updateX: function() {

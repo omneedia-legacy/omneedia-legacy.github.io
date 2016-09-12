@@ -1,4 +1,4 @@
-.#{$prefix}grid-column:after {
+.#{$prefix}gridcolumn:after {
   content: '';
   width: 0;
   background-color: $accent-light-color;
@@ -8,10 +8,7 @@
   top: 0;
 }
 
-.#{$prefix}grid-column.#{$prefix}grid-column-resizing:after {
+.#{$prefix}gridcolumn.#{$prefix}resizing:after {
   width: 16px;
 }
 
-.#{$prefix}grid-resize-marker {
-  background-color: $divider-color;
-}

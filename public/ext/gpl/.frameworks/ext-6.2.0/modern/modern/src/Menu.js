@@ -38,85 +38,88 @@ Ext.define('Ext.Menu', {
     xtype: 'menu',
     requires: ['Ext.Button'],
 
-    config: {
-        /**
-         * @cfg
-         * @inheritdoc
-         */
-        baseCls: Ext.baseCSSPrefix + 'menu',
+    /**
+     * @cfg
+     * @inheritdoc
+     */
+    baseCls: Ext.baseCSSPrefix + 'menu',
 
-        /**
-         * @cfg
-         * @inheritdoc
-         */
-        left: 0,
+    /**
+     * @cfg
+     * @inheritdoc
+     */
+    left: 0,
 
-        /**
-         * @cfg
-         * @inheritdoc
-         */
-        right: 0,
+    /**
+     * @cfg
+     * @inheritdoc
+     */
+    right: 0,
 
-        /**
-         * @cfg
-         * @inheritdoc
-         */
-        bottom: 0,
+    /**
+     * @cfg
+     * @inheritdoc
+     */
+    bottom: 0,
 
-        /**
-         * @cfg
-         * @inheritdoc
-         */
-        height: 'auto',
+    /**
+     * @cfg
+     * @inheritdoc
+     */
+    height: 'auto',
 
-        /**
-         * @cfg
-         * @inheritdoc
-         */
-        width: 'auto',
+    /**
+     * @cfg
+     * @inheritdoc
+     */
+    width: 'auto',
 
-        /**
-         * @cfg
-         * @inheritdoc
-         */
-        defaultType: 'button',
+    /**
+     * @cfg
+     * @inheritdoc
+     */
+    defaultType: 'button',
 
-        /**
-         * @hide
-         */
-        showAnimation: null,
+    /**
+     * @hide
+     */
+    showAnimation: null,
 
-        /**
-         * @hide
-         */
-        hideAnimation: null,
+    /**
+     * @hide
+     */
+    hideAnimation: null,
 
-        /**
-         * @hide
-         */
-        centered: false,
+    /**
+     * @hide
+     */
+    centered: false,
 
-        /**
-         * @hide
-         */
-        modal: true,
+    /**
+     * @hide
+     */
+    modal: true,
 
-        /**
-         * @hide
-         */
-        hidden: true,
+    /**
+     * @hide
+     */
+    hidden: true,
 
-        /**
-         * @hide
-         */
-        hideOnMaskTap: true,
+    /**
+     * @hide
+     */
+    hideOnMaskTap: true,
 
-        /**
-         * @hide
-         */
-        translatable: {
-            translationMethod: null
-        }
+    /**
+     * @hide
+     */
+    translatable: {
+        translationMethod: null
+    },
+
+    layout: {
+        type: 'vbox',
+        align: 'stretch'
     },
 
     floated: true,

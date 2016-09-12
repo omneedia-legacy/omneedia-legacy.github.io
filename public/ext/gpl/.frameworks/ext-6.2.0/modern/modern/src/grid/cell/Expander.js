@@ -1,11 +1,17 @@
 Ext.define('Ext.grid.cell.Expander', {
     extend: 'Ext.grid.cell.Base',
     xtype: 'expandercell',
+    isExpanderCell: true,
 
-    element: {
-        reference: 'element',
-        cls: Ext.baseCSSPrefix + 'grid-expander-cell'
-    },
+    align: 'center',
 
-    isExpanderCell: true
+    classCls: Ext.baseCSSPrefix + 'expandercell',
+
+    innerTemplate: [{
+        reference: 'iconElement',
+        classList:[
+            Ext.baseCSSPrefix + 'icon-el',
+            Ext.baseCSSPrefix + 'font-icon'
+        ]
+    }]
 });

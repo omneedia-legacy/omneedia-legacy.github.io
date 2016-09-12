@@ -3,32 +3,37 @@ Ext.define('Calendar.view.calendar.Panel', {
     xtype: 'app-calendar',
 
     config: {
-        sideHeaderCfg: null
-    },
-
-    constructor: function() {
-        var me = this,
-            sidebar;
-
-        me.callParent(arguments);
-
-        // TODO: virtual getSideBarConfig()
-        sidebar = me.down('#sideBar');
-        sidebar.setUi('default');
-        me.sideHeaderItem = sidebar.insert(0, me.getSideHeaderCfg());
+        calendarList: {
+            padding: 8
+        },
+        sideBar: {
+            ui: 'default',
+            bodyPadding: 0,
+            title: 'Ext JS Calendar'
+        },
+        sheet: {
+            title: 'Ext JS Calendar',
+            ui: 'default'
+        },
+        sideBarHeader: {
+            weight: -1,
+            margin: '0 0 3em 0'
+        }
     },
 
     privates: {
-        onMenuButtonTap: function() {
-            var me = this,
-                initialized = !!me.sheet;
+        attachHeader: function(c) {
+            // we need to initialize the header within the panel scope (instead of
+            // the sheet one) to ensure that bindings are correctly resolved.
+            c.items.unshift(this.getSideBarHeader());
+            return c;
+        },
 
-            this.callParent(arguments);
-
-            if (!initialized && me.sheet) {
-                me.sheet.insert(0, me.sideHeaderItem);
-                me.sheet.setUi('default');
-            }
+        createSheet: function() {
+            return this.attachHeader(this.callParent());
+        },
+        createSideBar: function() {
+            return this.attachHeader(this.callParent());
         }
     }
 });

@@ -37,10 +37,6 @@ Ext.define('Ext.window.Window', {
         'Ext.util.Region'
     ],
 
-    mixins: [
-        'Ext.util.FocusTrap'
-    ],
-
     alias: 'widget.window',
 
     /**
@@ -358,6 +354,7 @@ Ext.define('Ext.window.Window', {
 
     ariaRole: 'dialog',
     focusable: true,
+    tabGuard: true,
     
     //<locale>
     closeToolText: 'Close dialog',
@@ -497,7 +494,7 @@ Ext.define('Ext.window.Window', {
             // grab the position from the final box
             pos = [ghostBox.x, ghostBox.y];
         } else {
-            pos = me.getPosition();
+            pos = me.getPosition(true);
         }
         Ext.apply(state, {
             size: maximized ? me.restoreSize : me.getSize(),
@@ -562,6 +559,8 @@ Ext.define('Ext.window.Window', {
         }
 
         me.callParent();
+        
+        me.initTabGuards();
     },
 
     /**
@@ -572,13 +571,15 @@ Ext.define('Ext.window.Window', {
         this.close();
     },
 
-    beforeDestroy: function() {
+    doDestroy: function() {
         var me = this;
+        
         if (me.rendered) {
             Ext.un('resize', me.onWindowResize, me);
             delete me.animateTarget;
             me.hide();
         }
+        
         me.callParent();
     },
 
@@ -616,15 +617,83 @@ Ext.define('Ext.window.Window', {
             me.addTool(tools);
         }
     },
+    
+    addTool: function(tools) {
+        var me = this;
+        
+        me.callParent([tools]);
+        
+        if (me.rendered && me.tabGuard) {
+            me.initTabGuards();
+        }
+    },
+    
+    add: function() {
+        var me = this,
+            ret;
+        
+        ret = me.callParent(arguments);
+        
+        if (me.rendered && me.tabGuard) {
+            me.initTabGuards();
+        }
+        
+        return ret;
+    },
+    
+    remove: function() {
+        var me = this,
+            ret;
+        
+        ret = me.callParent(arguments);
+        
+        if (me.rendered && me.tabGuard) {
+            me.initTabGuards();
+        }
+        
+        return ret;
+    },
+    
+    addDocked: function() {
+        var me = this,
+            ret;
+        
+        ret = me.callParent(arguments);
+        
+        if (me.rendered && me.tabGuard) {
+            me.initTabGuards();
+        }
+        
+        return ret;
+    },
+    
+    removeDocked: function() {
+        var me = this,
+            ret;
+        
+        ret = me.callParent(arguments);
+        
+        if (me.rendered && me.tabGuard) {
+            me.initTabGuards();
+        }
+        
+        return ret;
+    },
 
     onShow: function() {
         var me = this;
 
         me.callParent(arguments);
+        
         if (me.expandOnShow) {
             me.expand(false);
         }
+        
         me.syncMonitorWindowResize();
+        
+        if (me.rendered && me.tabGuard) {
+            me.initTabGuards();
+        }
    },
 
     /**
@@ -636,7 +705,10 @@ Ext.define('Ext.window.Window', {
         // Being called as callback after going through the hide call below
         if (me.hidden) {
             me.fireEvent('close', me);
-            if (me.closeAction === 'destroy') {
+            
+            // This method can be called from hide() which in turn can be called
+            // from destroy()
+            if (me.closeAction === 'destroy' && !me.destroying && !me.destroyed) {
                 me.destroy();
             }
         } else {
@@ -656,6 +728,10 @@ Ext.define('Ext.window.Window', {
 
         // Perform superclass's afterHide tasks.
         me.callParent(arguments);
+        
+        if (me.rendered && me.tabGuard) {
+            me.initTabGuards();
+        }
     },
 
     /**
@@ -1009,6 +1085,59 @@ Ext.define('Ext.window.Window', {
             dd = me.dd;
             if (dd && me.maximized || me.maximizing) {
                 dd.disable();
+            }
+        },
+        
+        onTabGuardFocusEnter: function(e, target) {
+            var me = this,
+                el = me.el,
+                beforeGuard = me.tabGuardBeforeEl,
+                afterGuard = me.tabGuardAfterEl,
+                from = e.relatedTarget,
+                nodes, forward, nextFocus;
+
+            nodes = el.findTabbableElements({
+                skipSelf: true
+            });
+            
+            // Tabbables might include two tab guards, so remove them
+            if (nodes[0] === beforeGuard.dom) {
+                nodes.shift();
+            }
+            
+            if (nodes[nodes.length - 1] === afterGuard.dom) {
+                nodes.pop();
+            }
+            
+            // Totally possible not to have anything tabbable within the window
+            // but we have to do something so focus back the window el. At least
+            // in that case the user will be able to press Escape key to close it.
+            if (nodes.length === 0) {
+                nextFocus = el;
+            }
+            // The window itself was focused, possibly by clicking or programmatically;
+            // but this time we do have something tabbable to choose from.
+            else if (from === el.dom) {
+                forward = target === beforeGuard.dom;
+            }
+            // Focus was within the window and is trying to escape; 
+            // for topmost guard we need to bounce focus back to the last tabbable
+            // element in the window, and vice versa for the bottom guard.
+            else if (el.contains(from)) {
+                forward = !!e.forwardTab;
+            }
+            // It is entirely possible that focus was outside the window and
+            // the user tabbed into the window. In that case we forward the focus
+            // to the next available element in the natural tab order, i.e. the element
+            // after the topmost guard, or the element before the bottom guard.
+            else {
+                forward = target === beforeGuard.dom;
+            }
+            
+            nextFocus = nextFocus || (forward ? nodes[0] : nodes[nodes.length - 1]);
+            
+            if (nextFocus) {
+                nextFocus.focus();
             }
         }
     }

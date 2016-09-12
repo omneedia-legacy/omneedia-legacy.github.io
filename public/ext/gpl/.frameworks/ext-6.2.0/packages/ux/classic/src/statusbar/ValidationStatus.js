@@ -120,11 +120,11 @@ Ext.define('Ext.ux.statusbar.ValidationStatus', {
         }
     },
 
-    onDestroy : function() {
+    doDestroy: function() {
         Ext.destroy(this.msgEl);
         this.stopMonitoring();
         this.statusBar.statusEl.un('click', this.onStatusClick, this);
-        this.callParent(arguments);
+        this.callParent();
     },
 
     /**

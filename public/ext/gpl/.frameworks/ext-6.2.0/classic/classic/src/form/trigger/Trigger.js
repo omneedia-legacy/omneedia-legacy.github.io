@@ -57,6 +57,13 @@ Ext.define('Ext.form.trigger.Trigger', {
      */
 
     /**
+     * @cfg {String} tooltip
+     * The triggers tooltip text. This text is available when using `Ext.QuickTips`.
+     * @since 6.2.0
+     */
+    tooltip: null,
+
+    /**
      * @cfg {Number} weight
      * An optional weighting to change the ordering of the items. The default weight is
      * `0`.  Triggers are sorted by weight in ascending order before being rendered.  
@@ -179,7 +186,15 @@ Ext.define('Ext.form.trigger.Trigger', {
      * Called when this trigger's field is rendered
      */
     afterFieldRender: function() {
-        this.initEvents();
+        var me = this,
+            tip = me.tooltip;
+
+        me.initEvents();
+
+        if (tip) {
+            me.tooltip = null;
+            me.setTooltip(tip);
+        }
     },
 
     destroy: function() {
@@ -241,6 +256,7 @@ Ext.define('Ext.form.trigger.Trigger', {
                 handler: me.onClick,
                 listeners: {
                     mousedown: me.onClickRepeaterMouseDown,
+                    mouseup: me.onClickRepeaterMouseUp,
                     scope: me
                 },
                 scope: me
@@ -332,6 +348,13 @@ Ext.define('Ext.form.trigger.Trigger', {
         e.preventDefault();
     },
 
+    onClickRepeaterMouseUp: function(e) {
+        var me = this,
+            field = me.field;
+
+        Ext.callback(me.endHandler, me.scope, [field, me, e], 0, field);
+    },
+
     /**
      * @protected
      * Called when this trigger's field is blurred
@@ -414,6 +437,20 @@ Ext.define('Ext.form.trigger.Trigger', {
     setHidden: function (hidden) {
         if (hidden !== this.hidden) {
             this[hidden ? 'hide' : 'show']();
+        }
+    },
+
+    setTooltip: function (tip) {
+        var me = this,
+            el = me.el,
+            was = me.tooltip;
+
+        if (tip !== was) {
+            me.tooltip = tip;
+
+            if (el) {
+                el.dom.setAttribute('data-qtip', Ext.htmlEncode(tip));
+            }
         }
     },
 

@@ -108,30 +108,29 @@ describe("Ext.event.publisher.Gesture", function() {
         });
     });
     
-    describe("execptions in recognizers", function() {
+    // window.onerror method of catching exceptions in synthetic event handlers
+    // doesn't work in IE8 for some reason :(
+    (Ext.isIE8m ? xdescribe : describe)("exceptions in recognizers", function() {
         var gesture = Ext.event.publisher.Gesture.instance;
 
         beforeEach(function() {
             targetEl.on('tap', function() {
-                throw new Error("This error is expected and can't be handled, don't worry about it :)");
+                throw new Error("This error is caught but will show in console IE");
             });
         });
         
-        // For some reason the exception is NOT get caught by outer try/catch block!
-        // TODO Revisit and find out what the heck is going on here.
-        xit("should allow the exception to propagate", function() {
+        it("should allow the exception to propagate", function() {
             expect(function() {
                 helper.touchStart(targetEl, { id: 1, x: 1, y: 1 });
                 helper.touchEnd(targetEl, { id: 1, x: 1, y: 1 });
-            }).toThrow('foo');
+            }).toThrow('This error is caught but will show in console IE');
         });
         
         it("should finish gesture an exception is thrown in recognizer", function() {
-            try {
+            expect(function() {
                 helper.touchStart(targetEl, { id: 1, x: 1, y: 1 });
                 helper.touchEnd(targetEl, { id: 1, x: 1, y: 1 });
-            }
-            catch (e) {};
+            }).toThrow('This error is caught but will show in console IE');
             
             expect(gesture.isStarted).toBe(false);
         });

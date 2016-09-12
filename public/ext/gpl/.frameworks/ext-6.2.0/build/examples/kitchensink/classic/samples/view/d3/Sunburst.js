@@ -1,6 +1,17 @@
+/**
+ * The 'd3-sunburst' component visualizes tree nodes as donut sectors,
+ * with the root circle in the center. The angle and area of each sector corresponds
+ * to its value. By default the same value is returned for each node, meaning that
+ * siblings will span equal angles and occupy equal area.
+ * This example visualizes the D3 directory structure, where the sizes of
+ * files are of no interest, so each file slice takes up equal area. One could
+ * modify the example, however, by setting the `nodeValue` config to 'size'
+ * to make slices occupy areas proportional to file size.
+ */
 Ext.define('KitchenSink.view.d3.Sunburst', {
     extend: 'Ext.panel.Panel',
     xtype: 'd3-view-sunburst',
+    controller: 'sunburst',
 
     requires: [
         'KitchenSink.view.d3.TreeViewModel',
@@ -10,6 +21,10 @@ Ext.define('KitchenSink.view.d3.Sunburst', {
     // <example>
     // Content between example tags is omitted from code preview.
     otherContent: [
+        {
+            type: 'Controller',
+            path: 'classic/samples/view/d3/SunburstController.js'
+        },
         {
             type: 'Model',
             path: 'classic/samples/model/Tree.js'
@@ -34,24 +49,7 @@ Ext.define('KitchenSink.view.d3.Sunburst', {
         type: 'tree'
     },
 
-    session: true,
-    resizable: {
-        constrain: true
-    },
-
     items: [
-        {
-            xtype: 'breadcrumb',
-
-            region: 'north',
-
-            bind: {
-                store: '{store}',
-                selection: '{selection}'
-            },
-
-            publishes: 'selection'
-        },
         {
             xtype: 'treepanel',
 
@@ -60,7 +58,7 @@ Ext.define('KitchenSink.view.d3.Sunburst', {
             splitterResize: false,
             collapsible: true,
             minWidth: 100,
-            width: 215,
+            width: 230,
 
             title: 'Folders',
             useArrows: true,
@@ -68,7 +66,8 @@ Ext.define('KitchenSink.view.d3.Sunburst', {
 
             bind: {
                 store: '{store}',
-                selection: '{selection}'
+                selection: '{selection}',
+                focused: '{selection}'
             }
         },
         {
@@ -84,6 +83,9 @@ Ext.define('KitchenSink.view.d3.Sunburst', {
                 bind: {
                     store: '{store}',
                     selection: '{selection}'
+                },
+                tooltip: {
+                    renderer: 'onTooltip'
                 }
             }
         }

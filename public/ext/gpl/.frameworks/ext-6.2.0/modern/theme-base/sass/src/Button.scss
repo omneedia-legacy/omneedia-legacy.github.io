@@ -4,7 +4,7 @@
 
 .x-button,
 .x-tab {
-    @include st-box;
+    @include st-inline-box;
     @include st-box-align(center);
 
     position: relative;
@@ -16,7 +16,7 @@
         overflow: visible;
     }
 
-    &.x-item-disabled {
+    &.x-disabled {
         cursor: default;
     }
 }
@@ -71,7 +71,7 @@
 
 // Button labels
 .x-button-label {
-    @include st-box-flex(1);
+    @include st-box-flex(1, 'auto');
     text-align: center;
     white-space: nowrap;
     text-overflow: ellipsis;

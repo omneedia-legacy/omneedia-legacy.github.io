@@ -57,7 +57,7 @@ Ext.define('Ext.layout.HBox', {
 
     alias: 'layout.hbox',
 
-    cls: [ Ext.baseCSSPrefix + 'layout-box', Ext.baseCSSPrefix + 'layout-hbox' ],
-
-    itemCls: [ Ext.baseCSSPrefix + 'layout-box-item', Ext.baseCSSPrefix + 'layout-hbox-item' ]
+    config: {
+        vertical: false
+    }
 });

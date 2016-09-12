@@ -48,6 +48,9 @@ describe("Ext.tip.ToolTip", function() {
             Ext.testHelper.tap(targetEl, {x:xy[0], y:xy[1]});
         }
     }
+    function mouseOutTarget() {
+        jasmine.fireMouseEvent(target, 'mouseout', 1000, 1000);
+    }
 
     describe("basic", function() {
         it("should accept an id for the 'target' config", function() {
@@ -63,6 +66,15 @@ describe("Ext.tip.ToolTip", function() {
         it("should accept an HTMLElement for the 'target' config", function() {
             createTip({target: target.dom});
             expect(tip.getTarget().dom).toBe(target.dom);
+        });
+
+        it('should show with no errors thrown', function() {
+            createTip({
+                target: null
+            });
+            expect(function() {
+                tip.show();
+            }).not.toThrow();
         });
     });
 
@@ -171,7 +183,7 @@ describe("Ext.tip.ToolTip", function() {
     describe("mouseOffset", function() {
         it("should display the tooltip [15,18] from the mouse pointer by default", function() {
             runs(function() {
-                createTip({showDelay: 1});
+                createTip({showDelay: 1, anchorToTarget: false});
                 mouseOverTarget();
             });
             waitsFor(function() {
@@ -184,7 +196,7 @@ describe("Ext.tip.ToolTip", function() {
 
         it("should allow configuring the mouseOffset", function() {
             runs(function() {
-                createTip({showDelay: 1, mouseOffset: [20, 30]});
+                createTip({showDelay: 1, anchorToTarget: false, mouseOffset: [20, 30]});
                 mouseOverTarget();
             });
             waitsFor(function() {
@@ -219,28 +231,28 @@ describe("Ext.tip.ToolTip", function() {
 
     describe("anchor", function() {
         it("should allow anchoring the top of the tooltip to the target", function() {
-            createTip({anchor: 'top'});
+            createTip({align: 't-b?', anchor: true});
             tip.show();
             var tgtXY = target.getXY();
             expect(tip.el).toBePositionedAt(tgtXY[0], tgtXY[1] + target.getHeight() + tip.anchorSize.y);
         });
 
         it("should allow anchoring the right of the tooltip to the target", function() {
-            createTip({anchor: 'right'});
+            createTip({align: 'r-l?', anchor: true});
             tip.show();
             var tgtXY = target.getXY();
             expect(tip.el).toBePositionedAt(tgtXY[0] - tip.el.getWidth() - tip.anchorSize.y, tgtXY[1]);
         });
 
         it("should allow anchoring the bottom of the tooltip to the target", function() {
-            createTip({anchor: 'bottom'});
+            createTip({align: 'b-t?', anchor: true});
             tip.show();
             var tgtXY = target.getXY();
             expect(tip.el).toBePositionedAt(tgtXY[0], tgtXY[1] - tip.el.getHeight() - tip.anchorSize.y);
         });
 
         it("should allow anchoring the left of the tooltip to the target", function() {
-            createTip({anchor: 'left'});
+            createTip({align: 'l-r?', anchor: true});
             tip.show();
             var tgtXY = target.getXY();
             expect(tip.el).toBePositionedAt(tgtXY[0] + target.getWidth() + tip.anchorSize.y, tgtXY[1]);
@@ -248,7 +260,7 @@ describe("Ext.tip.ToolTip", function() {
 
         it("should flip from top to left if not enough space below the target", function() {
             target.setY(Ext.Element.getViewportHeight() - 75);
-            createTip({anchor: 'top'});
+            createTip({align: 't-b?', anchor: true});
             tip.show();
             var tgtXY = target.getXY();
             expect(tip.el).toBePositionedAt(tgtXY[0] - tip.el.getWidth() - tip.anchorSize.y, tgtXY[1]);
@@ -256,7 +268,7 @@ describe("Ext.tip.ToolTip", function() {
 
         it("should flip from top to bottom if not enough space below the target and axisLock: true", function() {
             target.setY(Ext.Element.getViewportHeight() - 75);
-            createTip({anchor: 'top', axisLock: true});
+            createTip({align: 't-b?', anchor: true, axisLock: true});
             tip.show();
             var tgtXY = target.getXY();
             expect(tip.el).toBePositionedAt(tgtXY[0], tgtXY[1] - tip.el.getHeight() - tip.anchorSize.y);
@@ -264,7 +276,7 @@ describe("Ext.tip.ToolTip", function() {
 
         it("should flip from bottom to left if not enough space above the target", function() {
             target.setY(25);
-            createTip({anchor: 'bottom'});
+            createTip({align: 'b-t?', anchor: true});
             tip.show();
             var tgtXY = target.getXY();
             expect(tip.el).toBePositionedAt(tgtXY[0] - tip.el.getWidth() - tip.anchorSize.y, tgtXY[1]);
@@ -272,7 +284,7 @@ describe("Ext.tip.ToolTip", function() {
 
         it("should flip from bottom to top if not enough space above the target and axisLock: true", function() {
             target.setY(25);
-            createTip({anchor: 'bottom', axisLock: true});
+            createTip({align: 'b-t?', anchor: true, axisLock: true});
             tip.show();
             var tgtXY = target.getXY();
             expect(tip.el).toBePositionedAt(tgtXY[0], tgtXY[1] + target.getHeight() + tip.anchorSize.y);
@@ -280,7 +292,7 @@ describe("Ext.tip.ToolTip", function() {
 
         it("should flip from right to left if not enough space to the left of the target", function() {
             target.setX(25);
-            createTip({anchor: 'right'});
+            createTip({align: 'r-l?', anchor: true});
             tip.show();
             var tgtXY = target.getXY();
             expect(tip.el).toBePositionedAt(tgtXY[0], tgtXY[1] - tip.el.getHeight() - tip.anchorSize.y);
@@ -288,7 +300,7 @@ describe("Ext.tip.ToolTip", function() {
 
         it("should flip from right to left if not enough space to the left of the target and axisLock: true", function() {
             target.setX(25);
-            createTip({anchor: 'right', axisLock: true});
+            createTip({align: 'r-l?', anchor: true, axisLock: true});
             tip.show();
             var tgtXY = target.getXY();
             expect(tip.el).toBePositionedAt(tgtXY[0] + target.getWidth() + tip.anchorSize.y, tgtXY[1]);
@@ -296,7 +308,7 @@ describe("Ext.tip.ToolTip", function() {
 
         it("should flip from left to right if not enough space to the right of the target and axisLock: true", function() {
             target.setX(Ext.Element.getViewportWidth() - 75);
-            createTip({anchor: 'left', axisLock: true});
+            createTip({align: 'l-r?', anchor: true, axisLock: true});
             tip.show();
             var tgtXY = target.getXY();
             expect(tip.el).toBePositionedAt(tgtXY[0] - tip.el.getWidth() - tip.anchorSize.y, tgtXY[1]);
@@ -304,7 +316,7 @@ describe("Ext.tip.ToolTip", function() {
 
         it("should flip from left to bottom if not enough space to the right of the target", function() {
             target.setX(Ext.Element.getViewportWidth() - 75);
-            createTip({anchor: 'left'});
+            createTip({align: 'l-r?', anchor: true});
             tip.show();
             var tgtXY = target.getXY();
             expect(tip.el).toBePositionedAt(tgtXY[0], tgtXY[1] - tip.el.getHeight() - tip.anchorSize.y);
@@ -315,7 +327,7 @@ describe("Ext.tip.ToolTip", function() {
         it("should allow anchoring the top of the tooltip to the mouse pointer", function() {
             var xy = target.getXY();
             runs(function() {
-                createTip({showDelay: 1, anchorToTarget: false, anchor: 'top'});
+                createTip({showDelay: 1, anchorToTarget: false, align: 't-b?', anchor: true});
                 mouseOverTarget();
             });
             waitsFor(function() {
@@ -329,7 +341,7 @@ describe("Ext.tip.ToolTip", function() {
         it("should allow anchoring the right of the tooltip to the mouse pointer", function() {
             var xy = target.getXY();
             runs(function() {
-                createTip({showDelay: 1, anchorToTarget: false, anchor: 'right'});
+                createTip({showDelay: 1, anchorToTarget: false, align: 'r-l?', anchor: true});
                 mouseOverTarget();
             });
             waitsFor(function() {
@@ -343,7 +355,7 @@ describe("Ext.tip.ToolTip", function() {
         it("should allow anchoring the bottom of the tooltip to the mouse pointer", function() {
             var xy = target.getXY();
             runs(function() {
-                createTip({showDelay: 1, anchorToTarget: false, anchor: 'bottom'});
+                createTip({showDelay: 1, anchorToTarget: false, align: 'b-t?', anchor: true});
                 mouseOverTarget();
             });
             waitsFor(function() {
@@ -357,7 +369,7 @@ describe("Ext.tip.ToolTip", function() {
         it("should allow anchoring the left of the tooltip to the mouse pointer", function() {
             var xy = target.getXY();
             runs(function() {
-                createTip({showDelay: 1, anchorToTarget: false, anchor: 'left'});
+                createTip({showDelay: 1, anchorToTarget: false, align: 'l-r?', anchor: true});
                 mouseOverTarget();
             });
             waitsFor(function() {
@@ -406,6 +418,27 @@ describe("Ext.tip.ToolTip", function() {
             mouseOverTarget(delegatedTarget);
             tip.hide();
             expect(tip.currentTarget.dom).toBeNull();
+        });
+    });
+
+    describe('cancel show', function() {
+        it('should show when rehovering after a show has been canceked', function() {
+            createTip({
+                target: document.body,
+                delegate: '#tipTarget',
+                showDelay: 1000
+            });
+            mouseOverTarget();
+
+            mouseOutTarget();
+
+            tip.setShowDelay(1);
+
+            mouseOverTarget();
+            
+            waitsFor(function() {
+                return tip.isVisible();
+            }, 1000, 'tooltip to show');
         });
     });
 });

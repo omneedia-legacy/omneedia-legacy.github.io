@@ -6,12 +6,13 @@ Ext.define('KitchenSink.view.binding.AlgebraUnary', {
     alias: 'widget.binding-algebra-unary',
 
     bodyPadding: 10,
+    shadow: true,
+    cls: 'demo-solid-background',
 
     viewModel: {
         type: 'default',
         data: {
-            x: 1,
-            package: 'core'
+            x: 1
         }
     },
 
@@ -38,6 +39,6 @@ Ext.define('KitchenSink.view.binding.AlgebraUnary', {
     },{
         label: 'Globals',
         //expressions should have at least one token to be evaluated
-        bind: 'ExtJS version: {@Ext.versions.core.version} ({package})'
+        bind: 'Ext JS version: {@Ext.versions.ext.version}'
     }]
 });

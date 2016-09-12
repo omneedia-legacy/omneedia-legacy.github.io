@@ -622,6 +622,15 @@ Ext.define('Ext.form.field.Date', {
         return this.rawDate || null;
     },
 
+    setRawValue: function(value) {
+        var me = this;
+
+        me.callParent([value]);
+
+        me.rawDate = Ext.isDate(value) ? value : me.rawToValue(value);
+        me.rawDateText = this.formatDate(value);
+    },
+
     /**
      * @private
      */
@@ -731,7 +740,7 @@ Ext.define('Ext.form.field.Date', {
      */
     onBlur: function(e) {
         var me = this,
-            v = me.rawToValue(me.getRawValue())
+            v = me.rawToValue(me.getRawValue());
 
         if (v === '' || Ext.isDate(v)) {
             me.setValue(v);

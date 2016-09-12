@@ -2,7 +2,7 @@
  * Controls the grand totals example.
  */
 Ext.define('KitchenSink.view.pivot.GrandTotalsController', {
-    extend: 'Ext.app.ViewController',
+    extend: 'KitchenSink.view.pivot.PivotController',
 
     alias: 'controller.pivotgrandtotals',
 

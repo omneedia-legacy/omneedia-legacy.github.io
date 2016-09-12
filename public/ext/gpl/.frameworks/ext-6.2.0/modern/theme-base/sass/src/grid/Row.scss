@@ -1,10 +1,8 @@
-.#{$prefix}grid-row {
-    position: absolute;
-    left: 0;
-    top: 0;
+.#{$prefix}grid.#{$prefix}infinite .#{$prefix}gridrow {
+    width: auto;
 }
 
-.#{$prefix}grid-row-cells {
+.#{$prefix}gridrow .#{$prefix}cells-el {
     display: table;
     table-layout: fixed;
     // An explicit width is required for table-layout: fixed to be applied, even if the columns

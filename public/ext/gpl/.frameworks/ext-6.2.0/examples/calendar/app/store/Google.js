@@ -3,7 +3,7 @@ Ext.define('Calendar.store.Google', {
     alias: 'store.calendar-google',
 
     requires: [
-        'Ext.data.google.CalendarsProxy'
+        'Ext.google.data.CalendarsProxy'
     ],
 
     autoSync: true,

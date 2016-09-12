@@ -322,8 +322,13 @@ Ext.define('Ext.view.BoundList', {
         
         node = me.callParent([record]);
         
-        if (node && me.ariaSelectable) {
-            node.setAttribute('aria-selected', 'true');
+        if (node) {
+            if (me.ariaSelectable) {
+                node.setAttribute('aria-selected', 'true');
+            }
+            else {
+                node.removeAttribute('aria-selected');
+            }
         }
         
         return node;
@@ -391,8 +396,9 @@ Ext.define('Ext.view.BoundList', {
         }
     },
 
-    onDestroy: function() {
+    doDestroy: function() {
         this.pagingToolbar = Ext.destroy(this.pagingToolbar);
+        
         this.callParent();
     },
 

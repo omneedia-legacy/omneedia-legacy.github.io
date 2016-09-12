@@ -28,7 +28,7 @@ describe('Ext.form.field.Field', function () {
     });
 
     describe("quicktips/validation", function() {
-        var tf, errorDom;
+        var tf, errorDom, tip;
 
         function createForm(required, cfg) {
             // we're creating textields for testing, but any type that supports validation will do.
@@ -52,6 +52,10 @@ describe('Ext.form.field.Field', function () {
             tf = form.down('textfield');
             errorDom = tf.errorEl.dom;
         }
+        
+        afterEach(function() {
+            tip = Ext.destroy(tip);
+        });
 
         it("should create a validation error icon to the right of the field", function() {
             createForm(); 
@@ -64,7 +68,6 @@ describe('Ext.form.field.Field', function () {
         });
 
         it("should show a quicktip if mouse over the invalid icon", function() {
-            var tip;
             createForm(true, {
                 title: 'quicktip'
             });

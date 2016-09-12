@@ -5,8 +5,15 @@
  */
 Ext.define('Ext.scroll.Scroller', {
     extend: 'Ext.Evented',
+    alias: 'scroller.scroller',
 
-    requires: ['Ext.util.CSS'],
+    mixins: [ 'Ext.mixin.Factoryable' ],
+
+    requires: ['Ext.util.CSS', 'Ext.util.translatable.ScrollPosition'],
+
+    factoryConfig: {
+        defaultType: 'scroller'
+    },
 
     isScroller: true,
 
@@ -149,10 +156,9 @@ Ext.define('Ext.scroll.Scroller', {
          * Creates and returns an appropriate Scroller instance for the current device.
          * @param {Object} config Configuration options for the Scroller
          * @return {Ext.scroll.Scroller}
-         * @deprecated
          */
-        create: function(config) {
-            return new this(config);
+        create: function(config, type) {
+            return Ext.Factory.scroller(config, type);
         },
 
         /**
@@ -216,6 +222,11 @@ Ext.define('Ext.scroll.Scroller', {
         me.setElement(null);
         me.setScrollElement(null);
         me.onDomScrollEnd = me._partners = me.component = null;
+        
+        if (me._translatable) {
+            me._translatable.destroy();
+            me._translatable = null;
+        }
 
         me.removeSnapStylesheet();
 
@@ -290,6 +301,31 @@ Ext.define('Ext.scroll.Scroller', {
         }
     },
 
+    applySize: function (size, oldSize) {
+        var x, y;
+
+        if (size === null || typeof size === 'number') {
+            x = y = size;
+        } else if (size) {
+            x = size.x;
+            y = size.y;
+        }
+
+        if (x === null) {
+            x = 0;
+        } else if (x === undefined) {
+            x = (oldSize ? oldSize.x : 0);
+        }
+
+        if (y === null) {
+            y = 0;
+        } else if (y === undefined) {
+            y = (oldSize ? oldSize.y : 0);
+        }
+
+        return { x: x, y: y };
+    },
+
     /**
      * Gets the `clientWidth` and `clientHeight` of the {@link #element} for this scroller.
      * @return {Object} An object with `x` and `y` properties.
@@ -349,10 +385,6 @@ Ext.define('Ext.scroll.Scroller', {
             width: width,
             height: height
         };
-    },
-
-    getPosition: function() {
-        return this.position;
     },
 
     /**
@@ -619,21 +651,21 @@ Ext.define('Ext.scroll.Scroller', {
      *
      * @param {Number} x The scroll position on the x axis.
      * @param {Number} y The scroll position on the y axis.
-     * @param {Boolean/Object} animation (optional) Whether or not to animate the scrolling to the new position.
+     * @param {Boolean/Object} [animation] Whether or not to animate the scrolling to the new position.
      *
      * @return {Ext.scroll.Scroller} this
      * @chainable
      */
-    scrollTo: function(x, y, animate) {
+    scrollTo: function(x, y, animation) {
         var maxPosition;
 
         if (x) {
             if (x.length) { // array
-                animate = y;
+                animation = y;
                 y = x[1];
                 x = x[0];
             } else if (typeof x !== 'number') { // object
-                animate = y;
+                animation = y;
                 y = x.y;
                 x = x.x;
             }
@@ -650,7 +682,7 @@ Ext.define('Ext.scroll.Scroller', {
             }
         }
 
-        this.doScrollTo(x, y, animate);
+        this.doScrollTo(x, y, animation);
     },
 
     updateDirection: function(direction) {
@@ -700,7 +732,9 @@ Ext.define('Ext.scroll.Scroller', {
     updateSize: function(size) {
         var me = this,
             element = me.getElement(),
-            spacer, x, y;
+            x = size.x,
+            y = size.y,
+            spacer;
 
         if (element) {
             me.positionDirty = true;
@@ -710,18 +744,9 @@ Ext.define('Ext.scroll.Scroller', {
             // In some cases, however, it is necessary to be able to manipulate this scroll size
             // (infinite lists for example).  This method positions a 1x1 px spacer element
             // within the scroller element to set a specific scroll size.
-
-            if (size == null) {
+            if (!x && !y) {
                 spacer.hide();
             } else {
-                if (typeof size === 'number') {
-                    x = size;
-                    y = size;
-                } else {
-                    x = size.x || 0;
-                    y = size.y || 0;
-                }
-
                 // Subtract spacer size from coordinates (spacer is always 1x1 px in size)
                 if (x > 0) {
                     x -= 1;
@@ -859,25 +884,30 @@ Ext.define('Ext.scroll.Scroller', {
             return pos;
         },
 
-        // rtl hook
         updateSpacerXY: function(pos) {
-            var spacer = this.getSpacer(),
+            var me = this,
+                spacer = me.getSpacer(),
                 sStyle = spacer.dom.style,
                 scrollHeight = pos.y,
                 shortfall;
 
             sStyle.marginTop = '';
-            spacer.translate(pos.x, this.constrainScrollRange(scrollHeight));
+            me.translateSpacer(pos.x, me.constrainScrollRange(scrollHeight));
 
             // Force a synchronous layout to update the scrollHeight.
             // This flip-flops between 0px and 1px
             sStyle.lineHeight = Number(!parseInt(sStyle.lineHeight, 10)) + 'px';
 
             // See if we can get any more scrollHeight from a margin-top
-            shortfall = scrollHeight - this.getElement().dom.scrollHeight;
+            shortfall = scrollHeight - me.getElement().dom.scrollHeight;
             if (shortfall > 0) {
-                sStyle.marginTop = Math.min(shortfall, this.maxSpacerMargin || 0) + 'px';
+                sStyle.marginTop = Math.min(shortfall, me.maxSpacerMargin || 0) + 'px';
             }
+        },
+
+        // rtl hook - rtl version sets right style
+        translateSpacer: function(x, y) {
+            this.getSpacer().translate(x, y);
         },
 
         doIsInView: function(el, skipCheck) {
@@ -997,7 +1027,7 @@ Ext.define('Ext.scroll.Scroller', {
             // don't forget to update the override as well
             var me = this,
                 element = me.getScrollElement(),
-                maxPosition, dom, to, xInf, yInf,
+                maxPosition, dom, xInf, yInf,
                 i;
 
             if (element && !element.destroyed) {
@@ -1019,22 +1049,11 @@ Ext.define('Ext.scroll.Scroller', {
                 x = me.convertX(x);
 
                 if (animate) {
-                    to = {};
-
-                    if (y != null) {
-                        to.scrollTop = y;
+                    if (!this._translatable) {
+                        this._translatable = new Ext.util.translatable.ScrollPosition({element: element});
                     }
 
-                    if (x != null) {
-                        to.scrollLeft = x;
-                    }
-
-                    element.animate(Ext.mergeIf({
-                        to: {
-                            scrollTop: y,
-                            scrollLeft: x
-                        }
-                    }, animate));
+                    this._translatable.translate(x, y, animate);
                 } else {
                     if (y != null) {
                         dom.scrollTop = y;
@@ -1262,11 +1281,6 @@ Ext.define('Ext.scroll.Scroller', {
             return position;
         },
 
-        // rtl hook
-        getElementScroll: function(element) {
-            return element.getScroll();
-        },
-
         /**
          * @private
          * May be called when a Component is rendererd AFTER some scrolling partner has begun its lifecycle to sync
@@ -1322,9 +1336,16 @@ Ext.define('Ext.scroll.Scroller', {
 
         onDomScrollEnd: function() {
             var me = this,
-                position = me.getPosition(),
-                x = position.x,
-                y = position.y;
+                position, x, y;
+            
+            // Could be destroyed by this time
+            if (me.destroying || me.destroyed) {
+                return;
+            }
+                
+            position = me.getPosition();
+            x = position.x;
+            y = position.y;
 
             me.isScrolling = Ext.isScrolling = false;
 
@@ -1362,11 +1383,9 @@ Ext.define('Ext.scroll.Scroller', {
 
         restoreState: function () {
             var me = this,
-                el = me.getScrollElement(),
-                dom;
+                el = me.getScrollElement();
 
             if (el) {
-                dom = el.dom;
 
                 // Only restore state if has been previously captured! For example,
                 // floaters probably have not been hidden before initially shown.
@@ -1381,8 +1400,7 @@ Ext.define('Ext.scroll.Scroller', {
                     Ext.defer(function() {
                         me.restoring = false;
                     }, 50);
-                    dom.scrollTop = me.trackingScrollTop;
-                    dom.scrollLeft = me.trackingScrollLeft;
+                    me.doScrollTo(me.trackingScrollLeft, me.trackingScrollTop, false);
 
                     // Do not discard the state.
                     // It may need to be restored again.

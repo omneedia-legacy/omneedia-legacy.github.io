@@ -173,86 +173,6 @@ Ext.define('Ext.overrides.dom.Element', (function() {
         },
 
         /**
-         * Sets up event handlers to add and remove a css class when the mouse is down and then up on this element (a click effect)
-         * @param {String} className The class to add
-         * @param {Function} [testFn] A test function to execute before adding the class. The passed parameter
-         * will be the Element instance. If this functions returns false, the class will not be added.
-         * @param {Object} [scope] The scope to execute the testFn in.
-         * @return {Ext.dom.Element} this
-         */
-        addClsOnClick: function(className, testFn, scope) {
-            var me = this,
-                dom = me.dom,
-                hasTest = Ext.isFunction(testFn);
-                
-            me.on("mousedown", function() {
-                if (hasTest && testFn.call(scope || me, me) === false) {
-                    return false;
-                }
-                Ext.fly(dom).addCls(className);
-                var d = Ext.getDoc(),
-                    fn = function() {
-                        Ext.fly(dom).removeCls(className);
-                        d.removeListener("mouseup", fn);
-                    };
-                d.on("mouseup", fn);
-            });
-            return me;
-        },
-
-        /**
-         * Sets up event handlers to add and remove a css class when this element has the focus
-         * @param {String} className The class to add
-         * @param {Function} [testFn] A test function to execute before adding the class. The passed parameter
-         * will be the Element instance. If this functions returns false, the class will not be added.
-         * @param {Object} [scope] The scope to execute the testFn in.
-         * @return {Ext.dom.Element} this
-         */
-        addClsOnFocus: function(className, testFn, scope) {
-            var me = this,
-                dom = me.dom,
-                hasTest = Ext.isFunction(testFn);
-                
-            me.on("focus", function() {
-                if (hasTest && testFn.call(scope || me, me) === false) {
-                    return false;
-                }
-                Ext.fly(dom).addCls(className);
-            });
-            me.on("blur", function() {
-                Ext.fly(dom).removeCls(className);
-            });
-            return me;
-        },
-
-        /**
-         * Sets up event handlers to add and remove a css class when the mouse is over this element
-         * @param {String} className The class to add
-         * @param {Function} [testFn] A test function to execute before adding the class. The passed parameter
-         * will be the Element instance. If this functions returns false, the class will not be added.
-         * @param {Object} [scope] The scope to execute the testFn in.
-         * @return {Ext.dom.Element} this
-         */
-        addClsOnOver: function(className, testFn, scope) {
-            var me = this,
-                dom = me.dom,
-                hasTest = Ext.isFunction(testFn);
-                
-            me.hover(
-                function() {
-                    if (hasTest && testFn.call(scope || me, me) === false) {
-                        return;
-                    }
-                    Ext.fly(dom).addCls(className);
-                },
-                function() {
-                    Ext.fly(dom).removeCls(className);
-                }
-            );
-            return me;
-        },
-
-        /**
          * Convenience method for constructing a KeyMap
          * @param {String/Number/Number[]/Object} key Either a string with the keys to listen for, the numeric key code,
          * array of key codes or an object with the following options:
@@ -650,8 +570,12 @@ Ext.define('Ext.overrides.dom.Element', (function() {
                 data = me.getData(),
                 maskEl, maskMsg;
 
-            if (dom && me.isAnimate) {
-                me.stopAnimation();
+            if (dom) {
+                if (me.isAnimate) {
+                    me.stopAnimation();
+                }
+                
+                me.removeAnchor();
             }
 
             me.callParent();
@@ -946,7 +870,7 @@ Ext.define('Ext.overrides.dom.Element', (function() {
 
         /**
          * Gets an object with all CSS positioning properties. Useful along with
-         * #setPostioning to get snapshot before performing an update and then restoring
+         * `setPostioning` to get snapshot before performing an update and then restoring
          * the element.
          * @param {Boolean} [autoPx=false] true to return pixel values for "auto" styles.
          * @return {Object}
@@ -1764,7 +1688,7 @@ Ext.define('Ext.overrides.dom.Element', (function() {
         },
 
         /**
-         * Set positioning with an object returned by #getPositioning.
+         * Set positioning with an object returned by `getPositioning`.
          * @param {Object} posCfg
          * @return {Ext.dom.Element} this
          */
@@ -4006,6 +3930,10 @@ Ext.define('Ext.overrides.dom.Element', (function() {
             bodyCls.push(Ext.baseCSSPrefix + 'ie11');
         }
 
+        if (Ext.isEdge) {
+            bodyCls.push(Ext.baseCSSPrefix + 'edge');
+        }
+
         if (Ext.isGecko) {
             bodyCls.push(Ext.baseCSSPrefix + 'gecko');
         }
@@ -4038,6 +3966,9 @@ Ext.define('Ext.overrides.dom.Element', (function() {
         }
         if (supports.Touch) {
             bodyCls.push(Ext.baseCSSPrefix + 'touch');
+        }
+        if (Ext.os.deviceType) {
+            bodyCls.push(Ext.baseCSSPrefix + Ext.os.deviceType.toLowerCase());
         }
         //Ext.fly(document.documentElement).addCls(htmlCls);
 

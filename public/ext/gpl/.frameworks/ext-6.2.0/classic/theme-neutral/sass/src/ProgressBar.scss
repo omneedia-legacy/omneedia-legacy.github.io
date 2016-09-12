@@ -19,10 +19,10 @@
  * a predefined gradient or a list of color stops. Used as the `$type` parameter for
  * {@link Global_CSS#background-gradient}.
  *
- * @param {color} [$ui-color-front=$progress-text-color-front]
+ * @param {color} [$ui-color-front=$progress-text-front-color]
  * The color of the ProgressBar's text when in front of the ProgressBar's moving element
  *
- * @param {color} [$ui-color-back=$progress-text-color-back]
+ * @param {color} [$ui-color-back=$progress-text-back-color]
  * The color of the ProgressBar's text when the ProgressBar's 'moving element is not under it
  *
  * @param {number} [$ui-height=$progress-height]
@@ -63,8 +63,8 @@
     $ui-bar-background-color: $progress-bar-background-color,
     $ui-bar-background-gradient: $progress-bar-background-gradient,
 
-    $ui-color-front: $progress-text-color-front,
-    $ui-color-back: $progress-text-color-back,
+    $ui-color-front: $progress-text-front-color,
+    $ui-color-back: $progress-text-back-color,
     $ui-height: $progress-height,
     $ui-border-style: $progress-border-style,
     $ui-border-width: $progress-border-width,
@@ -152,12 +152,17 @@
     @include x-slicer(progress-bar-#{$ui});
 
     @if $include-ext-view-table {
-        .#{$prefix}progressbar-#{$ui}-cell > .#{$prefix}grid-cell-inner,
-        .#{$prefix}progressbarwidget-#{$ui}-cell > .#{$prefix}grid-cell-inner {
-            padding-top:    max(ceil(($grid-row-height - $ui-height) / 2), 0);
-            padding-bottom: max(floor(($grid-row-height - $ui-height) / 2), 0);
-            .#{$prefix}progress-#{$ui} {
-                height: min($progress-height, $grid-row-height - 2);
+        // here we need to add three selectors, one for the progress classic component (xtype: 'pogressbar')
+        // and one for each progressbarwidget alias (xtype: ['progress', 'progressbarwidget']).
+        .#{$prefix}progressbar-#{$ui}-cell,
+        .#{$prefix}progress-#{$ui}-cell,
+        .#{$prefix}progressbarwidget-#{$ui}-cell {
+            > .#{$prefix}grid-cell-inner {
+                padding-top:    max(ceil(($grid-row-height - $ui-height) / 2), 0);
+                padding-bottom: max(floor(($grid-row-height - $ui-height) / 2), 0);
+                .#{$prefix}progress-#{$ui} {
+                    height: min($progress-height, $grid-row-height - 2);
+                }
             }
         }
     }

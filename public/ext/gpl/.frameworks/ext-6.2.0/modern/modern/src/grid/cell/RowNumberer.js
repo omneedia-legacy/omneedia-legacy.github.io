@@ -5,7 +5,7 @@ Ext.define('Ext.grid.cell.RowNumberer', {
     extend: 'Ext.grid.cell.Base',
     xtype: 'rownumberercell',
 
-    cellCls: Ext.baseCSSPrefix + 'grid-cell-row-numberer',
+    classCls: Ext.baseCSSPrefix + 'rownumberercell',
 
     updateRecord: function (record) {
         var column = this.getColumn(),

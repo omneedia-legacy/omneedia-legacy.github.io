@@ -58,6 +58,13 @@ Ext.env.OS = function(userAgent, platform, browserScope) {
     this.name = name;
     this.version = version;
 
+    // This is added as a workaround for Chrome iPad emulation mode
+    // it will report the platform of the machine (MacIntel, Win32, etc) instead
+    // of an emulated platform
+    if (userAgent.match(/ipad/i)) {
+        platform = 'iPad';
+    }
+
     if (platform) {
         this.setFlag(platform.replace(/ simulator$/i, ''));
     }

@@ -11,10 +11,12 @@
     Ext.define('KitchenSink.store.Pie', {
         extend: 'Ext.data.Store',
         alias: 'store.pie',
+
         config: {
-            fields: ['id', 'g1', 'g2', 'g3', 'g4', 'g5', 'g6', 'name'],
             numRecords: 9
         },
+
+        fields: ['id', 'g1', 'g2', 'g3', 'g4', 'g5', 'g6', 'name'],
 
         generateData: function (count) {
             var data = [], 
@@ -46,8 +48,9 @@
             this.loadData(data);
         },
         constructor: function (config) {
-            this.callParent([config]);
-            this.generateData(this.getNumRecords())
+            var me = this;
+            me.callParent([config]);
+            me.generateData(me.getNumRecords());
         }
     });
 })();

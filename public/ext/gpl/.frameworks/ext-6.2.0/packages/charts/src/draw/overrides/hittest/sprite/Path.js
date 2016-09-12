@@ -17,7 +17,7 @@ Ext.define('Ext.draw.overrides.hittest.sprite.Path', {
     isPointInPath: function (x, y) {
         var attr = this.attr;
 
-        if (attr.fillStyle === Ext.draw.Color.RGBA_NONE) {
+        if (attr.fillStyle === Ext.util.Color.RGBA_NONE) {
             return this.isPointOnPath(x, y);
         }
 
@@ -92,8 +92,8 @@ Ext.define('Ext.draw.overrides.hittest.sprite.Path', {
         }
 
         if (options.fill && options.stroke) {
-            isFilled = attr.fillStyle !== Ext.draw.Color.NONE &&
-                       attr.fillStyle !== Ext.draw.Color.RGBA_NONE;
+            isFilled = attr.fillStyle !== Ext.util.Color.NONE &&
+                       attr.fillStyle !== Ext.util.Color.RGBA_NONE;
             if (isFilled) {
                 if (path.isPointInPath(x, y)) {
                     result = {

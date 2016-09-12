@@ -320,7 +320,7 @@ describe("Ext.form.field.Text", function() {
                 it("should not exist by default", function() {
                     createField();
                     
-                    expect(component).toHaveAttr('aria-label', null);
+                    expect(component).not.toHaveAttr('aria-label');
                 });
                 
                 it("should be rendered when set", function() {
@@ -686,13 +686,14 @@ describe("Ext.form.field.Text", function() {
         // NOTE emptyText is handled via the HTML5 'placeholder' attribute for those browsers which
         // support it, and the old modified-value method for other browsers, so the tests differ.
 
-        if ('placeholder' in document.createElement('input')) { //ala Ext.supports.Placeholder
+        if (Ext.supports.Placeholder) { //ala Ext.supports.Placeholder
             it("should set the input's placeholder attribute", function() {
                 makeComponent({
                     emptyText: 'empty',
                     renderTo: Ext.getBody()
                 });
-                expect(component.inputEl.dom.placeholder).toEqual('empty');
+                expect(component.inputEl.dom.placeholder).toBe('empty');
+                expect(component.inputEl).toHaveCls(component.emptyCls);
             });
 
             it("should be able to be added with setEmptyText", function() {
@@ -701,7 +702,8 @@ describe("Ext.form.field.Text", function() {
                 });
                 component.setEmptyText('Foo');
                 expect(component.emptyText).toBe('Foo');
-                expect(component.inputEl.dom.placeholder).toEqual('Foo');
+                expect(component.inputEl.dom.placeholder).toBe('Foo');
+                expect(component.inputEl).toHaveCls(component.emptyCls);
             });
 
             it("should be able to be removed with setEmptyText", function() {
@@ -711,29 +713,60 @@ describe("Ext.form.field.Text", function() {
                 });
                 component.setEmptyText('');
                 expect(component.emptyText).toBe('');
-                expect(component.inputEl.dom.hasAttribute('placeholder')).toBe(false);
+                expect(component.inputEl.dom.value).toBe('');
+                expect(component.inputEl).toHaveCls(component.emptyCls);
+            });
+
+            describe("with initial value", function() {
+                it("should be able to change the empty text", function() {
+                    makeComponent({
+                        emptyText: 'empty',
+                        value: 'Foo',
+                        renderTo: Ext.getBody()
+                    });
+
+                    expect(component.inputEl.dom.placeholder).toBe('empty');
+                    component.setEmptyText('Bar');
+                    expect(component.inputEl.dom.placeholder).toBe('Bar');
+                });
+
+                it("should add emptyCls when empty and remove it when not empty", function() {
+                    makeComponent({
+                        emptyText: 'empty',
+                        value: 'Foo',
+                        renderTo: Ext.getBody()
+                    });
+                    
+                    expect(component.inputEl).not.toHaveCls(component.emptyCls);
+                    component.setValue();
+                    expect(component.inputEl).toHaveCls(component.emptyCls);
+                });
             });
         }
         else {
             describe("when the value is empty", function() {
+                var label;
                 beforeEach(function() {
                     makeComponent({
                         emptyText: 'empty',
                         renderTo: Ext.getBody()
                     });
+                    label = component.placeholderLabel;
                 });
 
-                it("should set the input field's value to the emptyText", function() {
-                    expect(component.inputEl.dom.value).toEqual('empty');
+                it("should set placeholder label text to the emptyText", function() {
+                    expect(label.getHtml()).toBe('empty');
+                    expect(component.inputEl.dom.value).toBe('');
                 });
 
-                it("should add the emptyCls to the input element", function() {
+                it("should add the emptyCls to the inputEl", function() {
                     expect(component.inputEl.hasCls(component.emptyCls)).toBe(true);
                 });
 
-                it("should return empty string from the value getters", function() {
-                    expect(component.getValue()).toEqual('');
-                    expect(component.getRawValue()).toEqual('');
+                it("should return empty string from the value getters and emptytext form getEmptyText", function() {
+                    expect(component.getValue()).toBe('');
+                    expect(component.getRawValue()).toBe('');
+                    expect(component.getEmptyText()).toBe('empty');
                 });
             });
 
@@ -785,45 +818,51 @@ describe("Ext.form.field.Text", function() {
 
             describe("using setEmptyText", function() {
                 describe("when value is empty", function() {
-
                     it("should be able to add empty text", function() {
                         makeComponent({
                             renderTo: Ext.getBody()
                         });
+
                         component.setEmptyText('Foo');
                         expect(component.emptyText).toBe('Foo');
-                        expect(component.inputEl.dom.value).toBe('Foo');
+                        expect(component.placeholderLabel.getHtml()).toBe('Foo');
                         expect(component.inputEl).toHaveCls(component.emptyCls);
-                    })
+                    });
 
                     it("should be able to remove empty text", function() {
                          makeComponent({
                             emptyText : 'Bar',
                             renderTo: Ext.getBody()
                         });
+
                         component.setEmptyText('');
                         expect(component.emptyText).toBe('');
                         expect(component.inputEl.dom.value).toBe('');
-                        expect(component.inputEl).not.toHaveCls(component.emptyCls);
+                        expect(component.inputEl).toHaveCls(component.emptyCls);
                     });
 
                 });
 
                 describe("when value is not empty", function() {
-
                     it("should be able to add empty text", function() {
                         makeComponent({
                             value : 'value',
                             renderTo: Ext.getBody()
                         });
+
                         component.setEmptyText('Foo');
                         expect(component.emptyText).toEqual('Foo');
                         expect(component.inputEl.dom.value).toEqual('value');
-                        expect(component.inputEl.hasCls(component.emptyCls)).toBe(false);
+                        expect(component.inputEl).not.toHaveCls(component.emptyCls);
+                        expect(component.getValue()).not.toBe('Foo');
+
                         component.setValue();
-                        expect(component.inputEl.dom.value).toEqual('Foo');
-                        expect(component.inputEl.hasCls(component.emptyCls)).toBe(true);
-                    })
+
+                        expect(component.placeholderLabel.getHtml()).toEqual('Foo');
+                        expect(component.inputEl).toHaveCls(component.emptyCls);
+                        expect(component.getValue()).not.toBe('Foo');
+                        expect(component.inputEl.dom.value).toBe('');
+                    });
 
                     it("should be able to remove empty text", function() {
                          makeComponent({
@@ -831,19 +870,18 @@ describe("Ext.form.field.Text", function() {
                             value : 'value',
                             renderTo: Ext.getBody()
                         });
-                        component.setEmptyText();
+                        
+                        expect(component.inputEl).not.toHaveCls(component.emptyCls);
+                        component.setEmptyText('');
                         expect(component.emptyText).toBe('');
                         expect(component.inputEl.dom.value).toEqual('value');
+                        expect(component.getValue()).toEqual('value');
                         component.setValue();
                         expect(component.inputEl.dom.value).toEqual('');
-                        expect(component.inputEl.hasCls(component.emptyCls)).toBe(false);
+                        expect(component.inputEl).toHaveCls(component.emptyCls);
                     });
-
                 });
-
-
             });
-
             // TODO check that the empty text is removed/added when focusing/blurring the field
         }
     });
@@ -920,7 +958,7 @@ describe("Ext.form.field.Text", function() {
                 // In some browsers, even if the maxLength is not set
                 // it still returns a numeric value
                 expect(component.inputEl.dom.maxLength).toEqual(len);
-            })
+            });
         });
         
         describe("allowBlank", function(){
@@ -2063,7 +2101,8 @@ describe("Ext.form.field.Text", function() {
                 triggers: {
                     foo: {
                         cls: 'foo-trigger',
-                        handler: fooHandler
+                        handler: fooHandler,
+                        tooltip: 'foobaroo'
                     },
                     bar: {
                         cls: 'bar-trigger',
@@ -2089,6 +2128,31 @@ describe("Ext.form.field.Text", function() {
             create();
             expect(component.triggerWrap.selectNode('.foo-trigger', false)).toBe(fooEl);
             expect(component.triggerWrap.selectNode('.bar-trigger', false)).toBe(barEl);
+        });
+        
+        it("should render data-qtip attribute for tooltips", function() {
+            create();
+            
+            expect(fooEl).toHaveAttr('data-qtip', 'foobaroo');
+            expect(barEl).not.toHaveAttr('data-qtip');
+        });
+        
+        it("should allow setting tooltip dynamically", function() {
+            create();
+            
+            barTrigger.setTooltip('blergofumble');
+            
+            expect(fooEl).toHaveAttr('data-qtip', 'foobaroo');
+            expect(barEl).toHaveAttr('data-qtip', 'blergofumble');
+        });
+        
+        it("should allow changing tooltip dynamically", function() {
+            create();
+            
+            fooTrigger.setTooltip('zombo gurgle!');
+            
+            expect(fooEl).toHaveAttr('data-qtip', 'zombo gurgle!');
+            expect(barEl).not.toHaveAttr('data-qtip');
         });
 
         it("should call trigger handlers", function() {

@@ -143,7 +143,9 @@ describe("Ext.direct.PollingProvider", function() {
     
     describe("should handle polling:", function() {
         beforeEach(function() {
-            spyOn(Ext.Ajax, 'request').andReturn();
+            spyOn(Ext.Ajax, 'request').andCallFake(function(request) {
+                return request;
+            });
             
             provider.connect();
         });
@@ -169,7 +171,7 @@ describe("Ext.direct.PollingProvider", function() {
         });
         
         it("should pass headers if they are set", function() {
-            provider.headers = { blerg: 'zingbong' };
+            provider.setHeaders({ blerg: 'zingbong' });
             provider.runPoll();
             
             expect(Ext.Ajax.request).toHaveBeenCalledWith({
@@ -435,7 +437,7 @@ describe("Ext.direct.PollingProvider", function() {
         it("doesn't break on empty string response", function() {
             provider.onData({}, true, { responseText: '' });
             
-            expect(handler).not.toHaveBeenCalled();
+            expect(handler).toHaveBeenCalled();
         });
         
         it("doesn't break on empty dataset returned", function() {

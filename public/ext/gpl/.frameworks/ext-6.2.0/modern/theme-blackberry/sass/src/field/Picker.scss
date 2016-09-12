@@ -2,7 +2,7 @@
  * @class Ext.field.Picker
  */
 
-.x-form .x-pickerfield {
+.x-formpanel .x-pickerfield {
 	padding-bottom: 18px;
 }
 
@@ -10,7 +10,7 @@
 	padding-left: 5px;
 	padding-right: 5px;
 
-	.x-field-body {
+	.x-body-el {
 		@include st-box;
 		@include st-box-align(center);
 		@include st-box-direction(horizontal);
@@ -24,7 +24,7 @@
 		overflow: hidden;
 		z-index: 1;
 
-		.x-field-label {
+		.x-label-el {
 			font-size: 15px;
 			line-height: inherit;
 		}
@@ -53,20 +53,20 @@
 	.x-list {
 		background: #e3e0e3;
 
-		.x-list-item {
+		.x-listitem {
 			border-color: #cfcdcf;
 			color: #5e5d5e;
-		}
 
-		.x-item-selected {
-			@include box-shadow(none);
-			background-color: #efebef;
-			color: #343334;
-		}
+            &.x-selected {
+                @include box-shadow(none);
+                background-color: #efebef;
+                color: #343334;
+            }
 
-		.x-item-pressed {
-			background-color: $base-color;
-			color: #fff;
+            &.x-pressed {
+                background-color: $base-color;
+                color: #fff;
+            }
 		}
 	}
 }

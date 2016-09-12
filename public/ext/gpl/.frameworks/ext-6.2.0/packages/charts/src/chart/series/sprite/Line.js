@@ -215,7 +215,7 @@ Ext.define('Ext.chart.series.sprite.Line', {
             // Special case where we have an uninterrupted segment, followed
             // by a gap, then a valid point, then another gap. The uninterrupted
             // segment should be connenected with the dot situated between the gaps.
-            if (isConnect && lastValidPoint && isValidPoint && !isValidPoint1) {
+            if (isConnect && lastValidPoint && isValidPoint && !isValidPoint0) {
                 x0 = lastValidPoint[0];
                 y0 = lastValidPoint[1];
                 isValidPoint0 = true;

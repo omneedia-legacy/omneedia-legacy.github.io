@@ -26,8 +26,7 @@ Ext.define('KitchenSink.view.dd.GridToGrid', {
 
     layout: {
         type: 'hbox',
-        align: 'stretch',
-        padding: 5
+        align: 'stretch'
     },
     
     items: [{
@@ -106,7 +105,13 @@ Ext.define('KitchenSink.view.dd.GridToGrid', {
                 ptype: 'gridviewdragdrop',
                 containerScroll: true,
                 dragGroup: 'dd-grid-to-grid-group2',
-                dropGroup: 'dd-grid-to-grid-group1'
+                dropGroup: 'dd-grid-to-grid-group1',
+
+                // The right hand drop zone gets special styling
+                // when dragging over it.
+                dropZone: {
+                    overClass: 'dd-over-gridview'
+                }
             },
 
             listeners: {

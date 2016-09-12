@@ -1,7 +1,4 @@
 @include tab-ui(
-
-    $flex: $tab-flex,
-
     $background-color: $tab-background-color,
     $active-background-color: $tab-active-background-color,
 
@@ -63,5 +60,6 @@
     $badge-right: $tab-badge-right,
     $badge-bottom: $tab-badge-bottom,
     $badge-left: $tab-badge-left,
-    $badge-padding: $tab-badge-padding
+    $badge-padding: $tab-badge-padding,
+    $badge-padding-big: $tab-badge-padding-big
 );

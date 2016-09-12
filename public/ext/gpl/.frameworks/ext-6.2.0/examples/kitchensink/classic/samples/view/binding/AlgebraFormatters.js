@@ -33,7 +33,7 @@ Ext.define('KitchenSink.view.binding.AlgebraFormatters', {
         bind: '{ (x*y*100):fileSize:lowercase }'
     }, {
         fieldLabel: 'Nested',
-        bind: '{ (x*y):currency( "USD":lowercase, (x/y):round(0) ) }'
+        bind: '{ (x*y):currency( "USD":lowercase, (x/y):round(0):lessThanElse(20, 2, 5) ) }'
     }],
 
     defaultType: 'displayfield',

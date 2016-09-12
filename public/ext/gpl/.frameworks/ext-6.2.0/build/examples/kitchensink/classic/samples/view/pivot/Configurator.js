@@ -42,16 +42,13 @@ Ext.define('KitchenSink.view.pivot.Configurator', {
     collapsible: true,
     multiSelect: true,
 
-    store: {
-        type: 'sales'
-    },
     selModel: {
         type: 'spreadsheet'
     },
 
     plugins: [{
-        ptype:      'pivotconfigurator',
-        pluginId:   'configurator',
+        ptype: 'pivotconfigurator',
+        id: 'configurator',
         // It is possible to configure a list of fields that can be used to configure the pivot grid
         // If no fields list is supplied then all fields from the Store model are fetched automatically
         fields: [{
@@ -107,7 +104,7 @@ Ext.define('KitchenSink.view.pivot.Configurator', {
             header:     'Company',
 
             settings: {
-                // Define here what aggregator functions can be used when this field is 
+                // Define here what aggregator functions can be used when this field is
                 // used as an aggregate dimension
                 aggregators: ['count']
             }
@@ -116,7 +113,7 @@ Ext.define('KitchenSink.view.pivot.Configurator', {
             header:     'Country',
 
             settings: {
-                // Define here what aggregator functions can be used when this field is 
+                // Define here what aggregator functions can be used when this field is
                 // used as an aggregate dimension
                 aggregators: ['count']
             }
@@ -143,7 +140,7 @@ Ext.define('KitchenSink.view.pivot.Configurator', {
             labelRenderer:  'monthLabelRenderer',
 
             settings: {
-                // Define here what aggregator functions can be used when this field is 
+                // Define here what aggregator functions can be used when this field is
                 // used as an aggregate dimension
                 aggregators: ['count'],
                 // Define here in which areas this field could be used
@@ -152,39 +149,46 @@ Ext.define('KitchenSink.view.pivot.Configurator', {
         }]
     }],
 
+    matrix: {
+        type: 'local',
+        store: {
+            type: 'sales'
+        },
+
+        // Configure the aggregate dimensions. Multiple dimensions are supported.
+        aggregate: [{
+            dataIndex: 'value',
+            header: 'Value',
+            aggregator: 'avg'
+        }],
+
+        // Configure the left axis dimensions that will be used to generate the grid rows
+        leftAxis: [{
+            dataIndex: 'person',
+            header: 'Person'
+        }, {
+            dataIndex: 'company',
+            header: 'Company',
+            sortable: false
+        }],
+
+        /**
+         * Configure the top axis dimensions that will be used to generate the columns.
+         * When columns are generated the aggregate dimensions are also used. If multiple aggregation dimensions
+         * are defined then each top axis result will have in the end a column header with children
+         * columns for each aggregate dimension defined.
+         */
+        topAxis: [{
+            dataIndex: 'year',
+            header: 'Year',
+            labelRenderer: 'yearLabelRenderer'
+        }]
+    },
+
     listeners: {
         // Define here a function that can add custom menu items to the configurator field menu
         beforeshowconfigfieldmenu: 'getCustomMenus'
     },
-
-    // Configure the aggregate dimensions. Multiple dimensions are supported.
-    aggregate: [{
-        dataIndex:  'value',
-        header:     'Value',
-        aggregator: 'avg'
-    }],
-
-    // Configure the left axis dimensions that will be used to generate the grid rows
-    leftAxis: [{
-        dataIndex:  'person',
-        header:     'Person'
-    },{
-        dataIndex:  'company',
-        header:     'Company',
-        sortable:   false
-    }],
-
-    /**
-     * Configure the top axis dimensions that will be used to generate the columns.
-     * When columns are generated the aggregate dimensions are also used. If multiple aggregation dimensions
-     * are defined then each top axis result will have in the end a column header with children
-     * columns for each aggregate dimension defined.
-     */
-    topAxis: [{
-        dataIndex:  'year',
-        header:     'Year',
-        labelRenderer: 'yearLabelRenderer'
-    }],
 
     header: {
         itemPosition: 1, // after title before collapse tool

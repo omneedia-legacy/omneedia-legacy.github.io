@@ -107,9 +107,9 @@ describe('Ext.grid.column.RowNumberer', function () {
                 renderTo: Ext.getBody()
             });
 
-            expect(getCell(0, 0).el).toHaveCls('x-grid-cell-row-numberer');
-            expect(getCell(0, 0).el.down('.x-grid-cell-inner', true).innerHTML).toBe('1');
-            expect(getCell(1, 0).el.down('.x-grid-cell-inner', true).innerHTML).toBe('2');
+            expect(getCell(0, 0).el).toHaveCls('x-rownumberercell');
+            expect(getCell(0, 0).el.down('.x-inner-el', true).innerHTML).toBe('1');
+            expect(getCell(1, 0).el.down('.x-inner-el', true).innerHTML).toBe('2');
         });
 
         it("should be able to survive a full row update", function() {
@@ -129,9 +129,9 @@ describe('Ext.grid.column.RowNumberer', function () {
                 renderTo: Ext.getBody()
             });
 
-            expect(getCell(0, 0).el).toHaveCls('x-grid-cell-row-numberer');
-            expect(getCell(0, 0).el.down('.x-grid-cell-inner', true).innerHTML).toBe('1');
-            expect(getCell(1, 0).el.down('.x-grid-cell-inner', true).innerHTML).toBe('2');
+            expect(getCell(0, 0).el).toHaveCls('x-rownumberercell');
+            expect(getCell(0, 0).el.down('.x-inner-el', true).innerHTML).toBe('1');
+            expect(getCell(1, 0).el.down('.x-inner-el', true).innerHTML).toBe('2');
         });
 
         describe('beforeRender method', function () {

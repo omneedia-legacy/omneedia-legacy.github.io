@@ -3,20 +3,25 @@ Ext.define('Calendar.view.calendar.Panel', {
     xtype: 'app-calendar',
 
     config: {
-        sideHeaderCfg: []
+        createButton: {
+            margin: '10 0 0 0'
+        },
+        sideBar: {
+            bodyPadding: 0,
+            ui: 'default',
+            title: 'Ext JS Calendar'
+        },
+        sideBarHeader: {
+            weight: -1,
+            margin: '0 0 10px 0'
+        }
     },
 
-    initComponent: function() {
-        var me = this,
-            sidebar;
-
-        me.callParent(arguments);
-
-        // TODO: virtual getSideBarConfig()
-        sidebar = me.down('#sideBar');
-        sidebar.bodyPadding = 0;
-        sidebar.ui = 'default';
-        sidebar.setLayout({ type: 'vbox', align: 'stretch' });
-        sidebar.insert(0, me.getSideHeaderCfg());
+    privates: {
+        createSideBar: function() {
+            var result = this.callParent();
+            result.items.unshift(this.getSideBarHeader());
+            return result;
+        }
     }
 });

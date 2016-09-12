@@ -3,6 +3,7 @@
  */
 Ext.define('KitchenSink.view.chart.ColumnStacked', {
     extend: 'Ext.Panel',
+    xtype: 'grid-column-stacked',
     requires: ['Ext.chart.CartesianChart', 'Ext.chart.interactions.PanZoom',
         'Ext.chart.theme.Midnight',
         'Ext.chart.series.Bar', 'Ext.chart.axis.Numeric', 'Ext.chart.axis.Category'
@@ -15,7 +16,19 @@ Ext.define('KitchenSink.view.chart.ColumnStacked', {
         }
     },
 
+    // <example>
+    otherContent: [{
+        type: 'Controller',
+        path: 'modern/src/view/chart/ChartController.js'
+    }, {
+        type: 'Store',
+        path: 'modern/src/store/OrderItems.js' 
+    }],
+    // </example>
+    
     layout: 'fit',
+    shadow: true,
+
     items: [{
         xtype: 'toolbar',
         docked: 'top',
@@ -53,6 +66,7 @@ Ext.define('KitchenSink.view.chart.ColumnStacked', {
             position: 'bottom'
         },
         innerPadding: '0 3 0 3',
+        insetPadding: '30 10 10 10',
         interactions: [{
             type: 'panzoom',
             axes: {

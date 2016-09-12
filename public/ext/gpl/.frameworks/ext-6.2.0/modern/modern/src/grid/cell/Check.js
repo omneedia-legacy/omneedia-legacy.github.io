@@ -1,18 +1,14 @@
 /**
- * A Cell subclass which renders a checkbox in each column cell which toggles the truthiness of the associated data field on click..
+ * A Cell subclass which renders a checkbox in each column cell which toggles the truthiness
+ * of the associated data field on click.
+ *
+ * This class should not be directly instantiated.  Instances are created automatically
+ * when using a {@link Ext.grid.column.Check Check Column}.
  */
 Ext.define('Ext.grid.cell.Check', {
     extend: 'Ext.grid.cell.Cell',
     xtype: 'checkcell',
 
-    /**
-     * @cfg {String} [disabledCls="x-item-disabled"] The CSS class to add to the component when it is disabled
-     * @accessor
-     */
-    disabledCls: Ext.baseCSSPrefix + 'item-disabled',
-    
-    cellCheckedCls: Ext.baseCSSPrefix + 'checkcell-checked',
-        
     config: {
         /**
          * @cfg {Boolean} disabled
@@ -21,28 +17,30 @@ Ext.define('Ext.grid.cell.Check', {
         disabled: null
     },
 
-    element: {
-        reference: 'element',
-        cls: Ext.baseCSSPrefix + 'grid-cell ' + Ext.baseCSSPrefix + 'grid-checkcell',
-        listeners: {
-            tap: 'onTap',
-            scope: 'this'
-        },
-        children: [{
-            reference: 'innerElement',
-            cls: Ext.baseCSSPrefix + 'grid-cell-inner',
-            children: [{
-                reference: 'checkboxEl',
-                cls: Ext.baseCSSPrefix + 'checkcell-checkbox'
-            }]
-        }]
+    innerTemplate: [{
+        reference: 'checkboxElement',
+        classList:[
+            Ext.baseCSSPrefix + 'checkbox-el',
+            Ext.baseCSSPrefix + 'font-icon'
+        ]
+    }],
+
+    classCls: Ext.baseCSSPrefix + 'checkcell',
+    disabledCls: Ext.baseCSSPrefix + 'disabled',
+    checkedCls: Ext.baseCSSPrefix + 'checked',
+
+    constructor: function(config) {
+        this.callParent([config]);
+
+        this.checkboxElement.on('tap', 'onTap', this);
     },
 
-    updateValue: function(value) {
-        var column = this.getColumn();
+    updateValue: function(value, oldValue) {
+        var me = this,
+            column = me.getColumn();
 
-        value = Boolean(value);
-        this.el.toggleCls(this.cellCheckedCls, value);
+        value = !!value;
+        me.el.toggleCls(me.checkedCls, !!value);
 
         // Keep column header state up to date.
         if (value) {
@@ -86,25 +84,24 @@ Ext.define('Ext.grid.cell.Check', {
             record = me.getRecord(),
             column = me.getColumn(),
             recordIndex = column.up('grid').getStore().indexOf(record),
-            dataIndex = me.dataIndex,
             checked;
 
         if (record) {
             checked = !column.isRecordChecked(record);
-            if (column.getDisabled()) {
+            if (me.getDisabled()) {
                 return;
             }
 
-            if (column.fireEvent('beforecheckchange', column, recordIndex, checked, record, e) !== false) {
+            if (column.fireEvent('beforecheckchange', me, recordIndex, checked, record, e) !== false) {
                 if (me.getColumn().getStopSelection()) {
                     e.stopSelection = true;
                 }
 
-                if (record && dataIndex) {
-                    column.setRecordCheck(record, checked);
+                if (record) {
+                    column.setRecordChecked(record, checked);
                 }
                 if (column.hasListeners.checkchange) {
-                    column.fireEvent('checkchange', column, recordIndex, checked, record, e);
+                    column.fireEvent('checkchange', me, recordIndex, checked, record, e);
                 }
             }
         }

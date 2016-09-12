@@ -236,7 +236,7 @@ Ext.define('Ext.dom.Element', function(Element) {
     catch (e) {
         TOP = WIN;
     }
-    
+
     TOP.__elementIdCounter = elementIdCounter = (TOP.__elementIdCounter__ || 0) + 1;
     windowId = 'ext-window-' + elementIdCounter;
     documentId = 'ext-document-' + elementIdCounter;
@@ -248,7 +248,7 @@ Ext.define('Ext.dom.Element', function(Element) {
             'Ext.util.Positionable',
             'Ext.mixin.Observable'
         ],
-        
+
         requires: [
             'Ext.dom.Shadow',
             'Ext.dom.Shim',
@@ -272,7 +272,7 @@ Ext.define('Ext.dom.Element', function(Element) {
         isElement: true,
 
         skipGarbageCollection: true,
-        
+
         $applyConfigs: true,
 
         identifiablePrefix: 'ext-element-',
@@ -683,7 +683,7 @@ Ext.define('Ext.dom.Element', function(Element) {
              * @inheritable
              */
             OFFSETS: 3,
-            
+
             /**
              * @property {Number}
              * Visibility mode constant for use with {@link Ext.dom.Element#setVisibilityMode}.
@@ -783,17 +783,17 @@ Ext.define('Ext.dom.Element', function(Element) {
              * @private
              * Create method to add support for a DomHelper config. Creates
              * and appends elements/children using document.createElement/appendChild.
-             * This method is used by Sencha Touch for a significant performance gain
+             * This method is used by the modern toolkit for a significant performance gain
              * in webkit browsers as opposed to using DomQuery which generates HTML
              * markup and sets it as innerHTML.
              *
              * However, the createElement/appendChild
              * method of creating elements is significantly slower in all versions of IE
-             * at the time of this writing (6 - 11), so Ext JS should not use this method,
+             * at the time of this writing (6 - 11), so classic toolkit should not use this method,
              * but should instead use DomHelper methods, or Element methods that use
              * DomHelper under the hood (e.g. createChild).
              * see https:*fiddle.sencha.com/#fiddle/tj
-             * 
+             *
              * @static
              * @inheritable
              */
@@ -871,8 +871,10 @@ Ext.define('Ext.dom.Element', function(Element) {
                                 break;
 
                             case CREATE_ATTRIBUTES.children:
-                                for (i = 0,ln = value.length; i < ln; i++) {
-                                    element.appendChild(me.create(value[i], true));
+                                if (value != null) {
+                                    for (i = 0,ln = value.length; i < ln; i++) {
+                                        element.appendChild(me.create(value[i], true));
+                                    }
                                 }
                                 break;
 
@@ -1124,7 +1126,7 @@ Ext.define('Ext.dom.Element', function(Element) {
              */
             getActiveElement: function(asElement) {
                 var active = DOC.activeElement;
-                
+
                 // The activeElement can be null, however there also appears to be a very odd
                 // and inconsistent bug in IE where the activeElement is simply an empty object
                 // literal. Test if the returned active element has focus, if not, we've hit the bug
@@ -1132,7 +1134,7 @@ Ext.define('Ext.dom.Element', function(Element) {
                 if (!active || !active.focus) {
                     active = DOC.body;
                 }
-                
+
                 return asElement ? Ext.get(active) : active;
             },
 
@@ -1640,6 +1642,86 @@ Ext.define('Ext.dom.Element', function(Element) {
             return me;
         },
 
+        /**
+         * Sets up event handlers to add and remove a css class when the mouse is down and then up on this element (a click effect)
+         * @param {String} className The class to add
+         * @param {Function} [testFn] A test function to execute before adding the class. The passed parameter
+         * will be the Element instance. If this functions returns false, the class will not be added.
+         * @param {Object} [scope] The scope to execute the testFn in.
+         * @return {Ext.dom.Element} this
+         */
+        addClsOnClick: function(className, testFn, scope) {
+            var me = this,
+                dom = me.dom,
+                hasTest = Ext.isFunction(testFn);
+
+            me.on("mousedown", function() {
+                if (hasTest && testFn.call(scope || me, me) === false) {
+                    return false;
+                }
+                Ext.fly(dom).addCls(className);
+                var d = Ext.getDoc(),
+                    fn = function() {
+                        Ext.fly(dom).removeCls(className);
+                        d.removeListener("mouseup", fn);
+                    };
+                d.on("mouseup", fn);
+            });
+            return me;
+        },
+
+        /**
+         * Sets up event handlers to add and remove a css class when this element has the focus
+         * @param {String} className The class to add
+         * @param {Function} [testFn] A test function to execute before adding the class. The passed parameter
+         * will be the Element instance. If this functions returns false, the class will not be added.
+         * @param {Object} [scope] The scope to execute the testFn in.
+         * @return {Ext.dom.Element} this
+         */
+        addClsOnFocus: function(className, testFn, scope) {
+            var me = this,
+                dom = me.dom,
+                hasTest = Ext.isFunction(testFn);
+
+            me.on("focus", function() {
+                if (hasTest && testFn.call(scope || me, me) === false) {
+                    return false;
+                }
+                Ext.fly(dom).addCls(className);
+            });
+            me.on("blur", function() {
+                Ext.fly(dom).removeCls(className);
+            });
+            return me;
+        },
+
+        /**
+         * Sets up event handlers to add and remove a css class when the mouse is over this element
+         * @param {String} className The class to add
+         * @param {Function} [testFn] A test function to execute before adding the class. The passed parameter
+         * will be the Element instance. If this functions returns false, the class will not be added.
+         * @param {Object} [scope] The scope to execute the testFn in.
+         * @return {Ext.dom.Element} this
+         */
+        addClsOnOver: function(className, testFn, scope) {
+            var me = this,
+                dom = me.dom,
+                hasTest = Ext.isFunction(testFn);
+
+            me.hover(
+                function() {
+                    if (hasTest && testFn.call(scope || me, me) === false) {
+                        return;
+                    }
+                    Ext.fly(dom).addCls(className);
+                },
+                function() {
+                    Ext.fly(dom).removeCls(className);
+                }
+            );
+            return me;
+        },
+
         addStyles: function(sides, styles){
             var totalSize = 0,
                 sidesArr = (sides || '').match(wordsRe),
@@ -1717,7 +1799,8 @@ Ext.define('Ext.dom.Element', function(Element) {
             animation.setElement(this);
             this._activeAnimation = animation;
             animation.on({
-                animationend: this._onAnimationEnd
+                animationend: this._onAnimationEnd,
+                scope: this
             });
             Ext.Animator.run(animation);
             return animation;
@@ -1761,8 +1844,9 @@ Ext.define('Ext.dom.Element', function(Element) {
                 for (e = 0; e < eLen; e++) {
                     insertEl.appendChild(el[e], returnDom);
                 }
+                el = Ext.Array.toArray(insertEl.dom.childNodes);
                 me.dom.appendChild(insertEl.dom);
-                return returnDom ? insertEl.dom : insertEl;
+                return returnDom ? el : new Ext.dom.CompositeElementLite(el);
             }
             else { // dh config
                 return me.createChild(el, null, returnDom);
@@ -1897,6 +1981,8 @@ Ext.define('Ext.dom.Element', function(Element) {
          * @param {String/HTMLElement/Ext.dom.Element} centerIn element in
          * which to center the element.
          * @return {Ext.dom.Element} This element
+         *
+         * @chainable
          */
         center: function(centerIn){
             return this.alignTo(centerIn || DOC, 'c-c');
@@ -2013,12 +2099,6 @@ Ext.define('Ext.dom.Element', function(Element) {
             }
 
             me.collect();
-
-            if (!me.isFly) {
-                // The parent destroy sets the destroy to emptyFn, which we don't
-                // want on a shared fly
-                me.callParent();
-            }
         },
 
         detach: function() {
@@ -2293,10 +2373,11 @@ Ext.define('Ext.dom.Element', function(Element) {
                 shadow = me.shadow,
                 shim = me.shim;
 
+            // The parent destroy sets the destroy to emptyFn, which we don't
+            // want on a shared fly
             if (!me.isFly) {
                 me.mixins.observable.destroy.call(me);
                 delete Ext.cache[me.id];
-                me.destroyed = true;
                 me.el = null;
             }
 
@@ -2441,6 +2522,7 @@ Ext.define('Ext.dom.Element', function(Element) {
          */
         getHeight: function(contentHeight, preciseHeight) {
             var me = this,
+                dom = me.dom,
                 hidden = me.isStyle('display', 'none'),
                 height,
                 floating;
@@ -2449,7 +2531,17 @@ Ext.define('Ext.dom.Element', function(Element) {
                 return 0;
             }
 
-            height = me.dom.nodeName === 'BODY' ? Element.getViewportHeight() : me.dom.offsetHeight;
+            // Use the viewport height if they are asking for body height
+            if (dom.nodeName === 'BODY') {
+                height = Element.getViewportHeight();
+            } else {
+                height = dom.offsetHeight;
+
+                // SVG nodes do not have offsetHeight, so use boundingClientRect instead.
+                if (height == null) {
+                    height = dom.getBoundingClientRect().height;
+                }
+            }
 
             // IE9/10 Direct2D dimension rounding bug
             if (Ext.supports.Direct2DBug) {
@@ -3171,7 +3263,7 @@ Ext.define('Ext.dom.Element', function(Element) {
             if (!selector) {
                 // In Ext 4 is() called through to DomQuery methods, and would always
                 // return true if the selector was ''.  The new query() method in v5 uses
-                // querySelector/querySeletorAll() which consider '' to be an invalid
+                // querySelector/querySelectorAll() which consider '' to be an invalid
                 // selector and throw an error as a result.  To maintain compatibility
                 // with the various users of is() we have to return true if the selector
                 // is an empty string.  For example: el.up('') should return the element's
@@ -4902,6 +4994,10 @@ Ext.define('Ext.dom.Element', function(Element) {
             var transformStyleName = 'webkitTransform' in DOC.createElement('div').style ? 'webkitTransform' : 'transform';
 
             return function(x, y, z) {
+
+                x = Math.round(x);
+                y = Math.round(y);
+                z = Math.round(z);
                 this.dom.style[transformStyleName] = 'translate3d(' + (x || 0) + 'px, ' + (y || 0) + 'px, ' + (z || 0) + 'px)';
             };
         }(),

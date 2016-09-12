@@ -166,7 +166,7 @@ Ext.define('Ext.grid.cell.Cell', {
             parser.release();
             return function(v){
                 return fmt(v, me.getScope() || me.resolveListenerScope());
-            }
+            };
         }
         //<debug>
         else if(typeof fmt !== 'function'){
@@ -205,11 +205,12 @@ Ext.define('Ext.grid.cell.Cell', {
             column = me.getColumn(),
             record = me.getRecord(),
             v = me.getValue(),
+            zeroValue = me.getZeroValue(),
             raw = v, // raw value takes as default the cell value
             dataIndex, tpl, renderer, scope, format;
 
-        if(v === 0) {
-            raw = me.getZeroValue();
+        if(v === 0 && zeroValue !== null) {
+            raw = zeroValue;
         }else if (record && column) {
             tpl = me.getTpl();
             renderer = me.getRenderer();

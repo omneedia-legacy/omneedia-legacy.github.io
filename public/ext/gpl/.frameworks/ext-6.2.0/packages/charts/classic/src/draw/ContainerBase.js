@@ -95,6 +95,10 @@ Ext.define('Ext.draw.ContainerBase', {
         var image = this.getImage(),
             items;
 
+        if (Ext.isIE8) {
+            return false;
+        }
+
         if (image.type === 'svg-markup') {
             items = {
                 xtype: 'container',

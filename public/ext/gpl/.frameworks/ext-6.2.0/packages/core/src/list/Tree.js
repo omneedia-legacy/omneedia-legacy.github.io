@@ -229,10 +229,14 @@ Ext.define('Ext.list.Tree', {
             root;
 
         if (oldStore) {
-            if (oldStore.getAutoDestroy()) {
-                oldStore.destroy();
-            } else {
-                me.storeListeners.destroy();
+            // Store could be already destroyed upstream
+            if (!oldStore.destroyed) {
+                if (oldStore.getAutoDestroy()) {
+                    oldStore.destroy();
+                }
+                else {
+                    me.storeListeners.destroy();
+                }
             }
             me.removeRoot();
             me.storeListeners = null;

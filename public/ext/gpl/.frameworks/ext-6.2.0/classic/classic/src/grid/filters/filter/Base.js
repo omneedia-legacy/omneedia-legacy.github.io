@@ -112,11 +112,16 @@ Ext.define('Ext.grid.filters.filter.Base', {
     constructor: function (config) {
         var me = this,
             column;
-
+        
+        // Calling Base constructor is very desirable for testing
+        //<debug>
+        me.callParent([config]);
+        //</debug>
+        
         me.initConfig(config);
 
         column = me.column;
-        column.on('destroy', me.destroy, me);
+        me.columnListeners = column.on('destroy', me.destroy, me, { destroyable: true });
         me.dataIndex = me.dataIndex || column.dataIndex;
 
         me.task = new Ext.util.DelayedTask(me.setValue, me);
@@ -126,8 +131,17 @@ Ext.define('Ext.grid.filters.filter.Base', {
      * Destroys this filter by purging any event listeners, and removing any menus.
      */
     destroy: function() {
-        this.grid = this.menu = Ext.destroy(this.menu);
-        this.callParent();
+        var me = this;
+        
+        if (me.task) {
+            me.task.cancel();
+            me.task = null;
+        }
+        
+        me.columnListeners = me.columnListeners.destroy();
+        me.grid = me.menu = Ext.destroy(me.menu);
+        
+        me.callParent();
     },
 
     addStoreFilter: function (filter) {
@@ -216,7 +230,8 @@ Ext.define('Ext.grid.filters.filter.Base', {
     onValueChange: function (field, e) {
         var me = this,
             keyCode = e.getKey(),
-            updateBuffer = me.updateBuffer;
+            updateBuffer = me.updateBuffer,
+            value;
 
         // Don't process tabs!
         if (keyCode === e.TAB) {
@@ -235,10 +250,16 @@ Ext.define('Ext.grid.filters.filter.Base', {
                 return;
             }
 
+            value = me.getValue(field);
+
+            if (value === me.value) {
+                return;
+            }
+
             if (updateBuffer) {
-                me.task.delay(updateBuffer, null, null, [me.getValue(field)]);
+                me.task.delay(updateBuffer, null, null, [value]);
             } else {
-                me.setValue(me.getValue(field));
+                me.setValue(value);
             }
         }
     },

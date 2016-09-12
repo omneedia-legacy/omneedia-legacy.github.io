@@ -6,39 +6,49 @@
  * @var {number/list}
  * The margin for the panel sidebar.
  */
-$calendar-panel-sidebar-list-margin: dynamic(1em 1em 0);
+$calendar-panel-sidebar-padding: dynamic(1em);
 
-$calendar-panel-sheet-list-margin: dynamic(0 0.6em);
+$calendar-panel-sidebar-max-width: dynamic(20%);
 
-$calendar-panel-create-button-horizontal-padding: dynamic(2.5em);
+$calendar-panel-sheet-padding: dynamic(1em);
+
+$calendar-panel-create-button-horizontal-padding: dynamic(3em);
+
+$calendar-panel-sheet-max-width: dynamic(80vw);
 
 @mixin calendar-panel-ui(
     $ui: null,
 
-    $sidebar-list-margin: null,
+    $sidebar-padding: null,
+    $sidebar-max-width: null,
 
-    $sheet-list-margin: null,
+    $sheet-padding: null,
+    $sheet-max-width: null,
 
     $create-button-horizontal-padding: null
 ) {
     $ui-suffix: ui-suffix($ui);
 
     .#{$prefix}calendar-panel#{$ui-suffix} {
-        .#{$prefix}calendar-create-button {
+        .#{$prefix}calendar-panel-create-button {
             padding-left: $create-button-horizontal-padding;
             padding-right: $create-button-horizontal-padding;
         }
 
-        .#{$prefix}calendar-list {
-            margin: $sidebar-list-margin;
+        .#{$prefix}calendar-sidebar {
+            max-width: $sidebar-max-width;
+            .#{$prefix}panel-inner {
+                padding: $sidebar-padding;
+            }
         }
     }
 
     .#{$prefix}calendar-panel-sheet#{$ui-suffix} {
         padding: 0;
+        max-width: $sheet-max-width;
 
-        .#{$prefix}calendar-list {
-            margin: $sheet-list-margin;
+        .#{$prefix}sheet-inner {
+            padding: $sheet-padding;
         }
     }
 }

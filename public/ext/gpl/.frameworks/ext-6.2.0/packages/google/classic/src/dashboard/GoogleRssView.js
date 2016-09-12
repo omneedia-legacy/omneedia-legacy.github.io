@@ -245,7 +245,7 @@ Ext.define('Ext.ux.dashboard.GoogleRssView', {
             data = me.data,
             current = (currentEntry === undefined) ? data.currentEntry : currentEntry;
 
-        me.tpl = me.getTpl(mode + 'Tpl');
+        me.tpl = me.lookupTpl(mode + 'Tpl');
         me.tpl.date = me.formatDate;
         me.mode = mode;
 
@@ -279,7 +279,7 @@ Ext.define('Ext.ux.dashboard.GoogleRssView', {
     /**
      * @private
      */
-    beforeDestroy: function () {
+    doDestroy: function () {
         Ext.destroy(this.tip);
 
         this.callParent();

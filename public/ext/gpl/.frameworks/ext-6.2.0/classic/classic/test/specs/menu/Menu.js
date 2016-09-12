@@ -1,4 +1,4 @@
-/* global expect, jasmine, Ext, spyOn, xdescribe, describe */
+/* global expect, jasmine, Ext, spyOn, xdescribe, describe, it */
 
 describe("Ext.menu.Menu", function() {
     var menu;
@@ -46,11 +46,12 @@ describe("Ext.menu.Menu", function() {
     }
 
     afterEach(function() {
-        if (menu) {
+        if (menu && !menu.destroyed) {
             menu.hide();
             Ext.destroy(menu);
-            menu = null;
         }
+
+        menu = null;
     });
 
     describe("defaultType", function() {
@@ -278,18 +279,23 @@ describe("Ext.menu.Menu", function() {
                         }
                     }]
                 });
-                
                 menu.show();
                 
                 var item = menu.down('[text="Menu Item 1"]');
 
                 // Expand the sub-menu
                 doItemMouseover(item);
+
+                waitsFor(function() {
+                    return item.menu.isVisible();
+                });
                 
-                jasmine.fireMouseEvent(item.el, 'click');
+                runs(function() {
+                    jasmine.fireMouseEvent(item.el, 'click');
                 
-                // Manager acts on global mousedown with no delays
-                expect(item.menu.isVisible()).toBe(true);
+                    // Manager acts on global mousedown with no delays
+                    expect(item.menu.isVisible()).toBe(true);
+                });
             });
         });
     });
@@ -821,6 +827,12 @@ describe("Ext.menu.Menu", function() {
                 menu.hide();
             });
             
+            describe("tabIndex", function() {
+                it("should be present on main el", function() {
+                    expect(menu.el).toHaveAttr('tabIndex', '-1');
+                });
+            });
+            
             describe("aria-expanded", function() {
                 it("should be false when hidden", function() {
                     expect(menu).toHaveAttr('aria-expanded', 'false');
@@ -844,6 +856,10 @@ describe("Ext.menu.Menu", function() {
             
             it("should not have aria-expanded attribute", function() {
                 expect(menu).not.toHaveAttr('aria-expanded');
+            });
+            
+            it("should not have tabIndex on main el", function() {
+                expect(menu.el).not.toHaveAttr('tabIndex');
             });
         });
     });
@@ -1461,6 +1477,67 @@ describe("Ext.menu.Menu", function() {
 
         it("should successfully add an instance of Ext.menu.Separator", function () {
             expect(menu.items.getAt(1).getXType()).toBe('menuseparator');
+        });
+    });
+
+    describe("static, inside an accordion layout", function() {
+        var oldOnError = window.onerror;
+        
+        afterEach(function() {
+            window.onerror = oldOnError;
+        });
+        it('should not throw an error on mousedown of the header', function() {
+            var header, onErrorSpy = jasmine.createSpy();
+
+            function getSampleMenuItems () {
+                return [
+                    { text: 'Menu Item 1' },
+                    { text: 'Menu Item 2' },
+                    { text: 'Menu Item 3' },
+                    { text: 'Menu Item 4' }
+                ];
+            }
+
+            menu = Ext.widget('panel', {
+                title: 'Accordion Panel',
+                width: 300,
+                height: 500,
+                renderTo: Ext.getBody(),
+                layout: 'accordion',
+                items: [{
+                    xtype: 'menu',
+                    floating: false,
+                    title: 'Menu 1 Title (Throws Exception)',
+                        items: getSampleMenuItems()
+                }, {
+                    xtype: 'menu',
+                    floating: false,
+                    title: 'Menu 2 Title (Throws Exception)',
+                        items: getSampleMenuItems()
+                }, {
+                    xtype: 'panel',
+                    title: 'Panel w/ Fit Menu (Works)',
+                    layout: 'fit',
+                    items: [{
+                        xtype: 'menu',
+                        floating: false,
+                        items: getSampleMenuItems()
+                    }]
+                }]
+            });
+
+            window.onerror = onErrorSpy.andCallFake(function() {
+                if (oldOnError) {
+                    oldOnError();
+                }
+            });
+
+            header = menu.down('menu').header;
+            header.titleCmp.focus();
+            jasmine.fireMouseEvent(header.el, 'mousedown');
+
+            // Must not have thrown an error
+            expect(onErrorSpy).not.toHaveBeenCalled();
         });
     });
 });

@@ -437,11 +437,11 @@ Ext.define('Ext.util.Filter', {
     },
 
     updateDisableOnEmpty: function(disableOnEmpty) {
-        var disabled = false;
+        // Only poke disabled if true because otherwise we'll smash the disabled
+        // config that may also be getting set.
         if (disableOnEmpty) {
-            disabled = Ext.isEmpty(this.getValue());
+            this.setDisabled(Ext.isEmpty(this.getValue()));
         }
-        this.setDisabled(disabled);
     },
 
     privates: {

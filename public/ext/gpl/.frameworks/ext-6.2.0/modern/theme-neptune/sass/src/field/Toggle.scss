@@ -3,8 +3,13 @@
  */
 
 .x-togglefield {
-  border: $togglefield-border;
-  .x-field-body {
-    padding: $togglefield-padding;
-  }
+    .x-body-el {
+        padding: $togglefield-padding;
+
+        @if $enable-big {
+            .#{$prefix}big & {
+                padding: $togglefield-padding-big;
+            }
+        }
+    }
 }

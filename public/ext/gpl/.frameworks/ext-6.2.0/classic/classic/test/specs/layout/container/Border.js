@@ -3013,8 +3013,7 @@ describe('Ext.layout.container.Border', function() {
                 expect(west.isViewportBorderChild).toBe(true);
             });
             
-            // TODO
-            xit('should support adding a collapsed region', function() {
+            it('should support adding a collapsed region', function() {
                 //
                 //      +------+------+
                 //      | west |center|
@@ -3028,6 +3027,8 @@ describe('Ext.layout.container.Border', function() {
                 var ct = createBorderLayout([{
                     region: 'west',
                     width: 30
+                }, {
+                    region: 'center'
                 }]);
 
                 ct.add({
@@ -3055,6 +3056,36 @@ describe('Ext.layout.container.Border', function() {
                 expect(center.getHeight()).toBe(200 - HORIZONTAL_PLACEHOLDER_HEIGHT);
                 expect(getLeft(ct, center)).toBe(30);
                 expect(getTop(ct, center)).toBe(0);
+            });
+            
+            it("should support re-adding previously collapsed region", function() {
+                var ct = createBorderLayout([{
+                    xtype: 'panel',
+                    region: 'west',
+                    title: 'west',
+                    width: 30,
+                    collapsible: true,
+                    collapsed: false,
+                    animCollapse: false
+                }, {
+                    region: 'center'
+                }]);
+                
+                var west = ct.down('[region=west]');
+                var center = ct.down('[region=center]');
+                
+                west.collapse();
+                ct.remove(west, false);
+                
+                expect(center.getWidth()).toBe(200);
+                expect(center.getHeight()).toBe(200);
+                
+                ct.add(west);
+                
+                expect(west.el.isVisible()).toBe(false);
+                expect(west.placeholder.el.isVisible()).toBe(true);
+                expect(west.placeholder.getWidth()).toBe(VERTICAL_PLACEHOLDER_WIDTH);
+                expect(center.getWidth()).toBe(200 - VERTICAL_PLACEHOLDER_WIDTH);
             });
         });
     });

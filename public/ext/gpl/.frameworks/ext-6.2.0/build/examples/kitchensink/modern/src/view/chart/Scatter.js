@@ -17,27 +17,33 @@ Ext.define('KitchenSink.view.chart.Scatter', {
         }
     },
 
+    // <example>
+    otherContent: [{
+        type: 'Controller',
+        path: 'modern/src/view/chart/ChartController.js'
+    },{
+        type: 'Store',
+        path: 'modern/src/store/OrderItems.js'
+    }],
+    // </example>
+    
     layout: 'fit',
+    shadow: true,
+
     items: [{
         xtype: 'toolbar',
         docked: 'top',
         cls: 'charttoolbar',
         items: [{
-            xtype: 'spacer'
-        }, {
-            iconCls: 'x-fa fa-picture-o',
-            text: 'Theme',
-            handler: 'onThemeChange'
-        }, {
             iconCls: 'x-fa fa-refresh',
             text: 'Refresh',
             handler: 'onRefresh'
         }, {
-            text: 'Reset',
-            handler: 'onReset'
+            xtype: 'spacer'
         }]
     }, {
         xtype: 'cartesian',
+        insetPadding: '20 20 10 10',
         store: {
             type: 'orderitems',
             numRecords: 25
@@ -45,7 +51,6 @@ Ext.define('KitchenSink.view.chart.Scatter', {
         legend: {
             position: 'bottom'
         },
-        background: 'white',
         interactions: [
             'panzoom',
             'itemhighlight'
@@ -54,6 +59,7 @@ Ext.define('KitchenSink.view.chart.Scatter', {
             type: 'scatter',
             xField: 'id',
             yField: 'g1',
+            title: 'Group 1',
             highlightCfg: {
                 strokeStyle: 'red',
                 lineWidth: 5
@@ -74,6 +80,7 @@ Ext.define('KitchenSink.view.chart.Scatter', {
             type: 'scatter',
             xField: 'id',
             yField: 'g2',
+            title: 'Group 2',
             highlightCfg: {
                 strokeStyle: 'red',
                 lineWidth: 5

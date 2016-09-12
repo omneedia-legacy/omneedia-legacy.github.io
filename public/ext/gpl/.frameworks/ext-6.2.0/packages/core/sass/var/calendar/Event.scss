@@ -87,13 +87,13 @@ $calendar-event-day-padding: dynamic(2px 4px);
 $calendar-event-day-font-size: dynamic($calendar-small-font-size);
 
 /**
- * @var number
+ * @var {number}
  * The border width for a day event.
  */
 $calendar-event-day-border-width: dynamic(1px);
 
 /**
- * @var number
+ * @var {number}
  * The border style for a day event.
  */
 $calendar-event-day-border-style: dynamic(solid);

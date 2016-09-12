@@ -15,7 +15,7 @@ describe('Ext.form.Labelable', function() {
             },
             privates: {
                 initRenderTpl: function () {
-                    this.renderTpl = this.getTpl('labelableRenderTpl');
+                    this.renderTpl = this.lookupTpl('labelableRenderTpl');
                     return this.callParent();
                 }
             }

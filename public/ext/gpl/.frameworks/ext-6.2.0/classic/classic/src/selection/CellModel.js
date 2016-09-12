@@ -490,7 +490,7 @@ Ext.define('Ext.selection.CellModel', {
         // DO NOT fire events because the selected 
         if (pos && pos.view === view) {
             record = pos.record;
-            column = pos.column;
+            column = view.getColumnByPosition(pos);
 
             // After a refresh, recreate the selection using the same record and grid column as before
             if (!column.isDescendantOf(headerCt)) {

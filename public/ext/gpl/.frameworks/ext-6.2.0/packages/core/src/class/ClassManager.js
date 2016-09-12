@@ -2041,14 +2041,17 @@ var makeCtor = Ext.Class.makeCtor,
         data.xtypesChain = xtypesChain;
         data.xtypesMap = xtypesMap;
 
-        Ext.Function.interceptAfter(data, 'onClassCreated', function() {
+        // Class is already extended at this point
+        Ext.Function.interceptAfterOnce(cls, 'onClassCreated', function() {
+            var cls = this,
+                prototype = cls.prototype,
+                mixins = prototype.mixins,
+                key, mixin;
+            
             //<debug>
             Ext.classSystemMonitor && Ext.classSystemMonitor(cls, 'Ext.ClassManager#aliasPreprocessor#afterClassCreated', arguments);
             //</debug>
         
-            var mixins = prototype.mixins,
-                key, mixin;
-
             for (key in mixins) {
                 if (mixins.hasOwnProperty(key)) {
                     mixin = mixins[key];

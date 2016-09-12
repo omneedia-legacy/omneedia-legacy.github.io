@@ -146,7 +146,7 @@ Ext.define('Ext.event.gesture.EdgeSwipe', {
     onCancel: function(e) {
         this.fire('edgeswipecancel', e, {
             touch: e.changedTouches[0]
-        });
+        }, true);
     },
 
     reset: function() {

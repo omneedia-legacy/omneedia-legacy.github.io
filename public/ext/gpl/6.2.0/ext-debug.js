@@ -1,19 +1,22 @@
 /*
-This file is part of Ext JS 6.2.0.589
+This file is part of Ext JS 6.2.0.981
 
 Copyright (c) 2011-2016 Sencha Inc
 
 Contact:  http://www.sencha.com/contact
 
-Pre-release code in the Ext repository is intended for development purposes only and will
-not always be stable. 
+GNU General Public License Usage
+This file may be used under the terms of the GNU General Public License version 3.0 as
+published by the Free Software Foundation and appearing in the file LICENSE included in the
+packaging of this file.
 
-Use of pre-release code is permitted with your application at your own risk under standard
-Ext license terms. Public redistribution is prohibited.
+Please review the following information to ensure the GNU General Public License version 3.0
+requirements will be met: http://www.gnu.org/copyleft/gpl.html.
 
-For early licensing, please contact us at licensing@sencha.com
+If you are unsure which license is appropriate for your use, please contact the sales department
+at http://www.sencha.com/contact.
 
-Version: 6.2.0.589 Build date: 2016-06-13 20:29:55 (a685b5b1cc9b9202059835dae21c4f60d10a4fdf)
+Version: 6.2.0.981 Build date: 2016-08-31 14:49:44 (08dbbd0ec0b8bc0e014d725fdb7d9650d510b343)
 
 */
 
@@ -72,8 +75,10 @@ var Ext = Ext || {};
     "Ext.perf": "../packages/core/src/perf",
     "Ext.plugin.Abstract": "../packages/core/src/plugin/Abstract.js",
     "Ext.plugin.LazyItems": "../packages/core/src/plugin/LazyItems.js",
+    "Ext.plugin.MouseEnter": "../packages/core/src/plugin/MousEnter.js",
     "Ext.promise": "../packages/core/src/promise",
-    "Ext.scroll": "../packages/core/src/scroll",
+    "Ext.scroll.Scroller": "../packages/core/src/scroll/Scroller.js",
+    "Ext.sparkline": "../packages/core/src/sparkline",
     "Ext.util": "../packages/core/src/util",
     "Ext.util.Animate": "../classic/classic/src/util/Animate.js",
     "Ext.util.ClickRepeater": "../classic/classic/src/util/ClickRepeater.js",
@@ -81,13 +86,11 @@ var Ext = Ext || {};
     "Ext.util.Cookies": "../classic/classic/src/util/Cookies.js",
     "Ext.util.ElementContainer": "../classic/classic/src/util/ElementContainer.js",
     "Ext.util.Floating": "../classic/classic/src/util/Floating.js",
-    "Ext.util.FocusTrap": "../classic/classic/src/util/FocusTrap.js",
     "Ext.util.Focusable": "../classic/classic/src/util/Focusable.js",
     "Ext.util.FocusableContainer": "../classic/classic/src/util/FocusableContainer.js",
     "Ext.util.Format.format": "../packages/core/src/Template.js",
     "Ext.util.KeyMap": "../classic/classic/src/util/KeyMap.js",
     "Ext.util.KeyNav": "../classic/classic/src/util/KeyNav.js",
-    "Ext.util.KeyboardInteractive": "../classic/classic/src/util/KeyboardInteractive.js",
     "Ext.util.Memento": "../classic/classic/src/util/Memento.js",
     "Ext.util.ProtoElement": "../classic/classic/src/util/ProtoElement.js",
     "Ext.util.Queue": "../classic/classic/src/util/Queue.js",
@@ -304,7 +307,7 @@ var Ext = Ext || {};
         22
       ],
       "uses": [
-        86
+        87
       ],
       "idx": 23
     },
@@ -424,18 +427,18 @@ var Ext = Ext || {};
       "uses": [
         35,
         49,
-        254,
         265,
-        266,
-        267,
-        268,
-        269,
-        270,
-        271,
-        272,
-        273,
-        274,
-        275
+        276,
+        277,
+        278,
+        279,
+        280,
+        281,
+        282,
+        283,
+        284,
+        285,
+        286
       ],
       "idx": 37
     },
@@ -559,13 +562,13 @@ var Ext = Ext || {};
         74,
         75,
         76,
-        86,
-        93,
-        226,
-        255,
-        276,
-        286,
-        288
+        87,
+        94,
+        233,
+        266,
+        287,
+        297,
+        299
       ],
       "idx": 49
     },
@@ -845,78 +848,86 @@ var Ext = Ext || {};
       "idx": 81
     },
     {
+      "path": "../packages/core/src/mixin/Pluggable.js",
+      "requires": [],
+      "uses": [],
+      "idx": 82
+    },
+    {
       "path": "../packages/core/src/Widget.js",
       "requires": [
         24,
         49,
         79,
         80,
-        81
+        81,
+        82
       ],
       "uses": [
         20,
-        23
+        23,
+        90
       ],
-      "idx": 82
+      "idx": 83
     },
     {
       "path": "../packages/core/src/ProgressBase.js",
       "requires": [],
       "uses": [
-        89
+        90
       ],
-      "idx": 83
+      "idx": 84
     },
     {
       "path": "../packages/core/src/Progress.js",
       "requires": [
-        82,
-        83
+        83,
+        84
       ],
       "uses": [],
-      "idx": 84
+      "idx": 85
     },
     {
       "path": "../packages/core/src/util/Format.js",
       "requires": [],
       "uses": [
-        86,
-        226
+        87,
+        233
       ],
-      "idx": 85
+      "idx": 86
     },
     {
       "path": "../packages/core/src/Template.js",
       "requires": [
-        85
+        86
       ],
       "uses": [
-        226
+        233
       ],
-      "idx": 86
+      "idx": 87
     },
     {
       "path": "../packages/core/src/util/XTemplateParser.js",
       "requires": [],
       "uses": [],
-      "idx": 87
+      "idx": 88
     },
     {
       "path": "../packages/core/src/util/XTemplateCompiler.js",
       "requires": [
-        87
-      ],
-      "uses": [],
-      "idx": 88
-    },
-    {
-      "path": "../packages/core/src/XTemplate.js",
-      "requires": [
-        86,
         88
       ],
       "uses": [],
       "idx": 89
+    },
+    {
+      "path": "../packages/core/src/XTemplate.js",
+      "requires": [
+        87,
+        89
+      ],
+      "uses": [],
+      "idx": 90
     },
     {
       "path": "../packages/core/src/app/EventDomain.js",
@@ -924,25 +935,25 @@ var Ext = Ext || {};
         2
       ],
       "uses": [],
-      "idx": 90
+      "idx": 91
     },
     {
       "path": "../packages/core/src/app/domain/Component.js",
       "requires": [
-        82,
-        90
+        83,
+        91
       ],
       "uses": [],
-      "idx": 91
+      "idx": 92
     },
     {
       "path": "../classic/classic/src/util/ProtoElement.js",
       "requires": [],
       "uses": [
         49,
-        226
+        233
       ],
-      "idx": 92
+      "idx": 93
     },
     {
       "path": "../packages/core/src/dom/CompositeElement.js",
@@ -950,7 +961,7 @@ var Ext = Ext || {};
         75
       ],
       "uses": [],
-      "idx": 93
+      "idx": 94
     },
     {
       "path": "../packages/core/src/util/CSS.js",
@@ -958,18 +969,61 @@ var Ext = Ext || {};
       "uses": [
         49
       ],
-      "idx": 94
+      "idx": 95
+    },
+    {
+      "path": "../packages/core/src/fx/easing/Abstract.js",
+      "requires": [],
+      "uses": [],
+      "idx": 96
+    },
+    {
+      "path": "../packages/core/src/fx/easing/Linear.js",
+      "requires": [
+        96
+      ],
+      "uses": [],
+      "idx": 97
+    },
+    {
+      "path": "../packages/core/src/util/translatable/Abstract.js",
+      "requires": [
+        24,
+        97
+      ],
+      "uses": [
+        19
+      ],
+      "idx": 98
+    },
+    {
+      "path": "../packages/core/src/util/translatable/Dom.js",
+      "requires": [
+        98
+      ],
+      "uses": [],
+      "idx": 99
+    },
+    {
+      "path": "../packages/core/src/util/translatable/ScrollPosition.js",
+      "requires": [
+        99
+      ],
+      "uses": [],
+      "idx": 100
     },
     {
       "path": "../packages/core/src/scroll/Scroller.js",
       "requires": [
+        12,
         24,
-        94
+        95,
+        100
       ],
       "uses": [
         76
       ],
-      "idx": 95
+      "idx": 101
     },
     {
       "path": "../classic/classic/src/util/Floating.js",
@@ -978,15 +1032,15 @@ var Ext = Ext || {};
         20,
         49,
         76,
-        352
+        376
       ],
-      "idx": 96
+      "idx": 102
     },
     {
       "path": "../classic/classic/src/util/ElementContainer.js",
       "requires": [],
       "uses": [],
-      "idx": 97
+      "idx": 103
     },
     {
       "path": "../classic/classic/src/util/Renderable.js",
@@ -994,11 +1048,11 @@ var Ext = Ext || {};
         49
       ],
       "uses": [
-        89,
-        105,
-        226
+        90,
+        111,
+        233
       ],
-      "idx": 98
+      "idx": 104
     },
     {
       "path": "../classic/classic/src/state/Provider.js",
@@ -1006,24 +1060,24 @@ var Ext = Ext || {};
         51
       ],
       "uses": [],
-      "idx": 99
+      "idx": 105
     },
     {
       "path": "../classic/classic/src/state/Manager.js",
       "requires": [
-        99
+        105
       ],
       "uses": [],
-      "idx": 100
+      "idx": 106
     },
     {
       "path": "../classic/classic/src/state/Stateful.js",
       "requires": [
         56,
-        100
+        106
       ],
       "uses": [],
-      "idx": 101
+      "idx": 107
     },
     {
       "path": "../classic/classic/src/util/Focusable.js",
@@ -1031,11 +1085,12 @@ var Ext = Ext || {};
         1
       ],
       "uses": [
+        20,
         23,
         35,
         49
       ],
-      "idx": 102
+      "idx": 108
     },
     {
       "path": "../packages/core/src/mixin/Accessible.js",
@@ -1043,17 +1098,17 @@ var Ext = Ext || {};
         0
       ],
       "uses": [],
-      "idx": 103
+      "idx": 109
     },
     {
-      "path": "../classic/classic/src/util/KeyboardInteractive.js",
+      "path": "../packages/core/src/mixin/Keyboard.js",
       "requires": [
         0
       ],
       "uses": [
         35
       ],
-      "idx": 104
+      "idx": 110
     },
     {
       "path": "../classic/classic/src/Component.js",
@@ -1067,80 +1122,80 @@ var Ext = Ext || {};
         79,
         80,
         81,
-        92,
         93,
-        95,
-        96,
-        97,
-        98,
+        94,
         101,
         102,
         103,
-        104
+        104,
+        107,
+        108,
+        109,
+        110
       ],
       "uses": [
         1,
         49,
         66,
-        89,
-        226,
-        347,
-        348,
-        349,
-        352,
-        360,
-        362,
-        432,
-        578,
-        593,
-        597
+        90,
+        233,
+        371,
+        372,
+        373,
+        376,
+        383,
+        385,
+        455,
+        602,
+        617,
+        621
       ],
-      "idx": 105
+      "idx": 111
     },
     {
       "path": "../classic/classic/src/layout/container/border/Region.js",
       "requires": [],
       "uses": [],
-      "idx": 106
+      "idx": 112
     },
     {
       "path": "../packages/core/src/app/EventBus.js",
       "requires": [
-        91
+        92
       ],
       "uses": [
-        90
+        91
       ],
-      "idx": 107
+      "idx": 113
     },
     {
       "path": "../packages/core/src/app/domain/Global.js",
       "requires": [
         76,
-        90
+        91
       ],
       "uses": [],
-      "idx": 108
+      "idx": 114
     },
     {
       "path": "../packages/core/src/app/BaseController.js",
       "requires": [
         4,
-        107,
-        108
+        113,
+        114
       ],
       "uses": [
-        165,
-        166,
-        205
+        171,
+        172,
+        212
       ],
-      "idx": 109
+      "idx": 115
     },
     {
       "path": "../packages/core/src/app/Util.js",
       "requires": [],
       "uses": [],
-      "idx": 110
+      "idx": 116
     },
     {
       "path": "../packages/core/src/util/CollectionKey.js",
@@ -1148,7 +1203,7 @@ var Ext = Ext || {};
         3
       ],
       "uses": [],
-      "idx": 111
+      "idx": 117
     },
     {
       "path": "../packages/core/src/util/Grouper.js",
@@ -1156,7 +1211,7 @@ var Ext = Ext || {};
         53
       ],
       "uses": [],
-      "idx": 112
+      "idx": 118
     },
     {
       "path": "../packages/core/src/util/Collection.js",
@@ -1164,23 +1219,23 @@ var Ext = Ext || {};
         4,
         50,
         53,
-        111,
-        112
+        117,
+        118
       ],
       "uses": [
-        155,
-        156,
-        157
+        161,
+        162,
+        163
       ],
-      "idx": 113
+      "idx": 119
     },
     {
       "path": "../packages/core/src/util/ObjectTemplate.js",
       "requires": [
-        89
+        90
       ],
       "uses": [],
-      "idx": 114
+      "idx": 120
     },
     {
       "path": "../packages/core/src/data/schema/Role.js",
@@ -1188,67 +1243,67 @@ var Ext = Ext || {};
       "uses": [
         12
       ],
-      "idx": 115
+      "idx": 121
     },
     {
       "path": "../packages/core/src/data/schema/Association.js",
       "requires": [
-        115
+        121
       ],
       "uses": [],
-      "idx": 116
+      "idx": 122
     },
     {
       "path": "../packages/core/src/data/schema/OneToOne.js",
       "requires": [
-        116
+        122
       ],
       "uses": [],
-      "idx": 117
+      "idx": 123
     },
     {
       "path": "../packages/core/src/data/schema/ManyToOne.js",
       "requires": [
-        116
+        122
       ],
       "uses": [],
-      "idx": 118
+      "idx": 124
     },
     {
       "path": "../packages/core/src/data/schema/ManyToMany.js",
       "requires": [
-        116
+        122
       ],
       "uses": [],
-      "idx": 119
+      "idx": 125
     },
     {
       "path": "../packages/core/src/util/Inflector.js",
       "requires": [],
       "uses": [],
-      "idx": 120
+      "idx": 126
     },
     {
       "path": "../packages/core/src/data/schema/Namer.js",
       "requires": [
         12,
-        120
+        126
       ],
       "uses": [],
-      "idx": 121
+      "idx": 127
     },
     {
       "path": "../packages/core/src/data/schema/Schema.js",
       "requires": [
         12,
-        114,
-        117,
-        118,
-        119,
-        121
+        120,
+        123,
+        124,
+        125,
+        127
       ],
       "uses": [],
-      "idx": 122
+      "idx": 128
     },
     {
       "path": "../packages/core/src/data/AbstractStore.js",
@@ -1256,74 +1311,74 @@ var Ext = Ext || {};
         4,
         12,
         50,
-        113,
-        122
+        119,
+        128
       ],
       "uses": [
-        161
+        167
       ],
-      "idx": 123
+      "idx": 129
     },
     {
       "path": "../packages/core/src/data/Error.js",
       "requires": [],
       "uses": [],
-      "idx": 124
+      "idx": 130
     },
     {
       "path": "../packages/core/src/data/ErrorCollection.js",
       "requires": [
         55,
-        124
+        130
       ],
       "uses": [
-        133
+        139
       ],
-      "idx": 125
+      "idx": 131
     },
     {
       "path": "../packages/core/src/data/operation/Operation.js",
       "requires": [],
       "uses": [],
-      "idx": 126
+      "idx": 132
     },
     {
       "path": "../packages/core/src/data/operation/Create.js",
       "requires": [
-        126
+        132
       ],
       "uses": [],
-      "idx": 127
+      "idx": 133
     },
     {
       "path": "../packages/core/src/data/operation/Destroy.js",
       "requires": [
-        126
+        132
       ],
       "uses": [],
-      "idx": 128
+      "idx": 134
     },
     {
       "path": "../packages/core/src/data/operation/Read.js",
       "requires": [
-        126
+        132
       ],
       "uses": [],
-      "idx": 129
+      "idx": 135
     },
     {
       "path": "../packages/core/src/data/operation/Update.js",
       "requires": [
-        126
+        132
       ],
       "uses": [],
-      "idx": 130
+      "idx": 136
     },
     {
       "path": "../packages/core/src/data/SortTypes.js",
       "requires": [],
       "uses": [],
-      "idx": 131
+      "idx": 137
     },
     {
       "path": "../packages/core/src/data/validator/Validator.js",
@@ -1331,68 +1386,20 @@ var Ext = Ext || {};
         12
       ],
       "uses": [],
-      "idx": 132
+      "idx": 138
     },
     {
       "path": "../packages/core/src/data/field/Field.js",
       "requires": [
         12,
-        131,
-        132
-      ],
-      "uses": [],
-      "idx": 133
-    },
-    {
-      "path": "../packages/core/src/data/field/Boolean.js",
-      "requires": [
-        133
-      ],
-      "uses": [],
-      "idx": 134
-    },
-    {
-      "path": "../packages/core/src/data/field/Date.js",
-      "requires": [
-        133
-      ],
-      "uses": [],
-      "idx": 135
-    },
-    {
-      "path": "../packages/core/src/data/field/Integer.js",
-      "requires": [
-        133
-      ],
-      "uses": [],
-      "idx": 136
-    },
-    {
-      "path": "../packages/core/src/data/field/Number.js",
-      "requires": [
-        136
-      ],
-      "uses": [],
-      "idx": 137
-    },
-    {
-      "path": "../packages/core/src/data/field/String.js",
-      "requires": [
-        133
-      ],
-      "uses": [],
-      "idx": 138
-    },
-    {
-      "path": "../packages/core/src/data/identifier/Generator.js",
-      "requires": [
-        12
+        137,
+        138
       ],
       "uses": [],
       "idx": 139
     },
     {
-      "path": "../packages/core/src/data/identifier/Sequential.js",
+      "path": "../packages/core/src/data/field/Boolean.js",
       "requires": [
         139
       ],
@@ -1400,82 +1407,47 @@ var Ext = Ext || {};
       "idx": 140
     },
     {
-      "path": "../packages/core/src/data/Model.js",
+      "path": "../packages/core/src/data/field/Date.js",
       "requires": [
-        122,
-        125,
-        126,
-        127,
-        128,
-        129,
-        130,
-        132,
-        133,
-        134,
-        135,
-        136,
-        137,
-        138,
-        139,
-        140
+        139
       ],
-      "uses": [
-        12,
-        143,
-        225
-      ],
+      "uses": [],
       "idx": 141
     },
     {
-      "path": "../packages/core/src/data/ResultSet.js",
-      "requires": [],
+      "path": "../packages/core/src/data/field/Integer.js",
+      "requires": [
+        139
+      ],
       "uses": [],
       "idx": 142
     },
     {
-      "path": "../packages/core/src/data/reader/Reader.js",
+      "path": "../packages/core/src/data/field/Number.js",
       "requires": [
-        4,
-        12,
-        22,
-        89,
         142
       ],
-      "uses": [
-        122
-      ],
+      "uses": [],
       "idx": 143
     },
     {
-      "path": "../packages/core/src/data/writer/Writer.js",
+      "path": "../packages/core/src/data/field/String.js",
       "requires": [
-        12
+        139
       ],
       "uses": [],
       "idx": 144
     },
     {
-      "path": "../packages/core/src/data/proxy/Proxy.js",
+      "path": "../packages/core/src/data/identifier/Generator.js",
       "requires": [
-        4,
-        12,
-        122,
-        143,
-        144
+        12
       ],
-      "uses": [
-        126,
-        127,
-        128,
-        129,
-        130,
-        141,
-        174
-      ],
+      "uses": [],
       "idx": 145
     },
     {
-      "path": "../packages/core/src/data/proxy/Client.js",
+      "path": "../packages/core/src/data/identifier/Sequential.js",
       "requires": [
         145
       ],
@@ -1483,33 +1455,116 @@ var Ext = Ext || {};
       "idx": 146
     },
     {
+      "path": "../packages/core/src/data/Model.js",
+      "requires": [
+        128,
+        131,
+        132,
+        133,
+        134,
+        135,
+        136,
+        138,
+        139,
+        140,
+        141,
+        142,
+        143,
+        144,
+        145,
+        146
+      ],
+      "uses": [
+        12,
+        149,
+        232
+      ],
+      "idx": 147
+    },
+    {
+      "path": "../packages/core/src/data/ResultSet.js",
+      "requires": [],
+      "uses": [],
+      "idx": 148
+    },
+    {
+      "path": "../packages/core/src/data/reader/Reader.js",
+      "requires": [
+        4,
+        12,
+        22,
+        90,
+        148
+      ],
+      "uses": [
+        128
+      ],
+      "idx": 149
+    },
+    {
+      "path": "../packages/core/src/data/writer/Writer.js",
+      "requires": [
+        12
+      ],
+      "uses": [],
+      "idx": 150
+    },
+    {
+      "path": "../packages/core/src/data/proxy/Proxy.js",
+      "requires": [
+        4,
+        12,
+        128,
+        149,
+        150
+      ],
+      "uses": [
+        132,
+        133,
+        134,
+        135,
+        136,
+        147,
+        180
+      ],
+      "idx": 151
+    },
+    {
+      "path": "../packages/core/src/data/proxy/Client.js",
+      "requires": [
+        151
+      ],
+      "uses": [],
+      "idx": 152
+    },
+    {
       "path": "../packages/core/src/data/proxy/Memory.js",
       "requires": [
-        146
+        152
       ],
       "uses": [
         50,
         54
       ],
-      "idx": 147
+      "idx": 153
     },
     {
       "path": "../packages/core/src/data/ProxyStore.js",
       "requires": [
-        123,
-        126,
-        127,
-        128,
         129,
-        130,
-        141,
-        145,
-        147
+        132,
+        133,
+        134,
+        135,
+        136,
+        147,
+        151,
+        153
       ],
       "uses": [
-        122
+        128
       ],
-      "idx": 148
+      "idx": 154
     },
     {
       "path": "../packages/core/src/data/LocalStore.js",
@@ -1517,176 +1572,115 @@ var Ext = Ext || {};
         0
       ],
       "uses": [
-        113
+        119
       ],
-      "idx": 149
+      "idx": 155
     },
     {
       "path": "../packages/core/src/data/proxy/Server.js",
       "requires": [
-        145
+        151
       ],
       "uses": [
-        86,
-        222
+        87,
+        229
       ],
-      "idx": 150
+      "idx": 156
     },
     {
       "path": "../packages/core/src/data/proxy/Ajax.js",
       "requires": [
         18,
-        150
-      ],
-      "uses": [],
-      "idx": 151
-    },
-    {
-      "path": "../packages/core/src/data/reader/Json.js",
-      "requires": [
-        78,
-        143
-      ],
-      "uses": [],
-      "idx": 152
-    },
-    {
-      "path": "../packages/core/src/data/writer/Json.js",
-      "requires": [
-        144
-      ],
-      "uses": [],
-      "idx": 153
-    },
-    {
-      "path": "../packages/core/src/util/Group.js",
-      "requires": [
-        113
-      ],
-      "uses": [],
-      "idx": 154
-    },
-    {
-      "path": "../packages/core/src/util/SorterCollection.js",
-      "requires": [
-        53,
-        113
-      ],
-      "uses": [],
-      "idx": 155
-    },
-    {
-      "path": "../packages/core/src/util/FilterCollection.js",
-      "requires": [
-        50,
-        113
-      ],
-      "uses": [],
-      "idx": 156
-    },
-    {
-      "path": "../packages/core/src/util/GroupCollection.js",
-      "requires": [
-        113,
-        154,
-        155,
         156
       ],
       "uses": [],
       "idx": 157
     },
     {
-      "path": "../packages/core/src/data/Store.js",
+      "path": "../packages/core/src/data/reader/Json.js",
       "requires": [
-        1,
-        141,
-        148,
-        149,
-        151,
-        152,
-        153,
-        157
+        78,
+        149
       ],
-      "uses": [
-        112,
-        161,
-        210
-      ],
+      "uses": [],
       "idx": 158
     },
     {
-      "path": "../packages/core/src/data/reader/Array.js",
+      "path": "../packages/core/src/data/writer/Json.js",
       "requires": [
-        152
+        150
       ],
       "uses": [],
       "idx": 159
     },
     {
-      "path": "../packages/core/src/data/ArrayStore.js",
+      "path": "../packages/core/src/util/Group.js",
       "requires": [
-        147,
-        158,
-        159
+        119
       ],
       "uses": [],
       "idx": 160
     },
     {
-      "path": "../packages/core/src/data/StoreManager.js",
+      "path": "../packages/core/src/util/SorterCollection.js",
       "requires": [
-        55,
-        160
+        53,
+        119
       ],
-      "uses": [
-        12,
-        147,
-        153,
-        158,
-        159
-      ],
+      "uses": [],
       "idx": 161
     },
     {
-      "path": "../packages/core/src/app/domain/Store.js",
+      "path": "../packages/core/src/util/FilterCollection.js",
       "requires": [
-        90,
-        123
+        50,
+        119
       ],
       "uses": [],
       "idx": 162
     },
     {
-      "path": "../packages/core/src/app/route/Queue.js",
-      "requires": [],
-      "uses": [
-        55
+      "path": "../packages/core/src/util/GroupCollection.js",
+      "requires": [
+        119,
+        160,
+        161,
+        162
       ],
+      "uses": [],
       "idx": 163
     },
     {
-      "path": "../packages/core/src/app/route/Route.js",
-      "requires": [],
+      "path": "../packages/core/src/data/Store.js",
+      "requires": [
+        1,
+        147,
+        154,
+        155,
+        157,
+        158,
+        159,
+        163
+      ],
       "uses": [
-        85,
-        86
+        118,
+        167,
+        217
       ],
       "idx": 164
     },
     {
-      "path": "../packages/core/src/util/History.js",
+      "path": "../packages/core/src/data/reader/Array.js",
       "requires": [
-        51
+        158
       ],
-      "uses": [
-        335
-      ],
+      "uses": [],
       "idx": 165
     },
     {
-      "path": "../packages/core/src/app/route/Router.js",
+      "path": "../packages/core/src/data/ArrayStore.js",
       "requires": [
-        163,
+        153,
         164,
         165
       ],
@@ -1694,33 +1688,94 @@ var Ext = Ext || {};
       "idx": 166
     },
     {
-      "path": "../packages/core/src/app/Controller.js",
+      "path": "../packages/core/src/data/StoreManager.js",
       "requires": [
-        20,
-        91,
-        109,
-        110,
-        161,
-        162,
+        55,
         166
       ],
       "uses": [
-        23,
-        122
+        12,
+        153,
+        159,
+        164,
+        165
       ],
       "idx": 167
+    },
+    {
+      "path": "../packages/core/src/app/domain/Store.js",
+      "requires": [
+        91,
+        129
+      ],
+      "uses": [],
+      "idx": 168
+    },
+    {
+      "path": "../packages/core/src/app/route/Queue.js",
+      "requires": [],
+      "uses": [
+        55
+      ],
+      "idx": 169
+    },
+    {
+      "path": "../packages/core/src/app/route/Route.js",
+      "requires": [],
+      "uses": [
+        86,
+        87
+      ],
+      "idx": 170
+    },
+    {
+      "path": "../packages/core/src/util/History.js",
+      "requires": [
+        51
+      ],
+      "uses": [
+        362
+      ],
+      "idx": 171
+    },
+    {
+      "path": "../packages/core/src/app/route/Router.js",
+      "requires": [
+        169,
+        170,
+        171
+      ],
+      "uses": [],
+      "idx": 172
+    },
+    {
+      "path": "../packages/core/src/app/Controller.js",
+      "requires": [
+        20,
+        92,
+        115,
+        116,
+        167,
+        168,
+        172
+      ],
+      "uses": [
+        23,
+        128
+      ],
+      "idx": 173
     },
     {
       "path": "../packages/core/src/app/Application.js",
       "requires": [
         55,
-        165,
-        167
+        171,
+        173
       ],
       "uses": [
-        166
+        172
       ],
-      "idx": 168
+      "idx": 174
     },
     {
       "path": "../packages/core/src/app/Profile.js",
@@ -1728,44 +1783,45 @@ var Ext = Ext || {};
         4
       ],
       "uses": [
-        167
+        173
       ],
-      "idx": 169
+      "idx": 175
     },
     {
       "path": "../packages/core/src/app/domain/View.js",
       "requires": [
-        90
+        83,
+        91
       ],
       "uses": [],
-      "idx": 170
+      "idx": 176
     },
     {
       "path": "../packages/core/src/app/ViewController.js",
       "requires": [
         12,
-        109,
-        170
+        115,
+        176
       ],
       "uses": [],
-      "idx": 171
+      "idx": 177
     },
     {
       "path": "../packages/core/src/util/Bag.js",
       "requires": [],
       "uses": [],
-      "idx": 172
+      "idx": 178
     },
     {
       "path": "../packages/core/src/util/Scheduler.js",
       "requires": [
         4,
-        172
+        178
       ],
       "uses": [
         76
       ],
-      "idx": 173
+      "idx": 179
     },
     {
       "path": "../packages/core/src/data/Batch.js",
@@ -1773,73 +1829,24 @@ var Ext = Ext || {};
         4
       ],
       "uses": [],
-      "idx": 174
+      "idx": 180
     },
     {
       "path": "../packages/core/src/data/matrix/Slice.js",
       "requires": [],
       "uses": [],
-      "idx": 175
+      "idx": 181
     },
     {
       "path": "../packages/core/src/data/matrix/Side.js",
       "requires": [
-        175
+        181
       ],
-      "uses": [],
-      "idx": 176
-    },
-    {
-      "path": "../packages/core/src/data/matrix/Matrix.js",
-      "requires": [
-        176
-      ],
-      "uses": [],
-      "idx": 177
-    },
-    {
-      "path": "../packages/core/src/data/session/ChangesVisitor.js",
-      "requires": [],
-      "uses": [],
-      "idx": 178
-    },
-    {
-      "path": "../packages/core/src/data/session/ChildChangesVisitor.js",
-      "requires": [
-        178
-      ],
-      "uses": [],
-      "idx": 179
-    },
-    {
-      "path": "../packages/core/src/data/session/BatchVisitor.js",
-      "requires": [],
-      "uses": [
-        174
-      ],
-      "idx": 180
-    },
-    {
-      "path": "../packages/core/src/data/Session.js",
-      "requires": [
-        122,
-        174,
-        177,
-        178,
-        179,
-        180
-      ],
-      "uses": [],
-      "idx": 181
-    },
-    {
-      "path": "../packages/core/src/util/Schedulable.js",
-      "requires": [],
       "uses": [],
       "idx": 182
     },
     {
-      "path": "../packages/core/src/app/bind/BaseBinding.js",
+      "path": "../packages/core/src/data/matrix/Matrix.js",
       "requires": [
         182
       ],
@@ -1847,44 +1854,41 @@ var Ext = Ext || {};
       "idx": 183
     },
     {
-      "path": "../packages/core/src/app/bind/Binding.js",
-      "requires": [
-        183
-      ],
+      "path": "../packages/core/src/data/session/ChangesVisitor.js",
+      "requires": [],
       "uses": [],
       "idx": 184
     },
     {
-      "path": "../packages/core/src/app/bind/AbstractStub.js",
+      "path": "../packages/core/src/data/session/ChildChangesVisitor.js",
       "requires": [
-        182,
         184
       ],
       "uses": [],
       "idx": 185
     },
     {
-      "path": "../packages/core/src/app/bind/Stub.js",
-      "requires": [
-        184,
-        185
-      ],
+      "path": "../packages/core/src/data/session/BatchVisitor.js",
+      "requires": [],
       "uses": [
-        190
+        180
       ],
       "idx": 186
     },
     {
-      "path": "../packages/core/src/app/bind/LinkStub.js",
-      "requires": [
-        186
-      ],
+      "path": "../packages/core/src/mixin/Dirty.js",
+      "requires": [],
       "uses": [],
       "idx": 187
     },
     {
-      "path": "../packages/core/src/app/bind/RootStub.js",
+      "path": "../packages/core/src/data/Session.js",
       "requires": [
+        4,
+        128,
+        180,
+        183,
+        184,
         185,
         186,
         187
@@ -1893,44 +1897,49 @@ var Ext = Ext || {};
       "idx": 188
     },
     {
-      "path": "../packages/core/src/app/bind/Multi.js",
-      "requires": [
-        183
-      ],
+      "path": "../packages/core/src/util/Schedulable.js",
+      "requires": [],
       "uses": [],
       "idx": 189
     },
     {
-      "path": "../packages/core/src/app/bind/Formula.js",
+      "path": "../packages/core/src/app/bind/BaseBinding.js",
       "requires": [
-        22,
-        182
+        189
       ],
       "uses": [],
       "idx": 190
     },
     {
-      "path": "../packages/core/src/util/Fly.js",
-      "requires": [],
+      "path": "../packages/core/src/app/bind/Binding.js",
+      "requires": [
+        190
+      ],
       "uses": [],
       "idx": 191
     },
     {
-      "path": "../packages/core/src/parse/Tokenizer.js",
+      "path": "../packages/core/src/app/bind/AbstractStub.js",
       "requires": [
+        189,
         191
       ],
       "uses": [],
       "idx": 192
     },
     {
-      "path": "../packages/core/src/parse/Symbol.js",
-      "requires": [],
-      "uses": [],
+      "path": "../packages/core/src/app/bind/Stub.js",
+      "requires": [
+        191,
+        192
+      ],
+      "uses": [
+        197
+      ],
       "idx": 193
     },
     {
-      "path": "../packages/core/src/parse/symbol/Constant.js",
+      "path": "../packages/core/src/app/bind/LinkStub.js",
       "requires": [
         193
       ],
@@ -1938,123 +1947,178 @@ var Ext = Ext || {};
       "idx": 194
     },
     {
-      "path": "../packages/core/src/parse/symbol/Infix.js",
+      "path": "../packages/core/src/app/bind/RootStub.js",
       "requires": [
-        193
+        192,
+        193,
+        194
       ],
       "uses": [],
       "idx": 195
     },
     {
-      "path": "../packages/core/src/parse/symbol/InfixRight.js",
+      "path": "../packages/core/src/app/bind/Multi.js",
       "requires": [
-        195
+        190
       ],
       "uses": [],
       "idx": 196
     },
     {
-      "path": "../packages/core/src/parse/symbol/Paren.js",
+      "path": "../packages/core/src/app/bind/Formula.js",
       "requires": [
-        193
+        22,
+        189
       ],
       "uses": [],
       "idx": 197
     },
     {
-      "path": "../packages/core/src/parse/symbol/Prefix.js",
-      "requires": [
-        193
-      ],
+      "path": "../packages/core/src/util/Fly.js",
+      "requires": [],
       "uses": [],
       "idx": 198
     },
     {
-      "path": "../packages/core/src/parse/Parser.js",
+      "path": "../packages/core/src/parse/Tokenizer.js",
       "requires": [
-        191,
-        192,
-        194,
-        196,
-        197,
         198
       ],
-      "uses": [
-        193,
-        195
-      ],
+      "uses": [],
       "idx": 199
     },
     {
-      "path": "../packages/core/src/app/bind/Parser.js",
-      "requires": [
-        85,
-        199
-      ],
+      "path": "../packages/core/src/parse/Symbol.js",
+      "requires": [],
       "uses": [],
       "idx": 200
     },
     {
-      "path": "../packages/core/src/app/bind/Template.js",
+      "path": "../packages/core/src/parse/symbol/Constant.js",
       "requires": [
-        85,
         200
       ],
       "uses": [],
       "idx": 201
     },
     {
-      "path": "../packages/core/src/app/bind/TemplateBinding.js",
+      "path": "../packages/core/src/parse/symbol/Infix.js",
       "requires": [
-        183,
-        189,
-        201
+        200
       ],
       "uses": [],
       "idx": 202
     },
     {
-      "path": "../packages/core/src/data/ChainedStore.js",
+      "path": "../packages/core/src/parse/symbol/InfixRight.js",
       "requires": [
-        123,
-        149
+        202
+      ],
+      "uses": [],
+      "idx": 203
+    },
+    {
+      "path": "../packages/core/src/parse/symbol/Paren.js",
+      "requires": [
+        200
+      ],
+      "uses": [],
+      "idx": 204
+    },
+    {
+      "path": "../packages/core/src/parse/symbol/Prefix.js",
+      "requires": [
+        200
+      ],
+      "uses": [],
+      "idx": 205
+    },
+    {
+      "path": "../packages/core/src/parse/Parser.js",
+      "requires": [
+        198,
+        199,
+        201,
+        203,
+        204,
+        205
       ],
       "uses": [
-        86,
-        161
+        200,
+        202
       ],
-      "idx": 203
+      "idx": 206
+    },
+    {
+      "path": "../packages/core/src/app/bind/Parser.js",
+      "requires": [
+        86,
+        206
+      ],
+      "uses": [],
+      "idx": 207
+    },
+    {
+      "path": "../packages/core/src/app/bind/Template.js",
+      "requires": [
+        86,
+        207
+      ],
+      "uses": [],
+      "idx": 208
+    },
+    {
+      "path": "../packages/core/src/app/bind/TemplateBinding.js",
+      "requires": [
+        190,
+        196,
+        208
+      ],
+      "uses": [],
+      "idx": 209
+    },
+    {
+      "path": "../packages/core/src/data/ChainedStore.js",
+      "requires": [
+        129,
+        155
+      ],
+      "uses": [
+        87,
+        167
+      ],
+      "idx": 210
     },
     {
       "path": "../packages/core/src/app/ViewModel.js",
       "requires": [
         3,
         12,
-        173,
-        181,
-        187,
+        179,
         188,
-        189,
-        190,
-        202,
-        203
+        194,
+        195,
+        196,
+        197,
+        209,
+        210
       ],
       "uses": [
         1,
-        122
+        128
       ],
-      "idx": 204
+      "idx": 211
     },
     {
       "path": "../packages/core/src/app/domain/Controller.js",
       "requires": [
-        90,
-        167
+        91,
+        173
       ],
       "uses": [
-        109
+        115
       ],
-      "idx": 205
+      "idx": 212
     },
     {
       "path": "../packages/core/src/direct/Manager.js",
@@ -2063,27 +2127,29 @@ var Ext = Ext || {};
         55
       ],
       "uses": [
-        86
+        87
       ],
-      "idx": 206
+      "idx": 213
     },
     {
       "path": "../packages/core/src/direct/Provider.js",
       "requires": [
         4,
-        206
+        213
       ],
-      "uses": [],
-      "idx": 207
+      "uses": [
+        18
+      ],
+      "idx": 214
     },
     {
       "path": "../packages/core/src/app/domain/Direct.js",
       "requires": [
-        90,
-        207
+        91,
+        214
       ],
       "uses": [],
-      "idx": 208
+      "idx": 215
     },
     {
       "path": "../packages/core/src/data/PageMap.js",
@@ -2091,41 +2157,41 @@ var Ext = Ext || {};
         22
       ],
       "uses": [],
-      "idx": 209
+      "idx": 216
     },
     {
       "path": "../packages/core/src/data/BufferedStore.js",
       "requires": [
         50,
         53,
-        112,
-        148,
-        209
+        118,
+        154,
+        216
       ],
       "uses": [
-        155,
-        156,
-        157
+        161,
+        162,
+        163
       ],
-      "idx": 210
+      "idx": 217
     },
     {
       "path": "../packages/core/src/data/proxy/Direct.js",
       "requires": [
-        150,
-        206
+        156,
+        213
       ],
       "uses": [],
-      "idx": 211
+      "idx": 218
     },
     {
       "path": "../packages/core/src/data/DirectStore.js",
       "requires": [
-        158,
-        211
+        164,
+        218
       ],
       "uses": [],
-      "idx": 212
+      "idx": 219
     },
     {
       "path": "../packages/core/src/data/JsonP.js",
@@ -2133,61 +2199,61 @@ var Ext = Ext || {};
       "uses": [
         76
       ],
-      "idx": 213
+      "idx": 220
     },
     {
       "path": "../packages/core/src/data/proxy/JsonP.js",
       "requires": [
-        150,
-        213
+        156,
+        220
       ],
       "uses": [],
-      "idx": 214
+      "idx": 221
     },
     {
       "path": "../packages/core/src/data/JsonPStore.js",
       "requires": [
-        152,
         158,
-        214
+        164,
+        221
       ],
       "uses": [],
-      "idx": 215
+      "idx": 222
     },
     {
       "path": "../packages/core/src/data/JsonStore.js",
       "requires": [
-        151,
-        152,
-        153,
-        158
+        157,
+        158,
+        159,
+        164
       ],
       "uses": [],
-      "idx": 216
+      "idx": 223
     },
     {
       "path": "../packages/core/src/data/ModelManager.js",
       "requires": [
-        122
+        128
       ],
       "uses": [
-        141
+        147
       ],
-      "idx": 217
+      "idx": 224
     },
     {
       "path": "../packages/core/src/data/NodeInterface.js",
       "requires": [
         4,
-        134,
-        136,
-        138,
-        153
+        140,
+        142,
+        144,
+        159
       ],
       "uses": [
-        122
+        128
       ],
-      "idx": 218
+      "idx": 225
     },
     {
       "path": "../packages/core/src/mixin/Queryable.js",
@@ -2195,201 +2261,143 @@ var Ext = Ext || {};
       "uses": [
         23
       ],
-      "idx": 219
+      "idx": 226
     },
     {
       "path": "../packages/core/src/data/TreeModel.js",
       "requires": [
-        141,
-        218,
-        219
+        147,
+        225,
+        226
       ],
       "uses": [],
-      "idx": 220
+      "idx": 227
     },
     {
       "path": "../packages/core/src/data/NodeStore.js",
       "requires": [
-        158,
-        218,
-        220
+        164,
+        225,
+        227
       ],
       "uses": [
-        141
+        147
       ],
-      "idx": 221
+      "idx": 228
     },
     {
       "path": "../packages/core/src/data/Request.js",
       "requires": [],
       "uses": [],
-      "idx": 222
+      "idx": 229
     },
     {
       "path": "../packages/core/src/data/TreeStore.js",
       "requires": [
         53,
-        158,
-        218,
-        220
+        164,
+        225,
+        227
       ],
       "uses": [
-        141
+        147
       ],
-      "idx": 223
+      "idx": 230
     },
     {
       "path": "../packages/core/src/data/Types.js",
       "requires": [
-        131
-      ],
-      "uses": [],
-      "idx": 224
-    },
-    {
-      "path": "../packages/core/src/data/Validation.js",
-      "requires": [
-        141
-      ],
-      "uses": [],
-      "idx": 225
-    },
-    {
-      "path": "../packages/core/src/dom/Helper.js",
-      "requires": [],
-      "uses": [
-        86
-      ],
-      "idx": 226
-    },
-    {
-      "path": "../packages/core/src/dom/Query.js",
-      "requires": [
-        21,
-        226
-      ],
-      "uses": [
-        22
-      ],
-      "idx": 227
-    },
-    {
-      "path": "../packages/core/src/data/reader/Xml.js",
-      "requires": [
-        143,
-        227
-      ],
-      "uses": [],
-      "idx": 228
-    },
-    {
-      "path": "../packages/core/src/data/writer/Xml.js",
-      "requires": [
-        144
-      ],
-      "uses": [],
-      "idx": 229
-    },
-    {
-      "path": "../packages/core/src/data/XmlStore.js",
-      "requires": [
-        151,
-        158,
-        228,
-        229
-      ],
-      "uses": [],
-      "idx": 230
-    },
-    {
-      "path": "../packages/core/src/data/identifier/Negative.js",
-      "requires": [
-        140
+        137
       ],
       "uses": [],
       "idx": 231
     },
     {
-      "path": "../packages/core/src/data/identifier/Uuid.js",
+      "path": "../packages/core/src/data/Validation.js",
       "requires": [
-        139
+        147
       ],
       "uses": [],
       "idx": 232
     },
     {
-      "path": "../packages/core/src/data/proxy/WebStorage.js",
-      "requires": [
-        140,
-        146
-      ],
+      "path": "../packages/core/src/dom/Helper.js",
+      "requires": [],
       "uses": [
-        53,
-        86,
-        142
+        87
       ],
       "idx": 233
     },
     {
-      "path": "../packages/core/src/data/proxy/LocalStorage.js",
+      "path": "../packages/core/src/dom/Query.js",
       "requires": [
+        21,
         233
       ],
-      "uses": [],
+      "uses": [
+        22
+      ],
       "idx": 234
     },
     {
-      "path": "../packages/core/src/data/proxy/Rest.js",
+      "path": "../packages/core/src/data/reader/Xml.js",
       "requires": [
-        151
+        149,
+        234
       ],
       "uses": [],
       "idx": 235
     },
     {
-      "path": "../packages/core/src/data/proxy/SessionStorage.js",
+      "path": "../packages/core/src/data/writer/Xml.js",
       "requires": [
-        233
+        150
       ],
       "uses": [],
       "idx": 236
     },
     {
-      "path": "../packages/core/src/data/validator/Bound.js",
+      "path": "../packages/core/src/data/XmlStore.js",
       "requires": [
-        132
+        157,
+        164,
+        235,
+        236
       ],
-      "uses": [
-        86
-      ],
+      "uses": [],
       "idx": 237
     },
     {
-      "path": "../packages/core/src/data/validator/Format.js",
+      "path": "../packages/core/src/data/identifier/Negative.js",
       "requires": [
-        132
+        146
       ],
       "uses": [],
       "idx": 238
     },
     {
-      "path": "../packages/core/src/data/validator/Email.js",
+      "path": "../packages/core/src/data/identifier/Uuid.js",
       "requires": [
-        238
+        145
       ],
       "uses": [],
       "idx": 239
     },
     {
-      "path": "../packages/core/src/data/validator/List.js",
+      "path": "../packages/core/src/data/proxy/WebStorage.js",
       "requires": [
-        132
+        146,
+        152
       ],
-      "uses": [],
+      "uses": [
+        53,
+        87,
+        148
+      ],
       "idx": 240
     },
     {
-      "path": "../packages/core/src/data/validator/Exclusion.js",
+      "path": "../packages/core/src/data/proxy/LocalStorage.js",
       "requires": [
         240
       ],
@@ -2397,114 +2405,195 @@ var Ext = Ext || {};
       "idx": 241
     },
     {
-      "path": "../packages/core/src/data/validator/Inclusion.js",
+      "path": "../packages/core/src/data/proxy/Rest.js",
       "requires": [
-        240
+        157
       ],
       "uses": [],
       "idx": 242
     },
     {
-      "path": "../packages/core/src/data/validator/Length.js",
+      "path": "../packages/core/src/data/proxy/SessionStorage.js",
       "requires": [
-        237
+        240
       ],
       "uses": [],
       "idx": 243
     },
     {
-      "path": "../packages/core/src/data/validator/Presence.js",
-      "requires": [
-        132
-      ],
+      "path": "../packages/core/src/data/schema/BelongsTo.js",
+      "requires": [],
       "uses": [],
       "idx": 244
     },
     {
-      "path": "../packages/core/src/data/validator/Range.js",
-      "requires": [
-        237
-      ],
+      "path": "../packages/core/src/data/schema/HasMany.js",
+      "requires": [],
       "uses": [],
       "idx": 245
     },
     {
-      "path": "../packages/core/src/direct/Event.js",
+      "path": "../packages/core/src/data/schema/HasOne.js",
       "requires": [],
       "uses": [],
       "idx": 246
     },
     {
-      "path": "../packages/core/src/direct/RemotingEvent.js",
+      "path": "../packages/core/src/data/schema/Reference.js",
+      "requires": [],
+      "uses": [],
+      "idx": 247
+    },
+    {
+      "path": "../packages/core/src/data/validator/Bound.js",
       "requires": [
-        246
+        138
       ],
       "uses": [
-        206
+        87
       ],
-      "idx": 247
+      "idx": 248
+    },
+    {
+      "path": "../packages/core/src/data/validator/Format.js",
+      "requires": [
+        138
+      ],
+      "uses": [],
+      "idx": 249
+    },
+    {
+      "path": "../packages/core/src/data/validator/Email.js",
+      "requires": [
+        249
+      ],
+      "uses": [],
+      "idx": 250
+    },
+    {
+      "path": "../packages/core/src/data/validator/List.js",
+      "requires": [
+        138
+      ],
+      "uses": [],
+      "idx": 251
+    },
+    {
+      "path": "../packages/core/src/data/validator/Exclusion.js",
+      "requires": [
+        251
+      ],
+      "uses": [],
+      "idx": 252
+    },
+    {
+      "path": "../packages/core/src/data/validator/Inclusion.js",
+      "requires": [
+        251
+      ],
+      "uses": [],
+      "idx": 253
+    },
+    {
+      "path": "../packages/core/src/data/validator/Length.js",
+      "requires": [
+        248
+      ],
+      "uses": [],
+      "idx": 254
+    },
+    {
+      "path": "../packages/core/src/data/validator/Presence.js",
+      "requires": [
+        138
+      ],
+      "uses": [],
+      "idx": 255
+    },
+    {
+      "path": "../packages/core/src/data/validator/Range.js",
+      "requires": [
+        248
+      ],
+      "uses": [],
+      "idx": 256
+    },
+    {
+      "path": "../packages/core/src/direct/Event.js",
+      "requires": [],
+      "uses": [],
+      "idx": 257
+    },
+    {
+      "path": "../packages/core/src/direct/RemotingEvent.js",
+      "requires": [
+        257
+      ],
+      "uses": [
+        213
+      ],
+      "idx": 258
     },
     {
       "path": "../packages/core/src/direct/ExceptionEvent.js",
       "requires": [
-        247
+        258
       ],
       "uses": [],
-      "idx": 248
+      "idx": 259
     },
     {
       "path": "../packages/core/src/direct/JsonProvider.js",
       "requires": [
-        207
+        214
       ],
       "uses": [
-        206,
-        248
+        213,
+        259
       ],
-      "idx": 249
+      "idx": 260
     },
     {
       "path": "../packages/core/src/direct/PollingProvider.js",
       "requires": [
         18,
         56,
-        248,
-        249
+        259,
+        260
       ],
       "uses": [
-        206,
-        335
+        213,
+        362
       ],
-      "idx": 250
+      "idx": 261
     },
     {
       "path": "../packages/core/src/direct/RemotingMethod.js",
       "requires": [],
       "uses": [],
-      "idx": 251
+      "idx": 262
     },
     {
       "path": "../packages/core/src/direct/Transaction.js",
       "requires": [],
       "uses": [],
-      "idx": 252
+      "idx": 263
     },
     {
       "path": "../packages/core/src/direct/RemotingProvider.js",
       "requires": [
         1,
         55,
-        206,
-        249,
-        251,
-        252
+        213,
+        260,
+        262,
+        263
       ],
       "uses": [
-        18,
         78,
-        248
+        259
       ],
-      "idx": 253
+      "idx": 264
     },
     {
       "path": "../packages/core/src/dom/GarbageCollector.js",
@@ -2512,7 +2601,7 @@ var Ext = Ext || {};
       "uses": [
         49
       ],
-      "idx": 254
+      "idx": 265
     },
     {
       "path": "../packages/core/src/dom/TouchAction.js",
@@ -2521,7 +2610,7 @@ var Ext = Ext || {};
         49
       ],
       "uses": [],
-      "idx": 255
+      "idx": 266
     },
     {
       "path": "../packages/core/src/drag/Constraint.js",
@@ -2529,7 +2618,7 @@ var Ext = Ext || {};
         12
       ],
       "uses": [],
-      "idx": 256
+      "idx": 267
     },
     {
       "path": "../packages/core/src/drag/Info.js",
@@ -2537,7 +2626,7 @@ var Ext = Ext || {};
         10
       ],
       "uses": [],
-      "idx": 257
+      "idx": 268
     },
     {
       "path": "../packages/core/src/drag/Item.js",
@@ -2546,37 +2635,38 @@ var Ext = Ext || {};
         4
       ],
       "uses": [],
-      "idx": 258
+      "idx": 269
     },
     {
       "path": "../packages/core/src/drag/Manager.js",
       "requires": [],
       "uses": [
         49,
-        257
+        268
       ],
-      "idx": 259
+      "idx": 270
     },
     {
       "path": "../packages/core/src/drag/Source.js",
       "requires": [
-        256,
-        258
+        76,
+        267,
+        269
       ],
       "uses": [
         12,
-        257
+        268
       ],
-      "idx": 260
+      "idx": 271
     },
     {
       "path": "../packages/core/src/drag/Target.js",
       "requires": [
-        258,
-        259
+        269,
+        270
       ],
       "uses": [],
-      "idx": 261
+      "idx": 272
     },
     {
       "path": "../packages/core/src/drag/proxy/None.js",
@@ -2584,23 +2674,23 @@ var Ext = Ext || {};
         12
       ],
       "uses": [],
-      "idx": 262
+      "idx": 273
     },
     {
       "path": "../packages/core/src/drag/proxy/Original.js",
       "requires": [
-        262
+        273
       ],
       "uses": [],
-      "idx": 263
+      "idx": 274
     },
     {
       "path": "../packages/core/src/drag/proxy/Placeholder.js",
       "requires": [
-        262
+        273
       ],
       "uses": [],
-      "idx": 264
+      "idx": 275
     },
     {
       "path": "../packages/core/src/event/gesture/Recognizer.js",
@@ -2609,99 +2699,99 @@ var Ext = Ext || {};
         37
       ],
       "uses": [],
-      "idx": 265
+      "idx": 276
     },
     {
       "path": "../packages/core/src/event/gesture/SingleTouch.js",
       "requires": [
-        265
+        276
       ],
       "uses": [],
-      "idx": 266
+      "idx": 277
     },
     {
       "path": "../packages/core/src/event/gesture/DoubleTap.js",
       "requires": [
-        266
+        277
       ],
       "uses": [
         49
       ],
-      "idx": 267
+      "idx": 278
     },
     {
       "path": "../packages/core/src/event/gesture/Drag.js",
       "requires": [
-        266
+        277
       ],
       "uses": [
         49
       ],
-      "idx": 268
+      "idx": 279
     },
     {
       "path": "../packages/core/src/event/gesture/Swipe.js",
       "requires": [
-        266
+        277
       ],
       "uses": [],
-      "idx": 269
+      "idx": 280
     },
     {
       "path": "../packages/core/src/event/gesture/EdgeSwipe.js",
       "requires": [
-        269
+        280
       ],
       "uses": [
         49
       ],
-      "idx": 270
+      "idx": 281
     },
     {
       "path": "../packages/core/src/event/gesture/LongPress.js",
       "requires": [
-        266
+        277
       ],
       "uses": [
         37,
         49,
-        268
+        279
       ],
-      "idx": 271
+      "idx": 282
     },
     {
       "path": "../packages/core/src/event/gesture/MultiTouch.js",
       "requires": [
-        265
+        276
       ],
       "uses": [],
-      "idx": 272
+      "idx": 283
     },
     {
       "path": "../packages/core/src/event/gesture/Pinch.js",
       "requires": [
-        272
+        283
       ],
       "uses": [],
-      "idx": 273
+      "idx": 284
     },
     {
       "path": "../packages/core/src/event/gesture/Rotate.js",
       "requires": [
-        272
+        283
       ],
       "uses": [],
-      "idx": 274
+      "idx": 285
     },
     {
       "path": "../packages/core/src/event/gesture/Tap.js",
       "requires": [
-        266
+        277
       ],
       "uses": [
         49
       ],
-      "idx": 275
+      "idx": 286
     },
     {
       "path": "../packages/core/src/event/publisher/Focus.js",
@@ -2713,232 +2803,141 @@ var Ext = Ext || {};
       "uses": [
         35
       ],
-      "idx": 276
+      "idx": 287
     },
     {
       "path": "../packages/core/src/fx/State.js",
       "requires": [],
       "uses": [],
-      "idx": 277
+      "idx": 288
     },
     {
       "path": "../packages/core/src/fx/animation/Abstract.js",
       "requires": [
         24,
-        277
-      ],
-      "uses": [],
-      "idx": 278
-    },
-    {
-      "path": "../packages/core/src/fx/animation/Slide.js",
-      "requires": [
-        278
-      ],
-      "uses": [],
-      "idx": 279
-    },
-    {
-      "path": "../packages/core/src/fx/animation/SlideOut.js",
-      "requires": [
-        279
-      ],
-      "uses": [],
-      "idx": 280
-    },
-    {
-      "path": "../packages/core/src/fx/animation/Fade.js",
-      "requires": [
-        278
-      ],
-      "uses": [],
-      "idx": 281
-    },
-    {
-      "path": "../packages/core/src/fx/animation/FadeOut.js",
-      "requires": [
-        281
-      ],
-      "uses": [],
-      "idx": 282
-    },
-    {
-      "path": "../packages/core/src/fx/animation/Flip.js",
-      "requires": [
-        278
-      ],
-      "uses": [],
-      "idx": 283
-    },
-    {
-      "path": "../packages/core/src/fx/animation/Pop.js",
-      "requires": [
-        278
-      ],
-      "uses": [],
-      "idx": 284
-    },
-    {
-      "path": "../packages/core/src/fx/animation/PopOut.js",
-      "requires": [
-        284
-      ],
-      "uses": [],
-      "idx": 285
-    },
-    {
-      "path": "../packages/core/src/fx/Animation.js",
-      "requires": [
-        279,
-        280,
-        281,
-        282,
-        283,
-        284,
-        285
-      ],
-      "uses": [
-        278
-      ],
-      "idx": 286
-    },
-    {
-      "path": "../packages/core/src/fx/runner/Css.js",
-      "requires": [
-        24,
-        286
-      ],
-      "uses": [],
-      "idx": 287
-    },
-    {
-      "path": "../packages/core/src/fx/runner/CssTransition.js",
-      "requires": [
-        19,
-        287
-      ],
-      "uses": [
-        286
-      ],
-      "idx": 288
-    },
-    {
-      "path": "../packages/core/src/fx/Runner.js",
-      "requires": [
         288
       ],
       "uses": [],
       "idx": 289
     },
     {
-      "path": "../packages/core/src/fx/animation/Cube.js",
+      "path": "../packages/core/src/fx/animation/Slide.js",
       "requires": [
-        278
+        289
       ],
       "uses": [],
       "idx": 290
     },
     {
-      "path": "../packages/core/src/fx/animation/Wipe.js",
+      "path": "../packages/core/src/fx/animation/SlideOut.js",
       "requires": [
-        286
+        290
       ],
       "uses": [],
       "idx": 291
     },
     {
-      "path": "../packages/core/src/fx/animation/WipeOut.js",
+      "path": "../packages/core/src/fx/animation/Fade.js",
       "requires": [
-        291
+        289
       ],
       "uses": [],
       "idx": 292
     },
     {
-      "path": "../packages/core/src/fx/easing/Abstract.js",
-      "requires": [],
+      "path": "../packages/core/src/fx/animation/FadeOut.js",
+      "requires": [
+        292
+      ],
       "uses": [],
       "idx": 293
     },
     {
-      "path": "../packages/core/src/fx/easing/Bounce.js",
+      "path": "../packages/core/src/fx/animation/Flip.js",
       "requires": [
-        293
+        289
       ],
       "uses": [],
       "idx": 294
     },
     {
-      "path": "../packages/core/src/fx/easing/Momentum.js",
+      "path": "../packages/core/src/fx/animation/Pop.js",
       "requires": [
-        293
+        289
       ],
       "uses": [],
       "idx": 295
     },
     {
-      "path": "../packages/core/src/fx/easing/BoundMomentum.js",
+      "path": "../packages/core/src/fx/animation/PopOut.js",
       "requires": [
-        293,
-        294,
         295
       ],
       "uses": [],
       "idx": 296
     },
     {
-      "path": "../packages/core/src/fx/easing/Linear.js",
+      "path": "../packages/core/src/fx/Animation.js",
       "requires": [
-        293
+        290,
+        291,
+        292,
+        293,
+        294,
+        295,
+        296
       ],
-      "uses": [],
+      "uses": [
+        289
+      ],
       "idx": 297
     },
     {
-      "path": "../packages/core/src/fx/easing/EaseIn.js",
+      "path": "../packages/core/src/fx/runner/Css.js",
       "requires": [
+        24,
         297
       ],
       "uses": [],
       "idx": 298
     },
     {
-      "path": "../packages/core/src/fx/easing/EaseOut.js",
+      "path": "../packages/core/src/fx/runner/CssTransition.js",
       "requires": [
+        19,
+        298
+      ],
+      "uses": [
         297
       ],
-      "uses": [],
       "idx": 299
     },
     {
-      "path": "../packages/core/src/fx/easing/Easing.js",
+      "path": "../packages/core/src/fx/Runner.js",
       "requires": [
-        297
+        299
       ],
       "uses": [],
       "idx": 300
     },
     {
-      "path": "../packages/core/src/fx/layout/card/Abstract.js",
+      "path": "../packages/core/src/fx/animation/Cube.js",
       "requires": [
-        24
+        289
       ],
       "uses": [],
       "idx": 301
     },
     {
-      "path": "../packages/core/src/fx/layout/card/Style.js",
+      "path": "../packages/core/src/fx/animation/Wipe.js",
       "requires": [
-        286,
-        301
+        297
       ],
-      "uses": [
-        288
-      ],
+      "uses": [],
       "idx": 302
     },
     {
-      "path": "../packages/core/src/fx/layout/card/Slide.js",
+      "path": "../packages/core/src/fx/animation/WipeOut.js",
       "requires": [
         302
       ],
@@ -2946,142 +2945,227 @@ var Ext = Ext || {};
       "idx": 303
     },
     {
-      "path": "../packages/core/src/fx/layout/card/Cover.js",
+      "path": "../packages/core/src/fx/easing/Bounce.js",
       "requires": [
-        302
+        96
       ],
       "uses": [],
       "idx": 304
     },
     {
-      "path": "../packages/core/src/fx/layout/card/Reveal.js",
+      "path": "../packages/core/src/fx/easing/Momentum.js",
       "requires": [
-        302
+        96
       ],
       "uses": [],
       "idx": 305
     },
     {
-      "path": "../packages/core/src/fx/layout/card/Fade.js",
+      "path": "../packages/core/src/fx/easing/BoundMomentum.js",
       "requires": [
-        302
+        96,
+        304,
+        305
       ],
       "uses": [],
       "idx": 306
     },
     {
-      "path": "../packages/core/src/fx/layout/card/Flip.js",
+      "path": "../packages/core/src/fx/easing/EaseIn.js",
       "requires": [
-        302
+        97
       ],
       "uses": [],
       "idx": 307
     },
     {
-      "path": "../packages/core/src/fx/layout/card/Pop.js",
+      "path": "../packages/core/src/fx/easing/EaseOut.js",
       "requires": [
-        302
+        97
       ],
       "uses": [],
       "idx": 308
     },
     {
-      "path": "../packages/core/src/fx/layout/card/Scroll.js",
+      "path": "../packages/core/src/fx/easing/Easing.js",
       "requires": [
-        297,
-        301
+        97
       ],
-      "uses": [
-        19
-      ],
+      "uses": [],
       "idx": 309
     },
     {
-      "path": "../packages/core/src/fx/layout/Card.js",
+      "path": "../packages/core/src/fx/layout/card/Abstract.js",
       "requires": [
-        303,
-        304,
-        305,
-        306,
-        307,
-        308,
-        309
+        24
       ],
-      "uses": [
-        301
-      ],
+      "uses": [],
       "idx": 310
     },
     {
-      "path": "../packages/core/src/fx/layout/card/Cube.js",
+      "path": "../packages/core/src/fx/layout/card/Style.js",
       "requires": [
-        302
+        297,
+        310
       ],
-      "uses": [],
+      "uses": [
+        299
+      ],
       "idx": 311
     },
     {
-      "path": "../packages/core/src/fx/layout/card/ScrollCover.js",
+      "path": "../packages/core/src/fx/layout/card/Slide.js",
       "requires": [
-        309
+        311
       ],
       "uses": [],
       "idx": 312
     },
     {
-      "path": "../packages/core/src/fx/layout/card/ScrollReveal.js",
+      "path": "../packages/core/src/fx/layout/card/Cover.js",
       "requires": [
-        309
+        311
       ],
       "uses": [],
       "idx": 313
     },
     {
-      "path": "../packages/core/src/fx/runner/CssAnimation.js",
+      "path": "../packages/core/src/fx/layout/card/Reveal.js",
       "requires": [
-        287
+        311
       ],
-      "uses": [
-        286
-      ],
+      "uses": [],
       "idx": 314
     },
     {
-      "path": "../packages/core/src/list/AbstractTreeItem.js",
+      "path": "../packages/core/src/fx/layout/card/Fade.js",
       "requires": [
-        82
+        311
       ],
       "uses": [],
       "idx": 315
     },
     {
-      "path": "../packages/core/src/list/RootTreeItem.js",
+      "path": "../packages/core/src/fx/layout/card/Flip.js",
       "requires": [
-        315
+        311
       ],
       "uses": [],
       "idx": 316
     },
     {
-      "path": "../packages/core/src/list/TreeItem.js",
+      "path": "../packages/core/src/fx/layout/card/Pop.js",
       "requires": [
-        82,
-        315
+        311
       ],
       "uses": [],
       "idx": 317
     },
     {
-      "path": "../packages/core/src/list/Tree.js",
+      "path": "../packages/core/src/fx/layout/card/Scroll.js",
       "requires": [
-        82,
-        316,
-        317
+        97,
+        310
       ],
       "uses": [
-        161
+        19
       ],
       "idx": 318
+    },
+    {
+      "path": "../packages/core/src/fx/layout/Card.js",
+      "requires": [
+        312,
+        313,
+        314,
+        315,
+        316,
+        317,
+        318
+      ],
+      "uses": [
+        310
+      ],
+      "idx": 319
+    },
+    {
+      "path": "../packages/core/src/fx/layout/card/Cube.js",
+      "requires": [
+        311
+      ],
+      "uses": [],
+      "idx": 320
+    },
+    {
+      "path": "../packages/core/src/fx/layout/card/ScrollCover.js",
+      "requires": [
+        318
+      ],
+      "uses": [],
+      "idx": 321
+    },
+    {
+      "path": "../packages/core/src/fx/layout/card/ScrollReveal.js",
+      "requires": [
+        318
+      ],
+      "uses": [],
+      "idx": 322
+    },
+    {
+      "path": "../packages/core/src/fx/runner/CssAnimation.js",
+      "requires": [
+        298
+      ],
+      "uses": [
+        297
+      ],
+      "idx": 323
+    },
+    {
+      "path": "../packages/core/src/list/AbstractTreeItem.js",
+      "requires": [
+        83
+      ],
+      "uses": [],
+      "idx": 324
+    },
+    {
+      "path": "../packages/core/src/list/RootTreeItem.js",
+      "requires": [
+        324
+      ],
+      "uses": [],
+      "idx": 325
+    },
+    {
+      "path": "../packages/core/src/list/TreeItem.js",
+      "requires": [
+        83,
+        324
+      ],
+      "uses": [],
+      "idx": 326
+    },
+    {
+      "path": "../packages/core/src/list/Tree.js",
+      "requires": [
+        83,
+        325,
+        326
+      ],
+      "uses": [
+        167
+      ],
+      "idx": 327
+    },
+    {
+      "path": "../packages/core/src/mixin/ConfigState.js",
+      "requires": [
+        0
+      ],
+      "uses": [],
+      "idx": 328
     },
     {
       "path": "../packages/core/src/mixin/Container.js",
@@ -3091,7 +3175,7 @@ var Ext = Ext || {};
       "uses": [
         20
       ],
-      "idx": 319
+      "idx": 329
     },
     {
       "path": "../packages/core/src/mixin/Hookable.js",
@@ -3099,7 +3183,7 @@ var Ext = Ext || {};
         0
       ],
       "uses": [],
-      "idx": 320
+      "idx": 330
     },
     {
       "path": "../packages/core/src/mixin/Mashup.js",
@@ -3107,7 +3191,7 @@ var Ext = Ext || {};
         0
       ],
       "uses": [],
-      "idx": 321
+      "idx": 331
     },
     {
       "path": "../packages/core/src/mixin/Responsive.js",
@@ -3118,7 +3202,7 @@ var Ext = Ext || {};
       "uses": [
         49
       ],
-      "idx": 322
+      "idx": 332
     },
     {
       "path": "../packages/core/src/mixin/Selectable.js",
@@ -3128,7 +3212,15 @@ var Ext = Ext || {};
       "uses": [
         55
       ],
-      "idx": 323
+      "idx": 333
+    },
+    {
+      "path": "../packages/core/src/mixin/StyleCacher.js",
+      "requires": [
+        0
+      ],
+      "uses": [],
+      "idx": 334
     },
     {
       "path": "../packages/core/src/mixin/Traversable.js",
@@ -3136,117 +3228,32 @@ var Ext = Ext || {};
         0
       ],
       "uses": [],
-      "idx": 324
+      "idx": 335
     },
     {
       "path": "../packages/core/src/perf/Accumulator.js",
       "requires": [
-        89
-      ],
-      "uses": [],
-      "idx": 325
-    },
-    {
-      "path": "../packages/core/src/perf/Monitor.js",
-      "requires": [
-        325
-      ],
-      "uses": [],
-      "idx": 326
-    },
-    {
-      "path": "../packages/core/src/plugin/Abstract.js",
-      "requires": [],
-      "uses": [],
-      "idx": 327
-    },
-    {
-      "path": "../packages/core/src/plugin/LazyItems.js",
-      "requires": [
-        327
-      ],
-      "uses": [],
-      "idx": 328
-    },
-    {
-      "path": "../packages/core/src/util/Base64.js",
-      "requires": [],
-      "uses": [],
-      "idx": 329
-    },
-    {
-      "path": "../packages/core/src/util/DelimitedValue.js",
-      "requires": [],
-      "uses": [],
-      "idx": 330
-    },
-    {
-      "path": "../packages/core/src/util/CSV.js",
-      "requires": [
-        330
-      ],
-      "uses": [],
-      "idx": 331
-    },
-    {
-      "path": "../packages/core/src/util/ItemCollection.js",
-      "requires": [
-        55
-      ],
-      "uses": [],
-      "idx": 332
-    },
-    {
-      "path": "../packages/core/src/util/LocalStorage.js",
-      "requires": [],
-      "uses": [],
-      "idx": 333
-    },
-    {
-      "path": "../packages/core/src/util/TSV.js",
-      "requires": [
-        330
-      ],
-      "uses": [],
-      "idx": 334
-    },
-    {
-      "path": "../packages/core/src/util/TaskManager.js",
-      "requires": [
-        56
-      ],
-      "uses": [],
-      "idx": 335
-    },
-    {
-      "path": "../packages/core/src/util/TextMetrics.js",
-      "requires": [
-        49
+        90
       ],
       "uses": [],
       "idx": 336
     },
     {
-      "path": "../packages/core/src/util/translatable/Abstract.js",
+      "path": "../packages/core/src/perf/Monitor.js",
       "requires": [
-        24,
-        297
+        336
       ],
-      "uses": [
-        19
-      ],
+      "uses": [],
       "idx": 337
     },
     {
-      "path": "../packages/core/src/util/translatable/Dom.js",
-      "requires": [
-        337
-      ],
+      "path": "../packages/core/src/plugin/Abstract.js",
+      "requires": [],
       "uses": [],
       "idx": 338
     },
     {
-      "path": "../packages/core/src/util/translatable/CssTransform.js",
+      "path": "../packages/core/src/plugin/LazyItems.js",
       "requires": [
         338
       ],
@@ -3254,7 +3261,7 @@ var Ext = Ext || {};
       "idx": 339
     },
     {
-      "path": "../packages/core/src/util/translatable/ScrollPosition.js",
+      "path": "../packages/core/src/plugin/MousEnter.js",
       "requires": [
         338
       ],
@@ -3262,31 +3269,218 @@ var Ext = Ext || {};
       "idx": 340
     },
     {
-      "path": "../packages/core/src/util/translatable/ScrollParent.js",
-      "requires": [
-        338
-      ],
+      "path": "../packages/core/src/sparkline/Shape.js",
+      "requires": [],
       "uses": [],
       "idx": 341
     },
     {
-      "path": "../packages/core/src/util/translatable/CssPosition.js",
+      "path": "../packages/core/src/sparkline/CanvasBase.js",
       "requires": [
-        338
+        341
       ],
       "uses": [],
       "idx": 342
     },
     {
-      "path": "../packages/core/src/util/Translatable.js",
+      "path": "../packages/core/src/sparkline/CanvasCanvas.js",
       "requires": [
-        339,
-        340,
-        341,
         342
       ],
       "uses": [],
       "idx": 343
+    },
+    {
+      "path": "../packages/core/src/sparkline/VmlCanvas.js",
+      "requires": [
+        342
+      ],
+      "uses": [],
+      "idx": 344
+    },
+    {
+      "path": "../packages/core/src/util/Color.js",
+      "requires": [],
+      "uses": [],
+      "idx": 345
+    },
+    {
+      "path": "../packages/core/src/sparkline/Base.js",
+      "requires": [
+        83,
+        90,
+        343,
+        344,
+        345
+      ],
+      "uses": [],
+      "idx": 346
+    },
+    {
+      "path": "../packages/core/src/sparkline/BarBase.js",
+      "requires": [
+        346
+      ],
+      "uses": [],
+      "idx": 347
+    },
+    {
+      "path": "../packages/core/src/sparkline/RangeMap.js",
+      "requires": [],
+      "uses": [],
+      "idx": 348
+    },
+    {
+      "path": "../packages/core/src/sparkline/Bar.js",
+      "requires": [
+        347,
+        348
+      ],
+      "uses": [],
+      "idx": 349
+    },
+    {
+      "path": "../packages/core/src/sparkline/Box.js",
+      "requires": [
+        346
+      ],
+      "uses": [],
+      "idx": 350
+    },
+    {
+      "path": "../packages/core/src/sparkline/Bullet.js",
+      "requires": [
+        346
+      ],
+      "uses": [],
+      "idx": 351
+    },
+    {
+      "path": "../packages/core/src/sparkline/Discrete.js",
+      "requires": [
+        347
+      ],
+      "uses": [],
+      "idx": 352
+    },
+    {
+      "path": "../packages/core/src/sparkline/Line.js",
+      "requires": [
+        346,
+        348
+      ],
+      "uses": [],
+      "idx": 353
+    },
+    {
+      "path": "../packages/core/src/sparkline/Pie.js",
+      "requires": [
+        346
+      ],
+      "uses": [],
+      "idx": 354
+    },
+    {
+      "path": "../packages/core/src/sparkline/TriState.js",
+      "requires": [
+        347,
+        348
+      ],
+      "uses": [],
+      "idx": 355
+    },
+    {
+      "path": "../packages/core/src/util/Base64.js",
+      "requires": [],
+      "uses": [],
+      "idx": 356
+    },
+    {
+      "path": "../packages/core/src/util/DelimitedValue.js",
+      "requires": [],
+      "uses": [],
+      "idx": 357
+    },
+    {
+      "path": "../packages/core/src/util/CSV.js",
+      "requires": [
+        357
+      ],
+      "uses": [],
+      "idx": 358
+    },
+    {
+      "path": "../packages/core/src/util/ItemCollection.js",
+      "requires": [
+        55
+      ],
+      "uses": [],
+      "idx": 359
+    },
+    {
+      "path": "../packages/core/src/util/LocalStorage.js",
+      "requires": [],
+      "uses": [],
+      "idx": 360
+    },
+    {
+      "path": "../packages/core/src/util/TSV.js",
+      "requires": [
+        357
+      ],
+      "uses": [],
+      "idx": 361
+    },
+    {
+      "path": "../packages/core/src/util/TaskManager.js",
+      "requires": [
+        56
+      ],
+      "uses": [],
+      "idx": 362
+    },
+    {
+      "path": "../packages/core/src/util/TextMetrics.js",
+      "requires": [
+        49
+      ],
+      "uses": [],
+      "idx": 363
+    },
+    {
+      "path": "../packages/core/src/util/translatable/CssTransform.js",
+      "requires": [
+        99
+      ],
+      "uses": [],
+      "idx": 364
+    },
+    {
+      "path": "../packages/core/src/util/translatable/ScrollParent.js",
+      "requires": [
+        99
+      ],
+      "uses": [],
+      "idx": 365
+    },
+    {
+      "path": "../packages/core/src/util/translatable/CssPosition.js",
+      "requires": [
+        99
+      ],
+      "uses": [],
+      "idx": 366
+    },
+    {
+      "path": "../packages/core/src/util/Translatable.js",
+      "requires": [
+        100,
+        364,
+        365,
+        366
+      ],
+      "uses": [],
+      "idx": 367
     },
     {
       "path": "../packages/core/src/util/paintmonitor/OverflowChange.js",
@@ -3294,13 +3488,13 @@ var Ext = Ext || {};
         45
       ],
       "uses": [],
-      "idx": 344
+      "idx": 368
     },
     {
       "path": "../classic/classic/src/Action.js",
       "requires": [],
       "uses": [],
-      "idx": 345
+      "idx": 369
     },
     {
       "path": "../classic/classic/src/ElementLoader.js",
@@ -3311,256 +3505,10 @@ var Ext = Ext || {};
         17,
         18
       ],
-      "idx": 346
-    },
-    {
-      "path": "../classic/classic/src/ComponentLoader.js",
-      "requires": [
-        346
-      ],
-      "uses": [],
-      "idx": 347
-    },
-    {
-      "path": "../classic/classic/src/layout/SizeModel.js",
-      "requires": [],
-      "uses": [],
-      "idx": 348
-    },
-    {
-      "path": "../classic/classic/src/layout/Layout.js",
-      "requires": [
-        12,
-        89,
-        348
-      ],
-      "uses": [
-        49,
-        578
-      ],
-      "idx": 349
-    },
-    {
-      "path": "../classic/classic/src/layout/container/Container.js",
-      "requires": [
-        89,
-        97,
-        349
-      ],
-      "uses": [
-        226
-      ],
-      "idx": 350
-    },
-    {
-      "path": "../classic/classic/src/layout/container/Auto.js",
-      "requires": [
-        350
-      ],
-      "uses": [
-        89
-      ],
-      "idx": 351
-    },
-    {
-      "path": "../classic/classic/src/ZIndexManager.js",
-      "requires": [
-        76,
-        155,
-        156
-      ],
-      "uses": [
-        49,
-        113
-      ],
-      "idx": 352
-    },
-    {
-      "path": "../classic/classic/src/container/Container.js",
-      "requires": [
-        55,
-        105,
-        219,
-        319,
-        332,
-        345,
-        351,
-        352
-      ],
-      "uses": [
-        12,
-        20,
-        23
-      ],
-      "idx": 353
-    },
-    {
-      "path": "../classic/classic/src/layout/container/Editor.js",
-      "requires": [
-        350
-      ],
-      "uses": [],
-      "idx": 354
-    },
-    {
-      "path": "../classic/classic/src/Editor.js",
-      "requires": [
-        353,
-        354
-      ],
-      "uses": [
-        1,
-        20
-      ],
-      "idx": 355
-    },
-    {
-      "path": "../classic/classic/src/EventManager.js",
-      "requires": [],
-      "uses": [
-        76
-      ],
-      "idx": 356
-    },
-    {
-      "path": "../classic/classic/src/Gadget.js",
-      "requires": [
-        82
-      ],
-      "uses": [],
-      "idx": 357
-    },
-    {
-      "path": "../classic/classic/src/Img.js",
-      "requires": [
-        77,
-        105
-      ],
-      "uses": [],
-      "idx": 358
-    },
-    {
-      "path": "../classic/classic/src/util/StoreHolder.js",
-      "requires": [
-        161
-      ],
-      "uses": [],
-      "idx": 359
-    },
-    {
-      "path": "../classic/classic/src/LoadMask.js",
-      "requires": [
-        105,
-        359
-      ],
-      "uses": [
-        49,
-        76,
-        161
-      ],
-      "idx": 360
-    },
-    {
-      "path": "../classic/classic/src/layout/component/Component.js",
-      "requires": [
-        349
-      ],
-      "uses": [],
-      "idx": 361
-    },
-    {
-      "path": "../classic/classic/src/layout/component/Auto.js",
-      "requires": [
-        361
-      ],
-      "uses": [],
-      "idx": 362
-    },
-    {
-      "path": "../classic/classic/src/layout/component/ProgressBar.js",
-      "requires": [
-        362
-      ],
-      "uses": [],
-      "idx": 363
-    },
-    {
-      "path": "../classic/classic/src/ProgressBar.js",
-      "requires": [
-        83,
-        86,
-        93,
-        105,
-        335,
-        363
-      ],
-      "uses": [
-        72
-      ],
-      "idx": 364
-    },
-    {
-      "path": "../classic/classic/src/dom/ButtonElement.js",
-      "requires": [
-        49
-      ],
-      "uses": [],
-      "idx": 365
-    },
-    {
-      "path": "../classic/classic/src/button/Manager.js",
-      "requires": [],
-      "uses": [],
-      "idx": 366
-    },
-    {
-      "path": "../classic/classic/src/menu/Manager.js",
-      "requires": [],
-      "uses": [
-        20,
-        95,
-        105,
-        542
-      ],
-      "idx": 367
-    },
-    {
-      "path": "../classic/classic/src/util/ClickRepeater.js",
-      "requires": [
-        51
-      ],
-      "uses": [],
-      "idx": 368
-    },
-    {
-      "path": "../classic/classic/src/button/Button.js",
-      "requires": [
-        77,
-        105,
-        219,
-        336,
-        365,
-        366,
-        367,
-        368
-      ],
-      "uses": [
-        487
-      ],
-      "idx": 369
-    },
-    {
-      "path": "../classic/classic/src/button/Split.js",
-      "requires": [
-        369
-      ],
-      "uses": [
-        49
-      ],
       "idx": 370
     },
     {
-      "path": "../classic/classic/src/button/Cycle.js",
+      "path": "../classic/classic/src/ComponentLoader.js",
       "requires": [
         370
       ],
@@ -3568,91 +3516,328 @@ var Ext = Ext || {};
       "idx": 371
     },
     {
-      "path": "../classic/classic/src/layout/container/SegmentedButton.js",
-      "requires": [
-        350
-      ],
+      "path": "../classic/classic/src/layout/SizeModel.js",
+      "requires": [],
       "uses": [],
       "idx": 372
     },
     {
-      "path": "../classic/classic/src/button/Segmented.js",
+      "path": "../classic/classic/src/layout/Layout.js",
       "requires": [
-        353,
-        369,
+        12,
+        90,
         372
       ],
-      "uses": [],
+      "uses": [
+        49,
+        602
+      ],
       "idx": 373
     },
     {
-      "path": "../classic/classic/src/panel/Bar.js",
+      "path": "../classic/classic/src/layout/container/Container.js",
       "requires": [
-        353
+        90,
+        103,
+        373
       ],
-      "uses": [],
+      "uses": [
+        233
+      ],
       "idx": 374
     },
     {
-      "path": "../classic/classic/src/panel/Title.js",
+      "path": "../classic/classic/src/layout/container/Auto.js",
       "requires": [
-        77,
-        105
+        374
       ],
-      "uses": [],
+      "uses": [
+        90
+      ],
       "idx": 375
     },
     {
-      "path": "../classic/classic/src/panel/Tool.js",
+      "path": "../classic/classic/src/ZIndexManager.js",
       "requires": [
-        77,
-        105
+        76,
+        161,
+        162
       ],
       "uses": [
-        487
+        49,
+        119
       ],
       "idx": 376
     },
     {
-      "path": "../classic/classic/src/util/KeyMap.js",
-      "requires": [],
-      "uses": [],
+      "path": "../classic/classic/src/container/Container.js",
+      "requires": [
+        55,
+        111,
+        226,
+        329,
+        359,
+        369,
+        375,
+        376
+      ],
+      "uses": [
+        12,
+        20,
+        23,
+        49
+      ],
       "idx": 377
     },
     {
-      "path": "../classic/classic/src/util/KeyNav.js",
+      "path": "../classic/classic/src/layout/container/Editor.js",
       "requires": [
-        377
+        374
       ],
       "uses": [],
       "idx": 378
     },
     {
-      "path": "../classic/classic/src/util/FocusableContainer.js",
+      "path": "../classic/classic/src/Editor.js",
       "requires": [
-        0,
+        377,
         378
       ],
       "uses": [
-        49,
-        105
+        1,
+        20
       ],
       "idx": 379
     },
     {
-      "path": "../classic/classic/src/panel/Header.js",
-      "requires": [
-        362,
-        374,
-        375,
-        376,
-        379
-      ],
+      "path": "../classic/classic/src/EventManager.js",
+      "requires": [],
       "uses": [
-        20,
-        105
+        76
       ],
       "idx": 380
+    },
+    {
+      "path": "../classic/classic/src/Img.js",
+      "requires": [
+        77,
+        111
+      ],
+      "uses": [],
+      "idx": 381
+    },
+    {
+      "path": "../classic/classic/src/util/StoreHolder.js",
+      "requires": [
+        167
+      ],
+      "uses": [],
+      "idx": 382
+    },
+    {
+      "path": "../classic/classic/src/LoadMask.js",
+      "requires": [
+        111,
+        382
+      ],
+      "uses": [
+        49,
+        76,
+        167
+      ],
+      "idx": 383
+    },
+    {
+      "path": "../classic/classic/src/layout/component/Component.js",
+      "requires": [
+        373
+      ],
+      "uses": [],
+      "idx": 384
+    },
+    {
+      "path": "../classic/classic/src/layout/component/Auto.js",
+      "requires": [
+        384
+      ],
+      "uses": [],
+      "idx": 385
+    },
+    {
+      "path": "../classic/classic/src/layout/component/ProgressBar.js",
+      "requires": [
+        385
+      ],
+      "uses": [],
+      "idx": 386
+    },
+    {
+      "path": "../classic/classic/src/ProgressBar.js",
+      "requires": [
+        84,
+        87,
+        94,
+        111,
+        362,
+        386
+      ],
+      "uses": [
+        72
+      ],
+      "idx": 387
+    },
+    {
+      "path": "../classic/classic/src/dom/ButtonElement.js",
+      "requires": [
+        49
+      ],
+      "uses": [],
+      "idx": 388
+    },
+    {
+      "path": "../classic/classic/src/button/Manager.js",
+      "requires": [],
+      "uses": [],
+      "idx": 389
+    },
+    {
+      "path": "../classic/classic/src/menu/Manager.js",
+      "requires": [],
+      "uses": [
+        20,
+        101,
+        111,
+        565
+      ],
+      "idx": 390
+    },
+    {
+      "path": "../classic/classic/src/util/ClickRepeater.js",
+      "requires": [
+        51
+      ],
+      "uses": [],
+      "idx": 391
+    },
+    {
+      "path": "../classic/classic/src/button/Button.js",
+      "requires": [
+        77,
+        111,
+        226,
+        363,
+        388,
+        389,
+        390,
+        391
+      ],
+      "uses": [
+        509
+      ],
+      "idx": 392
+    },
+    {
+      "path": "../classic/classic/src/button/Split.js",
+      "requires": [
+        392
+      ],
+      "uses": [
+        49
+      ],
+      "idx": 393
+    },
+    {
+      "path": "../classic/classic/src/button/Cycle.js",
+      "requires": [
+        393
+      ],
+      "uses": [],
+      "idx": 394
+    },
+    {
+      "path": "../classic/classic/src/layout/container/SegmentedButton.js",
+      "requires": [
+        374
+      ],
+      "uses": [],
+      "idx": 395
+    },
+    {
+      "path": "../classic/classic/src/button/Segmented.js",
+      "requires": [
+        377,
+        392,
+        395
+      ],
+      "uses": [],
+      "idx": 396
+    },
+    {
+      "path": "../classic/classic/src/panel/Bar.js",
+      "requires": [
+        377
+      ],
+      "uses": [],
+      "idx": 397
+    },
+    {
+      "path": "../classic/classic/src/panel/Title.js",
+      "requires": [
+        77,
+        111
+      ],
+      "uses": [],
+      "idx": 398
+    },
+    {
+      "path": "../classic/classic/src/panel/Tool.js",
+      "requires": [
+        77,
+        111
+      ],
+      "uses": [
+        509
+      ],
+      "idx": 399
+    },
+    {
+      "path": "../classic/classic/src/util/KeyMap.js",
+      "requires": [],
+      "uses": [],
+      "idx": 400
+    },
+    {
+      "path": "../classic/classic/src/util/KeyNav.js",
+      "requires": [
+        400
+      ],
+      "uses": [],
+      "idx": 401
+    },
+    {
+      "path": "../classic/classic/src/util/FocusableContainer.js",
+      "requires": [
+        0,
+        401
+      ],
+      "uses": [
+        111
+      ],
+      "idx": 402
+    },
+    {
+      "path": "../classic/classic/src/panel/Header.js",
+      "requires": [
+        385,
+        397,
+        398,
+        399,
+        402
+      ],
+      "uses": [
+        20
+      ],
+      "idx": 403
     },
     {
       "path": "../classic/classic/src/layout/container/boxOverflow/None.js",
@@ -3660,18 +3845,18 @@ var Ext = Ext || {};
         12
       ],
       "uses": [],
-      "idx": 381
+      "idx": 404
     },
     {
       "path": "../classic/classic/src/layout/container/boxOverflow/Scroller.js",
       "requires": [
         4,
         49,
-        368,
-        381
+        391,
+        404
       ],
       "uses": [],
-      "idx": 382
+      "idx": 405
     },
     {
       "path": "../classic/classic/src/dd/DragDropManager.js",
@@ -3681,121 +3866,122 @@ var Ext = Ext || {};
       ],
       "uses": [
         49,
-        415,
-        487
+        438,
+        509
       ],
-      "idx": 383
+      "idx": 406
     },
     {
       "path": "../classic/classic/src/resizer/Splitter.js",
       "requires": [
-        89,
-        105
+        90,
+        111
       ],
       "uses": [
-        411
+        434
       ],
-      "idx": 384
+      "idx": 407
     },
     {
       "path": "../classic/classic/src/layout/container/Box.js",
       "requires": [
-        85,
-        350,
-        381,
-        382,
-        383,
-        384
+        86,
+        374,
+        404,
+        405,
+        406,
+        407
       ],
       "uses": [
         12,
-        348,
-        362
+        372,
+        385
       ],
-      "idx": 385
+      "idx": 408
     },
     {
       "path": "../classic/classic/src/layout/container/HBox.js",
       "requires": [
-        385
+        408
       ],
       "uses": [],
-      "idx": 386
+      "idx": 409
     },
     {
       "path": "../classic/classic/src/layout/container/VBox.js",
       "requires": [
-        385
+        408
       ],
       "uses": [],
-      "idx": 387
+      "idx": 410
     },
     {
       "path": "../classic/classic/src/toolbar/Toolbar.js",
       "requires": [
-        353,
-        362,
-        379,
-        386,
-        387
+        377,
+        385,
+        402,
+        409,
+        410
       ],
       "uses": [
-        469,
-        490,
-        627
+        491,
+        512,
+        637,
+        638
       ],
-      "idx": 388
+      "idx": 411
     },
     {
       "path": "../classic/classic/src/dd/DragDrop.js",
       "requires": [
-        383
+        406
       ],
       "uses": [
         49
       ],
-      "idx": 389
+      "idx": 412
     },
     {
       "path": "../classic/classic/src/dd/DD.js",
       "requires": [
-        383,
-        389
+        406,
+        412
       ],
       "uses": [
         49
       ],
-      "idx": 390
+      "idx": 413
     },
     {
       "path": "../classic/classic/src/dd/DDProxy.js",
       "requires": [
-        390
+        413
       ],
       "uses": [
-        383
+        406
       ],
-      "idx": 391
+      "idx": 414
     },
     {
       "path": "../classic/classic/src/dd/StatusProxy.js",
       "requires": [
-        105
+        111
       ],
       "uses": [],
-      "idx": 392
+      "idx": 415
     },
     {
       "path": "../classic/classic/src/dd/DragSource.js",
       "requires": [
-        383,
-        391,
-        392
+        406,
+        414,
+        415
       ],
       "uses": [
-        362
+        385
       ],
-      "idx": 393
+      "idx": 416
     },
     {
       "path": "../classic/classic/src/panel/Proxy.js",
@@ -3803,34 +3989,34 @@ var Ext = Ext || {};
       "uses": [
         49
       ],
-      "idx": 394
+      "idx": 417
     },
     {
       "path": "../classic/classic/src/panel/DD.js",
       "requires": [
-        393,
-        394
+        416,
+        417
       ],
       "uses": [],
-      "idx": 395
+      "idx": 418
     },
     {
       "path": "../classic/classic/src/layout/component/Dock.js",
       "requires": [
-        361
+        384
       ],
       "uses": [
         23,
         49,
-        348
+        372
       ],
-      "idx": 396
+      "idx": 419
     },
     {
       "path": "../classic/classic/src/util/Memento.js",
       "requires": [],
       "uses": [],
-      "idx": 397
+      "idx": 420
     },
     {
       "path": "../classic/classic/src/container/DockingContainer.js",
@@ -3840,10 +4026,10 @@ var Ext = Ext || {};
       ],
       "uses": [
         23,
-        226,
-        332
+        233,
+        359
       ],
-      "idx": 398
+      "idx": 421
     },
     {
       "path": "../classic/classic/src/panel/Panel.js",
@@ -3851,121 +4037,123 @@ var Ext = Ext || {};
         49,
         55,
         72,
-        89,
-        353,
-        380,
-        388,
-        395,
-        396,
-        397,
-        398
+        90,
+        377,
+        403,
+        411,
+        418,
+        419,
+        420,
+        421
       ],
       "uses": [
         1,
         20,
-        85,
-        92,
+        33,
+        86,
         93,
-        105,
-        226,
-        351,
-        362,
-        376,
-        378,
-        432
+        94,
+        111,
+        233,
+        375,
+        385,
+        399,
+        401,
+        455
       ],
-      "idx": 399
+      "idx": 422
     },
     {
       "path": "../classic/classic/src/layout/container/Table.js",
       "requires": [
-        350
+        374
       ],
       "uses": [],
-      "idx": 400
+      "idx": 423
     },
     {
       "path": "../classic/classic/src/container/ButtonGroup.js",
       "requires": [
-        379,
-        399,
-        400
+        402,
+        422,
+        423
       ],
       "uses": [],
-      "idx": 401
+      "idx": 424
     },
     {
       "path": "../classic/classic/src/container/Monitor.js",
       "requires": [],
       "uses": [
+        23,
         55
       ],
-      "idx": 402
+      "idx": 425
     },
     {
       "path": "../classic/classic/src/plugin/Responsive.js",
       "requires": [
-        322
+        332
       ],
       "uses": [],
-      "idx": 403
+      "idx": 426
     },
     {
       "path": "../classic/classic/src/plugin/Viewport.js",
       "requires": [
-        403
+        426
       ],
       "uses": [
         49,
-        348
+        372
       ],
-      "idx": 404
+      "idx": 427
     },
     {
       "path": "../classic/classic/src/container/Viewport.js",
       "requires": [
-        322,
-        353,
-        404
+        332,
+        377,
+        427
       ],
       "uses": [],
-      "idx": 405
+      "idx": 428
     },
     {
       "path": "../classic/classic/src/layout/container/Anchor.js",
       "requires": [
-        351
+        375
       ],
       "uses": [],
-      "idx": 406
+      "idx": 429
     },
     {
       "path": "../classic/classic/src/dashboard/Panel.js",
       "requires": [
-        399
+        422
       ],
       "uses": [
         20
       ],
-      "idx": 407
+      "idx": 430
     },
     {
       "path": "../classic/classic/src/dashboard/Column.js",
       "requires": [
-        353,
-        406,
-        407
+        377,
+        429,
+        430
       ],
       "uses": [],
-      "idx": 408
+      "idx": 431
     },
     {
       "path": "../classic/classic/src/layout/container/Column.js",
       "requires": [
-        351
+        375
       ],
       "uses": [],
-      "idx": 409
+      "idx": 432
     },
     {
       "path": "../classic/classic/src/dd/DragTracker.js",
@@ -3973,137 +4161,138 @@ var Ext = Ext || {};
         51
       ],
       "uses": [
+        20,
         33,
-        378
+        401
       ],
-      "idx": 410
+      "idx": 433
     },
     {
       "path": "../classic/classic/src/resizer/SplitterTracker.js",
       "requires": [
         33,
-        410
+        433
       ],
       "uses": [
         49,
-        297
+        97
       ],
-      "idx": 411
+      "idx": 434
     },
     {
       "path": "../classic/classic/src/layout/container/ColumnSplitterTracker.js",
       "requires": [
-        411
+        434
       ],
       "uses": [],
-      "idx": 412
+      "idx": 435
     },
     {
       "path": "../classic/classic/src/layout/container/ColumnSplitter.js",
       "requires": [
-        384,
-        412
+        407,
+        435
       ],
       "uses": [],
-      "idx": 413
+      "idx": 436
     },
     {
       "path": "../classic/classic/src/layout/container/Dashboard.js",
       "requires": [
-        409,
-        413
+        432,
+        436
       ],
       "uses": [
-        362
+        385
       ],
-      "idx": 414
+      "idx": 437
     },
     {
       "path": "../classic/classic/src/dd/DDTarget.js",
       "requires": [
-        389
+        412
       ],
       "uses": [],
-      "idx": 415
+      "idx": 438
     },
     {
       "path": "../classic/classic/src/dd/ScrollManager.js",
       "requires": [
-        383
+        406
       ],
       "uses": [],
-      "idx": 416
+      "idx": 439
     },
     {
       "path": "../classic/classic/src/dd/DropTarget.js",
       "requires": [
-        415,
-        416
+        438,
+        439
       ],
       "uses": [],
-      "idx": 417
+      "idx": 440
     },
     {
       "path": "../classic/classic/src/dashboard/DropZone.js",
       "requires": [
-        417
+        440
       ],
       "uses": [],
-      "idx": 418
+      "idx": 441
     },
     {
       "path": "../classic/classic/src/dashboard/Part.js",
       "requires": [
         3,
         12,
-        114
+        120
       ],
       "uses": [],
-      "idx": 419
+      "idx": 442
     },
     {
       "path": "../classic/classic/src/dashboard/Dashboard.js",
       "requires": [
-        399,
-        408,
-        414,
-        418,
-        419
+        422,
+        431,
+        437,
+        441,
+        442
       ],
       "uses": [
         12,
-        100,
-        113
+        106,
+        119
       ],
-      "idx": 420
+      "idx": 443
     },
     {
       "path": "../classic/classic/src/dd/DragZone.js",
       "requires": [
-        393
+        416
       ],
       "uses": [
-        416,
-        422
+        439,
+        445
       ],
-      "idx": 421
+      "idx": 444
     },
     {
       "path": "../classic/classic/src/dd/Registry.js",
       "requires": [],
       "uses": [],
-      "idx": 422
+      "idx": 445
     },
     {
       "path": "../classic/classic/src/dd/DropZone.js",
       "requires": [
-        417,
-        422
+        440,
+        445
       ],
       "uses": [
-        383
+        406
       ],
-      "idx": 423
+      "idx": 446
     },
     {
       "path": "../classic/classic/src/dom/Layer.js",
@@ -4111,15 +4300,15 @@ var Ext = Ext || {};
         49
       ],
       "uses": [
-        226
+        233
       ],
-      "idx": 424
+      "idx": 447
     },
     {
       "path": "../classic/classic/src/enums.js",
       "requires": [],
       "uses": [],
-      "idx": 425
+      "idx": 448
     },
     {
       "path": "../classic/classic/src/event/publisher/MouseEnterLeave.js",
@@ -4127,180 +4316,171 @@ var Ext = Ext || {};
         36
       ],
       "uses": [],
-      "idx": 426
+      "idx": 449
     },
     {
       "path": "../classic/classic/src/flash/Component.js",
       "requires": [
-        105
+        111
       ],
       "uses": [],
-      "idx": 427
+      "idx": 450
     },
     {
       "path": "../classic/classic/src/form/action/Action.js",
       "requires": [],
       "uses": [],
-      "idx": 428
+      "idx": 451
     },
     {
       "path": "../classic/classic/src/form/action/Load.js",
       "requires": [
         17,
-        428
+        451
       ],
       "uses": [
         18
       ],
-      "idx": 429
+      "idx": 452
     },
     {
       "path": "../classic/classic/src/form/action/Submit.js",
       "requires": [
-        428
+        451
       ],
       "uses": [
         18,
-        226
+        233
       ],
-      "idx": 430
+      "idx": 453
     },
     {
       "path": "../classic/classic/src/form/action/StandardSubmit.js",
       "requires": [
-        430
+        453
       ],
       "uses": [],
-      "idx": 431
+      "idx": 454
     },
     {
       "path": "../classic/classic/src/util/ComponentDragger.js",
       "requires": [
-        410
+        433
       ],
       "uses": [
         33,
         49
       ],
-      "idx": 432
-    },
-    {
-      "path": "../classic/classic/src/util/FocusTrap.js",
-      "requires": [
-        0
-      ],
-      "uses": [],
-      "idx": 433
+      "idx": 455
     },
     {
       "path": "../classic/classic/src/window/Window.js",
       "requires": [
         33,
-        399,
-        432,
-        433
+        422,
+        455
       ],
       "uses": [],
-      "idx": 434
+      "idx": 456
     },
     {
       "path": "../classic/classic/src/form/Labelable.js",
       "requires": [
         0,
-        89
+        90
       ],
       "uses": [
         49,
-        486
+        508
       ],
-      "idx": 435
+      "idx": 457
     },
     {
       "path": "../classic/classic/src/form/field/Field.js",
       "requires": [],
       "uses": [],
-      "idx": 436
+      "idx": 458
     },
     {
       "path": "../classic/classic/src/form/field/Base.js",
       "requires": [
         1,
-        89,
-        105,
-        435,
-        436
+        90,
+        111,
+        457,
+        458
       ],
       "uses": [
-        86,
-        226
+        87,
+        233
       ],
-      "idx": 437
+      "idx": 459
     },
     {
       "path": "../classic/classic/src/form/field/VTypes.js",
       "requires": [],
       "uses": [],
-      "idx": 438
+      "idx": 460
     },
     {
       "path": "../classic/classic/src/form/trigger/Trigger.js",
       "requires": [
         12,
-        368
+        391
       ],
       "uses": [
         49,
-        89
+        90
       ],
-      "idx": 439
+      "idx": 461
     },
     {
       "path": "../classic/classic/src/form/field/Text.js",
       "requires": [
-        336,
-        437,
-        438,
-        439
+        363,
+        459,
+        460,
+        461
       ],
       "uses": [
-        85,
         86,
-        93
+        87,
+        94
       ],
-      "idx": 440
+      "idx": 462
     },
     {
       "path": "../classic/classic/src/form/field/TextArea.js",
       "requires": [
         1,
-        89,
-        440
+        90,
+        462
       ],
       "uses": [
-        85,
-        336
+        86,
+        363
       ],
-      "idx": 441
+      "idx": 463
     },
     {
       "path": "../classic/classic/src/window/MessageBox.js",
       "requires": [
-        364,
-        369,
-        386,
-        388,
-        406,
-        434,
-        440,
-        441
+        387,
+        392,
+        409,
+        411,
+        429,
+        456,
+        462,
+        463
       ],
       "uses": [
-        105,
-        353,
-        362,
-        363
+        111,
+        377,
+        385,
+        386
       ],
-      "idx": 442
+      "idx": 464
     },
     {
       "path": "../classic/classic/src/form/Basic.js",
@@ -4308,54 +4488,54 @@ var Ext = Ext || {};
         1,
         51,
         55,
-        125,
-        429,
-        430,
-        431,
-        442
+        131,
+        452,
+        453,
+        454,
+        464
       ],
       "uses": [
-        402
+        425
       ],
-      "idx": 443
+      "idx": 465
     },
     {
       "path": "../classic/classic/src/form/FieldAncestor.js",
       "requires": [
         0,
-        402
+        425
       ],
       "uses": [],
-      "idx": 444
+      "idx": 466
     },
     {
       "path": "../classic/classic/src/layout/component/field/FieldContainer.js",
       "requires": [
-        362
+        385
       ],
       "uses": [],
-      "idx": 445
+      "idx": 467
     },
     {
       "path": "../classic/classic/src/form/FieldContainer.js",
       "requires": [
-        353,
-        435,
-        444,
-        445
+        377,
+        457,
+        466,
+        467
       ],
       "uses": [],
-      "idx": 446
+      "idx": 468
     },
     {
       "path": "../classic/classic/src/layout/container/CheckboxGroup.js",
       "requires": [
-        350
+        374
       ],
       "uses": [
-        226
+        233
       ],
-      "idx": 447
+      "idx": 469
     },
     {
       "path": "../classic/classic/src/form/CheckboxManager.js",
@@ -4363,68 +4543,68 @@ var Ext = Ext || {};
         55
       ],
       "uses": [],
-      "idx": 448
+      "idx": 470
     },
     {
       "path": "../classic/classic/src/form/field/Checkbox.js",
       "requires": [
-        89,
-        437,
-        448
+        90,
+        459,
+        470
       ],
       "uses": [],
-      "idx": 449
+      "idx": 471
     },
     {
       "path": "../classic/classic/src/form/CheckboxGroup.js",
       "requires": [
-        436,
-        437,
-        446,
-        447,
-        449
+        458,
+        459,
+        468,
+        469,
+        471
       ],
       "uses": [],
-      "idx": 450
+      "idx": 472
     },
     {
       "path": "../classic/classic/src/form/FieldSet.js",
       "requires": [
-        353,
-        444
+        377,
+        466
       ],
       "uses": [
         49,
-        92,
-        105,
-        226,
-        362,
-        376,
-        406,
-        449,
-        581
+        93,
+        111,
+        233,
+        385,
+        399,
+        429,
+        471,
+        605
       ],
-      "idx": 451
+      "idx": 473
     },
     {
       "path": "../classic/classic/src/form/Label.js",
       "requires": [
-        85,
-        105
+        86,
+        111
       ],
       "uses": [],
-      "idx": 452
+      "idx": 474
     },
     {
       "path": "../classic/classic/src/form/Panel.js",
       "requires": [
         56,
-        399,
-        443,
-        444
+        422,
+        465,
+        466
       ],
       "uses": [],
-      "idx": 453
+      "idx": 475
     },
     {
       "path": "../classic/classic/src/form/RadioManager.js",
@@ -4432,27 +4612,27 @@ var Ext = Ext || {};
         55
       ],
       "uses": [],
-      "idx": 454
+      "idx": 476
     },
     {
       "path": "../classic/classic/src/form/field/Radio.js",
       "requires": [
-        449,
-        454
+        471,
+        476
       ],
       "uses": [],
-      "idx": 455
+      "idx": 477
     },
     {
       "path": "../classic/classic/src/form/RadioGroup.js",
       "requires": [
-        450,
-        455
+        472,
+        477
       ],
       "uses": [
-        454
+        476
       ],
-      "idx": 456
+      "idx": 478
     },
     {
       "path": "../classic/classic/src/form/action/DirectAction.js",
@@ -4460,346 +4640,96 @@ var Ext = Ext || {};
         0
       ],
       "uses": [
-        206
+        213
       ],
-      "idx": 457
+      "idx": 479
     },
     {
       "path": "../classic/classic/src/form/action/DirectLoad.js",
       "requires": [
-        206,
-        429,
-        457
+        213,
+        452,
+        479
       ],
       "uses": [],
-      "idx": 458
+      "idx": 480
     },
     {
       "path": "../classic/classic/src/form/action/DirectSubmit.js",
       "requires": [
-        206,
-        430,
-        457
+        213,
+        453,
+        479
       ],
       "uses": [],
-      "idx": 459
+      "idx": 481
     },
     {
       "path": "../classic/classic/src/form/field/Picker.js",
       "requires": [
-        378,
-        440
+        401,
+        462
       ],
       "uses": [],
-      "idx": 460
+      "idx": 482
     },
     {
       "path": "../classic/classic/src/selection/Model.js",
       "requires": [
         4,
         12,
-        172,
-        359
+        178,
+        382
       ],
       "uses": [],
-      "idx": 461
+      "idx": 483
     },
     {
       "path": "../classic/classic/src/selection/DataViewModel.js",
       "requires": [
-        378,
-        461
+        401,
+        483
       ],
       "uses": [],
-      "idx": 462
+      "idx": 484
     },
     {
       "path": "../classic/classic/src/view/NavigationModel.js",
       "requires": [
         12,
         51,
-        359
+        382
       ],
       "uses": [
-        378
+        401
       ],
-      "idx": 463
+      "idx": 485
     },
     {
       "path": "../classic/classic/src/view/AbstractView.js",
       "requires": [
         75,
-        94,
-        105,
-        359,
-        360,
-        462,
-        463
+        95,
+        111,
+        382,
+        383,
+        484,
+        485
       ],
       "uses": [
         12,
         19,
         49,
-        86,
-        89,
-        161,
-        226,
-        335
-      ],
-      "idx": 464
-    },
-    {
-      "path": "../classic/classic/src/view/View.js",
-      "requires": [
-        464
-      ],
-      "uses": [],
-      "idx": 465
-    },
-    {
-      "path": "../classic/classic/src/view/BoundListKeyNav.js",
-      "requires": [
-        463
-      ],
-      "uses": [
-        35,
-        378
-      ],
-      "idx": 466
-    },
-    {
-      "path": "../classic/classic/src/layout/component/BoundList.js",
-      "requires": [
+        87,
+        90,
+        167,
+        233,
         362
       ],
-      "uses": [],
-      "idx": 467
-    },
-    {
-      "path": "../classic/classic/src/toolbar/Item.js",
-      "requires": [
-        105,
-        388
-      ],
-      "uses": [],
-      "idx": 468
-    },
-    {
-      "path": "../classic/classic/src/toolbar/TextItem.js",
-      "requires": [
-        89,
-        388,
-        468
-      ],
-      "uses": [],
-      "idx": 469
-    },
-    {
-      "path": "../classic/classic/src/form/trigger/Spinner.js",
-      "requires": [
-        439
-      ],
-      "uses": [],
-      "idx": 470
-    },
-    {
-      "path": "../classic/classic/src/form/field/Spinner.js",
-      "requires": [
-        378,
-        440,
-        470
-      ],
-      "uses": [],
-      "idx": 471
-    },
-    {
-      "path": "../classic/classic/src/form/field/Number.js",
-      "requires": [
-        471
-      ],
-      "uses": [
-        85,
-        86
-      ],
-      "idx": 472
-    },
-    {
-      "path": "../classic/classic/src/toolbar/Paging.js",
-      "requires": [
-        359,
-        388,
-        469,
-        472
-      ],
-      "uses": [
-        86,
-        362,
-        470
-      ],
-      "idx": 473
-    },
-    {
-      "path": "../classic/classic/src/view/BoundList.js",
-      "requires": [
-        49,
-        219,
-        465,
-        466,
-        467,
-        473
-      ],
-      "uses": [
-        89,
-        362
-      ],
-      "idx": 474
-    },
-    {
-      "path": "../classic/classic/src/form/field/ComboBox.js",
-      "requires": [
-        1,
-        161,
-        359,
-        460,
-        474
-      ],
-      "uses": [
-        49,
-        50,
-        89,
-        113,
-        141,
-        156,
-        226,
-        378,
-        462,
-        466,
-        467
-      ],
-      "idx": 475
-    },
-    {
-      "path": "../classic/classic/src/picker/Month.js",
-      "requires": [
-        89,
-        105,
-        368,
-        369
-      ],
-      "uses": [
-        362
-      ],
-      "idx": 476
-    },
-    {
-      "path": "../classic/classic/src/picker/Date.js",
-      "requires": [
-        66,
-        89,
-        105,
-        368,
-        369,
-        370,
-        378,
-        476
-      ],
-      "uses": [
-        86,
-        226,
-        362
-      ],
-      "idx": 477
-    },
-    {
-      "path": "../classic/classic/src/form/field/Date.js",
-      "requires": [
-        460,
-        477
-      ],
-      "uses": [
-        86,
-        362
-      ],
-      "idx": 478
-    },
-    {
-      "path": "../classic/classic/src/form/field/Display.js",
-      "requires": [
-        85,
-        89,
-        437
-      ],
-      "uses": [],
-      "idx": 479
-    },
-    {
-      "path": "../classic/classic/src/form/field/FileButton.js",
-      "requires": [
-        369
-      ],
-      "uses": [],
-      "idx": 480
-    },
-    {
-      "path": "../classic/classic/src/form/trigger/Component.js",
-      "requires": [
-        439
-      ],
-      "uses": [],
-      "idx": 481
-    },
-    {
-      "path": "../classic/classic/src/form/field/File.js",
-      "requires": [
-        440,
-        480,
-        481
-      ],
-      "uses": [
-        362
-      ],
-      "idx": 482
-    },
-    {
-      "path": "../classic/classic/src/form/field/Hidden.js",
-      "requires": [
-        437
-      ],
-      "uses": [],
-      "idx": 483
-    },
-    {
-      "path": "../classic/classic/src/tip/Tip.js",
-      "requires": [
-        399
-      ],
-      "uses": [
-        34,
-        105
-      ],
-      "idx": 484
-    },
-    {
-      "path": "../classic/classic/src/tip/ToolTip.js",
-      "requires": [
-        32,
-        484
-      ],
-      "uses": [
-        74
-      ],
-      "idx": 485
-    },
-    {
-      "path": "../classic/classic/src/tip/QuickTip.js",
-      "requires": [
-        485
-      ],
-      "uses": [],
       "idx": 486
     },
     {
-      "path": "../classic/classic/src/tip/QuickTipManager.js",
+      "path": "../classic/classic/src/view/View.js",
       "requires": [
         486
       ],
@@ -4807,239 +4737,491 @@ var Ext = Ext || {};
       "idx": 487
     },
     {
-      "path": "../classic/classic/src/picker/Color.js",
+      "path": "../classic/classic/src/view/BoundListKeyNav.js",
       "requires": [
-        89,
-        105
+        485
       ],
-      "uses": [],
+      "uses": [
+        35,
+        401
+      ],
       "idx": 488
     },
     {
-      "path": "../classic/classic/src/layout/component/field/HtmlEditor.js",
+      "path": "../classic/classic/src/layout/component/BoundList.js",
       "requires": [
-        445
+        385
       ],
       "uses": [],
       "idx": 489
     },
     {
-      "path": "../classic/classic/src/toolbar/Separator.js",
+      "path": "../classic/classic/src/toolbar/Item.js",
       "requires": [
-        388,
-        468
+        111,
+        411
       ],
       "uses": [],
       "idx": 490
     },
     {
-      "path": "../classic/classic/src/layout/container/boxOverflow/Menu.js",
+      "path": "../classic/classic/src/toolbar/TextItem.js",
       "requires": [
-        369,
-        381,
+        90,
+        411,
         490
       ],
-      "uses": [
-        362,
-        382,
-        387,
-        396,
-        449,
-        540,
-        542,
-        627
-      ],
+      "uses": [],
       "idx": 491
     },
     {
-      "path": "../classic/classic/src/form/field/HtmlEditor.js",
+      "path": "../classic/classic/src/form/trigger/Spinner.js",
       "requires": [
-        85,
-        335,
-        387,
-        388,
-        436,
-        446,
-        468,
-        487,
-        488,
-        489,
-        491
+        461
       ],
-      "uses": [
-        1,
-        86,
-        105,
-        226,
-        362,
-        382,
-        396,
-        542
-      ],
+      "uses": [],
       "idx": 492
     },
     {
-      "path": "../classic/classic/src/view/TagKeyNav.js",
+      "path": "../classic/classic/src/form/field/Spinner.js",
       "requires": [
-        466
+        401,
+        462,
+        492
       ],
       "uses": [],
       "idx": 493
     },
     {
-      "path": "../classic/classic/src/form/field/Tag.js",
+      "path": "../classic/classic/src/form/field/Number.js",
       "requires": [
-        158,
-        203,
-        461,
-        475,
         493
       ],
       "uses": [
-        50,
         86,
-        89,
-        147,
-        152,
-        153
+        87
       ],
       "idx": 494
     },
     {
-      "path": "../classic/classic/src/picker/Time.js",
+      "path": "../classic/classic/src/toolbar/Paging.js",
       "requires": [
-        158,
-        474
+        382,
+        411,
+        491,
+        494
       ],
       "uses": [
-        50
+        87,
+        385,
+        492
       ],
       "idx": 495
     },
     {
-      "path": "../classic/classic/src/form/field/Time.js",
+      "path": "../classic/classic/src/view/BoundList.js",
       "requires": [
-        466,
-        475,
-        478,
+        49,
+        226,
+        487,
+        488,
+        489,
         495
       ],
       "uses": [
-        86,
-        89,
-        462,
-        467
+        90,
+        385
       ],
       "idx": 496
     },
     {
-      "path": "../classic/classic/src/form/field/Trigger.js",
+      "path": "../classic/classic/src/form/field/ComboBox.js",
       "requires": [
-        226,
-        368,
-        440
-      ],
-      "uses": [],
-      "idx": 497
-    },
-    {
-      "path": "../classic/classic/src/grid/CellContext.js",
-      "requires": [],
-      "uses": [],
-      "idx": 498
-    },
-    {
-      "path": "../classic/classic/src/grid/CellEditor.js",
-      "requires": [
-        355
+        1,
+        167,
+        382,
+        482,
+        496
       ],
       "uses": [
         49,
-        353
+        50,
+        90,
+        119,
+        147,
+        162,
+        233,
+        401,
+        484,
+        488,
+        489
+      ],
+      "idx": 497
+    },
+    {
+      "path": "../classic/classic/src/picker/Month.js",
+      "requires": [
+        90,
+        111,
+        391,
+        392
+      ],
+      "uses": [
+        385
+      ],
+      "idx": 498
+    },
+    {
+      "path": "../classic/classic/src/picker/Date.js",
+      "requires": [
+        66,
+        90,
+        111,
+        391,
+        392,
+        393,
+        401,
+        498
+      ],
+      "uses": [
+        87,
+        233,
+        385
       ],
       "idx": 499
     },
     {
-      "path": "../classic/classic/src/grid/ColumnComponentLayout.js",
+      "path": "../classic/classic/src/form/field/Date.js",
       "requires": [
-        362
+        482,
+        499
       ],
-      "uses": [],
+      "uses": [
+        87,
+        385
+      ],
       "idx": 500
     },
     {
-      "path": "../classic/classic/src/layout/container/Fit.js",
+      "path": "../classic/classic/src/form/field/Display.js",
       "requires": [
-        350
+        86,
+        90,
+        459
       ],
       "uses": [],
       "idx": 501
     },
     {
-      "path": "../classic/classic/src/panel/Table.js",
+      "path": "../classic/classic/src/form/field/FileButton.js",
       "requires": [
-        399,
-        501
+        392
       ],
-      "uses": [
-        1,
-        76,
-        161,
-        226,
-        505,
-        511,
-        521,
-        554,
-        555,
-        598,
-        599,
-        600
-      ],
+      "uses": [],
       "idx": 502
     },
     {
-      "path": "../classic/classic/src/grid/ColumnLayout.js",
+      "path": "../classic/classic/src/form/trigger/Component.js",
       "requires": [
-        386,
-        502
+        461
       ],
       "uses": [],
       "idx": 503
     },
     {
+      "path": "../classic/classic/src/form/field/File.js",
+      "requires": [
+        462,
+        502,
+        503
+      ],
+      "uses": [
+        385
+      ],
+      "idx": 504
+    },
+    {
+      "path": "../classic/classic/src/form/field/Hidden.js",
+      "requires": [
+        459
+      ],
+      "uses": [],
+      "idx": 505
+    },
+    {
+      "path": "../classic/classic/src/tip/Tip.js",
+      "requires": [
+        422
+      ],
+      "uses": [
+        34,
+        111
+      ],
+      "idx": 506
+    },
+    {
+      "path": "../classic/classic/src/tip/ToolTip.js",
+      "requires": [
+        32,
+        506
+      ],
+      "uses": [
+        34,
+        74
+      ],
+      "idx": 507
+    },
+    {
+      "path": "../classic/classic/src/tip/QuickTip.js",
+      "requires": [
+        507
+      ],
+      "uses": [],
+      "idx": 508
+    },
+    {
+      "path": "../classic/classic/src/tip/QuickTipManager.js",
+      "requires": [
+        508
+      ],
+      "uses": [],
+      "idx": 509
+    },
+    {
+      "path": "../classic/classic/src/picker/Color.js",
+      "requires": [
+        90,
+        111
+      ],
+      "uses": [],
+      "idx": 510
+    },
+    {
+      "path": "../classic/classic/src/layout/component/field/HtmlEditor.js",
+      "requires": [
+        467
+      ],
+      "uses": [],
+      "idx": 511
+    },
+    {
+      "path": "../classic/classic/src/toolbar/Separator.js",
+      "requires": [
+        411,
+        490
+      ],
+      "uses": [],
+      "idx": 512
+    },
+    {
+      "path": "../classic/classic/src/layout/container/boxOverflow/Menu.js",
+      "requires": [
+        392,
+        404,
+        512
+      ],
+      "uses": [
+        385,
+        405,
+        410,
+        419,
+        471,
+        563,
+        565,
+        637
+      ],
+      "idx": 513
+    },
+    {
+      "path": "../classic/classic/src/form/field/HtmlEditor.js",
+      "requires": [
+        86,
+        362,
+        410,
+        411,
+        458,
+        468,
+        490,
+        509,
+        510,
+        511,
+        513
+      ],
+      "uses": [
+        1,
+        87,
+        111,
+        233,
+        385,
+        405,
+        419,
+        565
+      ],
+      "idx": 514
+    },
+    {
+      "path": "../classic/classic/src/view/TagKeyNav.js",
+      "requires": [
+        488
+      ],
+      "uses": [],
+      "idx": 515
+    },
+    {
+      "path": "../classic/classic/src/form/field/Tag.js",
+      "requires": [
+        164,
+        210,
+        483,
+        497,
+        515
+      ],
+      "uses": [
+        50,
+        87,
+        90,
+        153,
+        158,
+        159
+      ],
+      "idx": 516
+    },
+    {
+      "path": "../classic/classic/src/picker/Time.js",
+      "requires": [
+        164,
+        496
+      ],
+      "uses": [
+        50
+      ],
+      "idx": 517
+    },
+    {
+      "path": "../classic/classic/src/form/field/Time.js",
+      "requires": [
+        488,
+        497,
+        500,
+        517
+      ],
+      "uses": [
+        87,
+        90,
+        484,
+        489
+      ],
+      "idx": 518
+    },
+    {
+      "path": "../classic/classic/src/form/field/Trigger.js",
+      "requires": [
+        233,
+        391,
+        462
+      ],
+      "uses": [],
+      "idx": 519
+    },
+    {
+      "path": "../classic/classic/src/grid/CellContext.js",
+      "requires": [],
+      "uses": [],
+      "idx": 520
+    },
+    {
+      "path": "../classic/classic/src/grid/CellEditor.js",
+      "requires": [
+        379
+      ],
+      "uses": [
+        49,
+        377
+      ],
+      "idx": 521
+    },
+    {
+      "path": "../classic/classic/src/grid/ColumnComponentLayout.js",
+      "requires": [
+        385
+      ],
+      "uses": [],
+      "idx": 522
+    },
+    {
+      "path": "../classic/classic/src/layout/container/Fit.js",
+      "requires": [
+        374
+      ],
+      "uses": [],
+      "idx": 523
+    },
+    {
+      "path": "../classic/classic/src/panel/Table.js",
+      "requires": [
+        422,
+        523
+      ],
+      "uses": [
+        1,
+        76,
+        167,
+        233,
+        527,
+        534,
+        544,
+        578,
+        579,
+        622,
+        623,
+        624
+      ],
+      "idx": 524
+    },
+    {
+      "path": "../classic/classic/src/grid/ColumnLayout.js",
+      "requires": [
+        409,
+        524
+      ],
+      "uses": [],
+      "idx": 525
+    },
+    {
       "path": "../classic/classic/src/grid/ColumnManager.js",
       "requires": [],
       "uses": [],
-      "idx": 504
+      "idx": 526
     },
     {
       "path": "../classic/classic/src/grid/NavigationModel.js",
       "requires": [
-        463
+        485
       ],
       "uses": [
         20,
         35,
+        49,
         74,
-        105,
-        378,
-        498
+        111,
+        401,
+        520
       ],
-      "idx": 505
+      "idx": 527
     },
     {
       "path": "../classic/classic/src/view/TableLayout.js",
       "requires": [
-        362
+        385
       ],
       "uses": [],
-      "idx": 506
+      "idx": 528
     },
     {
       "path": "../classic/classic/src/grid/locking/RowSynchronizer.js",
       "requires": [],
       "uses": [],
-      "idx": 507
+      "idx": 529
     },
     {
       "path": "../classic/classic/src/view/NodeCache.js",
@@ -5050,39 +5232,48 @@ var Ext = Ext || {};
         49,
         74
       ],
-      "idx": 508
+      "idx": 530
+    },
+    {
+      "path": "../classic/classic/src/scroll/TableScroller.js",
+      "requires": [
+        101
+      ],
+      "uses": [],
+      "idx": 531
     },
     {
       "path": "../classic/classic/src/view/Table.js",
       "requires": [
         1,
         55,
-        219,
-        465,
-        498,
-        506,
-        507,
-        508
+        226,
+        487,
+        520,
+        528,
+        529,
+        530,
+        531
       ],
       "uses": [
         12,
         49,
         74,
-        89,
-        105,
-        141,
-        521
+        90,
+        111,
+        147,
+        544
       ],
-      "idx": 509
+      "idx": 532
     },
     {
       "path": "../classic/classic/src/grid/Panel.js",
       "requires": [
-        502,
-        509
+        524,
+        532
       ],
       "uses": [],
-      "idx": 510
+      "idx": 533
     },
     {
       "path": "../classic/classic/src/grid/RowContext.js",
@@ -5090,227 +5281,228 @@ var Ext = Ext || {};
       "uses": [
         12
       ],
-      "idx": 511
+      "idx": 534
     },
     {
       "path": "../classic/classic/src/grid/RowEditorButtons.js",
       "requires": [
-        353
+        377
       ],
       "uses": [
-        362,
-        369,
-        399
+        385,
+        392,
+        422
       ],
-      "idx": 512
+      "idx": 535
     },
     {
       "path": "../classic/classic/src/grid/RowEditor.js",
       "requires": [
-        378,
-        453,
-        485,
-        512
+        401,
+        475,
+        507,
+        535
       ],
       "uses": [
         49,
         66,
         76,
-        351,
-        353,
-        362,
-        396,
-        479,
-        498
+        375,
+        377,
+        385,
+        419,
+        501,
+        520
       ],
-      "idx": 513
+      "idx": 536
     },
     {
       "path": "../classic/classic/src/grid/Scroller.js",
       "requires": [],
       "uses": [],
-      "idx": 514
+      "idx": 537
     },
     {
       "path": "../classic/classic/src/view/DropZone.js",
       "requires": [
-        423
+        446
       ],
       "uses": [
-        105,
-        362
+        111,
+        385
       ],
-      "idx": 515
+      "idx": 538
     },
     {
       "path": "../classic/classic/src/grid/ViewDropZone.js",
       "requires": [
-        515
+        538
       ],
       "uses": [],
-      "idx": 516
+      "idx": 539
     },
     {
       "path": "../classic/classic/src/grid/plugin/HeaderResizer.js",
       "requires": [
         33,
-        327,
-        410
+        338,
+        433
       ],
       "uses": [
-        522
+        545
       ],
-      "idx": 517
+      "idx": 540
     },
     {
       "path": "../classic/classic/src/grid/header/DragZone.js",
       "requires": [
-        421
+        444
       ],
       "uses": [],
-      "idx": 518
+      "idx": 541
     },
     {
       "path": "../classic/classic/src/grid/header/DropZone.js",
       "requires": [
-        423
+        446
       ],
       "uses": [
-        383
+        406
       ],
-      "idx": 519
+      "idx": 542
     },
     {
       "path": "../classic/classic/src/grid/plugin/HeaderReorderer.js",
       "requires": [
-        327,
-        518,
-        519
+        338,
+        541,
+        542
       ],
       "uses": [],
-      "idx": 520
+      "idx": 543
     },
     {
       "path": "../classic/classic/src/grid/header/Container.js",
       "requires": [
-        353,
-        378,
-        379,
-        503,
-        517,
-        520
+        377,
+        401,
+        402,
+        525,
+        540,
+        543
       ],
       "uses": [
         1,
-        105,
-        362,
-        382,
-        387,
-        396,
-        504,
-        522,
-        540,
-        541,
-        542
+        111,
+        385,
+        405,
+        410,
+        419,
+        526,
+        545,
+        563,
+        564,
+        565
       ],
-      "idx": 521
+      "idx": 544
     },
     {
       "path": "../classic/classic/src/grid/column/Column.js",
       "requires": [
-        200,
-        500,
-        503,
-        521
+        207,
+        522,
+        525,
+        544
       ],
       "uses": [
         53,
-        85,
-        517
+        86,
+        540
       ],
-      "idx": 522
+      "idx": 545
     },
     {
       "path": "../classic/classic/src/grid/column/ActionProxy.js",
       "requires": [],
       "uses": [],
-      "idx": 523
+      "idx": 546
     },
     {
       "path": "../classic/classic/src/grid/column/Action.js",
       "requires": [
         77,
-        522,
-        523
+        545,
+        546
       ],
       "uses": [
         49
       ],
-      "idx": 524
+      "idx": 547
     },
     {
       "path": "../classic/classic/src/grid/column/Boolean.js",
       "requires": [
-        522
+        545
       ],
       "uses": [],
-      "idx": 525
+      "idx": 548
     },
     {
       "path": "../classic/classic/src/grid/column/Check.js",
       "requires": [
-        522
+        545
       ],
       "uses": [
-        498
+        520
       ],
-      "idx": 526
+      "idx": 549
     },
     {
       "path": "../classic/classic/src/grid/column/Date.js",
       "requires": [
-        522
+        545
       ],
       "uses": [
-        85
+        86
       ],
-      "idx": 527
+      "idx": 550
     },
     {
       "path": "../classic/classic/src/grid/column/Number.js",
       "requires": [
-        85,
-        522
+        86,
+        545
       ],
       "uses": [],
-      "idx": 528
+      "idx": 551
     },
     {
       "path": "../classic/classic/src/grid/column/RowNumberer.js",
       "requires": [
-        522
+        545
       ],
       "uses": [],
-      "idx": 529
+      "idx": 552
     },
     {
       "path": "../classic/classic/src/grid/column/Template.js",
       "requires": [
-        89,
-        522
+        90,
+        545
       ],
       "uses": [
-        526
+        549
       ],
-      "idx": 530
+      "idx": 553
     },
     {
       "path": "../classic/classic/src/grid/column/Widget.js",
       "requires": [
-        522
+        334,
+        545
       ],
       "uses": [],
-      "idx": 531
+      "idx": 554
     },
     {
       "path": "../classic/classic/src/grid/feature/Feature.js",
@@ -5318,15 +5510,15 @@ var Ext = Ext || {};
         51
       ],
       "uses": [],
-      "idx": 532
+      "idx": 555
     },
     {
       "path": "../classic/classic/src/grid/feature/AbstractSummary.js",
       "requires": [
-        532
+        555
       ],
       "uses": [],
-      "idx": 533
+      "idx": 556
     },
     {
       "path": "../classic/classic/src/grid/feature/GroupStore.js",
@@ -5334,517 +5526,533 @@ var Ext = Ext || {};
         51
       ],
       "uses": [
-        113
+        119
       ],
-      "idx": 534
+      "idx": 557
     },
     {
       "path": "../classic/classic/src/grid/feature/Grouping.js",
       "requires": [
-        532,
-        533,
-        534
+        555,
+        556,
+        557
       ],
       "uses": [
-        89,
-        141,
-        521
+        90,
+        147,
+        544
       ],
-      "idx": 535
+      "idx": 558
     },
     {
       "path": "../classic/classic/src/grid/feature/GroupingSummary.js",
       "requires": [
-        535
+        558
       ],
       "uses": [],
-      "idx": 536
+      "idx": 559
     },
     {
       "path": "../classic/classic/src/grid/feature/RowBody.js",
       "requires": [
-        532
+        555
       ],
       "uses": [
-        89
+        90
       ],
-      "idx": 537
+      "idx": 560
     },
     {
       "path": "../classic/classic/src/grid/feature/Summary.js",
       "requires": [
-        533
+        556
       ],
       "uses": [
-        89,
-        105,
-        141,
-        362
+        90,
+        111,
+        147,
+        385
       ],
-      "idx": 538
+      "idx": 561
     },
     {
       "path": "../classic/classic/src/menu/Item.js",
       "requires": [
         77,
-        105,
-        219
+        111,
+        226
       ],
       "uses": [
-        367,
-        487
+        390,
+        509
       ],
-      "idx": 539
+      "idx": 562
     },
     {
       "path": "../classic/classic/src/menu/CheckItem.js",
       "requires": [
-        539
+        562
       ],
       "uses": [
-        367
+        390
       ],
-      "idx": 540
+      "idx": 563
     },
     {
       "path": "../classic/classic/src/menu/Separator.js",
       "requires": [
-        539
+        562
       ],
       "uses": [],
-      "idx": 541
+      "idx": 564
     },
     {
       "path": "../classic/classic/src/menu/Menu.js",
       "requires": [
-        367,
-        379,
-        387,
-        399,
-        539,
-        540,
-        541
+        390,
+        402,
+        410,
+        422,
+        562,
+        563,
+        564
       ],
       "uses": [
+        1,
         20,
         35,
         49,
-        362,
-        378
+        385,
+        401
       ],
-      "idx": 542
+      "idx": 565
     },
     {
       "path": "../classic/classic/src/grid/filters/filter/Base.js",
       "requires": [
         12,
-        382,
-        387,
-        396,
-        542
+        405,
+        410,
+        419,
+        565
       ],
       "uses": [
         1,
         50
       ],
-      "idx": 543
+      "idx": 566
     },
     {
       "path": "../classic/classic/src/grid/filters/filter/SingleFilter.js",
       "requires": [
-        543
+        566
       ],
       "uses": [],
-      "idx": 544
+      "idx": 567
     },
     {
       "path": "../classic/classic/src/grid/filters/filter/Boolean.js",
       "requires": [
-        544
+        567
       ],
       "uses": [],
-      "idx": 545
+      "idx": 568
     },
     {
       "path": "../classic/classic/src/grid/filters/filter/TriFilter.js",
       "requires": [
-        543
+        566
       ],
       "uses": [],
-      "idx": 546
+      "idx": 569
     },
     {
       "path": "../classic/classic/src/grid/filters/filter/Date.js",
       "requires": [
-        362,
-        540,
-        546
+        385,
+        563,
+        569
       ],
       "uses": [
-        382,
-        387,
-        396,
-        477,
-        591
+        405,
+        410,
+        419,
+        499,
+        615
       ],
-      "idx": 547
+      "idx": 570
     },
     {
       "path": "../classic/classic/src/grid/filters/filter/List.js",
       "requires": [
-        544
+        567
       ],
       "uses": [
-        158,
-        161
+        164,
+        167
       ],
-      "idx": 548
+      "idx": 571
     },
     {
       "path": "../classic/classic/src/grid/filters/filter/Number.js",
       "requires": [
-        362,
-        470,
-        546
+        385,
+        492,
+        569
       ],
       "uses": [
-        472
+        494
       ],
-      "idx": 549
+      "idx": 572
     },
     {
       "path": "../classic/classic/src/grid/filters/filter/String.js",
       "requires": [
-        362,
-        440,
-        544
+        385,
+        462,
+        567
       ],
       "uses": [
         50
       ],
-      "idx": 550
+      "idx": 573
     },
     {
       "path": "../classic/classic/src/grid/filters/Filters.js",
       "requires": [
-        327,
-        359,
-        543,
-        544,
-        545,
-        546,
-        547,
-        548,
-        549,
-        550
+        338,
+        382,
+        566,
+        567,
+        568,
+        569,
+        570,
+        571,
+        572,
+        573
       ],
       "uses": [
         12
       ],
-      "idx": 551
+      "idx": 574
     },
     {
       "path": "../classic/classic/src/grid/locking/HeaderContainer.js",
       "requires": [
-        504,
-        521
+        526,
+        544
       ],
       "uses": [],
-      "idx": 552
+      "idx": 575
     },
     {
       "path": "../classic/classic/src/grid/locking/View.js",
       "requires": [
         51,
-        102,
-        105,
-        359,
-        464,
-        509
+        108,
+        111,
+        382,
+        486,
+        532
       ],
       "uses": [
-        95,
-        360,
-        498
+        101,
+        383,
+        520
       ],
-      "idx": 553
+      "idx": 576
+    },
+    {
+      "path": "../classic/classic/src/scroll/LockingScroller.js",
+      "requires": [
+        101
+      ],
+      "uses": [],
+      "idx": 577
     },
     {
       "path": "../classic/classic/src/grid/locking/Lockable.js",
       "requires": [
-        105,
-        509,
-        521,
-        552,
-        553
+        111,
+        532,
+        544,
+        575,
+        576,
+        577
       ],
       "uses": [
         1,
-        161,
-        351,
-        362,
-        384,
-        385
+        33,
+        101,
+        167,
+        375,
+        385,
+        407,
+        408,
+        422,
+        524
       ],
-      "idx": 554
+      "idx": 578
     },
     {
       "path": "../classic/classic/src/grid/plugin/BufferedRenderer.js",
       "requires": [
-        327
+        338
       ],
       "uses": [
         1,
         49,
-        507
+        111,
+        529
       ],
-      "idx": 555
+      "idx": 579
     },
     {
       "path": "../classic/classic/src/grid/plugin/Editing.js",
       "requires": [
         4,
-        327,
-        378,
-        437,
-        509,
-        522
+        338,
+        401,
+        459,
+        532,
+        545
       ],
       "uses": [
         20,
-        105,
-        362,
-        498
+        111,
+        385,
+        520
       ],
-      "idx": 556
+      "idx": 580
     },
     {
       "path": "../classic/classic/src/grid/plugin/CellEditing.js",
       "requires": [
         1,
-        499,
-        556
+        521,
+        580
       ],
       "uses": [
         55,
-        498
+        520
       ],
-      "idx": 557
+      "idx": 581
     },
     {
       "path": "../classic/classic/src/plugin/AbstractClipboard.js",
       "requires": [
-        327,
-        377
+        338,
+        400
       ],
       "uses": [
         49
       ],
-      "idx": 558
+      "idx": 582
     },
     {
       "path": "../classic/classic/src/grid/plugin/Clipboard.js",
       "requires": [
-        85,
-        334,
-        558
+        86,
+        361,
+        582
       ],
       "uses": [
-        498
+        520
       ],
-      "idx": 559
+      "idx": 583
     },
     {
       "path": "../classic/classic/src/grid/plugin/DragDrop.js",
       "requires": [
-        327
+        338
       ],
       "uses": [
-        516,
-        633
+        539,
+        643
       ],
-      "idx": 560
+      "idx": 584
     },
     {
       "path": "../classic/classic/src/grid/plugin/RowEditing.js",
       "requires": [
-        513,
-        556
+        536,
+        580
       ],
       "uses": [],
-      "idx": 561
+      "idx": 585
     },
     {
       "path": "../classic/classic/src/grid/plugin/RowExpander.js",
       "requires": [
-        327,
-        537
+        338,
+        560
       ],
       "uses": [
-        89,
-        522
+        90,
+        545
       ],
-      "idx": 562
+      "idx": 586
     },
     {
       "path": "../classic/classic/src/grid/plugin/RowWidget.js",
       "requires": [
         3,
-        562
+        334,
+        586
       ],
       "uses": [
-        327,
-        537
+        338,
+        560
       ],
-      "idx": 563
+      "idx": 587
     },
     {
       "path": "../classic/classic/src/grid/property/Grid.js",
       "requires": [
-        510
+        533
       ],
       "uses": [
         20,
-        89,
-        141,
-        354,
-        362,
-        437,
-        440,
-        470,
-        472,
-        475,
-        478,
-        498,
-        499,
-        509,
-        557,
-        565,
-        568
+        90,
+        147,
+        378,
+        385,
+        459,
+        462,
+        492,
+        494,
+        497,
+        500,
+        520,
+        521,
+        532,
+        581,
+        589,
+        592
       ],
-      "idx": 564
+      "idx": 588
     },
     {
       "path": "../classic/classic/src/grid/property/HeaderContainer.js",
       "requires": [
-        85,
-        521
+        86,
+        544
       ],
       "uses": [],
-      "idx": 565
+      "idx": 589
     },
     {
       "path": "../classic/classic/src/grid/property/Property.js",
       "requires": [
-        141
+        147
       ],
       "uses": [],
-      "idx": 566
+      "idx": 590
     },
     {
       "path": "../classic/classic/src/grid/property/Reader.js",
       "requires": [
-        143
+        149
       ],
       "uses": [
-        142
+        148
       ],
-      "idx": 567
+      "idx": 591
     },
     {
       "path": "../classic/classic/src/grid/property/Store.js",
       "requires": [
-        147,
-        158,
-        566,
-        567
+        153,
+        164,
+        590,
+        591
       ],
       "uses": [
-        153
+        159
       ],
-      "idx": 568
+      "idx": 592
     },
     {
       "path": "../classic/classic/src/grid/selection/Selection.js",
       "requires": [],
       "uses": [],
-      "idx": 569
+      "idx": 593
     },
     {
       "path": "../classic/classic/src/grid/selection/Cells.js",
       "requires": [
-        569
+        593
       ],
       "uses": [
-        498
+        520
       ],
-      "idx": 570
+      "idx": 594
     },
     {
       "path": "../classic/classic/src/grid/selection/Columns.js",
       "requires": [
-        569
+        593
       ],
       "uses": [
-        498
+        520
       ],
-      "idx": 571
+      "idx": 595
     },
     {
       "path": "../classic/classic/src/grid/selection/Replicator.js",
       "requires": [
-        327
+        338
       ],
       "uses": [],
-      "idx": 572
+      "idx": 596
     },
     {
       "path": "../classic/classic/src/grid/selection/Rows.js",
       "requires": [
-        113,
-        569
+        119,
+        593
       ],
       "uses": [
-        498
+        520
       ],
-      "idx": 573
+      "idx": 597
     },
     {
       "path": "../classic/classic/src/grid/selection/SelectionExtender.js",
       "requires": [
-        410
+        433
       ],
       "uses": [
         49,
-        335
+        362
       ],
-      "idx": 574
+      "idx": 598
     },
     {
       "path": "../classic/classic/src/grid/selection/SpreadsheetModel.js",
       "requires": [
-        461,
-        529,
-        569,
-        570,
-        571,
-        573,
-        574
+        483,
+        552,
+        593,
+        594,
+        595,
+        597,
+        598
       ],
       "uses": [
-        351,
-        416,
-        498,
-        500,
-        526
+        375,
+        439,
+        520,
+        522,
+        549
       ],
-      "idx": 575
+      "idx": 599
     },
     {
       "path": "../classic/classic/src/util/Queue.js",
       "requires": [],
       "uses": [],
-      "idx": 576
+      "idx": 600
     },
     {
       "path": "../classic/classic/src/layout/ContextItem.js",
@@ -5853,142 +6061,142 @@ var Ext = Ext || {};
         55,
         66,
         72,
-        348
+        372
       ],
-      "idx": 577
+      "idx": 601
     },
     {
       "path": "../classic/classic/src/layout/Context.js",
       "requires": [
         66,
         72,
-        326,
-        349,
-        576,
-        577
+        337,
+        373,
+        600,
+        601
       ],
       "uses": [],
-      "idx": 578
+      "idx": 602
     },
     {
       "path": "../classic/classic/src/layout/SizePolicy.js",
       "requires": [],
       "uses": [],
-      "idx": 579
+      "idx": 603
     },
     {
       "path": "../classic/classic/src/layout/component/Body.js",
       "requires": [
-        362
+        385
       ],
       "uses": [],
-      "idx": 580
+      "idx": 604
     },
     {
       "path": "../classic/classic/src/layout/component/FieldSet.js",
       "requires": [
-        580
+        604
       ],
       "uses": [],
-      "idx": 581
+      "idx": 605
     },
     {
       "path": "../classic/classic/src/layout/container/Absolute.js",
       "requires": [
-        406
+        429
       ],
       "uses": [],
-      "idx": 582
+      "idx": 606
     },
     {
       "path": "../classic/classic/src/layout/container/Accordion.js",
       "requires": [
-        387
+        410
       ],
       "uses": [],
-      "idx": 583
+      "idx": 607
     },
     {
       "path": "../classic/classic/src/resizer/BorderSplitter.js",
       "requires": [
-        384
+        407
       ],
       "uses": [
-        594
+        618
       ],
-      "idx": 584
+      "idx": 608
     },
     {
       "path": "../classic/classic/src/layout/container/Border.js",
       "requires": [
         72,
-        106,
-        350,
-        584
+        112,
+        374,
+        608
       ],
       "uses": [
-        85,
-        362
+        86,
+        385
       ],
-      "idx": 585
+      "idx": 609
     },
     {
       "path": "../classic/classic/src/layout/container/Card.js",
       "requires": [
-        501
+        523
       ],
       "uses": [
         49
       ],
-      "idx": 586
+      "idx": 610
     },
     {
       "path": "../classic/classic/src/layout/container/Center.js",
       "requires": [
-        501
+        523
       ],
       "uses": [],
-      "idx": 587
+      "idx": 611
     },
     {
       "path": "../classic/classic/src/layout/container/Form.js",
       "requires": [
-        351
+        375
       ],
       "uses": [],
-      "idx": 588
+      "idx": 612
     },
     {
       "path": "../classic/classic/src/menu/Bar.js",
       "requires": [
-        542
+        565
       ],
       "uses": [],
-      "idx": 589
+      "idx": 613
     },
     {
       "path": "../classic/classic/src/menu/ColorPicker.js",
       "requires": [
-        488,
-        542
+        510,
+        565
       ],
       "uses": [
-        362,
-        367
+        385,
+        390
       ],
-      "idx": 590
+      "idx": 614
     },
     {
       "path": "../classic/classic/src/menu/DatePicker.js",
       "requires": [
-        477,
-        542
+        499,
+        565
       ],
       "uses": [
-        362,
-        367
+        385,
+        390
       ],
-      "idx": 591
+      "idx": 615
     },
     {
       "path": "../classic/classic/src/panel/Pinnable.js",
@@ -5996,43 +6204,43 @@ var Ext = Ext || {};
         0
       ],
       "uses": [
-        362,
-        376
+        385,
+        399
       ],
-      "idx": 592
+      "idx": 616
     },
     {
       "path": "../classic/classic/src/plugin/Manager.js",
       "requires": [],
       "uses": [],
-      "idx": 593
+      "idx": 617
     },
     {
       "path": "../classic/classic/src/resizer/BorderSplitterTracker.js",
       "requires": [
         33,
-        411
+        434
       ],
       "uses": [],
-      "idx": 594
+      "idx": 618
     },
     {
       "path": "../classic/classic/src/resizer/Handle.js",
       "requires": [
-        105
+        111
       ],
       "uses": [],
-      "idx": 595
+      "idx": 619
     },
     {
       "path": "../classic/classic/src/resizer/ResizeTracker.js",
       "requires": [
-        410
+        433
       ],
       "uses": [
         49
       ],
-      "idx": 596
+      "idx": 620
     },
     {
       "path": "../classic/classic/src/resizer/Resizer.js",
@@ -6041,442 +6249,317 @@ var Ext = Ext || {};
       ],
       "uses": [
         49,
-        86,
-        105,
-        596
+        87,
+        111,
+        620
       ],
-      "idx": 597
+      "idx": 621
     },
     {
       "path": "../classic/classic/src/selection/CellModel.js",
       "requires": [
-        462,
-        498
-      ],
-      "uses": [],
-      "idx": 598
-    },
-    {
-      "path": "../classic/classic/src/selection/RowModel.js",
-      "requires": [
-        462,
-        498
-      ],
-      "uses": [],
-      "idx": 599
-    },
-    {
-      "path": "../classic/classic/src/selection/CheckboxModel.js",
-      "requires": [
-        526,
-        599
-      ],
-      "uses": [
-        351,
-        498,
-        500
-      ],
-      "idx": 600
-    },
-    {
-      "path": "../classic/classic/src/selection/TreeModel.js",
-      "requires": [
-        599
-      ],
-      "uses": [],
-      "idx": 601
-    },
-    {
-      "path": "../classic/classic/src/slider/Thumb.js",
-      "requires": [
-        85,
-        410
-      ],
-      "uses": [
-        72
-      ],
-      "idx": 602
-    },
-    {
-      "path": "../classic/classic/src/slider/Tip.js",
-      "requires": [
-        484
-      ],
-      "uses": [],
-      "idx": 603
-    },
-    {
-      "path": "../classic/classic/src/slider/Multi.js",
-      "requires": [
-        85,
-        86,
-        437,
-        602,
-        603
-      ],
-      "uses": [
-        226
-      ],
-      "idx": 604
-    },
-    {
-      "path": "../classic/classic/src/slider/Single.js",
-      "requires": [
-        604
-      ],
-      "uses": [],
-      "idx": 605
-    },
-    {
-      "path": "../classic/classic/src/slider/Widget.js",
-      "requires": [
-        82,
-        604
-      ],
-      "uses": [
-        72,
-        85
-      ],
-      "idx": 606
-    },
-    {
-      "path": "../classic/classic/src/sparkline/Shape.js",
-      "requires": [],
-      "uses": [],
-      "idx": 607
-    },
-    {
-      "path": "../classic/classic/src/sparkline/CanvasBase.js",
-      "requires": [
-        607
-      ],
-      "uses": [],
-      "idx": 608
-    },
-    {
-      "path": "../classic/classic/src/sparkline/CanvasCanvas.js",
-      "requires": [
-        608
-      ],
-      "uses": [],
-      "idx": 609
-    },
-    {
-      "path": "../classic/classic/src/sparkline/VmlCanvas.js",
-      "requires": [
-        608
-      ],
-      "uses": [],
-      "idx": 610
-    },
-    {
-      "path": "../classic/classic/src/sparkline/Base.js",
-      "requires": [
-        82,
-        89,
-        351,
-        396,
-        485,
-        609,
-        610
-      ],
-      "uses": [],
-      "idx": 611
-    },
-    {
-      "path": "../classic/classic/src/sparkline/BarBase.js",
-      "requires": [
-        611
-      ],
-      "uses": [],
-      "idx": 612
-    },
-    {
-      "path": "../classic/classic/src/sparkline/RangeMap.js",
-      "requires": [],
-      "uses": [],
-      "idx": 613
-    },
-    {
-      "path": "../classic/classic/src/sparkline/Bar.js",
-      "requires": [
-        89,
-        612,
-        613
-      ],
-      "uses": [],
-      "idx": 614
-    },
-    {
-      "path": "../classic/classic/src/sparkline/Box.js",
-      "requires": [
-        89,
-        611
-      ],
-      "uses": [],
-      "idx": 615
-    },
-    {
-      "path": "../classic/classic/src/sparkline/Bullet.js",
-      "requires": [
-        89,
-        611
-      ],
-      "uses": [],
-      "idx": 616
-    },
-    {
-      "path": "../classic/classic/src/sparkline/Discrete.js",
-      "requires": [
-        89,
-        612
-      ],
-      "uses": [],
-      "idx": 617
-    },
-    {
-      "path": "../classic/classic/src/sparkline/Line.js",
-      "requires": [
-        89,
-        611,
-        613
-      ],
-      "uses": [],
-      "idx": 618
-    },
-    {
-      "path": "../classic/classic/src/sparkline/Pie.js",
-      "requires": [
-        89,
-        611
-      ],
-      "uses": [],
-      "idx": 619
-    },
-    {
-      "path": "../classic/classic/src/sparkline/TriState.js",
-      "requires": [
-        89,
-        612,
-        613
-      ],
-      "uses": [],
-      "idx": 620
-    },
-    {
-      "path": "../classic/classic/src/state/CookieProvider.js",
-      "requires": [
-        99
-      ],
-      "uses": [],
-      "idx": 621
-    },
-    {
-      "path": "../classic/classic/src/state/LocalStorageProvider.js",
-      "requires": [
-        99,
-        333
+        484,
+        520
       ],
       "uses": [],
       "idx": 622
     },
     {
-      "path": "../classic/classic/src/tab/Tab.js",
+      "path": "../classic/classic/src/selection/RowModel.js",
       "requires": [
-        369
+        484,
+        520
       ],
       "uses": [],
       "idx": 623
     },
     {
-      "path": "../classic/classic/src/tab/Bar.js",
+      "path": "../classic/classic/src/selection/CheckboxModel.js",
       "requires": [
-        34,
-        374,
-        379,
-        580,
+        549,
         623
       ],
       "uses": [
-        33
+        375,
+        520,
+        522
       ],
       "idx": 624
     },
     {
-      "path": "../classic/classic/src/tab/Panel.js",
+      "path": "../classic/classic/src/selection/TreeModel.js",
       "requires": [
-        399,
-        586,
-        624
-      ],
-      "uses": [
-        362,
         623
       ],
+      "uses": [],
       "idx": 625
     },
     {
-      "path": "../classic/classic/src/toolbar/Breadcrumb.js",
+      "path": "../classic/classic/src/slider/Thumb.js",
       "requires": [
-        223,
-        353,
-        370,
-        379
+        86,
+        433
       ],
       "uses": [
-        23,
-        161
+        72
       ],
       "idx": 626
     },
     {
-      "path": "../classic/classic/src/toolbar/Fill.js",
+      "path": "../classic/classic/src/slider/Tip.js",
       "requires": [
-        105,
-        388
+        506
       ],
       "uses": [],
       "idx": 627
     },
     {
-      "path": "../classic/classic/src/toolbar/Spacer.js",
+      "path": "../classic/classic/src/slider/Multi.js",
       "requires": [
-        105,
-        388
+        86,
+        87,
+        459,
+        626,
+        627
       ],
-      "uses": [],
+      "uses": [
+        233
+      ],
       "idx": 628
     },
     {
-      "path": "../classic/classic/src/tree/Column.js",
+      "path": "../classic/classic/src/slider/Single.js",
       "requires": [
-        522
+        628
       ],
-      "uses": [
-        77
-      ],
+      "uses": [],
       "idx": 629
     },
     {
-      "path": "../classic/classic/src/tree/NavigationModel.js",
+      "path": "../classic/classic/src/slider/Widget.js",
       "requires": [
-        505
+        83,
+        628
       ],
       "uses": [
-        35
+        72,
+        86
       ],
       "idx": 630
     },
     {
-      "path": "../classic/classic/src/tree/View.js",
+      "path": "../classic/classic/src/state/CookieProvider.js",
       "requires": [
-        509
+        105
       ],
-      "uses": [
-        49,
-        89
-      ],
+      "uses": [],
       "idx": 631
     },
     {
-      "path": "../classic/classic/src/tree/Panel.js",
+      "path": "../classic/classic/src/state/LocalStorageProvider.js",
       "requires": [
-        223,
-        502,
-        601,
-        629,
-        630,
-        631
+        105,
+        360
       ],
-      "uses": [
-        161,
-        351,
-        500
-      ],
+      "uses": [],
       "idx": 632
     },
     {
-      "path": "../classic/classic/src/view/DragZone.js",
+      "path": "../classic/classic/src/tab/Tab.js",
       "requires": [
-        421
+        392
       ],
-      "uses": [
-        49,
-        86
-      ],
+      "uses": [],
       "idx": 633
     },
     {
-      "path": "../classic/classic/src/tree/ViewDragZone.js",
+      "path": "../classic/classic/src/tab/Bar.js",
       "requires": [
+        34,
+        397,
+        402,
+        604,
         633
       ],
       "uses": [
-        86
+        33
       ],
       "idx": 634
     },
     {
-      "path": "../classic/classic/src/tree/ViewDropZone.js",
+      "path": "../classic/classic/src/tab/Panel.js",
       "requires": [
-        515
+        422,
+        610,
+        634
+      ],
+      "uses": [
+        385,
+        633
+      ],
+      "idx": 635
+    },
+    {
+      "path": "../classic/classic/src/toolbar/Breadcrumb.js",
+      "requires": [
+        230,
+        377,
+        393,
+        402
+      ],
+      "uses": [
+        23,
+        167
+      ],
+      "idx": 636
+    },
+    {
+      "path": "../classic/classic/src/toolbar/Fill.js",
+      "requires": [
+        111,
+        411
       ],
       "uses": [],
-      "idx": 635
+      "idx": 637
+    },
+    {
+      "path": "../classic/classic/src/toolbar/Spacer.js",
+      "requires": [
+        111,
+        411
+      ],
+      "uses": [],
+      "idx": 638
+    },
+    {
+      "path": "../classic/classic/src/tree/Column.js",
+      "requires": [
+        545
+      ],
+      "uses": [
+        77
+      ],
+      "idx": 639
+    },
+    {
+      "path": "../classic/classic/src/tree/NavigationModel.js",
+      "requires": [
+        527
+      ],
+      "uses": [
+        35
+      ],
+      "idx": 640
+    },
+    {
+      "path": "../classic/classic/src/tree/View.js",
+      "requires": [
+        532
+      ],
+      "uses": [
+        49
+      ],
+      "idx": 641
+    },
+    {
+      "path": "../classic/classic/src/tree/Panel.js",
+      "requires": [
+        230,
+        524,
+        625,
+        639,
+        640,
+        641
+      ],
+      "uses": [
+        167,
+        375,
+        522
+      ],
+      "idx": 642
+    },
+    {
+      "path": "../classic/classic/src/view/DragZone.js",
+      "requires": [
+        444
+      ],
+      "uses": [
+        49,
+        87
+      ],
+      "idx": 643
+    },
+    {
+      "path": "../classic/classic/src/tree/ViewDragZone.js",
+      "requires": [
+        643
+      ],
+      "uses": [
+        87
+      ],
+      "idx": 644
+    },
+    {
+      "path": "../classic/classic/src/tree/ViewDropZone.js",
+      "requires": [
+        538
+      ],
+      "uses": [],
+      "idx": 645
     },
     {
       "path": "../classic/classic/src/tree/plugin/TreeViewDragDrop.js",
       "requires": [
-        327
+        338
       ],
       "uses": [
-        634,
-        635
+        644,
+        645
       ],
-      "idx": 636
+      "idx": 646
     },
     {
       "path": "../classic/classic/src/util/Cookies.js",
       "requires": [],
       "uses": [],
-      "idx": 637
+      "idx": 647
     },
     {
       "path": "../classic/classic/src/view/MultiSelectorSearch.js",
       "requires": [
-        399
+        422
       ],
       "uses": [
         50,
-        161,
-        362,
-        396,
-        440,
-        501,
-        510
+        167,
+        385,
+        419,
+        462,
+        523,
+        533
       ],
-      "idx": 638
+      "idx": 648
     },
     {
       "path": "../classic/classic/src/view/MultiSelector.js",
       "requires": [
-        396,
-        501,
-        510,
-        638
+        419,
+        523,
+        533,
+        648
       ],
       "uses": [],
-      "idx": 639
+      "idx": 649
     },
     {
       "path": "../classic/classic/src/window/Toast.js",
       "requires": [
-        434
+        456
       ],
       "uses": [
         1
       ],
-      "idx": 640
+      "idx": 650
     }
   ],
   "classes": {
@@ -6486,7 +6569,7 @@ var Ext = Ext || {};
       "alternates": []
     },
     "Ext.Action": {
-      "idx": 345,
+      "idx": 369,
       "alias": [],
       "alternates": []
     },
@@ -6501,7 +6584,7 @@ var Ext = Ext || {};
       "alternates": []
     },
     "Ext.Component": {
-      "idx": 105,
+      "idx": 111,
       "alias": [
         "widget.box",
         "widget.component"
@@ -6511,7 +6594,7 @@ var Ext = Ext || {};
       ]
     },
     "Ext.ComponentLoader": {
-      "idx": 347,
+      "idx": 371,
       "alias": [],
       "alternates": []
     },
@@ -6533,19 +6616,19 @@ var Ext = Ext || {};
       "alternates": []
     },
     "Ext.Editor": {
-      "idx": 355,
+      "idx": 379,
       "alias": [
         "widget.editor"
       ],
       "alternates": []
     },
     "Ext.ElementLoader": {
-      "idx": 346,
+      "idx": 370,
       "alias": [],
       "alternates": []
     },
     "Ext.EventManager": {
-      "idx": 356,
+      "idx": 380,
       "alias": [],
       "alternates": []
     },
@@ -6555,11 +6638,6 @@ var Ext = Ext || {};
       "alternates": [
         "Ext.EventedBase"
       ]
-    },
-    "Ext.Gadget": {
-      "idx": 357,
-      "alias": [],
-      "alternates": []
     },
     "Ext.GlobalEvents": {
       "idx": 76,
@@ -6574,7 +6652,7 @@ var Ext = Ext || {};
       "alternates": []
     },
     "Ext.Img": {
-      "idx": 358,
+      "idx": 381,
       "alias": [
         "widget.image",
         "widget.imagecomponent"
@@ -6582,7 +6660,7 @@ var Ext = Ext || {};
       "alternates": []
     },
     "Ext.LoadMask": {
-      "idx": 360,
+      "idx": 383,
       "alias": [
         "widget.loadmask"
       ],
@@ -6594,7 +6672,7 @@ var Ext = Ext || {};
       "alternates": []
     },
     "Ext.Progress": {
-      "idx": 84,
+      "idx": 85,
       "alias": [
         "widget.progress",
         "widget.progressbarwidget"
@@ -6604,14 +6682,14 @@ var Ext = Ext || {};
       ]
     },
     "Ext.ProgressBar": {
-      "idx": 364,
+      "idx": 387,
       "alias": [
         "widget.progressbar"
       ],
       "alternates": []
     },
     "Ext.ProgressBase": {
-      "idx": 83,
+      "idx": 84,
       "alias": [],
       "alternates": []
     },
@@ -6626,180 +6704,182 @@ var Ext = Ext || {};
       "alternates": []
     },
     "Ext.Template": {
-      "idx": 86,
+      "idx": 87,
       "alias": [],
       "alternates": []
     },
     "Ext.Widget": {
-      "idx": 82,
+      "idx": 83,
       "alias": [
         "widget.widget"
       ],
-      "alternates": []
+      "alternates": [
+        "Ext.Gadget"
+      ]
     },
     "Ext.XTemplate": {
-      "idx": 89,
+      "idx": 90,
       "alias": [],
       "alternates": []
     },
     "Ext.ZIndexManager": {
-      "idx": 352,
+      "idx": 376,
       "alias": [],
       "alternates": [
         "Ext.WindowGroup"
       ]
     },
     "Ext.app.Application": {
-      "idx": 168,
+      "idx": 174,
       "alias": [],
       "alternates": []
     },
     "Ext.app.BaseController": {
-      "idx": 109,
+      "idx": 115,
       "alias": [],
       "alternates": []
     },
     "Ext.app.Controller": {
-      "idx": 167,
+      "idx": 173,
       "alias": [],
       "alternates": []
     },
     "Ext.app.EventBus": {
-      "idx": 107,
+      "idx": 113,
       "alias": [],
       "alternates": []
     },
     "Ext.app.EventDomain": {
-      "idx": 90,
+      "idx": 91,
       "alias": [],
       "alternates": []
     },
     "Ext.app.Profile": {
-      "idx": 169,
+      "idx": 175,
       "alias": [],
       "alternates": []
     },
     "Ext.app.Util": {
-      "idx": 110,
+      "idx": 116,
       "alias": [],
       "alternates": []
     },
     "Ext.app.ViewController": {
-      "idx": 171,
+      "idx": 177,
       "alias": [
         "controller.controller"
       ],
       "alternates": []
     },
     "Ext.app.ViewModel": {
-      "idx": 204,
+      "idx": 211,
       "alias": [
         "viewmodel.default"
       ],
       "alternates": []
     },
     "Ext.app.bind.AbstractStub": {
-      "idx": 185,
+      "idx": 192,
       "alias": [],
       "alternates": []
     },
     "Ext.app.bind.BaseBinding": {
-      "idx": 183,
-      "alias": [],
-      "alternates": []
-    },
-    "Ext.app.bind.Binding": {
-      "idx": 184,
-      "alias": [],
-      "alternates": []
-    },
-    "Ext.app.bind.Formula": {
       "idx": 190,
       "alias": [],
       "alternates": []
     },
+    "Ext.app.bind.Binding": {
+      "idx": 191,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.app.bind.Formula": {
+      "idx": 197,
+      "alias": [],
+      "alternates": []
+    },
     "Ext.app.bind.LinkStub": {
-      "idx": 187,
+      "idx": 194,
       "alias": [],
       "alternates": []
     },
     "Ext.app.bind.Multi": {
-      "idx": 189,
+      "idx": 196,
       "alias": [],
       "alternates": []
     },
     "Ext.app.bind.Parser": {
-      "idx": 200,
+      "idx": 207,
       "alias": [],
       "alternates": []
     },
     "Ext.app.bind.RootStub": {
-      "idx": 188,
+      "idx": 195,
       "alias": [],
       "alternates": []
     },
     "Ext.app.bind.Stub": {
-      "idx": 186,
+      "idx": 193,
       "alias": [],
       "alternates": []
     },
     "Ext.app.bind.Template": {
-      "idx": 201,
-      "alias": [],
-      "alternates": []
-    },
-    "Ext.app.bind.TemplateBinding": {
-      "idx": 202,
-      "alias": [],
-      "alternates": []
-    },
-    "Ext.app.domain.Component": {
-      "idx": 91,
-      "alias": [],
-      "alternates": []
-    },
-    "Ext.app.domain.Controller": {
-      "idx": 205,
-      "alias": [],
-      "alternates": []
-    },
-    "Ext.app.domain.Direct": {
       "idx": 208,
       "alias": [],
       "alternates": []
     },
+    "Ext.app.bind.TemplateBinding": {
+      "idx": 209,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.app.domain.Component": {
+      "idx": 92,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.app.domain.Controller": {
+      "idx": 212,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.app.domain.Direct": {
+      "idx": 215,
+      "alias": [],
+      "alternates": []
+    },
     "Ext.app.domain.Global": {
-      "idx": 108,
+      "idx": 114,
       "alias": [],
       "alternates": []
     },
     "Ext.app.domain.Store": {
-      "idx": 162,
+      "idx": 168,
       "alias": [],
       "alternates": []
     },
     "Ext.app.domain.View": {
-      "idx": 170,
+      "idx": 176,
       "alias": [],
       "alternates": []
     },
     "Ext.app.route.Queue": {
-      "idx": 163,
+      "idx": 169,
       "alias": [],
       "alternates": []
     },
     "Ext.app.route.Route": {
-      "idx": 164,
+      "idx": 170,
       "alias": [],
       "alternates": []
     },
     "Ext.app.route.Router": {
-      "idx": 166,
+      "idx": 172,
       "alias": [],
       "alternates": []
     },
     "Ext.button.Button": {
-      "idx": 369,
+      "idx": 392,
       "alias": [
         "widget.button"
       ],
@@ -6808,7 +6888,7 @@ var Ext = Ext || {};
       ]
     },
     "Ext.button.Cycle": {
-      "idx": 371,
+      "idx": 394,
       "alias": [
         "widget.cycle"
       ],
@@ -6817,21 +6897,21 @@ var Ext = Ext || {};
       ]
     },
     "Ext.button.Manager": {
-      "idx": 366,
+      "idx": 389,
       "alias": [],
       "alternates": [
         "Ext.ButtonToggleManager"
       ]
     },
     "Ext.button.Segmented": {
-      "idx": 373,
+      "idx": 396,
       "alias": [
         "widget.segmentedbutton"
       ],
       "alternates": []
     },
     "Ext.button.Split": {
-      "idx": 370,
+      "idx": 393,
       "alias": [
         "widget.splitbutton"
       ],
@@ -6840,7 +6920,7 @@ var Ext = Ext || {};
       ]
     },
     "Ext.container.ButtonGroup": {
-      "idx": 401,
+      "idx": 424,
       "alias": [
         "widget.buttongroup"
       ],
@@ -6849,7 +6929,7 @@ var Ext = Ext || {};
       ]
     },
     "Ext.container.Container": {
-      "idx": 353,
+      "idx": 377,
       "alias": [
         "widget.container"
       ],
@@ -6859,17 +6939,17 @@ var Ext = Ext || {};
       ]
     },
     "Ext.container.DockingContainer": {
-      "idx": 398,
+      "idx": 421,
       "alias": [],
       "alternates": []
     },
     "Ext.container.Monitor": {
-      "idx": 402,
+      "idx": 425,
       "alias": [],
       "alternates": []
     },
     "Ext.container.Viewport": {
-      "idx": 405,
+      "idx": 428,
       "alias": [
         "widget.viewport"
       ],
@@ -6878,45 +6958,45 @@ var Ext = Ext || {};
       ]
     },
     "Ext.dashboard.Column": {
-      "idx": 408,
+      "idx": 431,
       "alias": [
         "widget.dashboard-column"
       ],
       "alternates": []
     },
     "Ext.dashboard.Dashboard": {
-      "idx": 420,
+      "idx": 443,
       "alias": [
         "widget.dashboard"
       ],
       "alternates": []
     },
     "Ext.dashboard.DropZone": {
-      "idx": 418,
+      "idx": 441,
       "alias": [],
       "alternates": []
     },
     "Ext.dashboard.Panel": {
-      "idx": 407,
+      "idx": 430,
       "alias": [
         "widget.dashboard-panel"
       ],
       "alternates": []
     },
     "Ext.dashboard.Part": {
-      "idx": 419,
+      "idx": 442,
       "alias": [
         "part.part"
       ],
       "alternates": []
     },
     "Ext.data.AbstractStore": {
-      "idx": 123,
+      "idx": 129,
       "alias": [],
       "alternates": []
     },
     "Ext.data.ArrayStore": {
-      "idx": 160,
+      "idx": 166,
       "alias": [
         "store.array"
       ],
@@ -6925,19 +7005,19 @@ var Ext = Ext || {};
       ]
     },
     "Ext.data.Batch": {
-      "idx": 174,
+      "idx": 180,
       "alias": [],
       "alternates": []
     },
     "Ext.data.BufferedStore": {
-      "idx": 210,
+      "idx": 217,
       "alias": [
         "store.buffered"
       ],
       "alternates": []
     },
     "Ext.data.ChainedStore": {
-      "idx": 203,
+      "idx": 210,
       "alias": [
         "store.chained"
       ],
@@ -6949,113 +7029,113 @@ var Ext = Ext || {};
       "alternates": []
     },
     "Ext.data.DirectStore": {
-      "idx": 212,
+      "idx": 219,
       "alias": [
         "store.direct"
       ],
       "alternates": []
     },
     "Ext.data.Error": {
-      "idx": 124,
+      "idx": 130,
       "alias": [],
       "alternates": []
     },
     "Ext.data.ErrorCollection": {
-      "idx": 125,
+      "idx": 131,
       "alias": [],
       "alternates": [
         "Ext.data.Errors"
       ]
     },
     "Ext.data.JsonP": {
-      "idx": 213,
+      "idx": 220,
       "alias": [],
       "alternates": []
     },
     "Ext.data.JsonPStore": {
-      "idx": 215,
+      "idx": 222,
       "alias": [
         "store.jsonp"
       ],
       "alternates": []
     },
     "Ext.data.JsonStore": {
-      "idx": 216,
+      "idx": 223,
       "alias": [
         "store.json"
       ],
       "alternates": []
     },
     "Ext.data.LocalStore": {
-      "idx": 149,
+      "idx": 155,
       "alias": [],
       "alternates": []
     },
     "Ext.data.Model": {
-      "idx": 141,
+      "idx": 147,
       "alias": [],
       "alternates": [
         "Ext.data.Record"
       ]
     },
     "Ext.data.ModelManager": {
-      "idx": 217,
+      "idx": 224,
       "alias": [],
       "alternates": [
         "Ext.ModelMgr"
       ]
     },
     "Ext.data.NodeInterface": {
-      "idx": 218,
+      "idx": 225,
       "alias": [],
       "alternates": []
     },
     "Ext.data.NodeStore": {
-      "idx": 221,
+      "idx": 228,
       "alias": [
         "store.node"
       ],
       "alternates": []
     },
     "Ext.data.PageMap": {
-      "idx": 209,
+      "idx": 216,
       "alias": [],
       "alternates": []
     },
     "Ext.data.ProxyStore": {
-      "idx": 148,
+      "idx": 154,
       "alias": [],
       "alternates": []
     },
     "Ext.data.Request": {
-      "idx": 222,
+      "idx": 229,
       "alias": [],
       "alternates": []
     },
     "Ext.data.ResultSet": {
-      "idx": 142,
+      "idx": 148,
       "alias": [],
       "alternates": []
     },
     "Ext.data.Session": {
-      "idx": 181,
+      "idx": 188,
       "alias": [],
       "alternates": []
     },
     "Ext.data.SortTypes": {
-      "idx": 131,
+      "idx": 137,
       "alias": [],
       "alternates": []
     },
     "Ext.data.Store": {
-      "idx": 158,
+      "idx": 164,
       "alias": [
         "store.store"
       ],
       "alternates": []
     },
     "Ext.data.StoreManager": {
-      "idx": 161,
+      "idx": 167,
       "alias": [],
       "alternates": [
         "Ext.StoreMgr",
@@ -7064,36 +7144,36 @@ var Ext = Ext || {};
       ]
     },
     "Ext.data.TreeModel": {
-      "idx": 220,
+      "idx": 227,
       "alias": [],
       "alternates": []
     },
     "Ext.data.TreeStore": {
-      "idx": 223,
+      "idx": 230,
       "alias": [
         "store.tree"
       ],
       "alternates": []
     },
     "Ext.data.Types": {
-      "idx": 224,
+      "idx": 231,
       "alias": [],
       "alternates": []
     },
     "Ext.data.Validation": {
-      "idx": 225,
+      "idx": 232,
       "alias": [],
       "alternates": []
     },
     "Ext.data.XmlStore": {
-      "idx": 230,
+      "idx": 237,
       "alias": [
         "store.xml"
       ],
       "alternates": []
     },
     "Ext.data.field.Boolean": {
-      "idx": 134,
+      "idx": 140,
       "alias": [
         "data.field.bool",
         "data.field.boolean"
@@ -7101,14 +7181,14 @@ var Ext = Ext || {};
       "alternates": []
     },
     "Ext.data.field.Date": {
-      "idx": 135,
+      "idx": 141,
       "alias": [
         "data.field.date"
       ],
       "alternates": []
     },
     "Ext.data.field.Field": {
-      "idx": 133,
+      "idx": 139,
       "alias": [
         "data.field.auto"
       ],
@@ -7117,7 +7197,7 @@ var Ext = Ext || {};
       ]
     },
     "Ext.data.field.Integer": {
-      "idx": 136,
+      "idx": 142,
       "alias": [
         "data.field.int",
         "data.field.integer"
@@ -7125,7 +7205,7 @@ var Ext = Ext || {};
       "alternates": []
     },
     "Ext.data.field.Number": {
-      "idx": 137,
+      "idx": 143,
       "alias": [
         "data.field.float",
         "data.field.number"
@@ -7133,7 +7213,7 @@ var Ext = Ext || {};
       "alternates": []
     },
     "Ext.data.field.String": {
-      "idx": 138,
+      "idx": 144,
       "alias": [
         "data.field.string"
       ],
@@ -7145,85 +7225,85 @@ var Ext = Ext || {};
       "alternates": []
     },
     "Ext.data.identifier.Generator": {
-      "idx": 139,
+      "idx": 145,
       "alias": [
         "data.identifier.default"
       ],
       "alternates": []
     },
     "Ext.data.identifier.Negative": {
-      "idx": 231,
+      "idx": 238,
       "alias": [
         "data.identifier.negative"
       ],
       "alternates": []
     },
     "Ext.data.identifier.Sequential": {
-      "idx": 140,
+      "idx": 146,
       "alias": [
         "data.identifier.sequential"
       ],
       "alternates": []
     },
     "Ext.data.identifier.Uuid": {
-      "idx": 232,
+      "idx": 239,
       "alias": [
         "data.identifier.uuid"
       ],
       "alternates": []
     },
     "Ext.data.matrix.Matrix": {
-      "idx": 177,
+      "idx": 183,
       "alias": [],
       "alternates": []
     },
     "Ext.data.matrix.Side": {
-      "idx": 176,
+      "idx": 182,
       "alias": [],
       "alternates": []
     },
     "Ext.data.matrix.Slice": {
-      "idx": 175,
+      "idx": 181,
       "alias": [],
       "alternates": []
     },
     "Ext.data.operation.Create": {
-      "idx": 127,
+      "idx": 133,
       "alias": [
         "data.operation.create"
       ],
       "alternates": []
     },
     "Ext.data.operation.Destroy": {
-      "idx": 128,
+      "idx": 134,
       "alias": [
         "data.operation.destroy"
       ],
       "alternates": []
     },
     "Ext.data.operation.Operation": {
-      "idx": 126,
+      "idx": 132,
       "alias": [],
       "alternates": [
         "Ext.data.Operation"
       ]
     },
     "Ext.data.operation.Read": {
-      "idx": 129,
+      "idx": 135,
       "alias": [
         "data.operation.read"
       ],
       "alternates": []
     },
     "Ext.data.operation.Update": {
-      "idx": 130,
+      "idx": 136,
       "alias": [
         "data.operation.update"
       ],
       "alternates": []
     },
     "Ext.data.proxy.Ajax": {
-      "idx": 151,
+      "idx": 157,
       "alias": [
         "proxy.ajax"
       ],
@@ -7233,14 +7313,14 @@ var Ext = Ext || {};
       ]
     },
     "Ext.data.proxy.Client": {
-      "idx": 146,
+      "idx": 152,
       "alias": [],
       "alternates": [
         "Ext.data.ClientProxy"
       ]
     },
     "Ext.data.proxy.Direct": {
-      "idx": 211,
+      "idx": 218,
       "alias": [
         "proxy.direct"
       ],
@@ -7249,7 +7329,7 @@ var Ext = Ext || {};
       ]
     },
     "Ext.data.proxy.JsonP": {
-      "idx": 214,
+      "idx": 221,
       "alias": [
         "proxy.jsonp",
         "proxy.scripttag"
@@ -7259,7 +7339,7 @@ var Ext = Ext || {};
       ]
     },
     "Ext.data.proxy.LocalStorage": {
-      "idx": 234,
+      "idx": 241,
       "alias": [
         "proxy.localstorage"
       ],
@@ -7268,7 +7348,7 @@ var Ext = Ext || {};
       ]
     },
     "Ext.data.proxy.Memory": {
-      "idx": 147,
+      "idx": 153,
       "alias": [
         "proxy.memory"
       ],
@@ -7277,7 +7357,7 @@ var Ext = Ext || {};
       ]
     },
     "Ext.data.proxy.Proxy": {
-      "idx": 145,
+      "idx": 151,
       "alias": [
         "proxy.proxy"
       ],
@@ -7287,7 +7367,7 @@ var Ext = Ext || {};
       ]
     },
     "Ext.data.proxy.Rest": {
-      "idx": 235,
+      "idx": 242,
       "alias": [
         "proxy.rest"
       ],
@@ -7296,7 +7376,7 @@ var Ext = Ext || {};
       ]
     },
     "Ext.data.proxy.Server": {
-      "idx": 150,
+      "idx": 156,
       "alias": [
         "proxy.server"
       ],
@@ -7305,7 +7385,7 @@ var Ext = Ext || {};
       ]
     },
     "Ext.data.proxy.SessionStorage": {
-      "idx": 236,
+      "idx": 243,
       "alias": [
         "proxy.sessionstorage"
       ],
@@ -7314,14 +7394,14 @@ var Ext = Ext || {};
       ]
     },
     "Ext.data.proxy.WebStorage": {
-      "idx": 233,
+      "idx": 240,
       "alias": [],
       "alternates": [
         "Ext.data.WebStorageProxy"
       ]
     },
     "Ext.data.reader.Array": {
-      "idx": 159,
+      "idx": 165,
       "alias": [
         "reader.array"
       ],
@@ -7330,7 +7410,7 @@ var Ext = Ext || {};
       ]
     },
     "Ext.data.reader.Json": {
-      "idx": 152,
+      "idx": 158,
       "alias": [
         "reader.json"
       ],
@@ -7339,7 +7419,7 @@ var Ext = Ext || {};
       ]
     },
     "Ext.data.reader.Reader": {
-      "idx": 143,
+      "idx": 149,
       "alias": [
         "reader.base"
       ],
@@ -7349,7 +7429,7 @@ var Ext = Ext || {};
       ]
     },
     "Ext.data.reader.Xml": {
-      "idx": 228,
+      "idx": 235,
       "alias": [
         "reader.xml"
       ],
@@ -7377,131 +7457,131 @@ var Ext = Ext || {};
       "alternates": []
     },
     "Ext.data.schema.Association": {
-      "idx": 116,
+      "idx": 122,
       "alias": [],
       "alternates": []
     },
     "Ext.data.schema.ManyToMany": {
-      "idx": 119,
+      "idx": 125,
       "alias": [],
       "alternates": []
     },
     "Ext.data.schema.ManyToOne": {
-      "idx": 118,
+      "idx": 124,
       "alias": [],
       "alternates": []
     },
     "Ext.data.schema.Namer": {
-      "idx": 121,
+      "idx": 127,
       "alias": [
         "namer.default"
       ],
       "alternates": []
     },
     "Ext.data.schema.OneToOne": {
-      "idx": 117,
+      "idx": 123,
       "alias": [],
       "alternates": []
     },
     "Ext.data.schema.Role": {
-      "idx": 115,
+      "idx": 121,
       "alias": [],
       "alternates": []
     },
     "Ext.data.schema.Schema": {
-      "idx": 122,
+      "idx": 128,
       "alias": [
         "schema.default"
       ],
       "alternates": []
     },
     "Ext.data.session.BatchVisitor": {
-      "idx": 180,
+      "idx": 186,
       "alias": [],
       "alternates": []
     },
     "Ext.data.session.ChangesVisitor": {
-      "idx": 178,
+      "idx": 184,
       "alias": [],
       "alternates": []
     },
     "Ext.data.session.ChildChangesVisitor": {
-      "idx": 179,
+      "idx": 185,
       "alias": [],
       "alternates": []
     },
     "Ext.data.validator.Bound": {
-      "idx": 237,
+      "idx": 248,
       "alias": [
         "data.validator.bound"
       ],
       "alternates": []
     },
     "Ext.data.validator.Email": {
-      "idx": 239,
+      "idx": 250,
       "alias": [
         "data.validator.email"
       ],
       "alternates": []
     },
     "Ext.data.validator.Exclusion": {
-      "idx": 241,
+      "idx": 252,
       "alias": [
         "data.validator.exclusion"
       ],
       "alternates": []
     },
     "Ext.data.validator.Format": {
-      "idx": 238,
+      "idx": 249,
       "alias": [
         "data.validator.format"
       ],
       "alternates": []
     },
     "Ext.data.validator.Inclusion": {
-      "idx": 242,
+      "idx": 253,
       "alias": [
         "data.validator.inclusion"
       ],
       "alternates": []
     },
     "Ext.data.validator.Length": {
-      "idx": 243,
+      "idx": 254,
       "alias": [
         "data.validator.length"
       ],
       "alternates": []
     },
     "Ext.data.validator.List": {
-      "idx": 240,
+      "idx": 251,
       "alias": [
         "data.validator.list"
       ],
       "alternates": []
     },
     "Ext.data.validator.Presence": {
-      "idx": 244,
+      "idx": 255,
       "alias": [
         "data.validator.presence"
       ],
       "alternates": []
     },
     "Ext.data.validator.Range": {
-      "idx": 245,
+      "idx": 256,
       "alias": [
         "data.validator.range"
       ],
       "alternates": []
     },
     "Ext.data.validator.Validator": {
-      "idx": 132,
+      "idx": 138,
       "alias": [
         "data.validator.base"
       ],
       "alternates": []
     },
     "Ext.data.writer.Json": {
-      "idx": 153,
+      "idx": 159,
       "alias": [
         "writer.json"
       ],
@@ -7510,7 +7590,7 @@ var Ext = Ext || {};
       ]
     },
     "Ext.data.writer.Writer": {
-      "idx": 144,
+      "idx": 150,
       "alias": [
         "writer.base"
       ],
@@ -7520,7 +7600,7 @@ var Ext = Ext || {};
       ]
     },
     "Ext.data.writer.Xml": {
-      "idx": 229,
+      "idx": 236,
       "alias": [
         "writer.xml"
       ],
@@ -7529,27 +7609,27 @@ var Ext = Ext || {};
       ]
     },
     "Ext.dd.DD": {
-      "idx": 390,
+      "idx": 413,
       "alias": [],
       "alternates": []
     },
     "Ext.dd.DDProxy": {
-      "idx": 391,
+      "idx": 414,
       "alias": [],
       "alternates": []
     },
     "Ext.dd.DDTarget": {
-      "idx": 415,
+      "idx": 438,
       "alias": [],
       "alternates": []
     },
     "Ext.dd.DragDrop": {
-      "idx": 389,
+      "idx": 412,
       "alias": [],
       "alternates": []
     },
     "Ext.dd.DragDropManager": {
-      "idx": 383,
+      "idx": 406,
       "alias": [],
       "alternates": [
         "Ext.dd.DragDropMgr",
@@ -7557,118 +7637,118 @@ var Ext = Ext || {};
       ]
     },
     "Ext.dd.DragSource": {
-      "idx": 393,
-      "alias": [],
-      "alternates": []
-    },
-    "Ext.dd.DragTracker": {
-      "idx": 410,
-      "alias": [],
-      "alternates": []
-    },
-    "Ext.dd.DragZone": {
-      "idx": 421,
-      "alias": [],
-      "alternates": []
-    },
-    "Ext.dd.DropTarget": {
-      "idx": 417,
-      "alias": [],
-      "alternates": []
-    },
-    "Ext.dd.DropZone": {
-      "idx": 423,
-      "alias": [],
-      "alternates": []
-    },
-    "Ext.dd.Registry": {
-      "idx": 422,
-      "alias": [],
-      "alternates": []
-    },
-    "Ext.dd.ScrollManager": {
       "idx": 416,
       "alias": [],
       "alternates": []
     },
+    "Ext.dd.DragTracker": {
+      "idx": 433,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.dd.DragZone": {
+      "idx": 444,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.dd.DropTarget": {
+      "idx": 440,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.dd.DropZone": {
+      "idx": 446,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.dd.Registry": {
+      "idx": 445,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.dd.ScrollManager": {
+      "idx": 439,
+      "alias": [],
+      "alternates": []
+    },
     "Ext.dd.StatusProxy": {
-      "idx": 392,
+      "idx": 415,
       "alias": [],
       "alternates": []
     },
     "Ext.direct.Event": {
-      "idx": 246,
+      "idx": 257,
       "alias": [
         "direct.event"
       ],
       "alternates": []
     },
     "Ext.direct.ExceptionEvent": {
-      "idx": 248,
+      "idx": 259,
       "alias": [
         "direct.exception"
       ],
       "alternates": []
     },
     "Ext.direct.JsonProvider": {
-      "idx": 249,
+      "idx": 260,
       "alias": [
         "direct.jsonprovider"
       ],
       "alternates": []
     },
     "Ext.direct.Manager": {
-      "idx": 206,
+      "idx": 213,
       "alias": [],
       "alternates": []
     },
     "Ext.direct.PollingProvider": {
-      "idx": 250,
+      "idx": 261,
       "alias": [
         "direct.pollingprovider"
       ],
       "alternates": []
     },
     "Ext.direct.Provider": {
-      "idx": 207,
+      "idx": 214,
       "alias": [
         "direct.provider"
       ],
       "alternates": []
     },
     "Ext.direct.RemotingEvent": {
-      "idx": 247,
+      "idx": 258,
       "alias": [
         "direct.rpc"
       ],
       "alternates": []
     },
     "Ext.direct.RemotingMethod": {
-      "idx": 251,
+      "idx": 262,
       "alias": [],
       "alternates": []
     },
     "Ext.direct.RemotingProvider": {
-      "idx": 253,
+      "idx": 264,
       "alias": [
         "direct.remotingprovider"
       ],
       "alternates": []
     },
     "Ext.direct.Transaction": {
-      "idx": 252,
+      "idx": 263,
       "alias": [
         "direct.transaction"
       ],
       "alternates": []
     },
     "Ext.dom.ButtonElement": {
-      "idx": 365,
+      "idx": 388,
       "alias": [],
       "alternates": []
     },
     "Ext.dom.CompositeElement": {
-      "idx": 93,
+      "idx": 94,
       "alias": [],
       "alternates": [
         "Ext.CompositeElement"
@@ -7701,12 +7781,12 @@ var Ext = Ext || {};
       ]
     },
     "Ext.dom.GarbageCollector": {
-      "idx": 254,
+      "idx": 265,
       "alias": [],
       "alternates": []
     },
     "Ext.dom.Helper": {
-      "idx": 226,
+      "idx": 233,
       "alias": [],
       "alternates": [
         "Ext.DomHelper",
@@ -7714,14 +7794,14 @@ var Ext = Ext || {};
       ]
     },
     "Ext.dom.Layer": {
-      "idx": 424,
+      "idx": 447,
       "alias": [],
       "alternates": [
         "Ext.Layer"
       ]
     },
     "Ext.dom.Query": {
-      "idx": 227,
+      "idx": 234,
       "alias": [],
       "alternates": [
         "Ext.core.DomQuery",
@@ -7741,7 +7821,7 @@ var Ext = Ext || {};
       "alternates": []
     },
     "Ext.dom.TouchAction": {
-      "idx": 255,
+      "idx": 266,
       "alias": [],
       "alternates": []
     },
@@ -7756,53 +7836,53 @@ var Ext = Ext || {};
       "alternates": []
     },
     "Ext.drag.Constraint": {
-      "idx": 256,
+      "idx": 267,
       "alias": [
         "drag.constraint.base"
       ],
       "alternates": []
     },
     "Ext.drag.Info": {
-      "idx": 257,
+      "idx": 268,
       "alias": [],
       "alternates": []
     },
     "Ext.drag.Item": {
-      "idx": 258,
+      "idx": 269,
       "alias": [],
       "alternates": []
     },
     "Ext.drag.Manager": {
-      "idx": 259,
+      "idx": 270,
       "alias": [],
       "alternates": []
     },
     "Ext.drag.Source": {
-      "idx": 260,
+      "idx": 271,
       "alias": [],
       "alternates": []
     },
     "Ext.drag.Target": {
-      "idx": 261,
+      "idx": 272,
       "alias": [],
       "alternates": []
     },
     "Ext.drag.proxy.None": {
-      "idx": 262,
+      "idx": 273,
       "alias": [
         "drag.proxy.none"
       ],
       "alternates": []
     },
     "Ext.drag.proxy.Original": {
-      "idx": 263,
+      "idx": 274,
       "alias": [
         "drag.proxy.original"
       ],
       "alternates": []
     },
     "Ext.drag.proxy.Placeholder": {
-      "idx": 264,
+      "idx": 275,
       "alias": [
         "drag.proxy.placeholder"
       ],
@@ -7816,57 +7896,57 @@ var Ext = Ext || {};
       ]
     },
     "Ext.event.gesture.DoubleTap": {
-      "idx": 267,
+      "idx": 278,
       "alias": [],
       "alternates": []
     },
     "Ext.event.gesture.Drag": {
-      "idx": 268,
+      "idx": 279,
       "alias": [],
       "alternates": []
     },
     "Ext.event.gesture.EdgeSwipe": {
-      "idx": 270,
+      "idx": 281,
       "alias": [],
       "alternates": []
     },
     "Ext.event.gesture.LongPress": {
-      "idx": 271,
+      "idx": 282,
       "alias": [],
       "alternates": []
     },
     "Ext.event.gesture.MultiTouch": {
-      "idx": 272,
+      "idx": 283,
       "alias": [],
       "alternates": []
     },
     "Ext.event.gesture.Pinch": {
-      "idx": 273,
+      "idx": 284,
       "alias": [],
       "alternates": []
     },
     "Ext.event.gesture.Recognizer": {
-      "idx": 265,
+      "idx": 276,
       "alias": [],
       "alternates": []
     },
     "Ext.event.gesture.Rotate": {
-      "idx": 274,
+      "idx": 285,
       "alias": [],
       "alternates": []
     },
     "Ext.event.gesture.SingleTouch": {
-      "idx": 266,
+      "idx": 277,
       "alias": [],
       "alternates": []
     },
     "Ext.event.gesture.Swipe": {
-      "idx": 269,
+      "idx": 280,
       "alias": [],
       "alternates": []
     },
     "Ext.event.gesture.Tap": {
-      "idx": 275,
+      "idx": 286,
       "alias": [],
       "alternates": []
     },
@@ -7886,7 +7966,7 @@ var Ext = Ext || {};
       "alternates": []
     },
     "Ext.event.publisher.Focus": {
-      "idx": 276,
+      "idx": 287,
       "alias": [],
       "alternates": []
     },
@@ -7896,7 +7976,7 @@ var Ext = Ext || {};
       "alternates": []
     },
     "Ext.event.publisher.MouseEnterLeave": {
-      "idx": 426,
+      "idx": 449,
       "alias": [],
       "alternates": []
     },
@@ -7906,7 +7986,7 @@ var Ext = Ext || {};
       "alternates": []
     },
     "Ext.flash.Component": {
-      "idx": 427,
+      "idx": 450,
       "alias": [
         "widget.flash"
       ],
@@ -7915,57 +7995,57 @@ var Ext = Ext || {};
       ]
     },
     "Ext.form.Basic": {
-      "idx": 443,
+      "idx": 465,
       "alias": [],
       "alternates": [
         "Ext.form.BasicForm"
       ]
     },
     "Ext.form.CheckboxGroup": {
-      "idx": 450,
+      "idx": 472,
       "alias": [
         "widget.checkboxgroup"
       ],
       "alternates": []
     },
     "Ext.form.CheckboxManager": {
-      "idx": 448,
+      "idx": 470,
       "alias": [],
       "alternates": []
     },
     "Ext.form.FieldAncestor": {
-      "idx": 444,
+      "idx": 466,
       "alias": [],
       "alternates": []
     },
     "Ext.form.FieldContainer": {
-      "idx": 446,
+      "idx": 468,
       "alias": [
         "widget.fieldcontainer"
       ],
       "alternates": []
     },
     "Ext.form.FieldSet": {
-      "idx": 451,
+      "idx": 473,
       "alias": [
         "widget.fieldset"
       ],
       "alternates": []
     },
     "Ext.form.Label": {
-      "idx": 452,
+      "idx": 474,
       "alias": [
         "widget.label"
       ],
       "alternates": []
     },
     "Ext.form.Labelable": {
-      "idx": 435,
+      "idx": 457,
       "alias": [],
       "alternates": []
     },
     "Ext.form.Panel": {
-      "idx": 453,
+      "idx": 475,
       "alias": [
         "widget.form"
       ],
@@ -7975,31 +8055,31 @@ var Ext = Ext || {};
       ]
     },
     "Ext.form.RadioGroup": {
-      "idx": 456,
+      "idx": 478,
       "alias": [
         "widget.radiogroup"
       ],
       "alternates": []
     },
     "Ext.form.RadioManager": {
-      "idx": 454,
+      "idx": 476,
       "alias": [],
       "alternates": []
     },
     "Ext.form.action.Action": {
-      "idx": 428,
+      "idx": 451,
       "alias": [],
       "alternates": [
         "Ext.form.Action"
       ]
     },
     "Ext.form.action.DirectAction": {
-      "idx": 457,
+      "idx": 479,
       "alias": [],
       "alternates": []
     },
     "Ext.form.action.DirectLoad": {
-      "idx": 458,
+      "idx": 480,
       "alias": [
         "formaction.directload"
       ],
@@ -8008,7 +8088,7 @@ var Ext = Ext || {};
       ]
     },
     "Ext.form.action.DirectSubmit": {
-      "idx": 459,
+      "idx": 481,
       "alias": [
         "formaction.directsubmit"
       ],
@@ -8017,7 +8097,7 @@ var Ext = Ext || {};
       ]
     },
     "Ext.form.action.Load": {
-      "idx": 429,
+      "idx": 452,
       "alias": [
         "formaction.load"
       ],
@@ -8026,14 +8106,14 @@ var Ext = Ext || {};
       ]
     },
     "Ext.form.action.StandardSubmit": {
-      "idx": 431,
+      "idx": 454,
       "alias": [
         "formaction.standardsubmit"
       ],
       "alternates": []
     },
     "Ext.form.action.Submit": {
-      "idx": 430,
+      "idx": 453,
       "alias": [
         "formaction.submit"
       ],
@@ -8042,7 +8122,7 @@ var Ext = Ext || {};
       ]
     },
     "Ext.form.field.Base": {
-      "idx": 437,
+      "idx": 459,
       "alias": [
         "widget.field"
       ],
@@ -8052,7 +8132,7 @@ var Ext = Ext || {};
       ]
     },
     "Ext.form.field.Checkbox": {
-      "idx": 449,
+      "idx": 471,
       "alias": [
         "widget.checkbox",
         "widget.checkboxfield"
@@ -8062,7 +8142,7 @@ var Ext = Ext || {};
       ]
     },
     "Ext.form.field.ComboBox": {
-      "idx": 475,
+      "idx": 497,
       "alias": [
         "widget.combo",
         "widget.combobox"
@@ -8072,7 +8152,7 @@ var Ext = Ext || {};
       ]
     },
     "Ext.form.field.Date": {
-      "idx": 478,
+      "idx": 500,
       "alias": [
         "widget.datefield"
       ],
@@ -8082,7 +8162,7 @@ var Ext = Ext || {};
       ]
     },
     "Ext.form.field.Display": {
-      "idx": 479,
+      "idx": 501,
       "alias": [
         "widget.displayfield"
       ],
@@ -8092,12 +8172,12 @@ var Ext = Ext || {};
       ]
     },
     "Ext.form.field.Field": {
-      "idx": 436,
+      "idx": 458,
       "alias": [],
       "alternates": []
     },
     "Ext.form.field.File": {
-      "idx": 482,
+      "idx": 504,
       "alias": [
         "widget.filefield",
         "widget.fileuploadfield"
@@ -8109,14 +8189,14 @@ var Ext = Ext || {};
       ]
     },
     "Ext.form.field.FileButton": {
-      "idx": 480,
+      "idx": 502,
       "alias": [
         "widget.filebutton"
       ],
       "alternates": []
     },
     "Ext.form.field.Hidden": {
-      "idx": 483,
+      "idx": 505,
       "alias": [
         "widget.hidden",
         "widget.hiddenfield"
@@ -8126,7 +8206,7 @@ var Ext = Ext || {};
       ]
     },
     "Ext.form.field.HtmlEditor": {
-      "idx": 492,
+      "idx": 514,
       "alias": [
         "widget.htmleditor"
       ],
@@ -8135,7 +8215,7 @@ var Ext = Ext || {};
       ]
     },
     "Ext.form.field.Number": {
-      "idx": 472,
+      "idx": 494,
       "alias": [
         "widget.numberfield"
       ],
@@ -8145,7 +8225,7 @@ var Ext = Ext || {};
       ]
     },
     "Ext.form.field.Picker": {
-      "idx": 460,
+      "idx": 482,
       "alias": [
         "widget.pickerfield"
       ],
@@ -8154,7 +8234,7 @@ var Ext = Ext || {};
       ]
     },
     "Ext.form.field.Radio": {
-      "idx": 455,
+      "idx": 477,
       "alias": [
         "widget.radio",
         "widget.radiofield"
@@ -8164,7 +8244,7 @@ var Ext = Ext || {};
       ]
     },
     "Ext.form.field.Spinner": {
-      "idx": 471,
+      "idx": 493,
       "alias": [
         "widget.spinnerfield"
       ],
@@ -8173,14 +8253,14 @@ var Ext = Ext || {};
       ]
     },
     "Ext.form.field.Tag": {
-      "idx": 494,
+      "idx": 516,
       "alias": [
         "widget.tagfield"
       ],
       "alternates": []
     },
     "Ext.form.field.Text": {
-      "idx": 440,
+      "idx": 462,
       "alias": [
         "widget.textfield"
       ],
@@ -8190,7 +8270,7 @@ var Ext = Ext || {};
       ]
     },
     "Ext.form.field.TextArea": {
-      "idx": 441,
+      "idx": 463,
       "alias": [
         "widget.textarea",
         "widget.textareafield"
@@ -8200,7 +8280,7 @@ var Ext = Ext || {};
       ]
     },
     "Ext.form.field.Time": {
-      "idx": 496,
+      "idx": 518,
       "alias": [
         "widget.timefield"
       ],
@@ -8210,7 +8290,7 @@ var Ext = Ext || {};
       ]
     },
     "Ext.form.field.Trigger": {
-      "idx": 497,
+      "idx": 519,
       "alias": [
         "widget.trigger",
         "widget.triggerfield"
@@ -8222,28 +8302,28 @@ var Ext = Ext || {};
       ]
     },
     "Ext.form.field.VTypes": {
-      "idx": 438,
+      "idx": 460,
       "alias": [],
       "alternates": [
         "Ext.form.VTypes"
       ]
     },
     "Ext.form.trigger.Component": {
-      "idx": 481,
+      "idx": 503,
       "alias": [
         "trigger.component"
       ],
       "alternates": []
     },
     "Ext.form.trigger.Spinner": {
-      "idx": 470,
+      "idx": 492,
       "alias": [
         "trigger.spinner"
       ],
       "alternates": []
     },
     "Ext.form.trigger.Trigger": {
-      "idx": 439,
+      "idx": 461,
       "alias": [
         "trigger.trigger"
       ],
@@ -8255,7 +8335,7 @@ var Ext = Ext || {};
       "alternates": []
     },
     "Ext.fx.Animation": {
-      "idx": 286,
+      "idx": 297,
       "alias": [],
       "alternates": []
     },
@@ -8295,29 +8375,29 @@ var Ext = Ext || {};
       "alternates": []
     },
     "Ext.fx.Runner": {
-      "idx": 289,
+      "idx": 300,
       "alias": [],
       "alternates": []
     },
     "Ext.fx.State": {
-      "idx": 277,
+      "idx": 288,
       "alias": [],
       "alternates": []
     },
     "Ext.fx.animation.Abstract": {
-      "idx": 278,
+      "idx": 289,
       "alias": [],
       "alternates": []
     },
     "Ext.fx.animation.Cube": {
-      "idx": 290,
+      "idx": 301,
       "alias": [
         "animation.cube"
       ],
       "alternates": []
     },
     "Ext.fx.animation.Fade": {
-      "idx": 281,
+      "idx": 292,
       "alias": [
         "animation.fade",
         "animation.fadeIn"
@@ -8327,21 +8407,21 @@ var Ext = Ext || {};
       ]
     },
     "Ext.fx.animation.FadeOut": {
-      "idx": 282,
+      "idx": 293,
       "alias": [
         "animation.fadeOut"
       ],
       "alternates": []
     },
     "Ext.fx.animation.Flip": {
-      "idx": 283,
+      "idx": 294,
       "alias": [
         "animation.flip"
       ],
       "alternates": []
     },
     "Ext.fx.animation.Pop": {
-      "idx": 284,
+      "idx": 295,
       "alias": [
         "animation.pop",
         "animation.popIn"
@@ -8351,14 +8431,14 @@ var Ext = Ext || {};
       ]
     },
     "Ext.fx.animation.PopOut": {
-      "idx": 285,
+      "idx": 296,
       "alias": [
         "animation.popOut"
       ],
       "alternates": []
     },
     "Ext.fx.animation.Slide": {
-      "idx": 279,
+      "idx": 290,
       "alias": [
         "animation.slide",
         "animation.slideIn"
@@ -8368,167 +8448,167 @@ var Ext = Ext || {};
       ]
     },
     "Ext.fx.animation.SlideOut": {
-      "idx": 280,
+      "idx": 291,
       "alias": [
         "animation.slideOut"
       ],
       "alternates": []
     },
     "Ext.fx.animation.Wipe": {
-      "idx": 291,
+      "idx": 302,
       "alias": [],
       "alternates": [
         "Ext.fx.animation.WipeIn"
       ]
     },
     "Ext.fx.animation.WipeOut": {
-      "idx": 292,
+      "idx": 303,
       "alias": [],
       "alternates": []
     },
     "Ext.fx.easing.Abstract": {
-      "idx": 293,
+      "idx": 96,
       "alias": [],
       "alternates": []
     },
     "Ext.fx.easing.Bounce": {
-      "idx": 294,
+      "idx": 304,
       "alias": [],
       "alternates": []
     },
     "Ext.fx.easing.BoundMomentum": {
-      "idx": 296,
+      "idx": 306,
       "alias": [],
       "alternates": []
     },
     "Ext.fx.easing.EaseIn": {
-      "idx": 298,
+      "idx": 307,
       "alias": [
         "easing.ease-in"
       ],
       "alternates": []
     },
     "Ext.fx.easing.EaseOut": {
-      "idx": 299,
+      "idx": 308,
       "alias": [
         "easing.ease-out"
       ],
       "alternates": []
     },
     "Ext.fx.easing.Easing": {
-      "idx": 300,
+      "idx": 309,
       "alias": [],
       "alternates": []
     },
     "Ext.fx.easing.Linear": {
-      "idx": 297,
+      "idx": 97,
       "alias": [
         "easing.linear"
       ],
       "alternates": []
     },
     "Ext.fx.easing.Momentum": {
-      "idx": 295,
+      "idx": 305,
       "alias": [],
       "alternates": []
     },
     "Ext.fx.layout.Card": {
-      "idx": 310,
+      "idx": 319,
       "alias": [],
       "alternates": []
     },
     "Ext.fx.layout.card.Abstract": {
-      "idx": 301,
+      "idx": 310,
       "alias": [],
       "alternates": []
     },
     "Ext.fx.layout.card.Cover": {
-      "idx": 304,
+      "idx": 313,
       "alias": [
         "fx.layout.card.cover"
       ],
       "alternates": []
     },
     "Ext.fx.layout.card.Cube": {
-      "idx": 311,
+      "idx": 320,
       "alias": [
         "fx.layout.card.cube"
       ],
       "alternates": []
     },
     "Ext.fx.layout.card.Fade": {
-      "idx": 306,
+      "idx": 315,
       "alias": [
         "fx.layout.card.fade"
       ],
       "alternates": []
     },
     "Ext.fx.layout.card.Flip": {
-      "idx": 307,
+      "idx": 316,
       "alias": [
         "fx.layout.card.flip"
       ],
       "alternates": []
     },
     "Ext.fx.layout.card.Pop": {
-      "idx": 308,
+      "idx": 317,
       "alias": [
         "fx.layout.card.pop"
       ],
       "alternates": []
     },
     "Ext.fx.layout.card.Reveal": {
-      "idx": 305,
+      "idx": 314,
       "alias": [
         "fx.layout.card.reveal"
       ],
       "alternates": []
     },
     "Ext.fx.layout.card.Scroll": {
-      "idx": 309,
+      "idx": 318,
       "alias": [
         "fx.layout.card.scroll"
       ],
       "alternates": []
     },
     "Ext.fx.layout.card.ScrollCover": {
-      "idx": 312,
+      "idx": 321,
       "alias": [
         "fx.layout.card.scrollcover"
       ],
       "alternates": []
     },
     "Ext.fx.layout.card.ScrollReveal": {
-      "idx": 313,
+      "idx": 322,
       "alias": [
         "fx.layout.card.scrollreveal"
       ],
       "alternates": []
     },
     "Ext.fx.layout.card.Slide": {
-      "idx": 303,
+      "idx": 312,
       "alias": [
         "fx.layout.card.slide"
       ],
       "alternates": []
     },
     "Ext.fx.layout.card.Style": {
-      "idx": 302,
+      "idx": 311,
       "alias": [],
       "alternates": []
     },
     "Ext.fx.runner.Css": {
-      "idx": 287,
+      "idx": 298,
       "alias": [],
       "alternates": []
     },
     "Ext.fx.runner.CssAnimation": {
-      "idx": 314,
+      "idx": 323,
       "alias": [],
       "alternates": []
     },
     "Ext.fx.runner.CssTransition": {
-      "idx": 288,
+      "idx": 299,
       "alias": [],
       "alternates": [
         "Ext.Animator"
@@ -8575,45 +8655,45 @@ var Ext = Ext || {};
       "alternates": []
     },
     "Ext.grid.CellContext": {
-      "idx": 498,
+      "idx": 520,
       "alias": [],
       "alternates": []
     },
     "Ext.grid.CellEditor": {
-      "idx": 499,
+      "idx": 521,
       "alias": [],
       "alternates": []
     },
     "Ext.grid.ColumnComponentLayout": {
-      "idx": 500,
+      "idx": 522,
       "alias": [
         "layout.columncomponent"
       ],
       "alternates": []
     },
     "Ext.grid.ColumnLayout": {
-      "idx": 503,
+      "idx": 525,
       "alias": [
         "layout.gridcolumn"
       ],
       "alternates": []
     },
     "Ext.grid.ColumnManager": {
-      "idx": 504,
+      "idx": 526,
       "alias": [],
       "alternates": [
         "Ext.grid.ColumnModel"
       ]
     },
     "Ext.grid.NavigationModel": {
-      "idx": 505,
+      "idx": 527,
       "alias": [
         "view.navigation.grid"
       ],
       "alternates": []
     },
     "Ext.grid.Panel": {
-      "idx": 510,
+      "idx": 533,
       "alias": [
         "widget.grid",
         "widget.gridpanel"
@@ -8625,36 +8705,36 @@ var Ext = Ext || {};
       ]
     },
     "Ext.grid.RowContext": {
-      "idx": 511,
+      "idx": 534,
       "alias": [],
       "alternates": []
     },
     "Ext.grid.RowEditor": {
-      "idx": 513,
+      "idx": 536,
       "alias": [
         "widget.roweditor"
       ],
       "alternates": []
     },
     "Ext.grid.RowEditorButtons": {
-      "idx": 512,
+      "idx": 535,
       "alias": [
         "widget.roweditorbuttons"
       ],
       "alternates": []
     },
     "Ext.grid.Scroller": {
-      "idx": 514,
+      "idx": 537,
       "alias": [],
       "alternates": []
     },
     "Ext.grid.ViewDropZone": {
-      "idx": 516,
+      "idx": 539,
       "alias": [],
       "alternates": []
     },
     "Ext.grid.column.Action": {
-      "idx": 524,
+      "idx": 547,
       "alias": [
         "widget.actioncolumn"
       ],
@@ -8663,12 +8743,12 @@ var Ext = Ext || {};
       ]
     },
     "Ext.grid.column.ActionProxy": {
-      "idx": 523,
+      "idx": 546,
       "alias": [],
       "alternates": []
     },
     "Ext.grid.column.Boolean": {
-      "idx": 525,
+      "idx": 548,
       "alias": [
         "widget.booleancolumn"
       ],
@@ -8677,7 +8757,7 @@ var Ext = Ext || {};
       ]
     },
     "Ext.grid.column.Check": {
-      "idx": 526,
+      "idx": 549,
       "alias": [
         "widget.checkcolumn"
       ],
@@ -8687,7 +8767,7 @@ var Ext = Ext || {};
       ]
     },
     "Ext.grid.column.Column": {
-      "idx": 522,
+      "idx": 545,
       "alias": [
         "widget.gridcolumn"
       ],
@@ -8696,7 +8776,7 @@ var Ext = Ext || {};
       ]
     },
     "Ext.grid.column.Date": {
-      "idx": 527,
+      "idx": 550,
       "alias": [
         "widget.datecolumn"
       ],
@@ -8705,7 +8785,7 @@ var Ext = Ext || {};
       ]
     },
     "Ext.grid.column.Number": {
-      "idx": 528,
+      "idx": 551,
       "alias": [
         "widget.numbercolumn"
       ],
@@ -8714,7 +8794,7 @@ var Ext = Ext || {};
       ]
     },
     "Ext.grid.column.RowNumberer": {
-      "idx": 529,
+      "idx": 552,
       "alias": [
         "widget.rownumberer"
       ],
@@ -8723,7 +8803,7 @@ var Ext = Ext || {};
       ]
     },
     "Ext.grid.column.Template": {
-      "idx": 530,
+      "idx": 553,
       "alias": [
         "widget.templatecolumn"
       ],
@@ -8732,94 +8812,94 @@ var Ext = Ext || {};
       ]
     },
     "Ext.grid.column.Widget": {
-      "idx": 531,
+      "idx": 554,
       "alias": [
         "widget.widgetcolumn"
       ],
       "alternates": []
     },
     "Ext.grid.feature.AbstractSummary": {
-      "idx": 533,
+      "idx": 556,
       "alias": [
         "feature.abstractsummary"
       ],
       "alternates": []
     },
     "Ext.grid.feature.Feature": {
-      "idx": 532,
+      "idx": 555,
       "alias": [
         "feature.feature"
       ],
       "alternates": []
     },
     "Ext.grid.feature.GroupStore": {
-      "idx": 534,
+      "idx": 557,
       "alias": [],
       "alternates": []
     },
     "Ext.grid.feature.Grouping": {
-      "idx": 535,
+      "idx": 558,
       "alias": [
         "feature.grouping"
       ],
       "alternates": []
     },
     "Ext.grid.feature.GroupingSummary": {
-      "idx": 536,
+      "idx": 559,
       "alias": [
         "feature.groupingsummary"
       ],
       "alternates": []
     },
     "Ext.grid.feature.RowBody": {
-      "idx": 537,
+      "idx": 560,
       "alias": [
         "feature.rowbody"
       ],
       "alternates": []
     },
     "Ext.grid.feature.Summary": {
-      "idx": 538,
+      "idx": 561,
       "alias": [
         "feature.summary"
       ],
       "alternates": []
     },
     "Ext.grid.filters.Filters": {
-      "idx": 551,
+      "idx": 574,
       "alias": [
         "plugin.gridfilters"
       ],
       "alternates": []
     },
     "Ext.grid.filters.filter.Base": {
-      "idx": 543,
+      "idx": 566,
       "alias": [],
       "alternates": []
     },
     "Ext.grid.filters.filter.Boolean": {
-      "idx": 545,
+      "idx": 568,
       "alias": [
         "grid.filter.boolean"
       ],
       "alternates": []
     },
     "Ext.grid.filters.filter.Date": {
-      "idx": 547,
+      "idx": 570,
       "alias": [
         "grid.filter.date"
       ],
       "alternates": []
     },
     "Ext.grid.filters.filter.List": {
-      "idx": 548,
+      "idx": 571,
       "alias": [
         "grid.filter.list"
       ],
       "alternates": []
     },
     "Ext.grid.filters.filter.Number": {
-      "idx": 549,
+      "idx": 572,
       "alias": [
         "grid.filter.number",
         "grid.filter.numeric"
@@ -8827,135 +8907,135 @@ var Ext = Ext || {};
       "alternates": []
     },
     "Ext.grid.filters.filter.SingleFilter": {
-      "idx": 544,
+      "idx": 567,
       "alias": [],
       "alternates": []
     },
     "Ext.grid.filters.filter.String": {
-      "idx": 550,
+      "idx": 573,
       "alias": [
         "grid.filter.string"
       ],
       "alternates": []
     },
     "Ext.grid.filters.filter.TriFilter": {
-      "idx": 546,
+      "idx": 569,
       "alias": [],
       "alternates": []
     },
     "Ext.grid.header.Container": {
-      "idx": 521,
+      "idx": 544,
       "alias": [
         "widget.headercontainer"
       ],
       "alternates": []
     },
     "Ext.grid.header.DragZone": {
-      "idx": 518,
+      "idx": 541,
       "alias": [],
       "alternates": []
     },
     "Ext.grid.header.DropZone": {
-      "idx": 519,
+      "idx": 542,
       "alias": [],
       "alternates": []
     },
     "Ext.grid.locking.HeaderContainer": {
-      "idx": 552,
+      "idx": 575,
       "alias": [],
       "alternates": []
     },
     "Ext.grid.locking.Lockable": {
-      "idx": 554,
+      "idx": 578,
       "alias": [],
       "alternates": [
         "Ext.grid.Lockable"
       ]
     },
     "Ext.grid.locking.RowSynchronizer": {
-      "idx": 507,
+      "idx": 529,
       "alias": [],
       "alternates": []
     },
     "Ext.grid.locking.View": {
-      "idx": 553,
+      "idx": 576,
       "alias": [],
       "alternates": [
         "Ext.grid.LockingView"
       ]
     },
     "Ext.grid.plugin.BufferedRenderer": {
-      "idx": 555,
+      "idx": 579,
       "alias": [
         "plugin.bufferedrenderer"
       ],
       "alternates": []
     },
     "Ext.grid.plugin.CellEditing": {
-      "idx": 557,
+      "idx": 581,
       "alias": [
         "plugin.cellediting"
       ],
       "alternates": []
     },
     "Ext.grid.plugin.Clipboard": {
-      "idx": 559,
+      "idx": 583,
       "alias": [
         "plugin.clipboard"
       ],
       "alternates": []
     },
     "Ext.grid.plugin.DragDrop": {
-      "idx": 560,
+      "idx": 584,
       "alias": [
         "plugin.gridviewdragdrop"
       ],
       "alternates": []
     },
     "Ext.grid.plugin.Editing": {
-      "idx": 556,
+      "idx": 580,
       "alias": [
         "editing.editing"
       ],
       "alternates": []
     },
     "Ext.grid.plugin.HeaderReorderer": {
-      "idx": 520,
+      "idx": 543,
       "alias": [
         "plugin.gridheaderreorderer"
       ],
       "alternates": []
     },
     "Ext.grid.plugin.HeaderResizer": {
-      "idx": 517,
+      "idx": 540,
       "alias": [
         "plugin.gridheaderresizer"
       ],
       "alternates": []
     },
     "Ext.grid.plugin.RowEditing": {
-      "idx": 561,
+      "idx": 585,
       "alias": [
         "plugin.rowediting"
       ],
       "alternates": []
     },
     "Ext.grid.plugin.RowExpander": {
-      "idx": 562,
+      "idx": 586,
       "alias": [
         "plugin.rowexpander"
       ],
       "alternates": []
     },
     "Ext.grid.plugin.RowWidget": {
-      "idx": 563,
+      "idx": 587,
       "alias": [
         "plugin.rowwidget"
       ],
       "alternates": []
     },
     "Ext.grid.property.Grid": {
-      "idx": 564,
+      "idx": 588,
       "alias": [
         "widget.propertygrid"
       ],
@@ -8964,118 +9044,118 @@ var Ext = Ext || {};
       ]
     },
     "Ext.grid.property.HeaderContainer": {
-      "idx": 565,
+      "idx": 589,
       "alias": [],
       "alternates": [
         "Ext.grid.PropertyColumnModel"
       ]
     },
     "Ext.grid.property.Property": {
-      "idx": 566,
+      "idx": 590,
       "alias": [],
       "alternates": [
         "Ext.PropGridProperty"
       ]
     },
     "Ext.grid.property.Reader": {
-      "idx": 567,
+      "idx": 591,
       "alias": [],
       "alternates": []
     },
     "Ext.grid.property.Store": {
-      "idx": 568,
+      "idx": 592,
       "alias": [],
       "alternates": [
         "Ext.grid.PropertyStore"
       ]
     },
     "Ext.grid.selection.Cells": {
-      "idx": 570,
+      "idx": 594,
       "alias": [],
       "alternates": []
     },
     "Ext.grid.selection.Columns": {
-      "idx": 571,
+      "idx": 595,
       "alias": [],
       "alternates": []
     },
     "Ext.grid.selection.Replicator": {
-      "idx": 572,
+      "idx": 596,
       "alias": [
         "plugin.selectionreplicator"
       ],
       "alternates": []
     },
     "Ext.grid.selection.Rows": {
-      "idx": 573,
+      "idx": 597,
       "alias": [],
       "alternates": []
     },
     "Ext.grid.selection.Selection": {
-      "idx": 569,
+      "idx": 593,
       "alias": [],
       "alternates": []
     },
     "Ext.grid.selection.SelectionExtender": {
-      "idx": 574,
+      "idx": 598,
       "alias": [],
       "alternates": []
     },
     "Ext.grid.selection.SpreadsheetModel": {
-      "idx": 575,
+      "idx": 599,
       "alias": [
         "selection.spreadsheet"
       ],
       "alternates": []
     },
     "Ext.layout.Context": {
-      "idx": 578,
+      "idx": 602,
       "alias": [],
       "alternates": []
     },
     "Ext.layout.ContextItem": {
-      "idx": 577,
+      "idx": 601,
       "alias": [],
       "alternates": []
     },
     "Ext.layout.Layout": {
-      "idx": 349,
+      "idx": 373,
       "alias": [],
       "alternates": []
     },
     "Ext.layout.SizeModel": {
-      "idx": 348,
+      "idx": 372,
       "alias": [],
       "alternates": []
     },
     "Ext.layout.component.Auto": {
-      "idx": 362,
+      "idx": 385,
       "alias": [
         "layout.autocomponent"
       ],
       "alternates": []
     },
     "Ext.layout.component.Body": {
-      "idx": 580,
+      "idx": 604,
       "alias": [
         "layout.body"
       ],
       "alternates": []
     },
     "Ext.layout.component.BoundList": {
-      "idx": 467,
+      "idx": 489,
       "alias": [
         "layout.boundlist"
       ],
       "alternates": []
     },
     "Ext.layout.component.Component": {
-      "idx": 361,
+      "idx": 384,
       "alias": [],
       "alternates": []
     },
     "Ext.layout.component.Dock": {
-      "idx": 396,
+      "idx": 419,
       "alias": [
         "layout.dock"
       ],
@@ -9084,35 +9164,35 @@ var Ext = Ext || {};
       ]
     },
     "Ext.layout.component.FieldSet": {
-      "idx": 581,
+      "idx": 605,
       "alias": [
         "layout.fieldset"
       ],
       "alternates": []
     },
     "Ext.layout.component.ProgressBar": {
-      "idx": 363,
+      "idx": 386,
       "alias": [
         "layout.progressbar"
       ],
       "alternates": []
     },
     "Ext.layout.component.field.FieldContainer": {
-      "idx": 445,
+      "idx": 467,
       "alias": [
         "layout.fieldcontainer"
       ],
       "alternates": []
     },
     "Ext.layout.component.field.HtmlEditor": {
-      "idx": 489,
+      "idx": 511,
       "alias": [
         "layout.htmleditor"
       ],
       "alternates": []
     },
     "Ext.layout.container.Absolute": {
-      "idx": 582,
+      "idx": 606,
       "alias": [
         "layout.absolute"
       ],
@@ -9121,7 +9201,7 @@ var Ext = Ext || {};
       ]
     },
     "Ext.layout.container.Accordion": {
-      "idx": 583,
+      "idx": 607,
       "alias": [
         "layout.accordion"
       ],
@@ -9130,7 +9210,7 @@ var Ext = Ext || {};
       ]
     },
     "Ext.layout.container.Anchor": {
-      "idx": 406,
+      "idx": 429,
       "alias": [
         "layout.anchor"
       ],
@@ -9139,7 +9219,7 @@ var Ext = Ext || {};
       ]
     },
     "Ext.layout.container.Auto": {
-      "idx": 351,
+      "idx": 375,
       "alias": [
         "layout.auto",
         "layout.autocontainer"
@@ -9147,7 +9227,7 @@ var Ext = Ext || {};
       "alternates": []
     },
     "Ext.layout.container.Border": {
-      "idx": 585,
+      "idx": 609,
       "alias": [
         "layout.border"
       ],
@@ -9156,7 +9236,7 @@ var Ext = Ext || {};
       ]
     },
     "Ext.layout.container.Box": {
-      "idx": 385,
+      "idx": 408,
       "alias": [
         "layout.box"
       ],
@@ -9165,7 +9245,7 @@ var Ext = Ext || {};
       ]
     },
     "Ext.layout.container.Card": {
-      "idx": 586,
+      "idx": 610,
       "alias": [
         "layout.card"
       ],
@@ -9174,7 +9254,7 @@ var Ext = Ext || {};
       ]
     },
     "Ext.layout.container.Center": {
-      "idx": 587,
+      "idx": 611,
       "alias": [
         "layout.center",
         "layout.ux.center"
@@ -9184,14 +9264,14 @@ var Ext = Ext || {};
       ]
     },
     "Ext.layout.container.CheckboxGroup": {
-      "idx": 447,
+      "idx": 469,
       "alias": [
         "layout.checkboxgroup"
       ],
       "alternates": []
     },
     "Ext.layout.container.Column": {
-      "idx": 409,
+      "idx": 432,
       "alias": [
         "layout.column"
       ],
@@ -9200,19 +9280,19 @@ var Ext = Ext || {};
       ]
     },
     "Ext.layout.container.ColumnSplitter": {
-      "idx": 413,
+      "idx": 436,
       "alias": [
         "widget.columnsplitter"
       ],
       "alternates": []
     },
     "Ext.layout.container.ColumnSplitterTracker": {
-      "idx": 412,
+      "idx": 435,
       "alias": [],
       "alternates": []
     },
     "Ext.layout.container.Container": {
-      "idx": 350,
+      "idx": 374,
       "alias": [
         "layout.container"
       ],
@@ -9221,21 +9301,21 @@ var Ext = Ext || {};
       ]
     },
     "Ext.layout.container.Dashboard": {
-      "idx": 414,
+      "idx": 437,
       "alias": [
         "layout.dashboard"
       ],
       "alternates": []
     },
     "Ext.layout.container.Editor": {
-      "idx": 354,
+      "idx": 378,
       "alias": [
         "layout.editor"
       ],
       "alternates": []
     },
     "Ext.layout.container.Fit": {
-      "idx": 501,
+      "idx": 523,
       "alias": [
         "layout.fit"
       ],
@@ -9244,7 +9324,7 @@ var Ext = Ext || {};
       ]
     },
     "Ext.layout.container.Form": {
-      "idx": 588,
+      "idx": 612,
       "alias": [
         "layout.form"
       ],
@@ -9253,7 +9333,7 @@ var Ext = Ext || {};
       ]
     },
     "Ext.layout.container.HBox": {
-      "idx": 386,
+      "idx": 409,
       "alias": [
         "layout.hbox"
       ],
@@ -9262,14 +9342,14 @@ var Ext = Ext || {};
       ]
     },
     "Ext.layout.container.SegmentedButton": {
-      "idx": 372,
+      "idx": 395,
       "alias": [
         "layout.segmentedbutton"
       ],
       "alternates": []
     },
     "Ext.layout.container.Table": {
-      "idx": 400,
+      "idx": 423,
       "alias": [
         "layout.table"
       ],
@@ -9278,7 +9358,7 @@ var Ext = Ext || {};
       ]
     },
     "Ext.layout.container.VBox": {
-      "idx": 387,
+      "idx": 410,
       "alias": [
         "layout.vbox"
       ],
@@ -9287,12 +9367,12 @@ var Ext = Ext || {};
       ]
     },
     "Ext.layout.container.border.Region": {
-      "idx": 106,
+      "idx": 112,
       "alias": [],
       "alternates": []
     },
     "Ext.layout.container.boxOverflow.Menu": {
-      "idx": 491,
+      "idx": 513,
       "alias": [
         "box.overflow.Menu",
         "box.overflow.menu"
@@ -9302,7 +9382,7 @@ var Ext = Ext || {};
       ]
     },
     "Ext.layout.container.boxOverflow.None": {
-      "idx": 381,
+      "idx": 404,
       "alias": [
         "box.overflow.None",
         "box.overflow.none"
@@ -9312,7 +9392,7 @@ var Ext = Ext || {};
       ]
     },
     "Ext.layout.container.boxOverflow.Scroller": {
-      "idx": 382,
+      "idx": 405,
       "alias": [
         "box.overflow.Scroller",
         "box.overflow.scroller"
@@ -9322,59 +9402,59 @@ var Ext = Ext || {};
       ]
     },
     "Ext.list.AbstractTreeItem": {
-      "idx": 315,
+      "idx": 324,
       "alias": [],
       "alternates": []
     },
     "Ext.list.RootTreeItem": {
-      "idx": 316,
+      "idx": 325,
       "alias": [],
       "alternates": []
     },
     "Ext.list.Tree": {
-      "idx": 318,
+      "idx": 327,
       "alias": [
         "widget.treelist"
       ],
       "alternates": []
     },
     "Ext.list.TreeItem": {
-      "idx": 317,
+      "idx": 326,
       "alias": [
         "widget.treelistitem"
       ],
       "alternates": []
     },
     "Ext.menu.Bar": {
-      "idx": 589,
+      "idx": 613,
       "alias": [
         "widget.menubar"
       ],
       "alternates": []
     },
     "Ext.menu.CheckItem": {
-      "idx": 540,
+      "idx": 563,
       "alias": [
         "widget.menucheckitem"
       ],
       "alternates": []
     },
     "Ext.menu.ColorPicker": {
-      "idx": 590,
+      "idx": 614,
       "alias": [
         "widget.colormenu"
       ],
       "alternates": []
     },
     "Ext.menu.DatePicker": {
-      "idx": 591,
+      "idx": 615,
       "alias": [
         "widget.datemenu"
       ],
       "alternates": []
     },
     "Ext.menu.Item": {
-      "idx": 539,
+      "idx": 562,
       "alias": [
         "widget.menuitem"
       ],
@@ -9383,28 +9463,28 @@ var Ext = Ext || {};
       ]
     },
     "Ext.menu.Manager": {
-      "idx": 367,
+      "idx": 390,
       "alias": [],
       "alternates": [
         "Ext.menu.MenuMgr"
       ]
     },
     "Ext.menu.Menu": {
-      "idx": 542,
+      "idx": 565,
       "alias": [
         "widget.menu"
       ],
       "alternates": []
     },
     "Ext.menu.Separator": {
-      "idx": 541,
+      "idx": 564,
       "alias": [
         "widget.menuseparator"
       ],
       "alternates": []
     },
     "Ext.mixin.Accessible": {
-      "idx": 103,
+      "idx": 109,
       "alias": [],
       "alternates": []
     },
@@ -9418,8 +9498,18 @@ var Ext = Ext || {};
       "alias": [],
       "alternates": []
     },
+    "Ext.mixin.ConfigState": {
+      "idx": 328,
+      "alias": [],
+      "alternates": []
+    },
     "Ext.mixin.Container": {
-      "idx": 319,
+      "idx": 329,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.mixin.Dirty": {
+      "idx": 187,
       "alias": [],
       "alternates": []
     },
@@ -9429,7 +9519,7 @@ var Ext = Ext || {};
       "alternates": []
     },
     "Ext.mixin.Hookable": {
-      "idx": 320,
+      "idx": 330,
       "alias": [],
       "alternates": []
     },
@@ -9443,8 +9533,13 @@ var Ext = Ext || {};
       "alias": [],
       "alternates": []
     },
+    "Ext.mixin.Keyboard": {
+      "idx": 110,
+      "alias": [],
+      "alternates": []
+    },
     "Ext.mixin.Mashup": {
-      "idx": 321,
+      "idx": 331,
       "alias": [],
       "alternates": []
     },
@@ -9453,18 +9548,28 @@ var Ext = Ext || {};
       "alias": [],
       "alternates": []
     },
+    "Ext.mixin.Pluggable": {
+      "idx": 82,
+      "alias": [],
+      "alternates": []
+    },
     "Ext.mixin.Queryable": {
-      "idx": 219,
+      "idx": 226,
       "alias": [],
       "alternates": []
     },
     "Ext.mixin.Responsive": {
-      "idx": 322,
+      "idx": 332,
       "alias": [],
       "alternates": []
     },
     "Ext.mixin.Selectable": {
-      "idx": 323,
+      "idx": 333,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.mixin.StyleCacher": {
+      "idx": 334,
       "alias": [],
       "alternates": []
     },
@@ -9474,29 +9579,29 @@ var Ext = Ext || {};
       "alternates": []
     },
     "Ext.mixin.Traversable": {
-      "idx": 324,
+      "idx": 335,
       "alias": [],
       "alternates": []
     },
     "Ext.panel.Bar": {
-      "idx": 374,
+      "idx": 397,
       "alias": [],
       "alternates": []
     },
     "Ext.panel.DD": {
-      "idx": 395,
+      "idx": 418,
       "alias": [],
       "alternates": []
     },
     "Ext.panel.Header": {
-      "idx": 380,
+      "idx": 403,
       "alias": [
         "widget.header"
       ],
       "alternates": []
     },
     "Ext.panel.Panel": {
-      "idx": 399,
+      "idx": 422,
       "alias": [
         "widget.panel"
       ],
@@ -9505,92 +9610,92 @@ var Ext = Ext || {};
       ]
     },
     "Ext.panel.Pinnable": {
-      "idx": 592,
+      "idx": 616,
       "alias": [],
       "alternates": []
     },
     "Ext.panel.Proxy": {
-      "idx": 394,
+      "idx": 417,
       "alias": [],
       "alternates": [
         "Ext.dd.PanelProxy"
       ]
     },
     "Ext.panel.Table": {
-      "idx": 502,
+      "idx": 524,
       "alias": [
         "widget.tablepanel"
       ],
       "alternates": []
     },
     "Ext.panel.Title": {
-      "idx": 375,
+      "idx": 398,
       "alias": [
         "widget.title"
       ],
       "alternates": []
     },
     "Ext.panel.Tool": {
-      "idx": 376,
+      "idx": 399,
       "alias": [
         "widget.tool"
       ],
       "alternates": []
     },
     "Ext.parse.Parser": {
-      "idx": 199,
+      "idx": 206,
       "alias": [],
       "alternates": []
     },
     "Ext.parse.Symbol": {
-      "idx": 193,
+      "idx": 200,
       "alias": [],
       "alternates": []
     },
     "Ext.parse.Tokenizer": {
-      "idx": 192,
+      "idx": 199,
       "alias": [],
       "alternates": []
     },
     "Ext.parse.symbol.Constant": {
-      "idx": 194,
+      "idx": 201,
       "alias": [],
       "alternates": []
     },
     "Ext.parse.symbol.Infix": {
-      "idx": 195,
+      "idx": 202,
       "alias": [],
       "alternates": []
     },
     "Ext.parse.symbol.InfixRight": {
-      "idx": 196,
+      "idx": 203,
       "alias": [],
       "alternates": []
     },
     "Ext.parse.symbol.Paren": {
-      "idx": 197,
+      "idx": 204,
       "alias": [],
       "alternates": []
     },
     "Ext.parse.symbol.Prefix": {
-      "idx": 198,
+      "idx": 205,
       "alias": [],
       "alternates": []
     },
     "Ext.perf.Accumulator": {
-      "idx": 325,
+      "idx": 336,
       "alias": [],
       "alternates": []
     },
     "Ext.perf.Monitor": {
-      "idx": 326,
+      "idx": 337,
       "alias": [],
       "alternates": [
         "Ext.Perf"
       ]
     },
     "Ext.picker.Color": {
-      "idx": 488,
+      "idx": 510,
       "alias": [
         "widget.colorpicker"
       ],
@@ -9599,7 +9704,7 @@ var Ext = Ext || {};
       ]
     },
     "Ext.picker.Date": {
-      "idx": 477,
+      "idx": 499,
       "alias": [
         "widget.datepicker"
       ],
@@ -9608,7 +9713,7 @@ var Ext = Ext || {};
       ]
     },
     "Ext.picker.Month": {
-      "idx": 476,
+      "idx": 498,
       "alias": [
         "widget.monthpicker"
       ],
@@ -9617,48 +9722,55 @@ var Ext = Ext || {};
       ]
     },
     "Ext.picker.Time": {
-      "idx": 495,
+      "idx": 517,
       "alias": [
         "widget.timepicker"
       ],
       "alternates": []
     },
     "Ext.plugin.Abstract": {
-      "idx": 327,
+      "idx": 338,
       "alias": [],
       "alternates": [
         "Ext.AbstractPlugin"
       ]
     },
     "Ext.plugin.AbstractClipboard": {
-      "idx": 558,
+      "idx": 582,
       "alias": [],
       "alternates": []
     },
     "Ext.plugin.LazyItems": {
-      "idx": 328,
+      "idx": 339,
       "alias": [
         "plugin.lazyitems"
       ],
       "alternates": []
     },
     "Ext.plugin.Manager": {
-      "idx": 593,
+      "idx": 617,
       "alias": [],
       "alternates": [
         "Ext.PluginManager",
         "Ext.PluginMgr"
       ]
     },
+    "Ext.plugin.MouseEnter": {
+      "idx": 340,
+      "alias": [
+        "plugin.mouseenter"
+      ],
+      "alternates": []
+    },
     "Ext.plugin.Responsive": {
-      "idx": 403,
+      "idx": 426,
       "alias": [
         "plugin.responsive"
       ],
       "alternates": []
     },
     "Ext.plugin.Viewport": {
-      "idx": 404,
+      "idx": 427,
       "alias": [
         "plugin.viewport"
       ],
@@ -9680,74 +9792,90 @@ var Ext = Ext || {};
       "alternates": []
     },
     "Ext.resizer.BorderSplitter": {
-      "idx": 584,
+      "idx": 608,
       "alias": [
         "widget.bordersplitter"
       ],
       "alternates": []
     },
     "Ext.resizer.BorderSplitterTracker": {
-      "idx": 594,
+      "idx": 618,
       "alias": [],
       "alternates": []
     },
     "Ext.resizer.Handle": {
-      "idx": 595,
+      "idx": 619,
       "alias": [],
       "alternates": []
     },
     "Ext.resizer.ResizeTracker": {
-      "idx": 596,
+      "idx": 620,
       "alias": [],
       "alternates": []
     },
     "Ext.resizer.Resizer": {
-      "idx": 597,
+      "idx": 621,
       "alias": [],
       "alternates": [
         "Ext.Resizable"
       ]
     },
     "Ext.resizer.Splitter": {
-      "idx": 384,
+      "idx": 407,
       "alias": [
         "widget.splitter"
       ],
       "alternates": []
     },
     "Ext.resizer.SplitterTracker": {
-      "idx": 411,
+      "idx": 434,
       "alias": [],
+      "alternates": []
+    },
+    "Ext.scroll.LockingScroller": {
+      "idx": 577,
+      "alias": [
+        "scroller.locking"
+      ],
       "alternates": []
     },
     "Ext.scroll.Scroller": {
-      "idx": 95,
-      "alias": [],
+      "idx": 101,
+      "alias": [
+        "scroller.scroller"
+      ],
+      "alternates": []
+    },
+    "Ext.scroll.TableScroller": {
+      "idx": 531,
+      "alias": [
+        "scroller.table"
+      ],
       "alternates": []
     },
     "Ext.selection.CellModel": {
-      "idx": 598,
+      "idx": 622,
       "alias": [
         "selection.cellmodel"
       ],
       "alternates": []
     },
     "Ext.selection.CheckboxModel": {
-      "idx": 600,
+      "idx": 624,
       "alias": [
         "selection.checkboxmodel"
       ],
       "alternates": []
     },
     "Ext.selection.DataViewModel": {
-      "idx": 462,
+      "idx": 484,
       "alias": [
         "selection.dataviewmodel"
       ],
       "alternates": []
     },
     "Ext.selection.Model": {
-      "idx": 461,
+      "idx": 483,
       "alias": [
         "selection.abstract"
       ],
@@ -9756,21 +9884,21 @@ var Ext = Ext || {};
       ]
     },
     "Ext.selection.RowModel": {
-      "idx": 599,
+      "idx": 623,
       "alias": [
         "selection.rowmodel"
       ],
       "alternates": []
     },
     "Ext.selection.TreeModel": {
-      "idx": 601,
+      "idx": 625,
       "alias": [
         "selection.treemodel"
       ],
       "alternates": []
     },
     "Ext.slider.Multi": {
-      "idx": 604,
+      "idx": 628,
       "alias": [
         "widget.multislider"
       ],
@@ -9779,7 +9907,7 @@ var Ext = Ext || {};
       ]
     },
     "Ext.slider.Single": {
-      "idx": 605,
+      "idx": 629,
       "alias": [
         "widget.slider",
         "widget.sliderfield"
@@ -9792,146 +9920,146 @@ var Ext = Ext || {};
       ]
     },
     "Ext.slider.Thumb": {
-      "idx": 602,
+      "idx": 626,
       "alias": [],
       "alternates": []
     },
     "Ext.slider.Tip": {
-      "idx": 603,
+      "idx": 627,
       "alias": [
         "widget.slidertip"
       ],
       "alternates": []
     },
     "Ext.slider.Widget": {
-      "idx": 606,
+      "idx": 630,
       "alias": [
         "widget.sliderwidget"
       ],
       "alternates": []
     },
     "Ext.sparkline.Bar": {
-      "idx": 614,
+      "idx": 349,
       "alias": [
         "widget.sparklinebar"
       ],
       "alternates": []
     },
     "Ext.sparkline.BarBase": {
-      "idx": 612,
+      "idx": 347,
       "alias": [],
       "alternates": []
     },
     "Ext.sparkline.Base": {
-      "idx": 611,
+      "idx": 346,
       "alias": [
         "widget.sparkline"
       ],
       "alternates": []
     },
     "Ext.sparkline.Box": {
-      "idx": 615,
+      "idx": 350,
       "alias": [
         "widget.sparklinebox"
       ],
       "alternates": []
     },
     "Ext.sparkline.Bullet": {
-      "idx": 616,
+      "idx": 351,
       "alias": [
         "widget.sparklinebullet"
       ],
       "alternates": []
     },
     "Ext.sparkline.CanvasBase": {
-      "idx": 608,
+      "idx": 342,
       "alias": [],
       "alternates": []
     },
     "Ext.sparkline.CanvasCanvas": {
-      "idx": 609,
+      "idx": 343,
       "alias": [],
       "alternates": []
     },
     "Ext.sparkline.Discrete": {
-      "idx": 617,
+      "idx": 352,
       "alias": [
         "widget.sparklinediscrete"
       ],
       "alternates": []
     },
     "Ext.sparkline.Line": {
-      "idx": 618,
+      "idx": 353,
       "alias": [
         "widget.sparklineline"
       ],
       "alternates": []
     },
     "Ext.sparkline.Pie": {
-      "idx": 619,
+      "idx": 354,
       "alias": [
         "widget.sparklinepie"
       ],
       "alternates": []
     },
     "Ext.sparkline.RangeMap": {
-      "idx": 613,
+      "idx": 348,
       "alias": [],
       "alternates": []
     },
     "Ext.sparkline.Shape": {
-      "idx": 607,
+      "idx": 341,
       "alias": [],
       "alternates": []
     },
     "Ext.sparkline.TriState": {
-      "idx": 620,
+      "idx": 355,
       "alias": [
         "widget.sparklinetristate"
       ],
       "alternates": []
     },
     "Ext.sparkline.VmlCanvas": {
-      "idx": 610,
+      "idx": 344,
       "alias": [],
       "alternates": []
     },
     "Ext.state.CookieProvider": {
-      "idx": 621,
+      "idx": 631,
       "alias": [],
       "alternates": []
     },
     "Ext.state.LocalStorageProvider": {
-      "idx": 622,
+      "idx": 632,
       "alias": [
         "state.localstorage"
       ],
       "alternates": []
     },
     "Ext.state.Manager": {
-      "idx": 100,
+      "idx": 106,
       "alias": [],
       "alternates": []
     },
     "Ext.state.Provider": {
-      "idx": 99,
+      "idx": 105,
       "alias": [],
       "alternates": []
     },
     "Ext.state.Stateful": {
-      "idx": 101,
+      "idx": 107,
       "alias": [],
       "alternates": []
     },
     "Ext.tab.Bar": {
-      "idx": 624,
+      "idx": 634,
       "alias": [
         "widget.tabbar"
       ],
       "alternates": []
     },
     "Ext.tab.Panel": {
-      "idx": 625,
+      "idx": 635,
       "alias": [
         "widget.tabpanel"
       ],
@@ -9940,14 +10068,14 @@ var Ext = Ext || {};
       ]
     },
     "Ext.tab.Tab": {
-      "idx": 623,
+      "idx": 633,
       "alias": [
         "widget.tab"
       ],
       "alternates": []
     },
     "Ext.tip.QuickTip": {
-      "idx": 486,
+      "idx": 508,
       "alias": [
         "widget.quicktip"
       ],
@@ -9956,14 +10084,14 @@ var Ext = Ext || {};
       ]
     },
     "Ext.tip.QuickTipManager": {
-      "idx": 487,
+      "idx": 509,
       "alias": [],
       "alternates": [
         "Ext.QuickTips"
       ]
     },
     "Ext.tip.Tip": {
-      "idx": 484,
+      "idx": 506,
       "alias": [
         "widget.tip"
       ],
@@ -9972,7 +10100,7 @@ var Ext = Ext || {};
       ]
     },
     "Ext.tip.ToolTip": {
-      "idx": 485,
+      "idx": 507,
       "alias": [
         "widget.tooltip"
       ],
@@ -9981,14 +10109,14 @@ var Ext = Ext || {};
       ]
     },
     "Ext.toolbar.Breadcrumb": {
-      "idx": 626,
+      "idx": 636,
       "alias": [
         "widget.breadcrumb"
       ],
       "alternates": []
     },
     "Ext.toolbar.Fill": {
-      "idx": 627,
+      "idx": 637,
       "alias": [
         "widget.tbfill"
       ],
@@ -9997,7 +10125,7 @@ var Ext = Ext || {};
       ]
     },
     "Ext.toolbar.Item": {
-      "idx": 468,
+      "idx": 490,
       "alias": [
         "widget.tbitem"
       ],
@@ -10006,7 +10134,7 @@ var Ext = Ext || {};
       ]
     },
     "Ext.toolbar.Paging": {
-      "idx": 473,
+      "idx": 495,
       "alias": [
         "widget.pagingtoolbar"
       ],
@@ -10015,7 +10143,7 @@ var Ext = Ext || {};
       ]
     },
     "Ext.toolbar.Separator": {
-      "idx": 490,
+      "idx": 512,
       "alias": [
         "widget.tbseparator"
       ],
@@ -10024,7 +10152,7 @@ var Ext = Ext || {};
       ]
     },
     "Ext.toolbar.Spacer": {
-      "idx": 628,
+      "idx": 638,
       "alias": [
         "widget.tbspacer"
       ],
@@ -10033,7 +10161,7 @@ var Ext = Ext || {};
       ]
     },
     "Ext.toolbar.TextItem": {
-      "idx": 469,
+      "idx": 491,
       "alias": [
         "widget.tbtext"
       ],
@@ -10042,7 +10170,7 @@ var Ext = Ext || {};
       ]
     },
     "Ext.toolbar.Toolbar": {
-      "idx": 388,
+      "idx": 411,
       "alias": [
         "widget.toolbar"
       ],
@@ -10051,21 +10179,21 @@ var Ext = Ext || {};
       ]
     },
     "Ext.tree.Column": {
-      "idx": 629,
+      "idx": 639,
       "alias": [
         "widget.treecolumn"
       ],
       "alternates": []
     },
     "Ext.tree.NavigationModel": {
-      "idx": 630,
+      "idx": 640,
       "alias": [
         "view.navigation.tree"
       ],
       "alternates": []
     },
     "Ext.tree.Panel": {
-      "idx": 632,
+      "idx": 642,
       "alias": [
         "widget.treepanel"
       ],
@@ -10075,24 +10203,24 @@ var Ext = Ext || {};
       ]
     },
     "Ext.tree.View": {
-      "idx": 631,
+      "idx": 641,
       "alias": [
         "widget.treeview"
       ],
       "alternates": []
     },
     "Ext.tree.ViewDragZone": {
-      "idx": 634,
+      "idx": 644,
       "alias": [],
       "alternates": []
     },
     "Ext.tree.ViewDropZone": {
-      "idx": 635,
+      "idx": 645,
       "alias": [],
       "alternates": []
     },
     "Ext.tree.plugin.TreeViewDragDrop": {
-      "idx": 636,
+      "idx": 646,
       "alias": [
         "plugin.treeviewdragdrop"
       ],
@@ -10109,57 +10237,64 @@ var Ext = Ext || {};
       "alternates": []
     },
     "Ext.util.Bag": {
-      "idx": 172,
+      "idx": 178,
       "alias": [],
       "alternates": []
     },
     "Ext.util.Base64": {
-      "idx": 329,
+      "idx": 356,
       "alias": [],
       "alternates": []
     },
     "Ext.util.CSS": {
-      "idx": 94,
+      "idx": 95,
       "alias": [],
       "alternates": []
     },
     "Ext.util.CSV": {
-      "idx": 331,
+      "idx": 358,
       "alias": [],
       "alternates": []
     },
     "Ext.util.ClickRepeater": {
-      "idx": 368,
+      "idx": 391,
       "alias": [],
       "alternates": []
     },
     "Ext.util.Collection": {
-      "idx": 113,
+      "idx": 119,
       "alias": [],
       "alternates": []
     },
     "Ext.util.CollectionKey": {
-      "idx": 111,
+      "idx": 117,
       "alias": [],
       "alternates": []
     },
+    "Ext.util.Color": {
+      "idx": 345,
+      "alias": [],
+      "alternates": [
+        "Ext.draw.Color"
+      ]
+    },
     "Ext.util.ComponentDragger": {
-      "idx": 432,
+      "idx": 455,
       "alias": [],
       "alternates": []
     },
     "Ext.util.Cookies": {
-      "idx": 637,
+      "idx": 647,
       "alias": [],
       "alternates": []
     },
     "Ext.util.DelimitedValue": {
-      "idx": 330,
+      "idx": 357,
       "alias": [],
       "alternates": []
     },
     "Ext.util.ElementContainer": {
-      "idx": 97,
+      "idx": 103,
       "alias": [],
       "alternates": []
     },
@@ -10174,52 +10309,47 @@ var Ext = Ext || {};
       "alternates": []
     },
     "Ext.util.FilterCollection": {
-      "idx": 156,
+      "idx": 162,
       "alias": [],
       "alternates": []
     },
     "Ext.util.Floating": {
-      "idx": 96,
-      "alias": [],
-      "alternates": []
-    },
-    "Ext.util.Fly": {
-      "idx": 191,
-      "alias": [],
-      "alternates": []
-    },
-    "Ext.util.FocusTrap": {
-      "idx": 433,
-      "alias": [],
-      "alternates": []
-    },
-    "Ext.util.Focusable": {
       "idx": 102,
       "alias": [],
       "alternates": []
     },
+    "Ext.util.Fly": {
+      "idx": 198,
+      "alias": [],
+      "alternates": []
+    },
+    "Ext.util.Focusable": {
+      "idx": 108,
+      "alias": [],
+      "alternates": []
+    },
     "Ext.util.FocusableContainer": {
-      "idx": 379,
+      "idx": 402,
       "alias": [],
       "alternates": []
     },
     "Ext.util.Format": {
-      "idx": 85,
+      "idx": 86,
       "alias": [],
       "alternates": []
     },
     "Ext.util.Group": {
-      "idx": 154,
+      "idx": 160,
       "alias": [],
       "alternates": []
     },
     "Ext.util.GroupCollection": {
-      "idx": 157,
+      "idx": 163,
       "alias": [],
       "alternates": []
     },
     "Ext.util.Grouper": {
-      "idx": 112,
+      "idx": 118,
       "alias": [],
       "alternates": []
     },
@@ -10229,45 +10359,40 @@ var Ext = Ext || {};
       "alternates": []
     },
     "Ext.util.History": {
-      "idx": 165,
+      "idx": 171,
       "alias": [],
       "alternates": [
         "Ext.History"
       ]
     },
     "Ext.util.Inflector": {
-      "idx": 120,
+      "idx": 126,
       "alias": [],
       "alternates": []
     },
     "Ext.util.ItemCollection": {
-      "idx": 332,
+      "idx": 359,
       "alias": [],
       "alternates": [
         "Ext.ItemCollection"
       ]
     },
     "Ext.util.KeyMap": {
-      "idx": 377,
+      "idx": 400,
       "alias": [],
       "alternates": [
         "Ext.KeyMap"
       ]
     },
     "Ext.util.KeyNav": {
-      "idx": 378,
+      "idx": 401,
       "alias": [],
       "alternates": [
         "Ext.KeyNav"
       ]
     },
-    "Ext.util.KeyboardInteractive": {
-      "idx": 104,
-      "alias": [],
-      "alternates": []
-    },
     "Ext.util.LocalStorage": {
-      "idx": 333,
+      "idx": 360,
       "alias": [],
       "alternates": []
     },
@@ -10277,7 +10402,7 @@ var Ext = Ext || {};
       "alternates": []
     },
     "Ext.util.Memento": {
-      "idx": 397,
+      "idx": 420,
       "alias": [],
       "alternates": []
     },
@@ -10287,7 +10412,7 @@ var Ext = Ext || {};
       "alternates": []
     },
     "Ext.util.ObjectTemplate": {
-      "idx": 114,
+      "idx": 120,
       "alias": [],
       "alternates": []
     },
@@ -10317,12 +10442,12 @@ var Ext = Ext || {};
       "alternates": []
     },
     "Ext.util.ProtoElement": {
-      "idx": 92,
+      "idx": 93,
       "alias": [],
       "alternates": []
     },
     "Ext.util.Queue": {
-      "idx": 576,
+      "idx": 600,
       "alias": [],
       "alternates": []
     },
@@ -10332,17 +10457,17 @@ var Ext = Ext || {};
       "alternates": []
     },
     "Ext.util.Renderable": {
-      "idx": 98,
+      "idx": 104,
       "alias": [],
       "alternates": []
     },
     "Ext.util.Schedulable": {
-      "idx": 182,
+      "idx": 189,
       "alias": [],
       "alternates": []
     },
     "Ext.util.Scheduler": {
-      "idx": 173,
+      "idx": 179,
       "alias": [],
       "alternates": []
     },
@@ -10362,22 +10487,22 @@ var Ext = Ext || {};
       "alternates": []
     },
     "Ext.util.SorterCollection": {
-      "idx": 155,
+      "idx": 161,
       "alias": [],
       "alternates": []
     },
     "Ext.util.StoreHolder": {
-      "idx": 359,
+      "idx": 382,
       "alias": [],
       "alternates": []
     },
     "Ext.util.TSV": {
-      "idx": 334,
+      "idx": 361,
       "alias": [],
       "alternates": []
     },
     "Ext.util.TaskManager": {
-      "idx": 335,
+      "idx": 362,
       "alias": [],
       "alternates": [
         "Ext.TaskManager"
@@ -10389,22 +10514,22 @@ var Ext = Ext || {};
       "alternates": []
     },
     "Ext.util.TextMetrics": {
-      "idx": 336,
+      "idx": 363,
       "alias": [],
       "alternates": []
     },
     "Ext.util.Translatable": {
-      "idx": 343,
+      "idx": 367,
       "alias": [],
       "alternates": []
     },
     "Ext.util.XTemplateCompiler": {
-      "idx": 88,
+      "idx": 89,
       "alias": [],
       "alternates": []
     },
     "Ext.util.XTemplateParser": {
-      "idx": 87,
+      "idx": 88,
       "alias": [],
       "alternates": []
     },
@@ -10419,7 +10544,7 @@ var Ext = Ext || {};
       "alternates": []
     },
     "Ext.util.paintmonitor.OverflowChange": {
-      "idx": 344,
+      "idx": 368,
       "alias": [],
       "alternates": []
     },
@@ -10439,42 +10564,42 @@ var Ext = Ext || {};
       "alternates": []
     },
     "Ext.util.translatable.Abstract": {
-      "idx": 337,
+      "idx": 98,
       "alias": [],
       "alternates": []
     },
     "Ext.util.translatable.CssPosition": {
-      "idx": 342,
+      "idx": 366,
       "alias": [],
       "alternates": []
     },
     "Ext.util.translatable.CssTransform": {
-      "idx": 339,
+      "idx": 364,
       "alias": [],
       "alternates": []
     },
     "Ext.util.translatable.Dom": {
-      "idx": 338,
+      "idx": 99,
       "alias": [],
       "alternates": []
     },
     "Ext.util.translatable.ScrollParent": {
-      "idx": 341,
+      "idx": 365,
       "alias": [],
       "alternates": []
     },
     "Ext.util.translatable.ScrollPosition": {
-      "idx": 340,
+      "idx": 100,
       "alias": [],
       "alternates": []
     },
     "Ext.view.AbstractView": {
-      "idx": 464,
+      "idx": 486,
       "alias": [],
       "alternates": []
     },
     "Ext.view.BoundList": {
-      "idx": 474,
+      "idx": 496,
       "alias": [
         "widget.boundlist"
       ],
@@ -10483,50 +10608,50 @@ var Ext = Ext || {};
       ]
     },
     "Ext.view.BoundListKeyNav": {
-      "idx": 466,
+      "idx": 488,
       "alias": [
         "view.navigation.boundlist"
       ],
       "alternates": []
     },
     "Ext.view.DragZone": {
-      "idx": 633,
+      "idx": 643,
       "alias": [],
       "alternates": []
     },
     "Ext.view.DropZone": {
-      "idx": 515,
+      "idx": 538,
       "alias": [],
       "alternates": []
     },
     "Ext.view.MultiSelector": {
-      "idx": 639,
+      "idx": 649,
       "alias": [
         "widget.multiselector"
       ],
       "alternates": []
     },
     "Ext.view.MultiSelectorSearch": {
-      "idx": 638,
+      "idx": 648,
       "alias": [
         "widget.multiselector-search"
       ],
       "alternates": []
     },
     "Ext.view.NavigationModel": {
-      "idx": 463,
+      "idx": 485,
       "alias": [
         "view.navigation.default"
       ],
       "alternates": []
     },
     "Ext.view.NodeCache": {
-      "idx": 508,
+      "idx": 530,
       "alias": [],
       "alternates": []
     },
     "Ext.view.Table": {
-      "idx": 509,
+      "idx": 532,
       "alias": [
         "widget.gridview",
         "widget.tableview"
@@ -10536,21 +10661,21 @@ var Ext = Ext || {};
       ]
     },
     "Ext.view.TableLayout": {
-      "idx": 506,
+      "idx": 528,
       "alias": [
         "layout.tableview"
       ],
       "alternates": []
     },
     "Ext.view.TagKeyNav": {
-      "idx": 493,
+      "idx": 515,
       "alias": [
         "view.navigation.tagfield"
       ],
       "alternates": []
     },
     "Ext.view.View": {
-      "idx": 465,
+      "idx": 487,
       "alias": [
         "widget.dataview"
       ],
@@ -10559,21 +10684,21 @@ var Ext = Ext || {};
       ]
     },
     "Ext.window.MessageBox": {
-      "idx": 442,
+      "idx": 464,
       "alias": [
         "widget.messagebox"
       ],
       "alternates": []
     },
     "Ext.window.Toast": {
-      "idx": 640,
+      "idx": 650,
       "alias": [
         "widget.toast"
       ],
       "alternates": []
     },
     "Ext.window.Window": {
-      "idx": 434,
+      "idx": 456,
       "alias": [
         "widget.window"
       ],
@@ -10595,10 +10720,10 @@ var Ext = Ext || {};
         "classic"
       ],
       "type": "toolkit",
-      "version": "6.2.0.589"
+      "version": "6.2.0.981"
     },
     "cmd": {
-      "version": "6.2.0.46"
+      "version": "6.2.0.103"
     },
     "core": {
       "alternateName": [
@@ -10609,14 +10734,14 @@ var Ext = Ext || {};
         "ext"
       ],
       "type": "code",
-      "version": "6.2.0.589"
+      "version": "6.2.0.981"
     },
     "ext": {
       "build": {
         "dir": "${package.output.base}"
       },
       "creator": "Sencha",
-      "license": "beta",
+      "license": "gpl",
       "namespace": "Ext",
       "requires": [],
       "resource": {
@@ -10625,7 +10750,7 @@ var Ext = Ext || {};
         ]
       },
       "type": "framework",
-      "version": "6.2.0.589"
+      "version": "6.2.0.981"
     }
   },
   "bootRelative": true
@@ -11088,11 +11213,7 @@ Ext.Boot = Ext.Boot || (function(emptyFn) {
                 Boot.isIE8 = Boot.hasReadyState && !Boot.hasAsync && Boot.hasDefer && !Boot.hasOnLoad;
                 Boot.isIE9 = Boot.hasReadyState && !Boot.hasAsync && Boot.hasDefer && Boot.hasOnLoad;
                 Boot.isIE10p = Boot.hasReadyState && Boot.hasAsync && Boot.hasDefer && Boot.hasOnLoad;
-                /*@cc_on
-                    if (@_jscript_version === 10) {
-                        Boot.isIE10 = true;
-                    }
-                  @*/
+                Boot.isIE10 = (new Function('/*@cc_on return @_jscript_version @*/')()) === 10;
                 Boot.isIE10m = Boot.isIE10 || Boot.isIE9 || Boot.isIE8;
                 // IE11 does not support conditional compilation so we detect it by exclusion
                 Boot.isIE11 = Boot.isIE10p && !Boot.isIE10;
@@ -12233,6 +12354,9 @@ var Ext = Ext || {};
     // Mark these special fn's for easy identification:
     emptyFn.$nullFn = identityFn.$nullFn = emptyFn.$emptyFn = identityFn.$identityFn = privateFn.$nullFn = true;
     privateFn.$privacy = 'framework';
+    // We also want to prevent these functions from being cleaned up on destroy
+    emptyFn.$noClearOnDestroy = identityFn.$noClearOnDestroy = true;
+    privateFn.$noClearOnDestroy = true;
     // These are emptyFn's in core and are redefined only in Ext JS (we use this syntax
     // so Cmd does not detect them):
     Ext['suspendLayouts'] = Ext['resumeLayouts'] = emptyFn;
@@ -13575,9 +13699,14 @@ Ext.Array = (function() {
             return array;
         },
         spliceSim = function(array, index, removeCount) {
-            var pos = fixArrayIndex(array, index),
-                removed = array.slice(index, fixArrayIndex(array, pos + removeCount));
-            if (arguments.length < 4) {
+            var len = arguments.length,
+                pos = fixArrayIndex(array, index),
+                removed;
+            if (len < 3) {
+                removeCount = array.length - pos;
+            }
+            removed = array.slice(index, fixArrayIndex(array, pos + removeCount));
+            if (len < 4) {
                 replaceSim(array, pos, removeCount);
             } else {
                 replaceSim(array, pos, removeCount, slice.call(arguments, 3));
@@ -17961,6 +18090,22 @@ Ext.Function = (function() {
                     return fn.apply(scope || this, arguments);
                 });
             },
+            interceptAfterOnce: function(object, methodName, fn, scope) {
+                var origMethod = object[methodName],
+                    newMethod;
+                newMethod = function() {
+                    var ret;
+                    if (origMethod) {
+                        origMethod.apply(this, arguments);
+                    }
+                    ret = fn.apply(scope || this, arguments);
+                    object[methodName] = origMethod;
+                    object = methodName = fn = scope = origMethod = newMethod = null;
+                    return ret;
+                };
+                object[methodName] = newMethod;
+                return newMethod;
+            },
             makeCallback: function(callback, scope) {
                 if (!scope[callback]) {
                     if (scope.$className) {
@@ -20874,8 +21019,8 @@ Ext.apply(Ext, {
         }
     }
     if (!packages.ext && !packages.touch) {
-        Ext.setVersion('ext', '6.2.0.589');
-        Ext.setVersion('core', '6.2.0.589');
+        Ext.setVersion('ext', '6.2.0.981');
+        Ext.setVersion('core', '6.2.0.981');
     }
 })(Ext.manifest);
 
@@ -20991,7 +21136,7 @@ Ext.Config.prototype = {
      * @cfg {Boolean} [evented=false]
      * When set as `true` the config property will be treated as a {@link Ext.Evented Evented Config}.
      * @private
-     * @since 5.5.0
+     * @since 6.0.0
      */
     /**
      * @cfg {Function} [merge]
@@ -21336,6 +21481,7 @@ Ext.Config.prototype = {
                 value = config[name];
                 isObject = value && value.constructor === Object;
                 meta = isObject && '$value' in value ? value : null;
+                isCached = false;
                 if (meta) {
                     isCached = !!meta.cached;
                     value = meta.$value;
@@ -21501,7 +21647,7 @@ Ext.Config.prototype = {
                 values = me.values,
                 remaining = 0,
                 firstInstance = !initList,
-                cachedInitList, cfg, getter, needsInit, i, internalName, ln, names, name, value, isCached, valuesKey, field;
+                cachedInitList, cfg, getter, i, internalName, ln, names, name, value, isCached, valuesKey, field;
             values = me.needsFork ? ExtObject.fork(values) : ExtObject.chain(values);
             // Let apply/update methods know that the initConfig is currently running.
             instance.isConfiguring = true;
@@ -21512,10 +21658,9 @@ Ext.Config.prototype = {
                 me.initListMap = initListMap = {};
                 instance.isFirstInstance = true;
                 for (name in initMap) {
-                    needsInit = initMap[name];
                     cfg = configs[name];
                     isCached = cfg.cached;
-                    if (needsInit) {
+                    if (initMap[name]) {
                         names = cfg.names;
                         value = values[name];
                         if (!prototype[names.set].$isDefault || prototype[names.apply] || prototype[names.update] || typeof value === 'object') {
@@ -21959,7 +22104,39 @@ Ext.Base = (function(flexSetter) {
         oneMember = {},
         aliasOneMember = {},
         Base = function() {},
-        BasePrototype = Base.prototype;
+        BasePrototype = Base.prototype,
+        Reaper;
+    Ext.Reaper = Reaper = {
+        delay: 100,
+        queue: [],
+        timer: null,
+        add: function(obj) {
+            if (!Reaper.timer) {
+                Reaper.timer = Ext.defer(Reaper.tick, Reaper.delay);
+            }
+            Reaper.queue.push(obj);
+        },
+        flush: function() {
+            if (Reaper.timer) {
+                clearTimeout(Reaper.timer);
+                Reaper.timer = null;
+            }
+            var queue = Reaper.queue,
+                n = queue.length,
+                i, obj;
+            Reaper.queue = [];
+            for (i = 0; i < n; ++i) {
+                obj = queue[i];
+                if (obj && obj.$reap) {
+                    obj.$reap();
+                }
+            }
+        },
+        tick: function() {
+            Reaper.timer = null;
+            Reaper.flush();
+        }
+    };
     // These static properties will be copied to every newly created class with {@link Ext#define}
     Ext.apply(Base, {
         $className: 'Ext.Base',
@@ -22181,22 +22358,21 @@ Ext.Base = (function(flexSetter) {
         extend: function(parent) {
             var me = this,
                 parentPrototype = parent.prototype,
-                prototype, i, ln, name, statics;
+                prototype, name, statics;
             prototype = me.prototype = Ext.Object.chain(parentPrototype);
             prototype.self = me;
             me.superclass = prototype.superclass = parentPrototype;
             if (!parent.$isClass) {
-                for (i in BasePrototype) {
-                    if (i in prototype) {
-                        prototype[i] = BasePrototype[i];
+                for (name in BasePrototype) {
+                    if (name in prototype) {
+                        prototype[name] = BasePrototype[name];
                     }
                 }
             }
             // Statics inheritance
             statics = parentPrototype.$inheritableStatics;
             if (statics) {
-                for (i = 0 , ln = statics.length; i < ln; i++) {
-                    name = statics[i];
+                for (name in statics) {
                     if (!me.hasOwnProperty(name)) {
                         me[name] = parent[name];
                     }
@@ -22272,13 +22448,12 @@ Ext.Base = (function(flexSetter) {
          */
         addInheritableStatics: function(members) {
             var me = this,
-                prototype = me.prototype,
-                inheritableStatics, hasInheritableStatics, name, member, current;
-            inheritableStatics = prototype.$inheritableStatics;
-            hasInheritableStatics = prototype.$hasInheritableStatics;
+                proto = me.prototype,
+                inheritableStatics = me.$inheritableStatics,
+                name, member, current;
             if (!inheritableStatics) {
-                inheritableStatics = prototype.$inheritableStatics = [];
-                hasInheritableStatics = prototype.$hasInheritableStatics = {};
+                inheritableStatics = Ext.apply({}, proto.$inheritableStatics);
+                me.$inheritableStatics = proto.$inheritableStatics = inheritableStatics;
             }
             var className = Ext.getClassName(me) + '.';
             for (name in members) {
@@ -22292,10 +22467,7 @@ Ext.Base = (function(flexSetter) {
                         member.$previous = current;
                     }
                     me[name] = member;
-                    if (!hasInheritableStatics[name]) {
-                        hasInheritableStatics[name] = true;
-                        inheritableStatics.push(name);
-                    }
+                    inheritableStatics[name] = true;
                 }
             }
             return me;
@@ -22640,7 +22812,7 @@ Ext.Base = (function(flexSetter) {
          */
         mixin: function(name, mixinClass) {
             var me = this,
-                mixin, prototype, key, statics, i, ln, mixinName, staticName, mixinValue, mixins, mixinStatics;
+                mixin, prototype, key, statics, i, ln, mixinName, name, mixinValue, mixins, mixinStatics;
             if (typeof name !== 'string') {
                 mixins = name;
                 if (mixins instanceof Array) {
@@ -22693,10 +22865,9 @@ Ext.Base = (function(flexSetter) {
             statics = mixin.$inheritableStatics;
             if (statics) {
                 mixinStatics = {};
-                for (i = 0 , ln = statics.length; i < ln; i++) {
-                    staticName = statics[i];
-                    if (!me.hasOwnProperty(staticName)) {
-                        mixinStatics[staticName] = mixinClass[staticName];
+                for (name in statics) {
+                    if (!me.hasOwnProperty(name)) {
+                        mixinStatics[name] = mixinClass[name];
                     }
                 }
                 me.addInheritableStatics(mixinStatics);
@@ -22863,6 +23034,30 @@ Ext.Base = (function(flexSetter) {
          * @protected
          */
         destroyed: false,
+        /**
+         * @property {Boolean/"async"} [clearPropertiesOnDestroy=true]
+         * Setting this property to `false` will prevent nulling object references
+         * on a Class instance after destruction. Setting this to `"async"` will delay
+         * the clearing for approx 50ms.
+         * @protected
+         * @since 6.2.0
+         */
+        clearPropertiesOnDestroy: true,
+        /**
+         * @property {Boolean} [clearPrototypeOnDestroy=false]
+         * Setting this property to `true` will result in setting the object's
+         * prototype to `null` after the destruction sequence is fully completed.
+         * After that, most attempts at calling methods on the object instance
+         * will result in "method not defined" exception. This can be very helpful
+         * with tracking down otherwise hard to find bugs like runaway Ajax requests,
+         * timed functions not cleared on destruction, etc.
+         *
+         * Note that this option can only work in browsers that support `Object.setPrototypeOf`
+         * method, and is only available in debugging mode.
+         * @private
+         * @since 6.2.0
+         */
+        clearPrototypeOnDestroy: false,
         /**
          * Get the reference to the class from which this object was instantiated. Note that unlike {@link Ext.Base#self},
          * `this.statics()` is scope-independent and it always returns the class from which it was called, regardless of what
@@ -23150,9 +23345,6 @@ Ext.Base = (function(flexSetter) {
         constructor: function() {
             return this;
         },
-        getConfigurator: function() {
-            return this.$config || this.self.getConfigurator();
-        },
         /**
          * Initialize configuration for this class. a typical example:
          *
@@ -23180,7 +23372,7 @@ Ext.Base = (function(flexSetter) {
          */
         initConfig: function(instanceConfig) {
             var me = this,
-                cfg = me.getConfigurator();
+                cfg = me.self.getConfigurator();
             me.initConfig = Ext.emptyFn;
             // ignore subsequent calls to initConfig
             me.initialConfig = instanceConfig || {};
@@ -23220,7 +23412,7 @@ Ext.Base = (function(flexSetter) {
                 } else {
                     config = name;
                 }
-                me.getConfigurator().reconfigure(me, config, options);
+                me.self.getConfigurator().reconfigure(me, config, options);
             }
             return me;
         },
@@ -23228,7 +23420,7 @@ Ext.Base = (function(flexSetter) {
          * @private
          */
         getCurrentConfig: function() {
-            var cfg = this.getConfigurator();
+            var cfg = this.self.getConfigurator();
             return cfg.getCurrentConfig(this);
         },
         /**
@@ -23321,20 +23513,58 @@ Ext.Base = (function(flexSetter) {
             }
             return me;
         },
+        $reap: function() {
+            var me = this,
+                protectedProps = me.$noClearOnDestroy,
+                prop, value, type;
+            for (prop in me) {
+                if ((!protectedProps || !protectedProps[prop]) && me.hasOwnProperty(prop)) {
+                    value = me[prop];
+                    type = typeof value;
+                    // Object may retain references to other objects. Functions can do too
+                    // if they are closures, and most of the *own* function properties
+                    // are closures indeed. We skip Ext.emptyFn and the like though,
+                    // they're mostly harmless.
+                    if (type === 'object' || (type === 'function' && !value.$noClearOnDestroy)) {
+                        me[prop] = null;
+                    }
+                }
+            }
+            // We also want to make sure no methods are called on the destroyed object,
+            // because that may lead to accessing nulled properties and resulting exceptions.
+            if (me.clearPrototypeOnDestroy && !me.$vetoClearingPrototypeOnDestroy && Object.setPrototypeOf) {
+                Object.setPrototypeOf(me, null);
+            }
+        },
         /**
          * This method is called to cleanup an object and its resources. After calling
-         * this method, the object should not be used any further.
+         * this method, the object should not be used any further in any way, including
+         * access to its methods and properties.
+         *
+         * To prevent potential memory leaks, all object references will be nulled
+         * at the end of destruction sequence, unless {@link #clearPropertiesOnDestroy}
+         * is set to `false`.
          */
         destroy: function() {
             var me = this,
-                links = me.$links;
-            me.initialConfig = me.config = null;
-            me.destroy = Ext.emptyFn;
-            // isDestroyed added for compat reasons
-            me.isDestroyed = me.destroyed = true;
+                links = me.$links,
+                clearPropertiesOnDestroy = me.clearPropertiesOnDestroy;
             if (links) {
                 me.$links = null;
                 me.unlink(Ext.Object.getKeys(links));
+            }
+            me.destroy = Ext.emptyFn;
+            // isDestroyed added for compat reasons
+            me.isDestroyed = me.destroyed = true;
+            // By this time the destruction is complete. Now we can make sure
+            // no objects are retained by the husk of this ex-Instance.
+            if (clearPropertiesOnDestroy === true) {
+                me.$reap();
+            } else if (clearPropertiesOnDestroy) {
+                if (clearPropertiesOnDestroy !== 'async') {
+                    Ext.raise('Invalid value for clearPropertiesOnDestroy');
+                }
+                Reaper.add(me);
             }
         }
     });
@@ -24035,7 +24265,7 @@ Ext.Base = (function(flexSetter) {
      * evaluates to `true` will have its configs applied to the class. In this case, only
      * the "title" property, but the object can contain any number of config properties.
      * In this case, the `platformConfig` is evaluated as part of the class and there is
-     * not cost for each instance created.
+     * no cost for each instance created.
      *
      * The rules are evaluated expressions in the context of the platform tags contained
      * in `{@link Ext#platformTags Ext.platformTags}`. Any properties of that object are
@@ -26493,10 +26723,13 @@ Ext.ClassManager = (function(Class, alias, arraySlice, arrayFrom, global) {
         }
         data.xtypesChain = xtypesChain;
         data.xtypesMap = xtypesMap;
-        Ext.Function.interceptAfter(data, 'onClassCreated', function() {
-            Ext.classSystemMonitor && Ext.classSystemMonitor(cls, 'Ext.ClassManager#aliasPreprocessor#afterClassCreated', arguments);
-            var mixins = prototype.mixins,
+        // Class is already extended at this point
+        Ext.Function.interceptAfterOnce(cls, 'onClassCreated', function() {
+            var cls = this,
+                prototype = cls.prototype,
+                mixins = prototype.mixins,
                 key, mixin;
+            Ext.classSystemMonitor && Ext.classSystemMonitor(cls, 'Ext.ClassManager#aliasPreprocessor#afterClassCreated', arguments);
             for (key in mixins) {
                 if (mixins.hasOwnProperty(key)) {
                     mixin = mixins[key];
@@ -27178,6 +27411,12 @@ Ext.env.OS = function(userAgent, platform, browserScope) {
     }
     this.name = name;
     this.version = version;
+    // This is added as a workaround for Chrome iPad emulation mode
+    // it will report the platform of the machine (MacIntel, Win32, etc) instead
+    // of an emulated platform
+    if (userAgent.match(/ipad/i)) {
+        platform = 'iPad';
+    }
     if (platform) {
         this.setFlag(platform.replace(/ simulator$/i, ''));
     }
@@ -30422,7 +30661,7 @@ if (Ext._beforereadyhandler) {
 }
 
 /**
- *
+ * @class Ext.util.Positionable
  */
 Ext.define('Ext.overrides.util.Positionable', {
     override: 'Ext.util.Positionable',
@@ -30478,7 +30717,7 @@ Ext.define('Ext.overrides.util.Positionable', {
     getAnchor: function() {
         var el = this.el,
             data, anchor;
-        if (!el.dom) {
+        if (!el || !el.dom) {
             return;
         }
         data = el.getData();
@@ -30605,7 +30844,7 @@ Ext.define('Ext.overrides.util.Positionable', {
      */
 
 /**
- *
+ * @class Ext.event.Event
  */
 Ext.define('Ext.overrides.event.Event', {
     override: 'Ext.event.Event',
@@ -30859,7 +31098,7 @@ Ext.define('Ext.overrides.event.Event', {
         };
     }()),
     // call to produce method
-    preventDefault: function() {
+    preventDefault: function(browserOnly) {
         var me = this,
             event = me.browserEvent,
             parentEvent = me.parentEvent,
@@ -30868,7 +31107,13 @@ Ext.define('Ext.overrides.event.Event', {
         // invalidated, so we can't delve into the details of it. If so,
         // just fall out gracefully and don't attempt to do anything.
         if (typeof event.type !== 'unknown') {
-            me.defaultPrevented = true;
+            // In some cases we want to prevent default on the browser event
+            // but keep propagating it through our event system. For example,
+            // in Checkbox selection where the cells with checkboxes should
+            // prevent focusing on mousedown but still fire the click event.
+            if (!browserOnly) {
+                me.defaultPrevented = true;
+            }
             // if the event was created by prototype-chaining a new object to an existing event
             // instance, we need to make sure the parent event is defaultPrevented as well.
             if (parentEvent) {
@@ -31328,77 +31573,6 @@ Ext.define('Ext.overrides.dom.Element', (function() {
             }
         },
         /**
-         * Sets up event handlers to add and remove a css class when the mouse is down and then up on this element (a click effect)
-         * @param {String} className The class to add
-         * @param {Function} [testFn] A test function to execute before adding the class. The passed parameter
-         * will be the Element instance. If this functions returns false, the class will not be added.
-         * @param {Object} [scope] The scope to execute the testFn in.
-         * @return {Ext.dom.Element} this
-         */
-        addClsOnClick: function(className, testFn, scope) {
-            var me = this,
-                dom = me.dom,
-                hasTest = Ext.isFunction(testFn);
-            me.on("mousedown", function() {
-                if (hasTest && testFn.call(scope || me, me) === false) {
-                    return false;
-                }
-                Ext.fly(dom).addCls(className);
-                var d = Ext.getDoc(),
-                    fn = function() {
-                        Ext.fly(dom).removeCls(className);
-                        d.removeListener("mouseup", fn);
-                    };
-                d.on("mouseup", fn);
-            });
-            return me;
-        },
-        /**
-         * Sets up event handlers to add and remove a css class when this element has the focus
-         * @param {String} className The class to add
-         * @param {Function} [testFn] A test function to execute before adding the class. The passed parameter
-         * will be the Element instance. If this functions returns false, the class will not be added.
-         * @param {Object} [scope] The scope to execute the testFn in.
-         * @return {Ext.dom.Element} this
-         */
-        addClsOnFocus: function(className, testFn, scope) {
-            var me = this,
-                dom = me.dom,
-                hasTest = Ext.isFunction(testFn);
-            me.on("focus", function() {
-                if (hasTest && testFn.call(scope || me, me) === false) {
-                    return false;
-                }
-                Ext.fly(dom).addCls(className);
-            });
-            me.on("blur", function() {
-                Ext.fly(dom).removeCls(className);
-            });
-            return me;
-        },
-        /**
-         * Sets up event handlers to add and remove a css class when the mouse is over this element
-         * @param {String} className The class to add
-         * @param {Function} [testFn] A test function to execute before adding the class. The passed parameter
-         * will be the Element instance. If this functions returns false, the class will not be added.
-         * @param {Object} [scope] The scope to execute the testFn in.
-         * @return {Ext.dom.Element} this
-         */
-        addClsOnOver: function(className, testFn, scope) {
-            var me = this,
-                dom = me.dom,
-                hasTest = Ext.isFunction(testFn);
-            me.hover(function() {
-                if (hasTest && testFn.call(scope || me, me) === false) {
-                    return;
-                }
-                Ext.fly(dom).addCls(className);
-            }, function() {
-                Ext.fly(dom).removeCls(className);
-            });
-            return me;
-        },
-        /**
          * Convenience method for constructing a KeyMap
          * @param {String/Number/Number[]/Object} key Either a string with the keys to listen for, the numeric key code,
          * array of key codes or an object with the following options:
@@ -31769,8 +31943,11 @@ Ext.define('Ext.overrides.dom.Element', (function() {
                 dom = me.dom,
                 data = me.getData(),
                 maskEl, maskMsg;
-            if (dom && me.isAnimate) {
-                me.stopAnimation();
+            if (dom) {
+                if (me.isAnimate) {
+                    me.stopAnimation();
+                }
+                me.removeAnchor();
             }
             me.callParent();
             // prevent memory leaks in IE8
@@ -32037,7 +32214,7 @@ Ext.define('Ext.overrides.dom.Element', (function() {
         },
         /**
          * Gets an object with all CSS positioning properties. Useful along with
-         * #setPostioning to get snapshot before performing an update and then restoring
+         * `setPostioning` to get snapshot before performing an update and then restoring
          * the element.
          * @param {Boolean} [autoPx=false] true to return pixel values for "auto" styles.
          * @return {Object}
@@ -32766,7 +32943,7 @@ Ext.define('Ext.overrides.dom.Element', (function() {
             return me;
         },
         /**
-         * Set positioning with an object returned by #getPositioning.
+         * Set positioning with an object returned by `getPositioning`.
          * @param {Object} posCfg
          * @return {Ext.dom.Element} this
          */
@@ -34855,6 +35032,9 @@ Ext.define('Ext.overrides.dom.Element', (function() {
         if (Ext.isIE11) {
             bodyCls.push(Ext.baseCSSPrefix + 'ie11');
         }
+        if (Ext.isEdge) {
+            bodyCls.push(Ext.baseCSSPrefix + 'edge');
+        }
         if (Ext.isGecko) {
             bodyCls.push(Ext.baseCSSPrefix + 'gecko');
         }
@@ -34887,6 +35067,9 @@ Ext.define('Ext.overrides.dom.Element', (function() {
         }
         if (supports.Touch) {
             bodyCls.push(Ext.baseCSSPrefix + 'touch');
+        }
+        if (Ext.os.deviceType) {
+            bodyCls.push(Ext.baseCSSPrefix + Ext.os.deviceType.toLowerCase());
         }
         //Ext.fly(document.documentElement).addCls(htmlCls);
         Ext.getBody().addCls(bodyCls);
@@ -34943,7 +35126,7 @@ Ext.define('Ext.overrides.GlobalEvents', {
 });
 
 /**
- *
+ * @class Ext.Widget
  */
 Ext.define('Ext.overrides.Widget', {
     override: 'Ext.Widget',
@@ -35040,8 +35223,7 @@ Ext.define('Ext.overrides.Widget', {
         return Ext.Component.prototype.getSizeModel.apply(this, arguments);
     },
     onAdded: function(container, pos, instanced) {
-        var me = this,
-            inheritedState = me.inheritedState;
+        var me = this;
         me.ownerCt = container;
         me.onInheritedAdd(me, instanced);
     },
@@ -35097,6 +35279,32 @@ Ext.define('Ext.overrides.Widget', {
     isLayoutChild: function(candidate) {
         var ownerCt = this.ownerCt;
         return ownerCt ? (ownerCt === candidate || ownerCt.isLayoutChild(candidate)) : false;
+    },
+    privates: {
+        doAddListener: function(name, fn, scope, options, order, caller, manager) {
+            if (name == 'painted' || name == 'resize') {
+                this.element.doAddListener(name, fn, scope || this, options, order);
+            }
+            this.callParent([
+                name,
+                fn,
+                scope,
+                options,
+                order,
+                caller,
+                manager
+            ]);
+        },
+        doRemoveListener: function(name, fn, scope) {
+            if (name == 'painted' || name == 'resize') {
+                this.element.doRemoveListener(name, fn, scope);
+            }
+            this.callParent([
+                name,
+                fn,
+                scope
+            ]);
+        }
     }
 }, function(Cls) {
     var prototype = Cls.prototype;
@@ -35107,10 +35315,23 @@ Ext.define('Ext.overrides.Widget', {
     }
 });
 
+/**
+ * @class Ext.Progress
+ */
 Ext.define('Ext.overrides.Progress', {
     override: 'Ext.Progress',
     config: {
         ui: 'default'
+    },
+    updateWidth: function(width, oldWidth) {
+        var me = this;
+        me.callParent([
+            width,
+            oldWidth
+        ]);
+        width -= me.element.getBorderWidth('lr');
+        me.backgroundEl.setWidth(width);
+        me.textEl.setWidth(width);
     }
 });
 
@@ -35175,7 +35396,7 @@ Ext.application = function(config) {
 };
 
 /**
- *
+ * @class Ext.app.Application
  */
 Ext.define('Ext.overrides.app.Application', {
     override: 'Ext.app.Application',
@@ -35192,10 +35413,19 @@ Ext.define('Ext.overrides.app.Application', {
     config: {
         /**
          * @cfg {Boolean} enableQuickTips
-         * True to automatically set up Ext.tip.QuickTip support.
-         * @member Ext.app.Application
+         * @deprecated 6.2.0 Use {@link #quickTips}.
          */
-        enableQuickTips: true
+        enableQuickTips: null
+    },
+    /**
+     * @cfg {Boolean} quickTips
+     * True to automatically set up Ext.tip.QuickTip support.
+     *
+     * @since 6.2.0
+     */
+    quickTips: true,
+    updateEnableQuickTips: function(enableQuickTips) {
+        this.setQuickTips(enableQuickTips);
     },
     applyMainView: function(mainView) {
         var view, proto, config, plugins;
@@ -35237,7 +35467,7 @@ Ext.define('Ext.overrides.app.Application', {
     onBeforeLaunch: function() {
         var me = this,
             autoCreateViewport = me.autoCreateViewport;
-        if (me.getEnableQuickTips()) {
+        if (me.getQuickTips()) {
             me.initQuickTips();
         }
         if (autoCreateViewport) {
@@ -35261,6 +35491,24 @@ Ext.define('Ext.overrides.app.Application', {
     }
 });
 
+Ext.define('Ext.overrides.app.domain.View', {
+    override: 'Ext.app.domain.View',
+    requires: [
+        'Ext.Component'
+    ],
+    constructor: function(controller) {
+        this.callParent([
+            controller
+        ]);
+        // The base class handles Ext.Widget, which encompasses
+        // component for modern, so we only need the override here.
+        this.monitoredClasses.push(Ext.Component);
+    }
+});
+
+/**
+ * @class Ext.dom.Helper
+ */
 Ext.define('Ext.overrides.dom.Helper', (function() {
     var tableRe = /^(?:table|thead|tbody|tr|td)$/i,
         tableElRe = /td|tr|tbody|thead/i,
@@ -35351,6 +35599,9 @@ Ext.define('Ext.overrides.dom.Helper', (function() {
     };
 })());
 
+/**
+ * @class Ext.list.TreeItem
+ */
 Ext.define('Ext.overrides.list.TreeItem', {
     override: 'Ext.list.TreeItem',
     config: {
@@ -35441,7 +35692,7 @@ Ext.define('Ext.overrides.list.TreeItem', {
 });
 
 /**
- *
+ * @class Ext.plugin.Abstract
  */
 Ext.define('Ext.overrides.plugin.Abstract', {
     override: 'Ext.plugin.Abstract',
@@ -35491,6 +35742,47 @@ Ext.define('Ext.overrides.plugin.Abstract', {
      */
     disable: function() {
         this.disabled = true;
+    }
+});
+
+/**
+ * @class Ext.sparkline.Base
+ */
+Ext.define('Ext.override.sparkline.Base', {
+    override: 'Ext.sparkline.Base',
+    statics: {
+        constructTip: function() {
+            return new Ext.tip['ToolTip']({
+                id: 'sparklines-tooltip',
+                showDelay: 0,
+                dismissDelay: 0,
+                hideDelay: 400
+            });
+        }
+    },
+    onMouseMove: function(e) {
+        this.tooltip.triggerEvent = e;
+        this.callParent([
+            e
+        ]);
+    },
+    onMouseLeave: function(e) {
+        this.callParent([
+            e
+        ]);
+        this.tooltip.target = null;
+    },
+    privates: {
+        hideTip: function() {
+            var tip = this.tooltip;
+            tip.target = null;
+            tip.hide();
+        },
+        showTip: function() {
+            var tip = this.tooltip;
+            tip.target = this.el;
+            tip.onTargetOver(tip.triggerEvent);
+        }
     }
 });
 

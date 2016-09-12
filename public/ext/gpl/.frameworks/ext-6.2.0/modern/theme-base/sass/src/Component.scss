@@ -32,7 +32,7 @@ font-weight: normal;
 }
 
 li {
-list-style: none;
+list-style-type: none;
 }
 
 caption, th {
@@ -116,11 +116,31 @@ input, textarea {
     -webkit-touch-callout: inherit;
     -ms-user-select: auto;
 
-    ul li {
-        list-style-type: circle;
+    ul {
+        list-style-position: inside; 
+
+        li {
+            list-style-type: disc;
+        }
     }
-    ol li {
-        list-style-type: decimal;
+
+    ol { 
+        list-style-position: inside; 
+
+        li {
+            list-style-type: decimal; 
+        }
+    }
+
+    ul ul, ol ul { 
+        list-style-type: circle; 
+        list-style-position: inside; 
+        margin-left: 15px; 
+    }
+    ol ol, ul ol { 
+        list-style-type: lower-latin; 
+        list-style-position: inside; 
+        margin-left: 15px; 
     }
 }
 
@@ -213,8 +233,153 @@ input, textarea {
     @include border-radius($css-shadow-border-radius);
 }
 
-.#{$prefix}float-shadow {
+.#{$prefix}shadow {
     -webkit-box-shadow: $shadow-x-offset $shadow-y-offset $shadow-blur-radius $shadow-width $shadow-color;
-    -moz-box-shadow: $shadow-x-offset $shadow-y-offset $shadow-blur-radius $shadow-width $shadow-color;
     box-shadow: $shadow-x-offset $shadow-y-offset $shadow-blur-radius $shadow-width $shadow-color;
+}
+
+@if ($enable-floated-shadows) {
+    .#{$prefix}floated {
+        @extend .#{$prefix}shadow;
+    }
+}
+
+.#{$prefix}no-shadow {
+    -webkit-box-shadow: none !important;
+    box-shadow: none !important;
+}
+
+.#{$prefix}floating {
+    position: absolute !important;
+}
+
+.#{$prefix}center {
+    @include absolute-position();
+    @include st-box();
+    @include st-box-align(center);
+    @include st-box-pack(center);
+
+    > * {
+        position: relative;
+    }
+
+    > .#{$prefix}floating {
+        position: relative !important;
+	}
+}
+
+@if ($enable-status-bar-padding) {
+    // Must a native iOS app (not standalone)
+    // Must not be phone AND landscape (status bar disappears in landscape for phones)
+    .#{$prefix}ios-native:not(.#{$prefix}phone.#{$prefix}landscape) {
+        padding-top: 20px;
+    }
+}
+
+.#{$prefix}font-icon {
+    font-weight: normal;
+    // Flexbox layout is used to vertically center the icon inside the element.
+    // The pseudo el below may or may not be the same size as the icon element's font-size
+    // therefore we cannot rely on line-height: 1 to vertically center the icon.
+    // If block behavior is needed, use flex instead of inline-flex.
+    @include st-inline-box;
+    @include st-box-align(center);
+    @include st-box-pack(center);
+
+    &:before {
+        @include st-box();
+        line-height: 1;
+        font-style: normal;
+        text-transform: none;
+        letter-spacing: normal;
+        word-wrap: normal;
+        white-space: nowrap;
+        direction: ltr;
+
+        /* Support for all WebKit browsers. */
+        -webkit-font-smoothing: antialiased;
+
+        /* Support for Firefox. */
+        -moz-osx-font-smoothing: grayscale;
+
+        /* Roboto uses ligatures.  Android and IE seem to need this */
+        font-feature-settings: 'liga';
+
+        /* Support for Safari and Chrome. */
+        text-rendering: optimizeLegibility;
+    }
+}
+
+.#{$prefix}noborder-l {
+    border-left-width: 0 !important;
+}
+
+.#{$prefix}noborder-b {
+    border-bottom-width: 0 !important;
+}
+
+.#{$prefix}noborder-bl {
+    border-bottom-width: 0 !important;
+    border-left-width: 0 !important;
+}
+
+.#{$prefix}noborder-r {
+    border-right-width: 0 !important;
+}
+
+.#{$prefix}noborder-rl {
+    border-right-width: 0 !important;
+    border-left-width: 0 !important;
+}
+
+.#{$prefix}noborder-rb {
+    border-right-width: 0 !important;
+    border-bottom-width: 0 !important;
+}
+
+.#{$prefix}noborder-rbl {
+    border-right-width: 0 !important;
+    border-bottom-width: 0 !important;
+    border-left-width: 0 !important;
+}
+
+.#{$prefix}noborder-t {
+    border-top-width: 0 !important;
+}
+
+.#{$prefix}noborder-tl {
+    border-top-width: 0 !important;
+    border-left-width: 0 !important;
+}
+
+.#{$prefix}noborder-tb {
+    border-top-width: 0 !important;
+    border-bottom-width: 0 !important;
+}
+
+.#{$prefix}noborder-tbl {
+    border-top-width: 0 !important;
+    border-bottom-width: 0 !important;
+    border-left-width: 0 !important;
+}
+
+.#{$prefix}noborder-tr {
+    border-top-width: 0 !important;
+    border-right-width: 0 !important;
+}
+
+.#{$prefix}noborder-trl {
+    border-top-width: 0 !important;
+    border-right-width: 0 !important;
+    border-left-width: 0 !important;
+}
+
+.#{$prefix}noborder-trb {
+    border-top-width: 0 !important;
+    border-right-width: 0 !important;
+    border-bottom-width: 0 !important;
+}
+
+.#{$prefix}noborder-trbl {
+    border-width: 0 !important;
 }

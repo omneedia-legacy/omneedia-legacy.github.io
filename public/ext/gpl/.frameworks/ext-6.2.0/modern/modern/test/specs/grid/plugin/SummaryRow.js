@@ -25,7 +25,7 @@ describe('Ext.grid.plugin.SummaryRow', function () {
                 { header: 'Email', dataIndex: 'email', width: 100 },
                 { header: 'Phone', dataIndex: 'phone', width: 100 }
             ],
-            plugins: [{ type: 'gridsummaryrow'}],
+            plugins: [{ type: 'summaryrow'}],
             height: 200,
             width: 400
         }, gridCfg));
@@ -34,7 +34,7 @@ describe('Ext.grid.plugin.SummaryRow', function () {
     }
 
     function getCell(column) {
-        var sRow = panel.container.items.getAt(2);
+        var sRow = panel.findPlugin('summaryrow');
         return sRow ? sRow.query('gridcell')[column] : null;
     }
 
@@ -75,7 +75,7 @@ describe('Ext.grid.plugin.SummaryRow', function () {
                 renderTo: Ext.getBody()
             });
 
-            expect(getCell(0).el.down('.x-grid-cell-inner', true).innerHTML).toBe('4');
+            expect(getCell(0).el.down('.x-inner-el', true).innerHTML).toBe('4');
         });
 
         it('should apply the formatter correctly', function () {
@@ -87,7 +87,7 @@ describe('Ext.grid.plugin.SummaryRow', function () {
                 renderTo: Ext.getBody()
             });
 
-            expect(getCell(0).el.down('.x-grid-cell-inner', true).innerHTML).toBe('7,408.43');
+            expect(getCell(0).el.down('.x-inner-el', true).innerHTML).toBe('7,408.43');
         });
 
         it('should apply the scoped formatter correctly', function () {
@@ -104,7 +104,7 @@ describe('Ext.grid.plugin.SummaryRow', function () {
                 renderTo: Ext.getBody()
             });
 
-            expect(getCell(0).el.down('.x-grid-cell-inner', true).innerHTML).toBe('7,408.43');
+            expect(getCell(0).el.down('.x-inner-el', true).innerHTML).toBe('7,408.43');
         });
 
         it('should apply the renderer correctly', function () {
@@ -116,7 +116,7 @@ describe('Ext.grid.plugin.SummaryRow', function () {
                 renderTo: Ext.getBody()
             });
 
-            expect(getCell(0).el.down('.x-grid-cell-inner', true).innerHTML).toBe('7,408.43');
+            expect(getCell(0).el.down('.x-inner-el', true).innerHTML).toBe('7,408.43');
         });
 
         it('should apply the scoped renderer correctly', function () {
@@ -133,7 +133,7 @@ describe('Ext.grid.plugin.SummaryRow', function () {
                 renderTo: Ext.getBody()
             });
 
-            expect(getCell(0).el.down('.x-grid-cell-inner', true).innerHTML).toBe('7,408.43');
+            expect(getCell(0).el.down('.x-inner-el', true).innerHTML).toBe('7,408.43');
         });
 
 

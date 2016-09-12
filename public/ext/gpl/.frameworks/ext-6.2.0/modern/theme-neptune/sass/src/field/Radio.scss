@@ -1,42 +1,13 @@
-.#{$prefix}radiofield {
-    .#{$prefix}input {
-        height: $radiofield-checkbox-size;
-        width: $radiofield-checkbox-size;
-        line-height: $radiofield-checkbox-size;
-        font-size: $radiofield-checkbox-font-size;
-        color: $radiofield-checkbox-color;
-
-        @if $enable-big {
-            .#{$prefix}big & {
-                font-size: $radiofield-checkbox-font-size-big;
-            }
-        }
-
-        @include font-icon($radiofield-checkbox-icon);
-    }
-
-    .#{$prefix}field-body {
-        padding: $radiofield-body-padding;
-
-        @if $enable-big {
-            .#{$prefix}big {
-                padding: $radiofield-body-padding-big;
-            }
-        }
-    }
-}
-
-.#{$prefix}radiofield.#{$prefix}checkboxfield-checked .#{$prefix}input {
-    @include font-icon($radiofield-checked-checkbox-icon);
-    color: $radiofield-checked-checkbox-color;
-
-    &.#{$prefix}item-disabled {
-        color: $radiofield-disabled-checkbox-color;
-    }
-
-    @if $enable-big {
-        .#{$prefix}big & {
-            font-size: $radiofield-checkbox-font-size-big;
-        }
-    }
-}
+@include radiofield-ui(
+    $checkbox-size: $radiofield-checkbox-size,
+    $checkbox-size-big: $radiofield-checkbox-size-big,
+    $checkbox-font-size: $radiofield-checkbox-font-size,
+    $checkbox-font-size-big: $radiofield-checkbox-font-size-big,
+    $checkbox-margin: $radiofield-checkbox-margin,
+    $checkbox-margin-big: $radiofield-checkbox-margin-big,
+    $checkbox-icon: $radiofield-checkbox-icon,
+    $checked-checkbox-icon: $radiofield-checked-checkbox-icon,
+    $checkbox-color: $radiofield-checkbox-color,
+    $checked-checkbox-color: $radiofield-checked-checkbox-color,
+    $disabled-checkbox-color: $radiofield-disabled-checkbox-color
+);

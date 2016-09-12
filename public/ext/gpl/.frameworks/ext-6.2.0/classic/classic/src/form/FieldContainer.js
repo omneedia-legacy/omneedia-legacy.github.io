@@ -245,7 +245,7 @@ Ext.define('Ext.form.FieldContainer', {
 
     getSubTplMarkup: function(fieldData) {
         var me = this,
-            tpl = me.getTpl('fieldSubTpl'),
+            tpl = me.lookupTpl('fieldSubTpl'),
             html;
 
         if (!tpl.renderContent) {
@@ -342,7 +342,7 @@ Ext.define('Ext.form.FieldContainer', {
         initRenderTpl: function() {
             var me = this;
             if (!me.hasOwnProperty('renderTpl')) {
-                me.renderTpl = me.getTpl('labelableRenderTpl');
+                me.renderTpl = me.lookupTpl('labelableRenderTpl');
             }
             return me.callParent();
         }

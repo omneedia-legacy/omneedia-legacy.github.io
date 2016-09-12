@@ -14,14 +14,6 @@ describe("Ext.panel.Tool", function() {
         return tool;
     }
     
-    function expectAria(attr, value) {
-        jasmine.expectAriaAttr(tool, attr, value);
-    }
-    
-    function expectNoAria(attr) {
-        jasmine.expectNoAriaAttr(tool, attr);
-    }
-    
     afterEach(function() {
         Ext.destroy(tool);
         tool = null;
@@ -40,15 +32,15 @@ describe("Ext.panel.Tool", function() {
             });
             
             it("should have button role", function() {
-                expectAria('role', 'button');
+                expect(tool).toHaveAttr('role', 'button');
             });
             
             it("should not have title", function() {
-                expectNoAria('title');
+                expect(tool).not.toHaveAttr('title');
             });
             
             it("should not have aria-label", function() {
-                expectNoAria('aria-label');
+                expect(tool).not.toHaveAttr('aria-label');
             });
             
             describe("setTooltip", function() {
@@ -58,11 +50,11 @@ describe("Ext.panel.Tool", function() {
                     });
                     
                     it("should set aria-label", function() {
-                        expectAria('aria-label', 'foo');
+                        expect(tool).toHaveAttr('aria-label', 'foo');
                     });
                     
                     it("should not set title", function() {
-                        expectNoAria('title');
+                        expect(tool).not.toHaveAttr('title');
                     });
                 });
                 
@@ -72,11 +64,11 @@ describe("Ext.panel.Tool", function() {
                     });
                     
                     it("should set title", function() {
-                        expectAria('title', 'bar');
+                        expect(tool).toHaveAttr('title', 'bar');
                     });
                     
                     it("should not set aria-label", function() {
-                        expectNoAria('aria-label');
+                        expect(tool).not.toHaveAttr('aria-label');
                     });
                 });
             });
@@ -91,11 +83,11 @@ describe("Ext.panel.Tool", function() {
             });
             
             it("should set aria-label", function() {
-                expectAria('aria-label', 'frob');
+                expect(tool).toHaveAttr('aria-label', 'frob');
             });
             
             it("should not set title", function() {
-                expectNoAria('title');
+                expect(tool).not.toHaveAttr('title');
             });
         });
     });
@@ -482,6 +474,7 @@ describe("Ext.panel.Tool", function() {
 
                 tool.render(Ext.getBody());
 
+                expect(tool.toolEl).not.toHaveCls('x-tool-img');
                 expect(tool.toolEl).toHaveCls('bar-icon-cls');
                 expect(tool.toolEl).not.toHaveCls('foo-icon-cls');
             });

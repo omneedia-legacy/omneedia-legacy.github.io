@@ -600,16 +600,13 @@ Ext.define('Ext.LoadMask', {
         this.hide();
     },
 
-    beforeDestroy: function() {
+    doDestroy: function() {
+        var me = this;
+
         // We don't have a real ownerCt, so clear it out here to prevent
         // spurious warnings when we are destroyed
-        this.ownerCt = null;
-        this.bindStore(null);
-        this.callParent();
-    },
-
-    onDestroy: function() {
-        var me = this;
+        me.ownerCt = null;
+        me.bindStore(null);
 
         if (me.isElement) {
             me.ownerCt.unmask();

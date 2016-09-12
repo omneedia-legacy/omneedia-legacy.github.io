@@ -1,6 +1,6 @@
 describe("Ext.toolbar.Paging", function() {
     var keyEvent = Ext.supports.SpecialKeyDownRepeat ? 'keydown' : 'keypress',
-        tb, store,
+        tb, store, store2,
         describeNotIE9_10 = Ext.isIE9 || Ext.isIE10 ? xdescribe : describe,
         synchronousLoad = true,
         proxyStoreLoad = Ext.data.ProxyStore.prototype.load,
@@ -23,7 +23,7 @@ describe("Ext.toolbar.Paging", function() {
         tb = new Ext.toolbar.Paging(cfg);
     }   
     
-    function makeStore(pageSize) {
+    function makeStore (pageSize) {
         store = new Ext.data.Store({
             model: 'spec.PagingToolbarModel',
             storeId: 'pagingToolbarStore',
@@ -84,15 +84,60 @@ describe("Ext.toolbar.Paging", function() {
         Ext.data.ProxyStore.prototype.load = proxyStoreLoad;
 
         MockAjaxManager.removeMethods();
-        Ext.destroy(tb);
-        if (store) {
-            store.destroy();
-        }
+
+        tb = Ext.destroy(tb);
+        store = Ext.destroy(store);
+        store2 = Ext.destroy(store2);
+
         Ext.undefine('spec.PagingToolbarModel');
         Ext.data.Model.schema.clear();
-        tb = store = null;
     });
-    
+
+    describe("auto store", function() {
+        var view;
+
+        beforeEach(function () {
+            view = Ext.create({
+                xtype: 'grid',
+                store: makeStore(20),
+                renderTo: Ext.getBody(),
+                width: 500,
+                height: 400,
+
+                columns: [{
+                    text: 'Name',
+                    dataIndex: 'name'
+                }],
+
+                bbar: {
+                    xtype: 'pagingtoolbar'
+                }
+            });
+        });
+
+        afterEach(function () {
+            view = Ext.destroy(view);
+        });
+
+        it('should associate to owner store', function () {
+            store.load();
+            mockComplete(makeData(200, 0));
+
+            var c = view.down('pagingtoolbar');
+            expect(c.store).toBe(view.store);
+            expect(c.store).toBe(store);
+
+            store2 = store;
+
+            view.setStore(makeStore(10));
+            store.load();
+            mockComplete(makeData(200, 0));
+
+            expect(c.store).toBe(view.store);
+            expect(c.store).toBe(store);
+        });
+    });
+
     describe("store", function() {
         it("should be able to create without a store", function() {
             expect(function() {

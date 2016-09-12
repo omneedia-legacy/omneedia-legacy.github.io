@@ -60,6 +60,18 @@ Ext.define('KitchenSink.view.grid.BigData', {
         dock: 'bottom'
     }],
 
+    layout: 'border',
+    split: true,
+    
+    lockedGridConfig: {
+        title: 'Employees',
+        header: false,
+        collapsible: true,
+        width: 325,
+        minWidth: 290,
+        forceFit: true
+    },
+
     selModel: {
         type: 'checkboxmodel',
         checkOnly: true

@@ -629,16 +629,11 @@ describe("Ext.form.Basic", function() {
 
     describe("checkValidity method", function() {
         it("should be called when a field's 'validitychange' event is fired", function() {
-            runs(function() {
-                spyOn(basicForm, 'checkValidity');
-                // Modify the task to point to the spy
-                basicForm.checkValidityTask = new Ext.util.DelayedTask(basicForm.checkValidity, basicForm);
-                var field = addField({name: 'one'});
-                field.fireEvent('validitychange', field, false);
-            });
-            waitsFor(function() {
-                return basicForm.checkValidity.callCount === 1;
-            }, "checkValidity was not called");
+            var spy = spyOn(Ext.form.Basic.prototype, 'checkValidity');
+            var field = addField({name: 'one'});
+            field.fireEvent('validitychange', field, false);
+            
+            waitForSpy(spy, "checkValidity was not called", 1000);
         });
 
         it("should fire the 'validitychange' event if the overall validity of the form has changed", function() {
@@ -664,62 +659,47 @@ describe("Ext.form.Basic", function() {
         });
         
         describe("add/remove items", function() {
+            var checkValiditySpy;
+            
+            beforeEach(function() {
+                checkValiditySpy = spyOn(Ext.form.Basic.prototype, 'checkValidity');
+            });
+            
+            afterEach(function() {
+                checkValiditySpy = null;
+            });
+            
             it("should checkValidity when removing a field", function() {
-                runs(function() {
-                    addField({name: 'one'});
-                    addField({name: 'two'});
-                    spyOn(basicForm, 'checkValidity');
-                    // Modify the task to point to the spy
-                    basicForm.checkValidityTask = new Ext.util.DelayedTask(basicForm.checkValidity, basicForm);
-                    container.remove(0);
-                });
-                waitsFor(function() {
-                    return basicForm.checkValidity.callCount === 1;
-                }, "checkValidity was not called");
+                addField({name: 'one'});
+                addField({name: 'two'});
+                container.remove(0);
+                
+                waitForSpy(checkValiditySpy, "checkValidity was not called", 1000);
             });
             
             it("should checkValidity when adding a field", function() {
-                runs(function() {
-                    addField({name: 'one'});
-                    spyOn(basicForm, 'checkValidity');
-                    // Modify the task to point to the spy
-                    basicForm.checkValidityTask = new Ext.util.DelayedTask(basicForm.checkValidity, basicForm);
-                    addField({name: 'two'});
-                });
-                waitsFor(function() {
-                    return basicForm.checkValidity.callCount === 1;
-                }, "checkValidity was not called");
+                addField({name: 'one'});
+                addField({name: 'two'});
+                
+                waitForSpy(checkValiditySpy, "checkValidity was not called", 1000);
             });
             
             it("should checkValidity when removing a container that contains a field", function() {
-                runs(function() {
-                    var myCt = container.add({
-                        xtype: 'container'
-                    });
-                    addField({name: 'one'}, myCt);
-                    spyOn(basicForm, 'checkValidity');
-                    // Modify the task to point to the spy
-                    basicForm.checkValidityTask = new Ext.util.DelayedTask(basicForm.checkValidity, basicForm);
-                    container.remove(0);
+                var myCt = container.add({
+                    xtype: 'container'
                 });
-                waitsFor(function() {
-                    return basicForm.checkValidity.callCount === 1;
-                }, "checkValidity was not called");
+                addField({name: 'one'}, myCt);
+                container.remove(0);
+                
+                waitForSpy(checkValiditySpy, "checkValidity was not called", 1000);
             });
             
             it("should checkValidity when adding a container that contains a field", function() {
-                runs(function() {
-                    var myCt = new Ext.container.Container();
-                    addField({name: 'one'}, myCt);
-                    spyOn(basicForm, 'checkValidity');
-                    // Modify the task to point to the spy
-                    basicForm.checkValidityTask = new Ext.util.DelayedTask(basicForm.checkValidity, basicForm);
-                    container.add(myCt);
-                    
-                });
-                waitsFor(function() {
-                    return basicForm.checkValidity.callCount === 1;
-                }, "checkValidity was not called");
+                var myCt = new Ext.container.Container();
+                addField({name: 'one'}, myCt);
+                container.add(myCt);
+                
+                waitForSpy(checkValiditySpy, "checkValidity was not called", 1000);
             });
         });
     });

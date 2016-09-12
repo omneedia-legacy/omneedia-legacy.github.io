@@ -9,12 +9,15 @@
  *         ...
  *     ]
  *
- */Ext.define('Ext.grid.column.RowNumberer', {
+ */
+ Ext.define('Ext.grid.column.RowNumberer', {
     extend: 'Ext.grid.column.Column',
     xtype: 'rownumberer',
 
     align: 'right',
     ignoreExport: true,
+
+    sortable: false,
 
     cell: {
         xtype: 'rownumberercell'

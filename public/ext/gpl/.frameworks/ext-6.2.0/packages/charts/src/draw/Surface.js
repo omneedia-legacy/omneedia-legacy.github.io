@@ -104,8 +104,9 @@ Ext.define('Ext.draw.Surface', {
         }
     },
 
+    cls: Ext.baseCSSPrefix + 'surface',
+
     config: {
-        cls: Ext.baseCSSPrefix + 'surface',
         /**
          * @cfg {Array}
          * The [x, y, width, height] rect of the surface related to its container.
@@ -309,6 +310,7 @@ Ext.define('Ext.draw.Surface', {
             map = me.map,
             results = [],
             items, item, sprite,
+            oldSurface,
             i, ln;
 
         items = Ext.Array.clean(argIsArray ? args[0] : args);
@@ -319,6 +321,11 @@ Ext.define('Ext.draw.Surface', {
 
         for (i = 0, ln = items.length; i < ln; i++) {
             item = items[i];
+            
+            if (!item || item.destroyed) {
+                continue;
+            }
+            
             sprite = null;
             if (item.isSprite && !map[item.getId()]) {
                 sprite = item;
@@ -328,6 +335,10 @@ Ext.define('Ext.draw.Surface', {
             if (sprite) {
                 map[sprite.getId()] = sprite;
                 results.push(sprite);
+                oldSurface = sprite.getSurface();
+                if (oldSurface && oldSurface.isSurface) {
+                    oldSurface.remove(sprite);
+                }
                 sprite.setParent(me);
                 sprite.setSurface(me);
                 me.onAdd(sprite);
@@ -385,7 +396,7 @@ Ext.define('Ext.draw.Surface', {
                 return null;
             }
 
-            id = sprite.getId();
+            id = sprite.id;
             isOwnSprite = me.map[id];
             delete me.map[id];
 
@@ -398,14 +409,21 @@ Ext.define('Ext.draw.Surface', {
                 return sprite;
             }
 
+            if (!isOwnSprite) {
+                if (isDestroy) {
+                    sprite.destroy();
+                }
+                
+                return sprite;
+            }
+            
+            sprite.setParent(null);
+            sprite.setSurface(null);
+
             if (isDestroy) {
                 sprite.destroy();
             }
-            if (!isOwnSprite) {
-                return sprite;
-            }
-            sprite.setParent(null);
-            sprite.setSurface(null);
+            
             if (!destroying) {
                 Ext.Array.remove(me.getItems(), sprite);
 

@@ -159,12 +159,11 @@ Ext.define('Ext.toolbar.Breadcrumb', {
         me.callParent();
     },
 
-    onDestroy: function() {
-        var me = this;
-
-        me._buttons = Ext.destroy(me._buttons);
-        me.setStore(null);
-        me.callParent();
+    doDestroy: function() {
+        Ext.destroy(this._buttons);
+        this.setStore(null);
+        
+        this.callParent();
     },
 
     onRemove: function(component, destroying) {

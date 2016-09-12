@@ -21,7 +21,7 @@ Ext.define('KitchenSink.view.form.SliderFieldController', {
 
     onSaveClick: function () {
         var values = this.getForm().getValues(),
-            msgTpl = this.getView().getTpl('msgTpl'),
+            msgTpl = this.getView().lookupTpl('msgTpl'),
             msg = msgTpl.apply(values);
 
         Ext.Msg.alert({

@@ -139,7 +139,7 @@ Ext.define('Ext.tree.View', {
 
         me.callParent();
         me.store.setRootVisible(me.rootVisible);
-        me.addRowTpl(Ext.XTemplate.getTpl(me, 'treeRowTpl'));
+        me.addRowTpl(me.lookupTpl('treeRowTpl'));
     },
 
     onFillComplete: function(treeStore, fillRoot, newNodes) {
@@ -199,7 +199,7 @@ Ext.define('Ext.tree.View', {
 
     getChecked: function() {
         var checked = [];
-        this.node.cascadeBy(function(rec){
+        this.node.cascade(function(rec){
             if (rec.get('checked')) {
                 checked.push(rec);
             }

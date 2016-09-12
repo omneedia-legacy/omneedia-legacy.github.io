@@ -213,10 +213,14 @@ Ext.define('Ext.selection.Model', {
 
         me.suspendChanges();
         me.doSelect(selections, true, suppressEvent);
-        me.resumeChanges();
-        // fire selection change only if the number of selections differs
-        if (!suppressEvent && !me.destroyed) {
-            me.maybeFireSelectionChange(me.getSelection().length !== start);
+        
+        if (!me.destroyed) {
+            me.resumeChanges();
+            
+            // fire selection change only if the number of selections differs
+            if (!suppressEvent) {
+                me.maybeFireSelectionChange(me.getSelection().length !== start);
+            }
         }
     },
 
@@ -256,10 +260,14 @@ Ext.define('Ext.selection.Model', {
         
         me.suspendChanges();
         me.doDeselect(selections, suppressEvent);
-        me.resumeChanges();
-        // fire selection change only if the number of selections differs
-        if (!suppressEvent && !me.destroyed) {
-            me.maybeFireSelectionChange(me.getSelection().length !== start);
+        
+        if (!me.destroyed) {
+            me.resumeChanges();
+            
+            // fire selection change only if the number of selections differs
+            if (!suppressEvent) {
+                me.maybeFireSelectionChange(me.getSelection().length !== start);
+            }
         }
     },
 
@@ -289,6 +297,11 @@ Ext.define('Ext.selection.Model', {
             case 'SINGLE':
                 me.selectWithEventSingle(record, e, isSelected);
                 break;
+        }
+        
+        // Event handlers could have destroyed the selection model
+        if (me.destroyed) {
+            return;
         }
 
         // selectionStart is a start point for shift/mousedown to create a range from.
@@ -488,8 +501,17 @@ Ext.define('Ext.selection.Model', {
             
             for (i = 0, len = toDeselect.length; i < len; ++i) {
                 me.doDeselect(toDeselect[i]);
+                
+                // We could have brought destruction upon ourselves via handlers;
+                // no point in continuing if that happened
+                if (me.destroyed) {
+                    break;
+                }
             }
-            me.resumeChanges();
+            
+            if (!me.destroyed) {
+                me.resumeChanges();
+            }
         }
         
         if (!me.destroyed) {
@@ -694,8 +716,12 @@ Ext.define('Ext.selection.Model', {
                 break;
             }
         }
+        
         me.deselectingDuringSelect = false;
-        me.resumeChanges();
+        
+        if (!me.destroyed) {
+            me.resumeChanges();
+        }
         
         return [failed, changed];
     },
@@ -1204,7 +1230,8 @@ Ext.define('Ext.selection.Model', {
         if ((suppressEvent || me.fireEvent('before' + eventName, me, record)) !== false &&
            commitFn() !== false) {
 
-            if (!suppressEvent) {
+            // Could be destroyed in the handler
+            if (!suppressEvent && !me.destroyed) {
                 me.fireEvent(eventName, me, record);
             }
         }   

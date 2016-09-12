@@ -2,5 +2,5 @@ Ext.namespace('Ext.theme.is').iOS = true;
 Ext.theme.name = 'iOS';
 
 Ext.theme.getDocCls = function() {
-    return 'x-big';
+    return Ext.platformTags.desktop ? '' : 'x-big';
 };

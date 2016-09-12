@@ -25,7 +25,7 @@ Ext.define('KitchenSink.view.form.FormGridController', {
 
         if (Math.abs(value) > 0.1) {
             if (!tpl) {
-                this.signTpl = tpl = this.getView().getTpl('signTpl');
+                this.signTpl = tpl = this.getView().lookupTpl('signTpl');
                 this.data = data = {};
             }
 

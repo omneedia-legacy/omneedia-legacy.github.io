@@ -287,7 +287,7 @@ describe("Ext.list.Tree", function() {
             it("should set the store to null", function() {
                 makeList();
                 list.destroy();
-                expect(list.getStore()).toBeNull();
+                expect(list._store).toBeNull();
             });
 
             it("should unbind any listeners", function() {
@@ -353,6 +353,9 @@ describe("Ext.list.Tree", function() {
                     },
 
                     constructor: function(config) {
+                        this.$noClearOnDestroy = (this.$noClearOnDestroy || {});
+                        this.$noClearOnDestroy.logs = true;
+                        
                         this.logs = {
                             expandable: [],
                             expanded: [],
@@ -4485,7 +4488,7 @@ describe("Ext.list.Tree", function() {
 
         it("should unbind the store", function() {
             list.destroy();
-            expect(list.getStore()).toBeNull();
+            expect(list._store).toBeNull();
         });
     });
 

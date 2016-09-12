@@ -1337,8 +1337,8 @@ Ext.define('Ext.layout.container.Box', {
 
     onAdd: function (item, index) {
         var me = this,
-            // Buttons will gain a split param
-            split = me.enableSplitters && item.split && !item.isButton;
+            // Buttons have their own concept of "split" config
+            split = me.enableSplitters && !item.isButton && item.split;
 
         me.callParent([item, index]);
 

@@ -187,7 +187,7 @@ Ext.define('Ext.ProgressBar', {
 
         // Ensure value is not undefined.
         me.value = value || (value = 0);
-        
+
         // Empty string (falsy) must blank out the text as per docs.
         if (text != null) {
             me.autoText = false;
@@ -201,9 +201,15 @@ Ext.define('Ext.ProgressBar', {
                 percent: value * 100
             }));
         }
-        else {
+        else if (!me.text && me.autoText !== false) {
             me.autoText = true;
             me.updateText(Math.round(value * 100) + '%');
+        }
+        // Text was set the previous time but not this time. We can't
+        // deduce what it should be just from the value so need to
+        // reset aria-valuetext because it is no longer valid.
+        else if (me.text && me.ariaEl.dom) {
+            me.ariaEl.dom.removeAttribute('aria-valuetext');
         }
         
         if (me.rendered && !me.destroyed) {
@@ -237,7 +243,7 @@ Ext.define('Ext.ProgressBar', {
      */
     updateText: function(text) {
         var me = this;
-        
+
         if (!me.autoText) {
             me.text = text;
         }
@@ -327,6 +333,9 @@ Ext.define('Ext.ProgressBar', {
         if (!me.waitTimer) {
             scope = me;
             o = o || {};
+            if (o.text != null) {
+                me.autoText = false;
+            }
             me.updateText(o.text);
             me.waitTimer = Ext.TaskManager.start({
                 run: function(i){
@@ -392,20 +401,24 @@ Ext.define('Ext.ProgressBar', {
         }
     },
 
-    onDestroy: function(){
+    doDestroy: function() {
         var me = this,
             bar = me.bar;
         
         me.clearTimer();
+        
         if (me.rendered) {
             if (me.textEl.isComposite) {
                 me.textEl.clear();
             }
+            
             Ext.destroyMembers(me, 'textEl', 'progressBar');
+            
             if (bar && me.animate) {
                 bar.stopAnimation();
             }
         }
+        
         me.callParent();
     }
 });

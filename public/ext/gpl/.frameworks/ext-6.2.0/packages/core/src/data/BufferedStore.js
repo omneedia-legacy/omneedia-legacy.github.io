@@ -867,7 +867,7 @@ Ext.define('Ext.data.BufferedStore', {
      * @param {Ext.data.operation.Operation} operation The operation that completed
      */
     onProxyPrefetch: function(operation) {
-        if (this.destroyed) {
+        if (this.destroying || this.destroyed) {
             return;
         }
         

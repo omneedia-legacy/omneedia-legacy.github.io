@@ -255,6 +255,53 @@ describe("Ext.event.gesture.Drag", function() {
                 });
             });
         });
+
+        it("should fire dragcancel when a second touch begins", function() {
+            runs(function() {
+                start({ id: 1, x: 100, y: 101 });
+                move({ id: 1, x: 99, y: 101 - minDistance });
+            });
+
+            waitsForAnimation();
+
+            runs(function() {
+                expect(dragstartHandler).toHaveBeenCalled();
+                expect(dragHandler).toHaveBeenCalled();
+                move({ id: 1, x: 97, y: 100 - minDistance });
+            });
+
+            waitsForAnimation();
+
+            runs(function() {
+                expect(dragHandler.callCount).toBe(2);
+                start({ id: 2, x: 200, y: 300 });
+            });
+
+            waitsForAnimation();
+
+            runs(function() {
+                expect(dragendHandler).not.toHaveBeenCalled();
+                expect(dragcancelHandler).toHaveBeenCalled();
+
+                expectInfo(dragcancelEvent, {
+                    x: 97,
+                    y: 100 - minDistance,
+                    pageX: 97,
+                    pageY: 100 - minDistance,
+                    startX: 100,
+                    startY: 101,
+                    previousX: 99,
+                    previousY: 101 - minDistance,
+                    deltaX: -3,
+                    deltaY: -(minDistance + 1),
+                    absDeltaX: 3,
+                    absDeltaY: minDistance + 1,
+                    previousDeltaX: -1,
+                    previousDeltaY: -minDistance,
+                    longpress: false
+                });
+            });
+        });
     }
 
     it("should have the correct e.target if the mouse is moved off of the target", function() {

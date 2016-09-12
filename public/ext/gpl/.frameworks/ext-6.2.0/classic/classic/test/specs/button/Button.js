@@ -132,6 +132,55 @@ describe("Ext.button.Button", function() {
         });
     });
 
+    describe("setUI", function() {
+        beforeEach(function() {
+            makeButton({
+                text: 'Foo'
+            });
+            button.render(Ext.getBody());
+            button.setUI('custom');
+        });
+        it("should remove x-btn-default-small class from main button element", function() {         
+            expect(button.el).not.toHaveCls('x-btn-default-small');
+        });
+
+        it("should add x-btn-custom-small class to main button element", function() {         
+            expect(button.el).toHaveCls('x-btn-custom-small');
+        });
+
+        it("should remove x-btn-wrap-default-small class from btnWrap", function() {        
+            expect(button.btnWrap).not.toHaveCls('x-btn-wrap-default-small');
+        });
+
+        it("should add x-btn-wrap-custom-small class to btnWrap", function() {        
+            expect(button.btnWrap).toHaveCls('x-btn-wrap-custom-small');
+        });
+
+        it("should remove x-btn-button-default-small class from btnEl", function() {          
+            expect(button.btnEl).not.toHaveCls('x-btn-button-default-small');
+        });
+
+        it("should add x-btn-button-custom-small class to btnEl", function() {          
+            expect(button.btnEl).toHaveCls('x-btn-button-custom-small');
+        });
+
+        it("should remove x-btn-icon-el-default-small class from btnIconEl", function() {
+            expect(button.btnIconEl).not.toHaveCls('x-btn-icon-el-default-small');
+        });
+
+        it("should add x-btn-icon-el-custom-small class to btnIconEl", function() {
+            expect(button.btnIconEl).toHaveCls('x-btn-icon-el-custom-small');
+        });
+
+        it("should remove x-btn-inner-default-small class from btnInnerEl", function() {
+            expect(button.btnInnerEl).not.toHaveCls('x-btn-inner-default-small');
+        });
+
+        it("should add x-btn-inner-custom-small class to btnInnerEl", function() {
+            expect(button.btnInnerEl).toHaveCls('x-btn-inner-custom-small');
+        });
+    });
+
     describe("setText", function() {
         it("should be able to set the text before rendering", function() {
             makeButton({
@@ -1100,6 +1149,8 @@ describe("Ext.button.Button", function() {
                 }
             });
             expect(owner).toBe(button);
+            
+            Ext.undefine('spec.SubMenu');
         });
 
         describe("Hiding on scroll", function () {
@@ -1326,7 +1377,7 @@ describe("Ext.button.Button", function() {
                 });
                 
                 it("should set attribute when menu is added", function() {
-                    button.setMenu(null);
+                    button.setMenu(null, false);
                     button.setMenu(menu);
                     
                     expect(button).toHaveAttr('aria-haspopup', 'true');
@@ -1351,7 +1402,7 @@ describe("Ext.button.Button", function() {
                 });
                 
                 it("should be set when menu is added", function() {
-                    button.setMenu(null);
+                    button.setMenu(null, false);
                     button.setMenu(menu);
                     
                     expect(button).toHaveAttr('aria-owns', menu.id);
@@ -1799,7 +1850,7 @@ describe("Ext.button.Button", function() {
             spyOn(menu, 'alignTo');
             clickIt();
 
-            expect(menu.alignTo).toHaveBeenCalledWith(button.el, pos, undefined);
+            expect(menu.alignTo).toHaveBeenCalledWith(button.el, pos, undefined, false, true);
 
             Ext.destroy(ctn);
             ctn = null;

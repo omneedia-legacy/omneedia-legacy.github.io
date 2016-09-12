@@ -275,7 +275,10 @@ Ext.define('Ext.app.Application', {
          * The glyphFontFamily to use for this application.  Used as the default font-family
          * for all components that support a `glyph` config.
          */
-        glyphFontFamily:  null
+        glyphFontFamily:  null,
+
+        // Docs will go in subclasses
+        quickTips: true
     },
     
     onClassExtended: function(cls, data, hooks) {
@@ -643,25 +646,36 @@ Ext.define('Ext.app.Application', {
         return this;
     },
     
-    destroy: function(destroyRefs){
+    destroy: function(destroyRefs) {
         var me = this,
             controllers = me.controllers,
             ns = Ext.namespace(me.getName()),
             appProp = me.getAppProperty();
+        
+        Ext.un('appupdate', me.onAppUpdate, me);
          
         Ext.destroy(me.viewport);
            
         if (controllers) {
-            controllers.each(function(controller){
+            controllers.each(function(controller) {
                 controller.destroy(destroyRefs, true);
             });
         }
+        
         me.controllers = null;
         me.callParent([destroyRefs, true]);
         
         // Clean up any app reference
         if (ns && ns[appProp] === me) {
             delete ns[appProp];
+        }
+
+        if (Ext.app.route.Router.application === me) {
+            Ext.app.route.Router.application = null;
+        }
+        
+        if (Ext.app.Application.instance === me) {
+            Ext.app.Application.instance = null;
         }
     },
 

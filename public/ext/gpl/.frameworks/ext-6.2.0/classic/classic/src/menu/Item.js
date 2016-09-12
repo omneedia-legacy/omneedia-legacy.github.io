@@ -480,12 +480,20 @@ Ext.define('Ext.menu.Item', {
         // Click event may have destroyed the menu, don't do anything further
         clickResult = me.fireEvent('click', me, e);
         
+        // Click listener could have destroyed the menu and/or item.
         if (me.destroyed) {
             return;
         }
 
         if (clickResult !== false && me.handler) {
             Ext.callback(me.handler, me.scope, [me, e], 0, me);
+        }
+        
+        // And the handler could have done the same. We check this twice
+        // because if the menu was destroyed in the click listener, the handler
+        // should not have been called.
+        if (me.destroyed) {
+            return;
         }
 
         // If there's an href, invoke dom.click() after we've fired the click event in case a click
@@ -527,26 +535,20 @@ Ext.define('Ext.menu.Item', {
         me.parentMenu = me.ownerCmp = null;
     },
 
-    /**
-     * @private
-     */
-    beforeDestroy: function() {
+    doDestroy: function() {
         var me = this;
+
         if (me.rendered) {
             me.clearTip();
         }
-        me.callParent();
-    },
-
-    onDestroy: function() {
-        var me = this;
-
+        
         me.cancelDeferExpand();
         me.cancelDeferHide();
         clearTimeout(me.deferHideParentMenusTimer);
 
         me.setMenu(null);
-        me.callParent(arguments);
+        
+        me.callParent();
     },
 
     beforeRender: function() {

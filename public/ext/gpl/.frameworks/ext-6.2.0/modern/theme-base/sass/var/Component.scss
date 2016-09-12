@@ -109,3 +109,16 @@ $shadow-width: dynamic(0);
  * The color of the shadow in the Modern toolkit. Usually with a transparency element, eg: rgba(0, 0, 0, 0.4).
  */
 $shadow-color: dynamic(rgba(0, 0, 0, 0.4));
+
+/**
+ * @var {boolean}
+ * Determines if a padding is applied to the whole application when inside a webview on iOS
+ * disable this if your hybrid application is not using a overlay status bar on iOS
+ */
+$enable-status-bar-padding: dynamic(true);
+
+/**
+ * @var {boolean}
+ * Determines if {@link Ext.Component#floated} items have shadows
+ */
+$enable-floated-shadows: dynamic(true);

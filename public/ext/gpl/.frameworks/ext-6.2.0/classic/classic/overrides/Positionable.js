@@ -1,5 +1,5 @@
 /**
- *
+ * @class Ext.util.Positionable
  */
 Ext.define('Ext.overrides.util.Positionable', {
     override: 'Ext.util.Positionable',
@@ -56,11 +56,11 @@ Ext.define('Ext.overrides.util.Positionable', {
         return me;
     },
 
-    getAnchor: function(){
+    getAnchor: function() {
         var el = this.el,
             data, anchor;
             
-        if (!el.dom) {
+        if (!el || !el.dom) {
             return;
         }
         data = el.getData();

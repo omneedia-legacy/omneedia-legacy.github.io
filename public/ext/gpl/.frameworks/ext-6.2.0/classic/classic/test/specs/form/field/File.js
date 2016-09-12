@@ -1,9 +1,11 @@
-describe("Ext.form.field.File", function(){
+describe("Ext.form.field.File", function() {
     var field, makeField;
     
     beforeEach(function() {
-        makeField = function(cfg){
-            cfg = cfg || {};
+        makeField = function(cfg) {
+            cfg = Ext.apply({
+                renderTo: Ext.getBody()
+            }, cfg);
             field = new Ext.form.field.File(cfg);
         };
     });
@@ -13,59 +15,83 @@ describe("Ext.form.field.File", function(){
         field = makeField = null;
     });
     
-    describe("defaults", function(){
-        beforeEach(function(){
+    describe("defaults", function() {
+        beforeEach(function() {
             makeField();
         });
         
-        it("should default to readOnly", function(){
+        it("should default to readOnly", function() {
             expect(field.readOnly).toBe(true);
         });   
         
-        it("should default to have a button", function(){
+        it("should default to have a button", function() {
             expect(field.buttonOnly).toBe(false);
         });
         
-        it("should tell us it's an upload field", function(){
+        it("should tell us it's an upload field", function() {
             expect(field.isFileUpload()).toBe(true);    
         });
     });
     
     describe("config", function() {
-        it("should respect the buttonText config", function(){
+        it("should respect the buttonText config", function() {
             makeField({
-                renderTo: Ext.getBody(),
                 buttonText: 'Foo'
             });    
             expect(field.button.text).toBe('Foo');
         });
     
-        it("should respect the buttonConfig config", function(){
-                makeField({
-                    renderTo: Ext.getBody(),
-                    buttonConfig : {
-                        text    : 'FooBar',
-                        iconCls : 'download'
-                    },
-                    buttonText: 'Foo'
-                });
-                expect(field.button.text).toBe('FooBar');
-            });
-        
-        it("should respect the buttonOnly config", function(){
+        it("should respect the buttonConfig config", function() {
             makeField({
-                renderTo: Ext.getBody(),
+                buttonConfig: {
+                    text: 'FooBar',
+                    iconCls: 'download'
+                },
+                buttonText: 'Foo'
+            });
+            expect(field.button.text).toBe('FooBar');
+        });
+        
+        it("should respect the buttonOnly config", function() {
+            makeField({
                 buttonOnly: true
             });    
             expect(field.inputWrap.getStyle('display')).toBe('none');
         });
         
-        it("should be be able to be configured as disabled", function(){
+        it("should respect tabIndex config", function() {
             makeField({
-                renderTo: Ext.getBody(),
+                tabIndex: 42
+            });
+            
+            expect(field.inputEl).toHaveAttr('tabIndex', '-1');
+            
+            // IE/Edge are using tab guards
+            if (Ext.isIE || Ext.isEdge) {
+                expect(field.fileInputEl).toHaveAttr('tabIndex', '-1');
+                expect(field.button.beforeInputGuard).toHaveAttr('tabIndex', '42');
+                expect(field.button.afterInputGuard).toHaveAttr('tabIndex', '42');
+            }
+            else {
+                expect(field.fileInputEl).toHaveAttr('tabIndex', '42');
+            }
+        });
+        
+        it("should be be able to be configured as disabled", function() {
+            makeField({
                 disabled: true
             });
             expect(field.inputEl.dom.disabled).toBe(true);
+        });
+        
+        // The attribute is rendered in all browsers despite being meaningless in some
+        it("should respect accept config", function() {
+            makeField({
+                renderTo: Ext.getBody(),
+                accept: 'foo/bar'
+            });
+            
+            expect(field.fileInputEl).toHaveAttr('accept', 'foo/bar');
         });
     });
     
@@ -74,9 +100,7 @@ describe("Ext.form.field.File", function(){
         var button, guard;
         
         beforeEach(function() {
-            makeField({
-                renderTo: Ext.getBody()
-            });
+            makeField({});
             
             button = field.button;
         });
@@ -85,7 +109,18 @@ describe("Ext.form.field.File", function(){
             button = guard = null;
         });
         
-        it("should render input el between tab guards", function() {
+        it("should place input el between tab guards", function() {
+            var inputEl = field.button.fileInputEl.dom,
+                beforeGuard = inputEl.previousSibling,
+                afterGuard = inputEl.nextSibling;
+            
+            expect(beforeGuard).toHaveAttr('data-tabguard', 'true');
+            expect(afterGuard).toHaveAttr('data-tabguard', 'true');
+        });
+        
+        it("shold place input el between tab guards after resetting", function() {
+            field.reset();
+            
             var inputEl = field.button.fileInputEl.dom,
                 beforeGuard = inputEl.previousSibling,
                 afterGuard = inputEl.nextSibling;
@@ -107,8 +142,8 @@ describe("Ext.form.field.File", function(){
                 expect(guard).toHaveAttr('role', 'button');
             });
             
-            it("should be aria-busy", function() {
-                expect(guard).toHaveAttr('aria-busy', 'true');
+            it("should be aria-hidden", function() {
+                expect(guard).toHaveAttr('aria-hidden', 'true');
             });
             
             it("should be tabbable", function() {
@@ -129,8 +164,8 @@ describe("Ext.form.field.File", function(){
                 expect(guard).toHaveAttr('role', 'button');
             });
             
-            it("should be aria-busy", function() {
-                expect(guard).toHaveAttr('aria-busy', 'true');
+            it("should be aria-hidden", function() {
+                expect(guard).toHaveAttr('aria-hidden', 'true');
             });
             
             it("should be tabbable", function() {
@@ -140,7 +175,7 @@ describe("Ext.form.field.File", function(){
     });
     
     describe("extraction", function() {
-        it("should be able to produce a fake input when not rendered", function(){
+        it("should be able to produce a fake input when not rendered", function() {
             makeField({
                 name: 'foo'
             });
@@ -164,7 +199,6 @@ describe("Ext.form.field.File", function(){
             });
             
             makeField({
-                renderTo: Ext.getBody(),
                 listeners: {
                     focus: focusSpy,
                     blur: blurSpy
@@ -247,10 +281,11 @@ describe("Ext.form.field.File", function(){
     describe("reset", function() {
         beforeEach(function() {
             makeField({
-                renderTo: Ext.getBody()
+                accept: 'zumbo/blergh',
+                tabIndex: 42
             });
             
-            field.reset(true);
+            field.reset();
         });
         
         it("should assign button id to file input name", function() {
@@ -259,6 +294,24 @@ describe("Ext.form.field.File", function(){
         
         it("should reassign ariaEl to new file input el", function() {
             expect(field.button.ariaEl).toBe(field.button.fileInputEl);
+        });
+        
+        it("should re-render accept attribute", function() {
+            expect(field.button.fileInputEl).toHaveAttr('accept', 'zumbo/blergh');
+        });
+        
+        it("should reassign tabIndex attribute", function() {
+            expect(field.inputEl).toHaveAttr('tabIndex', '-1');
+            
+            // IE/Edge are using tab guards
+            if (Ext.isIE || Ext.isEdge) {
+                expect(field.fileInputEl).toHaveAttr('tabIndex', '-1');
+                expect(field.button.beforeInputGuard).toHaveAttr('tabIndex', '42');
+                expect(field.button.afterInputGuard).toHaveAttr('tabIndex', '42');
+            }
+            else {
+                expect(field.fileInputEl).toHaveAttr('tabIndex', '42');
+            }
         });
         
         // Order of elements is only relevant in IE/Edge

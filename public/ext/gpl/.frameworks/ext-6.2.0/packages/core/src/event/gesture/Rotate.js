@@ -118,7 +118,7 @@ Ext.define('Ext.event.gesture.Rotate', {
     },
 
     onCancel: function(e) {
-        this.fire('rotatecancel', e);
+        this.fire('rotatecancel', e, null, true);
     },
 
     reset: function() {

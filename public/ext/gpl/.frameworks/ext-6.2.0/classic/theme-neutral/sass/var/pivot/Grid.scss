@@ -1,6 +1,4 @@
-/**
- * @class Ext.pivot.Grid
- */
+/** @class Ext.pivot.Grid */
 
 $ext-pivot-trial: false !default; // Updated automatically by the build script.
 
@@ -8,25 +6,6 @@ $grid-header-trigger-border:
     $grid-column-header-border-width
     $grid-column-header-border-style
     $grid-header-border-color;
-
-
-/**
- * This vars are only used when the package is built and won't affect the app build
- */
-/*$base-color: #157fcc !default;
-$neutral-color: #e1e1e1 !default;
-$font-family: helvetica, arial, verdana, sans-serif !default;
-$font-size: 13px !default;
-$font-weight: normal !default;
-$font-weight-bold: bold !default;
-$grid-row-cell-font-size: $font-size !default;
-$grid-row-cell-line-height: round($grid-row-cell-font-size * 1.15) !default;
-$grid-cell-inner-padding: 3px 6px !default;
-$grid-row-height: $grid-row-cell-line-height + vertical($grid-cell-inner-padding);
-$grid-column-header-border-width: 1px !default;
-$grid-column-header-border-style: solid !default;
-$grid-header-border-color: adjust-color($neutral-color, $hue: 0deg, $saturation: 0%, $lightness: -16.078%) !default;
-*/
 
 
 /**

@@ -519,7 +519,7 @@ Ext.define('Ext.ux.form.MultiSelect', {
         return errors;
     },
     
-    onDestroy: function(){
+    doDestroy: function(){
         var me = this;
         
         me.bindStore(null);

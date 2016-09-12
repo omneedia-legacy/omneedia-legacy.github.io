@@ -161,13 +161,7 @@ Ext.define('Ext.chart.interactions.CrossZoom', {
             dblclick: 'onDoubleTap'
         },
 
-        undoButton: {},
-
-        touchAction: {
-            panX: false,
-            panY: false,
-            doubleTapZoom: false
-        }
+        undoButton: {}
     },
 
     stopAnimationBeforeSync: false,
@@ -465,7 +459,7 @@ Ext.define('Ext.chart.interactions.CrossZoom', {
 
     destroy: function () {
         this.setUndoButton(null);
-        this.callParent(arguments);
+        this.callParent();
     }
 
 });

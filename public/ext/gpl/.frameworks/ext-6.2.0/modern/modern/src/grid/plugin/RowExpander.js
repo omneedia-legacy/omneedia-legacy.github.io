@@ -1,6 +1,5 @@
 /**
  * @class Ext.grid.plugin.RowExpander
- * @extends Ext.Component
  * Description
  */
 Ext.define('Ext.grid.plugin.RowExpander', {
@@ -10,14 +9,14 @@ Ext.define('Ext.grid.plugin.RowExpander', {
         'Ext.grid.cell.Expander'
     ],
 
-    alias: 'plugin.gridrowexpander',
+    alias: 'plugin.rowexpander',
 
     config: {
         grid: null,
         column: {
+            xtype: 'gridcolumn',
             text: '',
             width: 50,
-            cls: Ext.baseCSSPrefix + 'grid-row-expander-column',
             resizable: false,
             hideable: false,
             sortable: false,
@@ -30,28 +29,41 @@ Ext.define('Ext.grid.plugin.RowExpander', {
         }
     },
 
+    expanderSelector: '.' + Ext.baseCSSPrefix + 'expandercell .' + Ext.baseCSSPrefix + 'icon-el',
+    expandedCls: Ext.baseCSSPrefix + 'expanded',
+
     init: function (grid) {
         this.setGrid(grid);
     },
 
+    applyColumn: function(column, oldColumn) {
+        return Ext.factory(column, null, oldColumn);
+    },
+
     updateGrid: function (grid, oldGrid) {
         var me = this;
+
         if (grid) {
-            grid.addCls(Ext.baseCSSPrefix + 'has-row-expander-column');
+            grid.hasRowExpander = true;
+            grid.addCls(Ext.baseCSSPrefix + 'has-rowexpander');
             grid.insertColumn(0, me.getColumn());
             grid.refreshScroller();
 
-            grid.element.on('tap', 'onGridTap', this);
+            grid.element.on({
+                tap: 'onGridTap',
+                delegate: me.expanderSelector,
+                scope: me
+            });
         }
     },
 
     onGridTap: function(event) {
         var el = event.getTarget(),
-            cell = Ext.Component.fromElement(el), row;
-
-        if (cell.isExpanderCell) {
+            cell = Ext.Component.fromElement(el),
             row = cell.getParent();
-            row.toggleCollapsed();
-        }
+
+        cell.toggleCls(this.expandedCls);
+
+        row.toggleCollapsed();
     }
 });

@@ -564,7 +564,7 @@ return {
             mat = Ext.draw.Matrix.fly(attr.matrix.elements.slice(0)),
             bbox = me.getBBox(true),
             dx = attr.textAlignOffsets,
-            none = Ext.draw.Color.RGBA_NONE,
+            none = Ext.util.Color.RGBA_NONE,
             x, y, i, lines, lineHeight;
 
         if (attr.text.length === 0) {

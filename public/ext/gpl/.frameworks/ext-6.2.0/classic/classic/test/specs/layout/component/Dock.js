@@ -519,6 +519,7 @@ describe('Ext.layout.component.Dock', function(){
             wrapOrder = wrapOrder || [];
             desc = desc ? desc + ',' : 'panel w/';
             
+            var hasHeader = config.title === null ? false : true;
             var numElChildren = elOrder.length;
             var numWrapChildren = wrapOrder.length;
             
@@ -561,6 +562,8 @@ describe('Ext.layout.component.Dock', function(){
                         margin: 20,
                         width: 400,
                         height: 300,
+                        collapsible: hasHeader ? true : false,
+                        animCollapse: false,
                         
                         title: 'blerg',
                         
@@ -590,6 +593,52 @@ describe('Ext.layout.component.Dock', function(){
                 it("should have bodyWrap el children in right order", function() {
                     countChicks(ct, 'bodyWrap', wrapOrder);
                 });
+                
+                if (hasHeader) {
+                    describe("collapsed", function() {
+                        beforeEach(function() {
+                            ct.collapse();
+                        });
+    
+                        it("should have " + numElChildren + " children in main el", function() {
+                            expect(ct.el.dom.childNodes.length).toBe(numElChildren);
+                        });
+                        
+                        it("should have main el children in right order", function() {
+                            countChicks(ct, 'el', elOrder);
+                        });
+                        
+                        it("should have " + numWrapChildren + " children in bodyWrap el", function() {
+                            expect(ct.bodyWrap.dom.childNodes.length).toBe(numWrapChildren);
+                        });
+                        
+                        it("should have bodyWrap el children in right order", function() {
+                            countChicks(ct, 'bodyWrap', wrapOrder);
+                        });
+                        
+                        describe("expanded", function() {
+                            beforeEach(function() {
+                                ct.expand();
+                            });
+    
+                            it("should have " + numElChildren + " children in main el", function() {
+                                expect(ct.el.dom.childNodes.length).toBe(numElChildren);
+                            });
+                            
+                            it("should have main el children in right order", function() {
+                                countChicks(ct, 'el', elOrder);
+                            });
+                            
+                            it("should have " + numWrapChildren + " children in bodyWrap el", function() {
+                                expect(ct.bodyWrap.dom.childNodes.length).toBe(numWrapChildren);
+                            });
+                            
+                            it("should have bodyWrap el children in right order", function() {
+                                countChicks(ct, 'bodyWrap', wrapOrder);
+                            });
+                        });
+                    });
+                }
             });
         }
         
@@ -862,7 +911,7 @@ describe('Ext.layout.component.Dock', function(){
             makeSuite({ frame: true, title: null, dockedItems: null, tabGuard: true, headerPosition: 'bottom' },
                 ['tabGuardBeforeEl', 'frameTL', 'bodyContainer', 'frameBL', 0, 'tabGuardAfterEl'],
                 [1, 2, 5, 8, 'body', 4, 3, 6, 7], addHeaderAndItems, 'dynamic items 8');
-            }
+        }
     });
         
     describe('isValidParent', function() {

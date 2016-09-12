@@ -16,6 +16,8 @@ Ext.define('Ext.view.AbstractView', {
         'Ext.util.StoreHolder'
     ],
 
+    isDataView: true,
+
     inheritableStatics: {
         /**
          * @private
@@ -45,7 +47,6 @@ Ext.define('Ext.view.AbstractView', {
     renderBuffer: document.createElement('div'),
 
     statics: {
-
         /**
          * @cfg {Number} [updateDelay=200] Global config for use when using {@link #throttledUpdate throttled view updating} if the data in the backing {@link Ext.data.Store store}
          * is being changed rapidly, for example receiving changes from the server through a WebSocket connection.
@@ -346,6 +347,7 @@ Ext.define('Ext.view.AbstractView', {
      * Note that when using local data the emptyText will not be displayed unless you set
      * the {@link #deferEmptyText} option to false.
      * @since 2.3.0
+     * @accessor
      */
     emptyText: "",
     //</locale>
@@ -400,6 +402,8 @@ Ext.define('Ext.view.AbstractView', {
      */
     preserveScrollOnReload: false,
 
+    autoDestroyBoundStore: true,
+    
     ariaRole: 'listbox',
     itemAriaRole: 'option',
 
@@ -517,7 +521,7 @@ Ext.define('Ext.view.AbstractView', {
         //</debug>
 
         me.callParent();
-        me.tpl = me.getTpl('tpl');
+        me.tpl = me.lookupTpl('tpl');
 
         //<debug>
         // backwards compat alias for overClass/selectedClass
@@ -584,10 +588,10 @@ Ext.define('Ext.view.AbstractView', {
         return result;
     },
 
-    onRender: function() {
+    onRender: function(parentNode , containerIdx) {
         var mask = this.loadMask;
 
-        this.callParent(arguments);
+        this.callParent([parentNode , containerIdx]);
         if (mask) {
             this.createMask(mask);
         }
@@ -596,9 +600,8 @@ Ext.define('Ext.view.AbstractView', {
     beforeLayout: function() {
         var me = this;
 
-        me.callParent(arguments);
+        me.callParent();
 
-        // If a refresh is needed, just before the layout is the time to apply it.
         // If there is a deferred refresh timer running, allow that to do the refresh.
         if (me.refreshNeeded && !me.pendingRefresh) {
             // If we have refreshed before, just call a refresh now.
@@ -634,12 +637,12 @@ Ext.define('Ext.view.AbstractView', {
     },
 
     beforeRender: function() {
-        this.callParent(arguments);
+        this.callParent();
         this.getSelectionModel().beforeViewRender(this);
     },
 
     afterRender: function() {
-        this.callParent(arguments);
+        this.callParent();
 
         // Subclasses may set focusable to false.
         // BoundList is not focusable.
@@ -702,13 +705,14 @@ Ext.define('Ext.view.AbstractView', {
             mode, ariaAttr, ariaDom;
 
         if (oldSelModel) {
-            oldSelModel.un({
-                scope: me,
-                selectionchange: me.updateBindSelection,
-                lastselectedchanged: me.updateBindSelection,
-                select: me.ariaSelect,
-                deselect: me.ariaDeselect
-            });
+            // Could be already destroyed, and listeners cleared
+            if (!oldSelModel.destroyed) {
+                oldSelModel.un({
+                    scope: me,
+                    selectionchange: me.updateBindSelection,
+                    lastselectedchanged: me.updateBindSelection
+                });
+            }
             
             Ext.destroy(me.selModelRelayer);
             selModel = Ext.Factory.selection(selModel);
@@ -759,9 +763,7 @@ Ext.define('Ext.view.AbstractView', {
         selModel.on({
             scope: me,
             lastselectedchanged: me.updateBindSelection,
-            selectionchange: me.updateBindSelection,
-            select: me.ariaSelect,
-            deselect: me.ariaDeselect
+            selectionchange: me.updateBindSelection
         });
 
         return selModel;
@@ -842,22 +844,6 @@ Ext.define('Ext.view.AbstractView', {
         }
 
         me.callParent([e]);
-    },
-    
-    ariaSelect: function(selModel, record) {
-        var node = this.getNode(record);
-        
-        if (node) {
-            node.setAttribute('aria-selected', true);
-        }
-    },
-    
-    ariaDeselect: function(selModel, record) {
-        var node = this.getNode(record);
-        
-        if (node) {
-            node.setAttribute('aria-selected', false);
-        }
     },
 
     onRemoved: function(isDestroying) {
@@ -1003,6 +989,21 @@ Ext.define('Ext.view.AbstractView', {
         }
     },
 
+    getEmptyText: function () {
+        return this.emptyText;
+    },
+
+    setEmptyText: function (emptyText) {
+        var me = this;
+
+        if (me.emptyText !== emptyText) {
+            me.emptyText = emptyText;
+            me.refresh();
+        }
+
+        return me;
+    },
+
     getViewRange: function() {
         return this.dataSource.getRange();
     },
@@ -1060,8 +1061,11 @@ Ext.define('Ext.view.AbstractView', {
         // If nodeContainer is the el, just clear the innerHTML. Otherwise, we need
         // to manually remove each node we know about.
         me.all.clear(!nodeContainerIsTarget);
-        if (nodeContainerIsTarget) {
-            targetEl.dom.innerHTML = '';
+
+        targetEl = nodeContainerIsTarget ? targetEl.dom : me.getNodeContainer();
+
+        if (targetEl) {
+            targetEl.innerHTML = '';
         }
     },
 
@@ -1566,17 +1570,24 @@ Ext.define('Ext.view.AbstractView', {
      * @param {Ext.data.Store} store The store to bind to this view
      * @since 3.4.0
      */
-    bindStore: function(store, initial) {
+    bindStore: function (store, initial) {
         var me = this,
             selModel = me.getSelectionModel(),
             navModel = me.getNavigationModel();
 
-        selModel.bindStore(store, initial);
-        selModel.bindComponent(store ? me : null);
+
+        // Can be already destroyed if we're called from doDestroy()
+        if (selModel && !selModel.destroyed) {
+            selModel.bindStore(store, initial);
+            selModel.bindComponent(store ? me : null);
+        }
+        
         me.mixins.storeholder.bindStore.apply(me, arguments);
 
         // Navigation model must bind to new store
-        navModel.setStore(store);
+        if (navModel && !navModel.destroyed) {
+            navModel.setStore(store);
+        }
 
         // If we have already achieved our first layout, refresh immediately.
         // If we bind to the Store before the first layout, then beforeLayout will
@@ -1705,7 +1716,7 @@ Ext.define('Ext.view.AbstractView', {
         me.lastRefreshLoadCount = store.loadCount;
     },
 
-    refreshView: function() {
+    refreshView: function(startIndex) {
         var me = this,
             // If we have an ancestor in a non-boxready state (collapsed or in-transition, or hidden), then block the
             // refresh because the next layout will trigger the refresh
@@ -1718,7 +1729,7 @@ Ext.define('Ext.view.AbstractView', {
             me.refreshNeeded = true;
         } else {
             if (bufferedRenderer) {
-                bufferedRenderer.refreshView();
+                bufferedRenderer.refreshView(startIndex);
             } else {
                 me.refresh();
             }
@@ -1899,34 +1910,40 @@ Ext.define('Ext.view.AbstractView', {
         return this.all.indexOf(node);
     },
 
-    onDestroy: function() {
+    doDestroy: function() {
         var me = this,
-            count = me.updateSuspendCounter;
+            count = me.updateSuspendCounter,
+            tabGuardEl = me.tabGuardEl;
 
-        me.all.clear();
+        // Can be already destroyed in Table view
+        if (me.all && !me.all.destroyed) {
+            me.all.clear();
+        }
+        
+        if (tabGuardEl) {
+            if (tabGuardEl.parentNode) {
+                tabGuardEl.parentNode.removeChild(tabGuardEl);
+            }
+        }
+        
         me.emptyEl = null;
         me.setItemsDraggable(false);
-
-        me.callParent();
-        me.bindStore(null);
         
-        me.store = me.dataSource = me.storeListeners = null;
+        me.bindStore(null);
         
         if (me.selModelRelayer) {
             me.selModelRelayer.destroy();
-            me.selModelRelayer = null;
         }
         
-        Ext.destroy(me.navigationModel, me.selectionModel);
-        me.navigationModel = me.selectionModel = me.selModel = null;
-        
-        me.loadMask = null;
+        Ext.destroy(me.navigationModel, me.selectionModel, me.loadMask);
 
         // We have been destroyed during a begin/end update, which means we're
         // suspending layouts, must forcibly do it here.
         while (count--) {
             Ext.resumeLayouts(true);
         }
+
+        me.callParent();
     },
 
     // invoked by the selection model to maintain visual UI cues
@@ -1935,6 +1952,7 @@ Ext.define('Ext.view.AbstractView', {
 
         if (node) {
             Ext.fly(node).addCls(this.selectedItemCls);
+            node.setAttribute('aria-selected', 'true');
         }
         
         return node;
@@ -1946,6 +1964,7 @@ Ext.define('Ext.view.AbstractView', {
 
         if (node) {
             Ext.fly(node).removeCls(this.selectedItemCls);
+            node.setAttribute('aria-selected', 'false');
         }
         
         return node;

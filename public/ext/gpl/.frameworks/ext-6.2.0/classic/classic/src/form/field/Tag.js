@@ -208,6 +208,12 @@ Ext.define('Ext.form.field.Tag', {
     growMax: false,
 
     /**
+     * @private
+     * @cfg
+     */
+    simulatePlaceholder: true,
+
+    /**
      * @cfg
      * @inheritdoc
      */
@@ -299,7 +305,6 @@ Ext.define('Ext.form.field.Tag', {
             '<span id="{cmpId}-selectedText" data-ref="selectedText" aria-hidden="true" class="' + Ext.baseCSSPrefix + 'hidden-clip"></span>',
             '<ul id="{cmpId}-itemList" data-ref="itemList" role="presentation" class="' + Ext.baseCSSPrefix + 'tagfield-list{itemListCls}">',
                 '<li id="{cmpId}-inputElCt" data-ref="inputElCt" role="presentation" class="' + Ext.baseCSSPrefix + 'tagfield-input">',
-                    '<div id="{cmpId}-emptyEl" data-ref="emptyEl" role="presentation" class="{emptyCls}">{emptyText}</div>',
                     '<input id="{cmpId}-inputEl" data-ref="inputEl" type="{type}" ',
                     '<tpl if="name">name="{name}" </tpl>',
                     '<tpl if="value"> value="{[Ext.util.Format.htmlEncode(values.value)]}"</tpl>',
@@ -307,7 +312,7 @@ Ext.define('Ext.form.field.Tag', {
                     '<tpl if="tabIdx != null">tabindex="{tabIdx}" </tpl>',
                     '<tpl if="disabled"> disabled="disabled"</tpl>',
                     '<tpl foreach="inputElAriaAttributes"> {$}="{.}"</tpl>',
-                    'class="' + Ext.baseCSSPrefix + 'tagfield-input-field {inputElCls}" autocomplete="off">',
+                    'class="' + Ext.baseCSSPrefix + 'tagfield-input-field {inputElCls} {emptyCls}" autocomplete="off">',
                 '</li>',
             '</ul>',
             '<ul id="{cmpId}-ariaList" data-ref="ariaList" role="listbox"',
@@ -320,6 +325,13 @@ Ext.define('Ext.form.field.Tag', {
             disableFormats: true
         }
     ],
+
+    postSubTpl: [
+            '<label id="{cmpId}-placeholderLabel" data-ref="placeholderLabel" for="{cmpId}-inputEl" class="{placeholderCoverCls} {placeholderCoverCls}-{ui} {emptyCls}">{emptyText}</label>',
+            '</div>', // end inputWrap
+            '<tpl for="triggers">{[values.renderTrigger(parent)]}</tpl>',
+        '</div>' // end triggerWrap
+    ],
     
     extraFieldBodyCls: Ext.baseCSSPrefix + 'tagfield-body',
 
@@ -327,13 +339,8 @@ Ext.define('Ext.form.field.Tag', {
      * @private
      */
     childEls: [
-        'listWrapper', 'itemList', 'inputEl', 'inputElCt', 'emptyEl', 'selectedText', 'ariaList'
+        'listWrapper', 'itemList', 'inputEl', 'inputElCt', 'selectedText', 'ariaList'
     ],
-
-    /**
-     * @private
-     */
-    emptyInputCls: Ext.baseCSSPrefix + 'tagfield-emptyinput',
 
     /**
      * @private
@@ -552,6 +559,7 @@ Ext.define('Ext.form.field.Tag', {
             valueStore.resumeEvents();
         }
 
+        me.refreshEmptyText();
         me.clearInput();
         Ext.resumeLayouts(true);
         me.alignPicker();
@@ -562,7 +570,7 @@ Ext.define('Ext.form.field.Tag', {
     onSelectionChange: function(selModel, selectedRecs) {
         var me = this,
             inputEl = me.inputEl,
-            picker, item;
+            item;
         
         me.applyMultiselectItemMarkup();
         me.applyAriaListMarkup();
@@ -570,8 +578,6 @@ Ext.define('Ext.form.field.Tag', {
         
         // Focus does not really change but we're pretending it does
         if (inputEl) {
-            picker = me.getPicker();
-            
             if (selectedRecs.length === 0) {
                 inputEl.dom.removeAttribute('aria-activedescendant');
             }
@@ -605,11 +611,11 @@ Ext.define('Ext.form.field.Tag', {
         return node;
     },
 
-    onDestroy: function() {
-        this.selectionModel = Ext.destroy(this.selectionModel);
+    doDestroy: function() {
+        Ext.destroy(this.selectionModel);
 
         // This will unbind the store, which will destroy the valueStore
-        this.callParent(arguments);
+        this.callParent();
     },
 
     getSubTplData: function(fieldData) {
@@ -617,7 +623,6 @@ Ext.define('Ext.form.field.Tag', {
             id = me.id,
             data = me.callParent(arguments),
             emptyText = me.emptyText,
-            emptyInputCls = me.emptyInputCls,
             isEmpty = emptyText && data.value.length < 1,
             growMin = me.growMin,
             growMax = me.growMax,
@@ -626,9 +631,8 @@ Ext.define('Ext.form.field.Tag', {
 
         data.value = '';
         data.emptyText = isEmpty ? emptyText : '';
-        data.emptyCls = isEmpty ? me.emptyCls : emptyInputCls;
-        data.inputElCls = isEmpty ? emptyInputCls : '';
         data.itemListCls = '';
+        data.emptyCls = isEmpty ? me.emptyUICls : '';
 
         if (me.grow) {
             if (Ext.isNumber(growMin) && growMin > 0) {
@@ -637,6 +641,8 @@ Ext.define('Ext.form.field.Tag', {
             if (Ext.isNumber(growMax) && growMax > 0) {
                 wrapperStyle += 'max-height:' + growMax + 'px;';
             }
+        } else {
+            wrapperStyle += 'max-height: 1px;';
         }
 
         data.wrapperStyle = wrapperStyle;
@@ -674,11 +680,9 @@ Ext.define('Ext.form.field.Tag', {
             emptyText = me.emptyText;
 
         if (emptyText) {
-            // We remove HTML5 placeholder here because we use the emptyEl instead.
+            // We remove HTML5 placeholder here because we use the placeholderLabel instead.
             if (Ext.supports.Placeholder && inputEl) {
                 inputEl.dom.removeAttribute('placeholder');
-            } else {
-                me.applyEmptyText();
             }
         }
 
@@ -687,6 +691,7 @@ Ext.define('Ext.form.field.Tag', {
         me.applyAriaSelectedText();
 
         me.callParent(arguments);
+        me.emptyClsElements.push(me.listWrapper, me.placeholderLabel);
     },
 
     findRecord: function(field, value) {
@@ -866,8 +871,7 @@ Ext.define('Ext.form.field.Tag', {
         var me = this,
             inputEl = me.inputEl,
             rawValue = inputEl.dom.value,
-            preventKeyUpEvent = me.preventKeyUpEvent,
-            selectedEl = me.selectedText.dom;
+            preventKeyUpEvent = me.preventKeyUpEvent;
 
         if (me.preventKeyUpEvent) {
             e.stopEvent();
@@ -993,10 +997,10 @@ Ext.define('Ext.form.field.Tag', {
             if (!me.labelTpl) {
                 me.labelTpl = '{' + me.displayField + '}';
             }
-            me.labelTpl = me.getTpl('labelTpl');
+            me.labelTpl = me.lookupTpl('labelTpl');
 
             if (me.tipTpl) {
-                me.tipTpl = me.getTpl('tipTpl');
+                me.tipTpl = me.lookupTpl('tipTpl');
             }
 
             me.multiSelectItemTpl = new Ext.XTemplate([
@@ -1028,7 +1032,7 @@ Ext.define('Ext.form.field.Tag', {
             ]);
         }
         if (!me.multiSelectItemTpl.isTemplate) {
-            me.multiSelectItemTpl = this.getTpl('multiSelectItemTpl');
+            me.multiSelectItemTpl = this.lookupTpl('multiSelectItemTpl');
         }
 
         return me.multiSelectItemTpl.apply(me.valueCollection.getRange());
@@ -1084,7 +1088,7 @@ Ext.define('Ext.form.field.Tag', {
         }
         
         if (!me.ariaListItemTpl.isTemplate) {
-            me.ariaListtemTpl = me.getTpl('ariaListItemTpl');
+            me.ariaListtemTpl = me.lookupTpl('ariaListItemTpl');
         }
         
         values = me.valueCollection.getRange();
@@ -1120,7 +1124,7 @@ Ext.define('Ext.form.field.Tag', {
         }
         
         if (!me.ariaSelectedItemTpl.isTemplate) {
-            me.ariaSelectedItemTpl = me.getTpl('ariaSelectedItemTpl');
+            me.ariaSelectedItemTpl = me.lookupTpl('ariaSelectedItemTpl');
         }
         
         return Ext.String.format(me.ariaSelectedText, me.ariaSelectedItemTpl.apply(values));
@@ -1373,7 +1377,6 @@ Ext.define('Ext.form.field.Tag', {
         me.applyAriaListMarkup();
         me.applyAriaSelectedText();
         me.checkChange();
-        me.applyEmptyText();
     },
 
     /**
@@ -1421,6 +1424,7 @@ Ext.define('Ext.form.field.Tag', {
         me.inputEl.dom.value = '';
 
         me.collapse();
+        me.refreshEmptyText();
     },
 
     /**
@@ -1448,57 +1452,6 @@ Ext.define('Ext.form.field.Tag', {
         }
 
         return true;
-    },
-
-    /**
-     * Overridden to use value (selection) instead of raw value and to avoid the use of placeholder
-     */
-    applyEmptyText : function() {
-        var me = this,
-            emptyText = me.emptyText,
-            emptyEl = me.emptyEl,
-            inputEl = me.inputEl,
-            listWrapper = me.listWrapper,
-            emptyCls = me.emptyCls,
-            emptyInputCls = me.emptyInputCls,
-            isEmpty;
-
-        if (me.rendered && emptyText) {
-            isEmpty = Ext.isEmpty(me.value) && !me.hasFocus;
-
-            if (isEmpty) {
-                inputEl.dom.value = '';
-                emptyEl.setHtml(emptyText);
-                emptyEl.addCls(emptyCls);
-                emptyEl.removeCls(emptyInputCls);
-                listWrapper.addCls(me.emptyUICls);
-                inputEl.addCls(emptyInputCls);
-            } else {
-                emptyEl.addCls(emptyInputCls);
-                emptyEl.removeCls(emptyCls);
-                listWrapper.removeCls(me.emptyUICls);
-                inputEl.removeCls(emptyInputCls);
-            }
-            me.autoSize();
-        }
-    },
-
-    /**
-     * Overridden to use inputEl instead of raw value and to avoid the use of placeholder
-     */
-    preFocus: function() {
-        var me = this,
-            inputEl = me.inputEl,
-            isEmpty = inputEl.dom.value === '';
-
-        me.emptyEl.addCls(me.emptyInputCls);
-        me.emptyEl.removeCls(me.emptyCls);
-        me.listWrapper.removeCls(me.emptyUICls);
-        me.inputEl.removeCls(me.emptyInputCls);
-
-        if (me.selectOnFocus || isEmpty) {
-            inputEl.dom.select();
-        }
     },
 
     /**

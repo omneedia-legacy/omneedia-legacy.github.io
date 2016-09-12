@@ -1,7 +1,7 @@
 Ext.define('Calendar.util.Google', {
     singleton: true,
 
-    mixins: ['Ext.ux.google.Client'],
+    mixins: ['Ext.google.ux.Client'],
 
     googleApis: { 'people': { version: 'v1' } },
 

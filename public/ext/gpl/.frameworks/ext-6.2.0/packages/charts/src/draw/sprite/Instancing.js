@@ -11,11 +11,16 @@ Ext.define('Ext.draw.sprite.Instancing', {
     isInstancing: true,
 
     config: {
-        
         /**
-         * @cfg {Object} [template=null] The sprite template used by all instances.
+         * @cfg {Object} [template] The sprite template used by all instances.
          */
-        template: null
+        template: null,
+
+        /**
+         * @cfg {Array} [instances]
+         * The instances of the {@link #template} sprite as configs of attributes.
+         */
+        instances: null
     },
 
     instances: null,
@@ -59,10 +64,20 @@ Ext.define('Ext.draw.sprite.Instancing', {
         this.clearAll();
     },
 
+    updateInstances: function (instances) {
+        this.clearAll();
+
+        if (Ext.isArray(instances)) {
+            for (var i = 0, ln = instances.length; i < ln; i++) {
+                this.add(instances[i]);
+            }
+        }
+    },
+
     updateSurface: function (surface) {
         var template = this.getTemplate();
 
-        if (template) {
+        if (template && !template.destroyed) {
             template.setSurface(surface);
         }
     },
@@ -83,14 +98,22 @@ Ext.define('Ext.draw.sprite.Instancing', {
     },
 
     /**
+     * @deprecated 6.2.0
+     * Deprecated, use the {@link #add} method instead.
+     */
+    createInstance: function (config, bypassNormalization, avoidCopy) {
+        return this.add(config, bypassNormalization, avoidCopy);
+    },
+
+    /**
      * Creates a new sprite instance.
-     * 
+     *
      * @param {Object} config The configuration of the instance.
      * @param {Boolean} [bypassNormalization] 'true' to bypass attribute normalization.
      * @param {Boolean} [avoidCopy] 'true' to avoid copying the `config` object.
      * @return {Object} The attributes of the instance.
      */
-    createInstance: function (config, bypassNormalization, avoidCopy) {
+    add: function (config, bypassNormalization, avoidCopy) {
         var template = this.getTemplate(),
             originalAttr = template.attr,
             attr = Ext.Object.chain(originalAttr);

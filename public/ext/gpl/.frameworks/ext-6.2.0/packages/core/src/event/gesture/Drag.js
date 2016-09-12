@@ -254,12 +254,21 @@ Ext.define('Ext.event.gesture.Drag', {
             touch = e.changedTouches[0],
             info = me.info;
 
+        // if "e" is a true cancellation event (touchcancel, pointercancel) e.touches.length
+        // will be 0.  If length is anything else we can safely assume that this was called
+        // because an additional touch was added (see SingleTouch#onTouchStart).  If that
+        // is the case we do not want to update the lastPoint because the coordinates should
+        // be those of the last single-touch drag, not the new touch.
+        if (!e.touches.length) {
+            me.lastPoint = touch.point;
+        }
+
         me.updateInfo('x', e, touch);
         me.updateInfo('y', e, touch);
 
         info.time = e.time;
 
-        me.fire('dragcancel', e, info);
+        me.fire('dragcancel', e, info, true);
     },
 
     reset: function() {

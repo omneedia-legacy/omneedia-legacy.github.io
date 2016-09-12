@@ -314,6 +314,10 @@ Ext.define('Ext.viewport.Default', new function() {
 
                 classList.push(clsPrefix + osName);
                 classList.push(clsPrefix + browserName);
+
+                if (Ext.browser.is.Safari && Ext.browser.version.isLessThan(9)) {
+                    classList.push(clsPrefix + 'safari8m');
+                }
                 if (Ext.toolkit) {
                     classList.push(clsPrefix + Ext.toolkit);
                 }
@@ -351,6 +355,10 @@ Ext.define('Ext.viewport.Default', new function() {
 
                 this.setOrientation(this.determineOrientation());
                 classList.push(clsPrefix + this.getOrientation());
+
+                if(Ext.os.is.iOS && Ext.browser.is.WebView && !Ext.browser.is.Standalone) {
+                    classList.push(clsPrefix + 'ios-native');
+                }
 
                 body.addCls(classList);
 
@@ -429,7 +437,8 @@ Ext.define('Ext.viewport.Default', new function() {
             // In FF, the focusedElement can be the document which doesn't have a blur method
             if (focusedElement && focusedElement.blur && focusedElement.nodeName.toUpperCase() != 'BODY' && !this.isInputRegex.test(target.tagName)) {
                 delete this.focusedElement;
-                focusedElement.blur();
+                // Wrap in a flyweight since the blur can sometimes throw spurious errors
+                Ext.fly(focusedElement).blur();
             }
         },
 
@@ -533,10 +542,7 @@ Ext.define('Ext.viewport.Default', new function() {
             body.replaceCls(clsPrefix + oldOrientation, clsPrefix + newOrientation);
 
             me.updateSize();
-
-            // Switched to using Width/Height of viewport as it is more consistent across Android and iOS
-            // using the inner window height/width caused iOS9 issues and was not updated to the correct value in Android Chrome
-            me.fireEvent('orientationchange', me, newOrientation, me.getWidth(), me.getHeight());
+            me.fireEvent('orientationchange', me, newOrientation, me.windowWidth, me.windowHeight);
         },
 
         onResize: function() {
@@ -1295,7 +1301,7 @@ Ext.define('Ext.viewport.Default', new function() {
             me.$swiping = false;
         },
 
-        destroy: function() {
+        doDestroy: function() {
             // If there are floated components, they might not be be being destroyed.
             // Move the floatRoot back into the document. It is "sticky".
             if (Ext.floatRoot) {

@@ -275,8 +275,9 @@ Ext.define('Ext.chart.series.Series', {
          * An array of color values which is used, in order of appearance, by the series. Each series
          * can request one or more colors from the array. Radar, Scatter or Line charts require just
          * one color each. Candlestick and OHLC require two (1 for drops + 1 for rises). Pie charts
-         * and Stacked charts (like Column or Pie charts) require one color for each data category
-         * they represent, so one color for each slice of a Pie chart or each segment of a Column chart.
+         * and Stacked charts (like Bar or Pie charts) require one color for each data category
+         * they represent, so one color for each slice of a Pie chart or each segment (not bar) of
+         * a Bar chart.
          * It overrides the colors that are provided by the current theme.
          */
         colors: null,
@@ -294,8 +295,8 @@ Ext.define('Ext.chart.series.Series', {
         useDarkerStrokeColor: true,
 
         /**
-         * @protected
-         * @cfg {Object} store The store of values used in the series.
+         * @cfg {Object} store The store to use for this series. If not specified,
+         * the series will use the chart's {@link Ext.chart.AbstractChart#store store}.
          */
         store: null,
 
@@ -595,31 +596,12 @@ Ext.define('Ext.chart.series.Series', {
         }
     },
 
-    updateTitle: function (newTitle) {
+    updateTitle: function () {
         var me = this,
             chart = me.getChart();
-        if (!chart || chart.isInitializing) {
-            return;
-        }
-        newTitle = Ext.Array.from(newTitle);
-        var series = chart.getSeries(),
-            seriesIndex = Ext.Array.indexOf(series, me),
-            legendStore = chart.getLegendStore(),
-            itemCount = legendStore.getCount(),
-            yField = me.getYField(),
-            i, item, title, ln;
 
-        if (itemCount && seriesIndex !== -1) {
-            ln = yField ? Math.min(newTitle.length, yField.length) : newTitle.length;
-            for (i = 0; i < ln; i++) {
-                title = newTitle[i];
-                item = legendStore.getAt(seriesIndex + i);
-                if (title && item) {
-                    item.set('name', title);
-                }
-            }
-            // Remove unused records.
-            legendStore.removeAt(i, itemCount);
+        if (chart && !chart.isInitializing) {
+            chart.refreshLegendStore();
         }
     },
 
@@ -758,7 +740,7 @@ Ext.define('Ext.chart.series.Series', {
             constrainPosition: true,
             shrinkWrapDock: true,
             autoHide: true,
-            mouseOffset: [10, 10]
+            mouseOffset: [20, 20]
         }, tooltip);
 
         return Ext.create(config);
@@ -1163,16 +1145,25 @@ Ext.define('Ext.chart.series.Series', {
         }
     },
 
-    applyLabel: function (newLabel, oldLabel) {
+    applyLabel: function (label, oldLabel) {
+        var template, chart;
+
         if (!oldLabel) {
             oldLabel = new Ext.chart.Markers({zIndex: 10});
-            oldLabel.setTemplate(new Ext.chart.sprite.Label(newLabel));
+            oldLabel.setTemplate(new Ext.chart.sprite.Label(label));
         } else {
-            oldLabel.getTemplate().setAttributes(newLabel);
-            if (newLabel && newLabel.display) {
-                oldLabel.setAttributes({
-                    hidden: newLabel.display === 'none'
-                });
+            template = oldLabel.getTemplate();
+            template.setAttributes(label);
+            if (label) {
+                if (label.field) {
+                    template.setField(label.field);
+                    this.updateLabelData();
+                }
+                if (label.display) {
+                    oldLabel.setAttributes({
+                        hidden: label.display === 'none'
+                    });
+                }
             }
             oldLabel.setDirty(true); // inform the label about the template change
             this.updateLabel(); // won't be called automatically in this case
@@ -1221,6 +1212,7 @@ Ext.define('Ext.chart.series.Series', {
         var me = this,
             chart = me.getChart(),
             sprites;
+
         if (chart && chart.isInitializing) {
             return;
         }
@@ -1449,7 +1441,7 @@ Ext.define('Ext.chart.series.Series', {
         if (darker) {
             strokeColors = Ext.Array.map(colors, function (color) {
                 color = Ext.isString(color) ? color : color.stops[0].color;
-                color = Ext.draw.Color.fromString(color);
+                color = Ext.util.Color.fromString(color);
                 return color.createDarker(darkerRatio).toString();
             });
         } else {
@@ -1479,7 +1471,7 @@ Ext.define('Ext.chart.series.Series', {
             seriesTheme = theme.getSeries(),
             initialConfig = me.getInitialConfig(),
             defaultConfig = me.defaultConfig,
-            configs = me.getConfigurator().configs,
+            configs = me.self.getConfigurator().configs,
             genericSeriesTheme = seriesTheme.defaults,
             specificSeriesTheme = seriesTheme[me.type],
             themeOnlyIfConfigured = me.themeOnlyIfConfigured,

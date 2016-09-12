@@ -395,7 +395,7 @@ return {
             identifier = '';
         }
         
-        return this._owner.then(function (value) {
+        return this.owner.then(function (value) {
             Ext.log("" + (identifier || 'Promise') + " resolved with value: " + value);
             
             return value;

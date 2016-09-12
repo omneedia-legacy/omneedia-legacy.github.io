@@ -19,16 +19,25 @@ Ext.define('KitchenSink.view.chart.OHLC', {
         }
     },
 
+    // <example>
+    otherContent: [{
+        type: 'Controller',
+        path: 'modern/src/view/chart/ChartController.js'
+    }, {
+        type: 'Store',
+        path: 'modern/src/store/StockPrice.js' 
+    }],
+    // </example>
+    
     layout: 'fit',
+    shadow: true,
+
     items: [{
         xtype: 'toolbar',
         docked: 'top',
         cls: 'charttoolbar',
         items: [{
             xtype: 'spacer'
-        }, {
-            text: 'Reset',
-            handler: 'onReset'
         }]
     }, {
         xtype: 'cartesian',

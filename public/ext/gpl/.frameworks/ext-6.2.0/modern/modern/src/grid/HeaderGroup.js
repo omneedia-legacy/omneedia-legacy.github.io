@@ -3,7 +3,7 @@
  */
 Ext.define('Ext.grid.HeaderGroup', {
     extend: 'Ext.Container',
-    alias: 'widget.gridheadergroup',
+    xtype: ['headergroup', 'gridheadergroup'],
     isHeaderGroup: true,
 
     config: {
@@ -24,7 +24,6 @@ Ext.define('Ext.grid.HeaderGroup', {
         items: undefined,
 
         defaultType: 'column',
-        baseCls: Ext.baseCSSPrefix + 'grid-headergroup',
 
         /**
          * We hide the HeaderGroup by default, and show it when any columns are added to it.
@@ -38,16 +37,28 @@ Ext.define('Ext.grid.HeaderGroup', {
         }
     },
 
+    classCls: Ext.baseCSSPrefix + 'headergroup',
+    headerCls: Ext.baseCSSPrefix + 'gridcolumn',
+
     getElementConfig: function() {
         return {
             reference: 'element',
-            classList: ['x-container', 'x-unsized'],
             children: [{
-                reference: 'textElement',
-                className: 'x-grid-headergroup-text'
+                // This markup intentionally mimics that of a gridcolumn for styling reasons.
+                // This header element can be styled using column uis (see updtateUi)
+                reference: 'headerElement',
+                classList: [ this.headerCls, Ext.baseCSSPrefix + 'align-center' ],
+                children: [{
+                    reference: 'titleElement',
+                    className: Ext.baseCSSPrefix + 'title-el',
+                    children: [{
+                        reference: 'textElement',
+                        className: Ext.baseCSSPrefix + 'text-el'
+                    }]
+                }]
             }, {
                 reference: 'innerElement',
-                className: 'x-inner'
+                className: Ext.baseCSSPrefix + 'inner'
             }]
         };
     },
@@ -146,9 +157,25 @@ Ext.define('Ext.grid.HeaderGroup', {
         me.hide();
     },
 
-    destroy: function() {
+    doDestroy: function() {
         this.setColumns(null);
         this.callParent();
+    },
+
+    updateUi: function(ui, oldUi) {
+        var me = this,
+            headerCls = me.headerCls,
+            headerElement = me.headerElement;
+
+        if (oldUi) {
+            headerElement.removeCls(oldUi, headerCls);
+        }
+
+        if (ui) {
+            headerElement.addCls(ui, headerCls);
+        }
+
+        me.callParent([ui, oldUi]);
     },
 
     privates: {

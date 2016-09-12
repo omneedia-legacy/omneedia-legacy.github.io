@@ -138,30 +138,27 @@ $tab-active-icon-color: dynamic($tab-active-color);
 
 /**
  * @var {number}
- * Tab icon size.  If specified in terms of `em` units, the icon will be sized
- * relative to {@link #$tab-icon-font-size}.
+ * Tab icon size.
  */
-$tab-icon-size: dynamic(1em);
+$tab-icon-size: dynamic($tab-line-height);
 
 /**
  * @var {number}
  * Tab icon size in the {@link Global_CSS#$enable-big big} sizing scheme
- * If specified in terms of `em` units, the icon will be sized
- * relative to {@link #$tab-icon-font-size-big}.
  */
-$tab-icon-size-big: dynamic(1em);
+$tab-icon-size-big: dynamic($tab-line-height-big);
 
 /**
  * @var {number}
  * Tab icon font-size.  Used for configuring the size of font icons
  */
-$tab-icon-font-size: dynamic($tab-line-height);
+$tab-icon-font-size: dynamic($tab-icon-size);
 
 /**
  * @var {number}
  * Tab icon font-size in the {@link Global_CSS#$enable-big big} sizing scheme
  */
-$tab-icon-font-size-big: dynamic($tab-line-height-big);
+$tab-icon-font-size-big: dynamic($tab-icon-size-big);
 
 /**
  * @var {number}
@@ -306,7 +303,17 @@ $tab-badge-left: dynamic(null);
  */
 $tab-badge-padding: dynamic(.1em .3em);
 
-$tab-flex: dynamic(null);
+/**
+ * @var {number}
+ * The padding of the tab's {@link #badgeText badge} in the
+ * {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$tab-badge-padding-big: dynamic($tab-badge-padding);
+
+/**
+ * @var {shadow}
+ * The shadow for the active tab
+ */
 $tab-active-box-shadow: dynamic(null);
 
 /**
@@ -474,8 +481,6 @@ $tab-active-box-shadow: dynamic(null);
 @mixin tab-ui(
     $ui: null,
 
-    $flex: null,
-
     $background-color: null,
     $active-background-color: null,
 
@@ -536,14 +541,14 @@ $tab-active-box-shadow: dynamic(null);
     $badge-right: null,
     $badge-bottom: null,
     $badge-left: null,
-    $badge-padding: null
+    $badge-padding: null,
+    $badge-padding-big: null
 ) {
     $ui-suffix: ui-suffix($ui);
 
     .x-tab#{$ui-suffix} {
         color: $color;
         padding: $padding;
-        @include st-box-flex($flex);
         @include font($font-weight, $font-size, $line-height, $font-family);
         @include border($border-width, $border-style, $border-color);
 
@@ -580,30 +585,20 @@ $tab-active-box-shadow: dynamic(null);
         .x-button-icon {
             width: $icon-size;
             height: $icon-size;
-            line-height: $icon-size;
-            font-size: $icon-font-size;
-            color: $icon-color;
+            @include icon($font-size: $icon-font-size, $font-size-big: $icon-font-size-big);
 
             @if $enable-big {
                 .x-big & {
-                    @if $icon-size-big != $icon-size {
-                        width: $icon-size-big;
-                        height: $icon-size-big;
-                        line-height: $icon-size-big;
-                    }
-                    @if $icon-font-size-big != $icon-font-size {
-                        font-size: $icon-font-size-big;
-                    }
+                    width: $icon-size-big;
+                    height: $icon-size-big;
                 }
             }
 
-            @include tab-icon-stroke($icon-color);
+            color: $icon-color;
         }
 
         &.x-tab-active .x-button-icon {
             color: $active-icon-color;
-
-            @include tab-icon-no-stroke($active-icon-color);
         }
 
         &.x-iconalign-left .x-button-icon {
@@ -651,7 +646,7 @@ $tab-active-box-shadow: dynamic(null);
             min-height: $line-height;
         }
 
-        &.x-item-disabled {
+        &.x-disabled {
             opacity: $disabled-opacity;
         }
 
@@ -665,6 +660,7 @@ $tab-active-box-shadow: dynamic(null);
                 .x-big & {
                     font-size: $badge-font-size-big;
                     line-height: $badge-line-height-big;
+                    padding: $badge-padding-big;
                 }
             }
 
@@ -684,15 +680,3 @@ $tab-active-box-shadow: dynamic(null);
         }
     }
 }
-
-/**
- * @private
- * Hook for iOS theme
- */
-@mixin tab-icon-stroke($stroke-color) {}
-
-/**
- * @private
- * Hook for iOS theme
- */
-@mixin tab-icon-no-stroke($color) {}

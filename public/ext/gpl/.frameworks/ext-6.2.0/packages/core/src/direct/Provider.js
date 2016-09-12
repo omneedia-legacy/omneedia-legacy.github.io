@@ -25,6 +25,8 @@ Ext.define('Ext.direct.Provider', {
     ],
     
     isProvider: true,
+    $configPrefixed: false,
+    $configStrict: false,
 
    /**
      * @cfg {String} id
@@ -47,6 +49,14 @@ Ext.define('Ext.direct.Provider', {
      * List of Provider events that should be relayed by {@link Ext.direct.Manager}.
      * 'data' event is always relayed.
      */
+    
+    config: {
+        /**
+         * @cfg {Object} [headers]
+         * An object containing default headers for every Ajax request made by this Provider.
+         */
+        headers: undefined
+    },
     
     /**
      * @event connect
@@ -85,13 +95,13 @@ Ext.define('Ext.direct.Provider', {
     constructor: function(config) {
         var me = this;
         
-        Ext.apply(me, config);
-        
+        me.mixins.observable.constructor.call(me, config);
+
+        me.requests = {};
+
         Ext.applyIf(me, {
             id: Ext.id(null, 'provider-')
         });
-
-        me.mixins.observable.constructor.call(me, config);
     },
     
     destroy: function() {
@@ -139,7 +149,7 @@ Ext.define('Ext.direct.Provider', {
     disconnect: function(/* */ force) {
         var me = this;
         
-        if (me.subscribers > 0) {
+        if (me.subscribers > 0 || force) {
             if (force) {
                 me.subscribers = 0;
             }
@@ -161,7 +171,45 @@ Ext.define('Ext.direct.Provider', {
      * @template
      * @protected
      */
-    doDisconnect: Ext.emptyFn,
+    doDisconnect: function() {
+        var requests = this.requests,
+            request, id;
+        
+        for (id in requests) {
+            request = requests[id];
+            request.abort();
+        }
+        
+        this.requests = {};
+    },
+    
+    /**
+     * Send the Ajax request
+     *
+     * @param {Object} Ajax request parameters
+     *
+     * @private
+     */
+    sendAjaxRequest: function(params) {
+        var request = Ext.Ajax.request(params);
+        
+        if (request && request.id) {
+            this.requests[request.id] = request;
+        }
+            
+        return request;
+    },
+    
+    /**
+     * Ajax request callback
+     *
+     * @private
+     */
+    onData: function(options, success, response) {
+        if (response && response.request) {
+            delete this.requests[response.request.id];
+        }
+    },
     
     inheritableStatics: {
         /**

@@ -529,12 +529,15 @@ Ext.define('Ext.field.Select', {
         return me;
     },
 
-    destroy: function() {
+    doDestroy: function() {
         var store = this.getStore();
 
         if (store && store.getAutoDestroy()) {
             store.destroy();
         }
+        
+        Ext.destroy(this.phonePicker, this.tabletPicker);
+        
         this.callParent();
     }
 });

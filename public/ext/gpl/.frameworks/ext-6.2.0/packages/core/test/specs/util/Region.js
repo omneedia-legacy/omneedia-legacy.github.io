@@ -1748,4 +1748,21 @@ describe("Ext.util.Region", function() {
             });
         });
     });
+
+    describe('getAnchorPoint', function() {
+        it('should return the requested anchor point', function() {
+            region1 = new Ext.util.Region(0, 100, 100, 0);
+
+            // The 9 primary anchor points
+            expect(region1.getAnchorPoint('tl')).toEqual([0, 0]);
+            expect(region1.getAnchorPoint('t')).toEqual([50, 0]);
+            expect(region1.getAnchorPoint('tr')).toEqual([100, 0]);
+            expect(region1.getAnchorPoint('l')).toEqual([0, 50]);
+            expect(region1.getAnchorPoint('c')).toEqual([50, 50]);
+            expect(region1.getAnchorPoint('r')).toEqual([100, 50]);
+            expect(region1.getAnchorPoint('bl')).toEqual([0, 100]);
+            expect(region1.getAnchorPoint('b')).toEqual([50, 100]);
+            expect(region1.getAnchorPoint('br')).toEqual([100, 100]);
+        });
+    });
 });

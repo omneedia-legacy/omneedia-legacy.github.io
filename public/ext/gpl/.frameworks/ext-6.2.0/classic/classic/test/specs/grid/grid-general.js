@@ -12,6 +12,15 @@ describe("grid-general", function() {
             return this;
         };
 
+    function spyOnEvent(object, eventName, fn) {
+        var obj = {
+            fn: fn || Ext.emptyFn
+        },
+        spy = spyOn(obj, "fn");
+        object.addListener(eventName, obj.fn);
+        return spy;
+    }
+
     beforeEach(function() {
         // Override so that we can control asynchronous loading
         Ext.data.ProxyStore.prototype.load = loadStore;
@@ -257,28 +266,28 @@ describe("grid-general", function() {
                     });
 
                     it("should destroy lockable with a ViewModel", function() {
-                        makeGrid([{
-                            locked: true,
-                            dataIndex: 'f1'
-                        }, {
-                            dataIndex: 'f2'
-                        }], null, {
-                            bind: '{test}',
-                            viewModel: {
-                                stores: {
-                                    test: {
-                                        data: [{
-                                            f1: 'a',
-                                            f2: 'b'
-                                        }]
-                                    }
-                                }
-                            }
-                        }, {
-                            preventStoreCreate: true
-                        });
+                        makeGrid([{
+                            locked: true,
+                            dataIndex: 'f1'
+                        }, {
+                            dataIndex: 'f2'
+                        }], null, {
+                            bind: '{test}',
+                            viewModel: {
+                                stores: {
+                                    test: {
+                                        data: [{
+                                            f1: 'a',
+                                            f2: 'b'
+                                        }]
+                                    }
+                                }
+                            }
+                        }, {
+                            preventStoreCreate: true
+                        });
                     
-                        grid.getViewModel().notify();
+                        grid.getViewModel().notify();
                         grid.destroy();
                         expect(grid.destroyed).toBe(true);
                     });
@@ -921,10 +930,25 @@ describe("grid-general", function() {
                             expect(grid.getEl().select('.' + dirtyCls).getCount()).toBe(0);
                         });
 
+                        it("should not render a cell with the dirtyText description initially", function() {
+                            makeDirtyGrid(false, true);
+                            store.first().set('field1', 'bleh');
+                            grid.render(Ext.getBody());
+
+                            expect(grid.getEl().select('[aria-describedby]').getCount()).toBe(0);
+                        });
+
                         it("should not add the dirtyCls when updated with a simple cell updater", function() {
                             makeDirtyGrid(false);
                             store.first().set('field1', 'bleh');
                             expect(grid.getEl().select('.' + dirtyCls).getCount()).toBe(0);
+                        });
+
+                        it("should not add the dirtyText description when updated with a simple cell updater", function() {
+                            makeDirtyGrid(false);
+                            store.first().set('field1', 'bleh');
+                            
+                            expect(grid.getEl().select('[aria-describedby]').getCount()).toBe(0);
                         });
 
                         it("should not add the dirtyCls when updated with a renderer", function() {
@@ -937,6 +961,18 @@ describe("grid-general", function() {
                             store.first().set('field1', 'bleh');
                             expect(grid.getEl().select('.' + dirtyCls).getCount()).toBe(0);
                         });
+
+                        it("should not add the dirtyText description when updated with a renderer", function() {
+                            makeDirtyGrid(false, false, [{
+                                dataIndex: '',
+                                renderer: function(v, meta, rec) {
+                                    return rec.get('field1') + rec.get('field2');
+                                }
+                            }]);
+                            store.first().set('field1', 'bleh');
+                            
+                            expect(grid.getEl().select('[aria-describedby]').getCount()).toBe(0);
+                        });
                     });
 
                     describe("with markDirty: true", function() {
@@ -947,6 +983,16 @@ describe("grid-general", function() {
                             var rec = store.first();
                             for (var i = 0; i < colRef.length; ++i) {
                                 expect(getCell(rec, colRef[i])).not.toHaveCls(dirtyCls);
+                            }
+                        });
+
+                        it("should not render a cell with the dirtyText description initially if not dirty", function() {
+                            makeDirtyGrid(true, true);
+                            grid.render(Ext.getBody());
+                            
+                            var rec = store.first();
+                            for (var i = 0; i < colRef.length; ++i) {
+                                expect(getCell(rec, colRef[i])).not.toHaveAttr('aria-describedby');
                             }
                         });
 
@@ -962,6 +1008,19 @@ describe("grid-general", function() {
                             }
                         });
 
+                        it("should render a cell with the dirtyText description initially if the cell is dirty", function() {
+                            makeDirtyGrid(true, true);
+                            store.first().set('field1', 'bleh');
+                            grid.render(Ext.getBody());
+                            
+                            var rec = store.first();
+                            expect(getCell(rec, colRef[0])).toHaveAttr('aria-describedby', colRef[0].dirtyTextElementId);
+                            
+                            for (var i = 1; i < colRef.length; ++i) {
+                                expect(getCell(rec, colRef[i])).not.toHaveAttr('aria-describedby');
+                            }
+                        });
+
                         it("should add the dirtyCls to updated cells", function() {
                             makeDirtyGrid(true);
                             var rec = store.first();
@@ -969,6 +1028,17 @@ describe("grid-general", function() {
                             expect(getCell(rec, colRef[0])).toHaveCls(dirtyCls);
                             rec.set('field4', 'qwerty');
                             expect(getCell(rec, colRef[3])).toHaveCls(dirtyCls);
+                        });
+
+                        it("should add the dirtyText description to updated cells", function() {
+                            makeDirtyGrid(true);
+                            var rec = store.first();
+                            
+                            rec.set('field1', 'bleh');
+                            expect(getCell(rec, colRef[0])).toHaveAttr('aria-describedby', colRef[0].dirtyTextElementId);
+                            
+                            rec.set('field4', 'qwerty');
+                            expect(getCell(rec, colRef[3])).toHaveAttr('aria-describedby', colRef[3].dirtyTextElementId);
                         });
 
                         it("should remove the dirtyCls when the cell is no longer dirty", function() {
@@ -980,6 +1050,18 @@ describe("grid-general", function() {
                             expect(getCell(rec, colRef[0])).toHaveCls(dirtyCls);
                             rec.set('field1', val);
                             expect(getCell(rec, colRef[0])).not.toHaveCls(dirtyCls);
+                        });
+
+                        it("should remove the dirtyText description when the cell is no longer dirty", function() {
+                            makeDirtyGrid(true);
+                            var rec = store.first(),
+                                val = rec.get('field1');
+
+                            rec.set('field1', 'asdf');
+                            expect(getCell(rec, colRef[0])).toHaveAttr('aria-describedby', colRef[0].dirtyTextElementId);
+                            
+                            rec.set('field1', val);
+                            expect(getCell(rec, colRef[0])).not.toHaveAttr('aria-describedby');
                         });
 
                         it("should remove the dirtyCls on commit", function() {
@@ -1001,6 +1083,25 @@ describe("grid-general", function() {
                             expect(getCell(rec, colRef[2])).not.toHaveCls(dirtyCls);
                         });
 
+                        it("should remove the dirtyText description on commit", function() {
+                            makeDirtyGrid(true);
+                            var rec = store.first();
+
+                            rec.set('field1', 'foo');
+                            rec.set('field2', 'bar');
+                            expect(getCell(rec, colRef[0])).toHaveAttr('aria-describedby', colRef[0].dirtyTextElementId);
+                            expect(getCell(rec, colRef[1])).toHaveAttr('aria-describedby', colRef[1].dirtyTextElementId);
+
+                            rec.set('field3', 'baz');
+                            expect(getCell(rec, colRef[2])).toHaveAttr('aria-describedby', colRef[2].dirtyTextElementId);
+
+                            rec.commit();
+
+                            expect(getCell(rec, colRef[0])).not.toHaveAttr('aria-describedby');
+                            expect(getCell(rec, colRef[1])).not.toHaveAttr('aria-describedby');
+                            expect(getCell(rec, colRef[2])).not.toHaveAttr('aria-describedby');
+                        });
+
                         it("should remove the dirtyCls on reject", function() {
                             makeDirtyGrid(true);
                             var rec = store.first();
@@ -1018,6 +1119,25 @@ describe("grid-general", function() {
                             expect(getCell(rec, colRef[0])).not.toHaveCls(dirtyCls);
                             expect(getCell(rec, colRef[1])).not.toHaveCls(dirtyCls);
                             expect(getCell(rec, colRef[2])).not.toHaveCls(dirtyCls);
+                        });
+
+                        it("should remove the dirtyText description on reject", function() {
+                            makeDirtyGrid(true);
+                            var rec = store.first();
+
+                            rec.set('field1', 'foo');
+                            rec.set('field2', 'bar');
+                            expect(getCell(rec, colRef[0])).toHaveAttr('aria-describedby', colRef[0].dirtyTextElementId);
+                            expect(getCell(rec, colRef[1])).toHaveAttr('aria-describedby', colRef[1].dirtyTextElementId);
+
+                            rec.set('field3', 'baz');
+                            expect(getCell(rec, colRef[2])).toHaveAttr('aria-describedby', colRef[2].dirtyTextElementId);
+
+                            rec.reject();
+
+                            expect(getCell(rec, colRef[0])).not.toHaveAttr('aria-describedby');
+                            expect(getCell(rec, colRef[1])).not.toHaveAttr('aria-describedby');
+                            expect(getCell(rec, colRef[2])).not.toHaveAttr('aria-describedby');
                         });
                     });
                 });
@@ -1396,6 +1516,8 @@ describe("grid-general", function() {
             
             describe("reconfigure", function() {
                 describe("setStore", function() {
+                    var storeChangeSpy;
+
                     describe("without locking", function() {
                         function expectNodeLength(n) {
                             expect(view.getNodes().length).toBe(n);
@@ -1403,8 +1525,10 @@ describe("grid-general", function() {
 
                         it("should be able to clear the store", function() {
                             makeGrid(null, undefined, null, null);
+                            storeChangeSpy = spyOnEvent(grid, 'storechange');
                             grid.setStore(null);
                             expectNodeLength(0);
+                            expect(storeChangeSpy.callCount).toBe(1);
                         });
                     });
 
@@ -1416,25 +1540,38 @@ describe("grid-general", function() {
 
                         it("should be able to clear the store", function() {
                             makeGrid(null, undefined, null, null, true);
+                            storeChangeSpy = spyOnEvent(grid, 'storechange');
                             grid.setStore(null);
                             expectNodeLength(0);
+                            expect(storeChangeSpy.callCount).toBe(1);
                         });
                     });
                 });
 
                 function makeReconfigureSuite(beforeRender) {
+                    var storeChangeSpy;
+
                     function makeReconfigureGrid(columns, data, cfg, options, locked) {
                         cfg = cfg || {};
                         if (beforeRender) {
                             cfg.renderTo = null;
                         }
                         makeGrid(columns, data, cfg, options, locked);
+                        storeChangeSpy = spyOnEvent(grid, 'storechange');
                     }
 
-                    function reconfigure() {
+                    function reconfigure(store, columns, allowUnbind) {
+                        var oldStore = grid.store,
+                            storeChangeCount = storeChangeSpy.callCount;
+
                         grid.reconfigure.apply(grid, arguments);
                         if (beforeRender) {
                             grid.render(Ext.getBody());
+                        }
+                        
+                        // Passing store as null only unbinds if allowUnbind is passed truthy
+                        if (store !== oldStore && (store || allowUnbind)) {
+                            expect(storeChangeSpy.callCount).toBe(storeChangeCount + 1);
                         }
                     }
 
@@ -2406,6 +2543,7 @@ describe("grid-general", function() {
 
                 it("should only refresh the view once", function() {
                     var count = 0;
+
                     makeGrid([{
                         dataIndex: 'field1'
                     }]);
@@ -2922,7 +3060,7 @@ describe("grid-general", function() {
                                 leadingBufferZone: 1
                             });
                             var getRangeSpy = spyOn(store, 'getRange').andCallThrough(),
-                                removeRangeSpy = spyOn(view.all, 'removeRange').andCallThrough();
+                                clipSpy = spyOn(view.all, 'clip').andCallThrough();
 
                             grid.render(document.body);
 
@@ -2941,7 +3079,7 @@ describe("grid-general", function() {
                             expect(getRangeSpy.calls[0].args).toEqual([0, Ext.grid.plugin.BufferedRenderer.prototype.viewSize - 1]);
 
                             // Shrinking will have been done removing the trailing unwanted elements.
-                            expect(removeRangeSpy.calls[0].args).toEqual([view.bufferedRenderer.viewSize, Ext.grid.plugin.BufferedRenderer.prototype.viewSize - 1, true]);
+                            expect(clipSpy.calls[0].args).toEqual([-1, Ext.grid.plugin.BufferedRenderer.prototype.viewSize - view.bufferedRenderer.viewSize]);
                         });
                     });
                 });
@@ -3011,25 +3149,16 @@ describe("grid-general", function() {
 
             describe("locking columns", function(){
                 it("should synchronize horizontal scrollbar presence between locked and normal side.", function(){
-                    var indexes = [],
-                        fn = function(){
-                            indexes.push(arguments[4]);
-                        };
-
                     makeGrid([{
                         locked: true,
-                        dataIndex: 'field1',
-                        renderer: fn    
+                        dataIndex: 'field1'
                     }, {
                         locked: true,
-                        dataIndex: 'field2',
-                        renderer: fn    
+                        dataIndex: 'field2'
                     }, {
-                        dataIndex: 'field3',
-                        renderer: fn   
+                        dataIndex: 'field3'
                     }, {
-                        dataIndex: 'field4',
-                        renderer: fn   
+                        dataIndex: 'field4'
                     }], undefined, {
                         width: 600,
                         height: 200
@@ -3047,16 +3176,16 @@ describe("grid-general", function() {
 
                     // The client height should be the same - scrollbars at the bottom should be synched. Either both there or none there.
                     // In this case, both should have scrollbars.
-                    expect(grid.lockedGrid.getView().getTargetEl().dom.clientHeight).toEqual(grid.normalGrid.getView().getTargetEl().dom.clientHeight);
+                    expect(grid.lockedGrid.getView().getTargetEl().dom.clientHeight - Ext.getScrollbarSize().height).toEqual(grid.normalGrid.getView().getTargetEl().dom.clientHeight);
 
                     // View's client height has been reduced by horizontal scrollbar appearing due to overflow in normal side (if scrollbars take up space)
                     if (scrollbarWidth) {
-                        expect(grid.lockedGrid.getView().getTargetEl().dom.clientHeight).toBeLessThan(grid.lockedGrid.getView().getTargetEl().dom.offsetHeight);
+                        expect(grid.lockedGrid.getView().getTargetEl().dom.clientHeight).toBe(grid.lockedGrid.getView().getTargetEl().dom.offsetHeight);
                         expect(grid.normalGrid.getView().getTargetEl().dom.clientHeight).toBeLessThan(grid.normalGrid.getView().getTargetEl().dom.offsetHeight);
                     }
                 });
 
-                it("should add 'overflow-y: scroll' to the view if we need scrollbars on the locked side", function() {
+                it("should create a y-scrolling wrapper, and the views should not scroll in the Y axis", function() {
                     makeGrid([{
                         locked: true,
                         dataIndex: 'field1',
@@ -3079,7 +3208,9 @@ describe("grid-general", function() {
                         }
                     });
 
-                    expect(grid.lockedGrid.getView().getTargetEl().getStyle('overflow-y')).toBe(scrollbarsTakeSpace ? 'scroll': 'auto');
+                    expect(grid.lockedGrid.getView().getTargetEl().getStyle('overflow-y')).toBe('hidden');
+                    expect(grid.normalGrid.getView().getTargetEl().getStyle('overflow-y')).toBe('hidden');
+                    expect(grid.scrollBody.getStyle('overflow-y')).toBe('auto');
                 });
 
                 it("should unbind locking view from its store", function() {
@@ -3289,7 +3420,7 @@ describe("grid-general", function() {
                                 dataIndex: 'field3'
                             }]);
                         
-                            var borderWidth = grid.lockedGrid.el.getBorderWidth('lr');
+                            var borderWidth = grid.lockedGrid.gridPanelBorderWidth;
 
                             // First, verify that the width of the lockedGrid is the width of the checkbox
                             // column after reconfigure.
@@ -3525,75 +3656,97 @@ describe("grid-general", function() {
             });
 
             describe("scrollbars", function() {
+                beforeEach(function() {
+                    lockedIsVariable = false;
+                    originalScrollBarSize = Ext.grid.ColumnLayout.prototype.scrollbarWidth;
+                    // Create nice round numbers for calculations so that we can hardcode expected flexed widths
+                    Ext.grid.ColumnLayout.prototype.scrollbarWidth = scrollbarsTakeSpace ? 20 : 0;
+                });
+
+                afterEach(function() {
+                    Ext.grid.ColumnLayout.prototype.scrollbarWidth = originalScrollBarSize;
+                    gridRef = colRef = null;
+                    lockedIsVariable = false;
+                });
+
+                // Do some measuring first
+                // First up, a locking grid, so we can get the locked->normal border width.
+                makeGrid([{
+                    dataIndex: 'field1',
+                    text: 'Field1',
+                    width: 100,
+                    locked: true
+                }, {
+                    dataIndex: 'field2',
+                    text: 'Field2',
+                    width: 100
+                }], 10);
+                lockingExtraWidth = grid.lockedGrid.gridPanelBorderWidth;
+                grid.destroy();
+                store.destroy();
+
+                // Now we measure row heights and exactly how many rows cause scrolling
+                makeGrid([{
+                    dataIndex: 'field1',
+                    text: 'Field1',
+                    width: 100
+                }], 10);
+
+                var gridRef,
+                    colRef,
+                    lockedIsVariable,
+                    originalScrollBarSize,
+                    headerCtHeight,
+                    singleRowHeight,
+                    gridHeight,
+                    maxRowsBeforeScroll,
+                    maxRowsBeforeScrollWithHorizontalScrollBar,
+                    scrollRowSize,
+                    lockingExtraWidth,
+                    measureView = grid.getView(),
+                    viewHeight = measureView.getHeight(),
+                    gridExtraHeight = grid.getHeight() - viewHeight,
+                    measureNode = Ext.fly(measureView.getNode(0));
+
+                headerCtHeight = grid.headerCt.getHeight();
+
+                singleRowHeight = measureNode.getHeight();
+
+                // In IE8 we're adding bottom border on all the rows to work around
+                // the lack of :last-child selector, and we compensate that by setting
+                // a negative top margin that equals the border width, so that top and
+                // bottom borders overlap on adjacent rows. Negative margin does not
+                // affect the row's reported height though so we have to compensate
+                // for that effectively invisible additional border width here.
+                // Note that this code mostly duplicates the actual row height
+                // calculation performed in BufferedRenderer.getScrollHeight(),
+                // and the same compensation is applied there as well.
+                if (Ext.isIE8) {
+                    singleRowHeight -= measureNode.getBorderWidth('b');
+                }
+
+                // Then calculate the view height to hold 21 rows but to overflow
+                // as soon as a horizontal scrollbar appears.
+                // Account for non space taking scrollbars
+                viewHeight = singleRowHeight * 21 + (Ext.getScrollbarSize().height || (singleRowHeight - 5));
+
+                // Calculate a grid height in which the view encompasses 21 rows and a horizontal scrollbar.
+                // We need to be able to definitely know whether we are going to trigger
+                // scrollbars or not so we can test for expected results.
+                gridHeight = viewHeight + gridExtraHeight;
+
+                maxRowsBeforeScroll = Math.floor(viewHeight / singleRowHeight);
+                maxRowsBeforeScrollWithHorizontalScrollBar = maxRowsBeforeScroll - (Ext.getScrollbarSize().height ? 1 : 0);
+                scrollRowSize = maxRowsBeforeScroll + 100;
+
+                grid.destroy();
+                store.destroy();
+                gridRef = colRef = null;
+
                 function makeScrollSuite(withLocking) {
                     describe(withLocking ? "with locking" : "without locking", function() {
-                        var gridRef,
-                            originalScrollBarSize,
-                            singleRowHeight,
-                            maxRowsBeforeScroll,
-                            scrollRowSize,
-                            borderWidth,
-                            colRef,
-                            lockedIsVariable,
-                            maxRowsBeforeScrollWithHorizontalScrollBar;
-
-                        beforeEach(function() {
-                            lockedIsVariable = false;
-                            originalScrollBarSize = Ext.grid.ColumnLayout.prototype.scrollbarWidth;
-                            // Create nice round numbers for calculations so that we can hardcode expected flexed widths
-                            Ext.grid.ColumnLayout.prototype.scrollbarWidth = scrollbarsTakeSpace ? 20 : 0;
-
-                            if (!singleRowHeight) {
-                                // Do this the first time, calculate the height of a single row &
-                                // the amount of rows we an have without a vertical scroll
-                                borderWidth = 0;
-
-                                makeScrollGrid([{
-                                    dataIndex: 'field1',
-                                    width: 100
-                                }], 10);
-
-                                var measureView = (withLocking ? grid.normalGrid : grid).getView(),
-                                    viewHeight = measureView.getHeight(),
-                                    measureNode = Ext.fly(measureView.getNode(0));
-
-                                singleRowHeight = measureNode.getHeight();
-                                
-                                // In IE8 we're adding bottom border on all the rows to work around
-                                // the lack of :last-child selector, and we compensate that by setting
-                                // a negative top margin that equals the border width, so that top and
-                                // bottom borders overlap on adjacent rows. Negative margin does not
-                                // affect the row's reported height though so we have to compensate
-                                // for that effectively invisible additional border width here.
-                                // Note that this code mostly duplicates the actual row height
-                                // calculation performed in BufferedRenderer.getScrollHeight(),
-                                // and the same compensation is applied there as well.
-                                if (Ext.isIE8) {
-                                    singleRowHeight -= measureNode.getBorderWidth('b');
-                                }
-                                
-                                maxRowsBeforeScroll = Math.floor(viewHeight / singleRowHeight);
-                                viewHeight -= Ext.getScrollbarSize().width;
-                                maxRowsBeforeScrollWithHorizontalScrollBar = Math.floor(viewHeight / singleRowHeight);
-                                scrollRowSize = maxRowsBeforeScroll + 100;
-                        
-                                if (withLocking) {
-                                    borderWidth = parseInt(grid.lockedGrid.getEl().getStyle('border-right-width'), 10);
-                                }
-
-                                grid.destroy();
-                                store.destroy();
-                                gridRef = colRef = null;
-                            }
-                        });
-
-                        afterEach(function() {
-                            Ext.grid.ColumnLayout.prototype.scrollbarWidth = originalScrollBarSize;
-                            gridRef = colRef = null;
-                            lockedIsVariable = false;
-                        });
-
                         function makeScrollGrid(columns, data, cfg) {
+                            cfg = cfg || {};
                             var lockedColWidth = 100;
 
                             if (Ext.isNumber(data)) {
@@ -3611,8 +3764,13 @@ describe("grid-general", function() {
                                     locked: true,
                                     variableRowHeight: lockedIsVariable
                                 });
-                                cfg = cfg || {};
-                                cfg.width = 1000 + borderWidth + lockedColWidth;
+                                cfg.width = 1000 + lockingExtraWidth + lockedColWidth;
+                            }
+                            cfg.height = gridHeight;
+
+                            // If they want hideHeaders, ensure the viewHeight is still as required
+                            if (cfg.hideHeaders) {
+                                cfg.height -= headerCtHeight;
                             }
                             makeGrid(columns, data, cfg);
                             gridRef = withLocking ? grid.normalGrid : grid;
@@ -3622,37 +3780,33 @@ describe("grid-general", function() {
                         function expectScroll(vertical, horizontal) {
                             var scrollView = gridRef.getView(),
                                 dom = scrollView.getEl().dom,
+                                clientHeight = withLocking ? grid.scrollBody.el.dom.clientHeight : dom.clientHeight,
                                 sStyle = scrollView.getScrollable().getSpacer().dom.style;
 
                             // For Safari, we have to force a synchronous layout for scroll values to be updated in this event thread
                             // This flip-flops between 0px and 1px
                             sStyle.lineHeight = Number(!parseInt(sStyle.lineHeight)) + 'px';
 
+                            // IE now seems to need this in scrollbar tests where scrollbars depend on scrollbar presence
+                            if (Ext.isIE) {
+                                grid.updateLayout();
+                            }
+
                             // In Mac OS X, scrollbars can be invisible until user hovers mouse cursor
                             // over the scrolled area. This is hard to test so we just assume that
                             // in Mac browsers scrollbars can have 0 width.
                             if (vertical !== undefined) {
                                 if (vertical) {
-                                    if (Ext.isMac) {
-                                        expect(dom.scrollHeight).toBeGreaterThanOrEqual(dom.clientHeight);
-                                    }
-                                    else {
-                                        expect(dom.scrollHeight).toBeGreaterThan(dom.clientHeight);
-                                    }
+                                    expect(dom.scrollHeight).toBeGreaterThanOrEqual(clientHeight);
                                 }
                                 else {
-                                    expect(dom.scrollHeight).toBeLessThanOrEqual(dom.clientHeight);
+                                    expect(dom.scrollHeight).toBeLessThanOrEqual(clientHeight);
                                 }
                             }
 
                             if (horizontal !== undefined) {
                                 if (horizontal) {
-                                    if (Ext.isMac) {
-                                        expect(dom.scrollWidth).toBeGreaterThanOrEqual(dom.clientWidth);
-                                    }
-                                    else {
-                                        expect(dom.scrollWidth).toBeGreaterThan(dom.clientWidth);
-                                    }
+                                    expect(dom.scrollWidth).toBeGreaterThan(dom.clientWidth);
                                 }
                                 else {
                                     expect(dom.scrollWidth).toBeLessThanOrEqual(dom.clientWidth);
@@ -4057,12 +4211,10 @@ describe("grid-general", function() {
                                         // Release the width constraint so that the horizontal scrollbar disappears.
                                         // contentHeight now fits
                                         changeWidth(50);
-                                        view.el.setDisplayed(false);
                                         waits(1);
 
                                         // Allow the reflow before showing and then measuring.
                                         runs(function() {
-                                            view.el.setDisplayed(true);
                                             expectScroll(false, false);
                                         });
                                     });
@@ -4292,12 +4444,10 @@ describe("grid-general", function() {
                                         expectScroll(true, true);
                                         expectColumnWidths([600, 600, minColWidth]);
                                         colRef[0].setWidth(200);
-                                        view.el.setDisplayed(false);
                                         waits(1);
 
                                         // Allow the reflow before showing and then measuring.
                                         runs(function() {
-                                            view.el.setDisplayed(true);
                                             expectScroll(!scrollbarsTakeSpace, false);
                                             expectColumnWidths([200, 600, 200]);
                                         });
@@ -4734,12 +4884,10 @@ describe("grid-general", function() {
                                         expectScroll(scrollbarsTakeSpace, true);
                                         expectColumnWidths([300, minColWidth, 800]);
                                         colRef[2].destroy();
-                                        view.el.setDisplayed(false);
                                         waits(1);
 
                                         // Allow the reflow before showing and then measuring.
                                         runs(function() {
-                                            view.el.setDisplayed(true);
                                             expectScroll(false, false);
                                             expectColumnWidths([300, 700]);
                                         });
@@ -4805,12 +4953,10 @@ describe("grid-general", function() {
                                         }], maxRowsBeforeScroll);
                                         expectScroll(scrollbarsTakeSpace, true);
                                         colRef[2].hide();
-                                        view.el.setDisplayed(false);
                                         waits(1);
 
                                         // Allow the reflow before showing and then measuring.
                                         runs(function() {
-                                            view.el.setDisplayed(true);
                                             expectScroll(false, false);
                                         });
                                     });
@@ -4829,12 +4975,10 @@ describe("grid-general", function() {
                                             }], data);
                                             expectScroll(true, false);
                                             colRef[2].hide();
-                                            view.el.setDisplayed(false);
                                             waits(1);
 
                                             // Allow the reflow before showing and then measuring.
                                             runs(function() {
-                                                view.el.setDisplayed(true);
                                                 expectScroll(false, false);
                                             });
                                         });
@@ -4903,12 +5047,10 @@ describe("grid-general", function() {
                                         expectScroll(scrollbarsTakeSpace, true);
                                         expectColumnWidths([300, minColWidth, 800]);
                                         colRef[2].hide();
-                                        view.el.setDisplayed(false);
                                         waits(1);
 
                                         // Allow the reflow before showing and then measuring.
                                         runs(function() {
-                                            view.el.setDisplayed(true);
                                             expectScroll(false, false);
                                             expectColumnWidths([300, 700]);
                                         });
@@ -4929,12 +5071,10 @@ describe("grid-general", function() {
                                             expectScroll(true, false);
                                             expectColumnWidths([300, scrollbarsTakeSpace ? 480 : 500, 200]);
                                             colRef[2].hide();
-                                            view.el.setDisplayed(false);
                                             waits(1);
 
                                             // Allow the reflow before showing and then measuring.
                                             runs(function() {
-                                                view.el.setDisplayed(true);
                                                 expectScroll(false, false);
                                                 expectColumnWidths([300, 700]);
                                             });
@@ -4988,8 +5128,6 @@ describe("grid-general", function() {
                                         }], maxRowsBeforeScrollWithHorizontalScrollBar, {
                                             height: null
                                         });
-                                        // Make the grid just height enough so that there's a horizontal scrollbar, but no vertical
-                                        grid.setHeight(grid.getHeight() + 5);
                                         expectScroll(false, true);
                                         store.add({});
                                         expectScroll(true, true);
@@ -5136,12 +5274,10 @@ describe("grid-general", function() {
                                         grid.setHeight(grid.getHeight() - 5);
                                         expectScroll(true, true);
                                         store.removeAt(0);
-                                        view.el.setDisplayed(false);
                                         waits(1);
 
                                         // Allow the reflow before showing and then measuring.
                                         runs(function() {
-                                            view.el.setDisplayed(true);
                                             expectScroll(false, true);
                                         });
                                     });
@@ -5312,7 +5448,8 @@ describe("grid-general", function() {
 
                                         visibleScrollbarsIt("should show a horizontal scrollbar if triggered by a vertical scrollbar", function() {
                                             makeScrollGrid([{
-                                                width: 495
+                                                width: 495,
+                                                variableRowHeight: true
                                             }, {
                                                 width: 495
                                             }], maxRowsBeforeScroll);
@@ -5346,7 +5483,7 @@ describe("grid-general", function() {
                                             }], maxRowsBeforeScroll, {
                                                 height: null
                                             });
-                                            grid.setHeight(grid.getHeight());
+                                            grid.setHeight(grid.getHeight() + 2);
                                             expectScroll(false, true);
                                             store.first().set('field1', makeRowDiv(3));
                                             expectScroll(true, true);
@@ -5358,7 +5495,8 @@ describe("grid-general", function() {
                                             var data = makeRows(maxRowsBeforeScrollWithHorizontalScrollBar);
                                             data[0].field1 = makeRowDiv(3);
                                             makeScrollGrid([{
-                                                width: 495
+                                                width: 495,
+                                                variableRowHeight: true
                                             }, {
                                                 width: 495
                                             }], maxRowsBeforeScroll, {
@@ -5368,12 +5506,10 @@ describe("grid-general", function() {
                                             store.first().set('field1', makeRowDiv(3));
                                             expectScroll(true, true);
                                             store.first().set('field1', '1.1');
-                                            view.el.setDisplayed(false);
                                             waits(1);
 
                                             // Allow the reflow before showing and then measuring.
                                             runs(function() {
-                                                view.el.setDisplayed(true);
                                                 expectScroll(false, false);
                                             });
                                         });
@@ -5704,7 +5840,7 @@ describe("grid-general", function() {
                             });
 
                             describe("with no vertical and horizontal scroll", function() {
-                                visibleScrollbarsIt("it should stretch to the full column size", function() {
+                                visibleScrollbarsIt("should stretch to the full column size", function() {
                                     makeScrollGrid([{
                                         width: 600
                                     }, {
@@ -5763,7 +5899,10 @@ describe("grid-general", function() {
                                 function expectLockedScroll(scroll) {
                                     var overflowX = grid.lockedGrid.getView().getScrollable().getX();
 
-                                    expect(overflowX).toBe(scroll);
+                                    expect(overflowX).toBe(true);
+                                    if (scrollbarsTakeSpace) {
+                                        expect(grid.lockedScrollbar.el.isVisible()).toBe(scroll);
+                                    }
                                 }
 
                                 it("should show the placeholder when the normal side overflows", function() {
@@ -5773,7 +5912,7 @@ describe("grid-general", function() {
                                         width: 600
                                     }], 1);
                                     // Will only turn the locked side's overflowX to 'scroll' if it has to match a space-taking scrollbar on the normal side
-                                    expectLockedScroll(scrollbarsTakeSpace ? 'scroll' : true);
+                                    expectLockedScroll(true);
                                 });
 
                                 it("should not show the placeholder when the normal side does not overflow", function() {
@@ -5782,7 +5921,7 @@ describe("grid-general", function() {
                                     }, {
                                         width: 300
                                     }], 1);
-                                    expectLockedScroll(scrollbarsTakeSpace ? false : true);
+                                    expectLockedScroll(false);
                                 });
 
                                 it("should show the placeholder when a resize causes an overflow", function() {
@@ -5791,10 +5930,10 @@ describe("grid-general", function() {
                                     }, {
                                         width: 400
                                     }], 1);
-                                    expectLockedScroll(scrollbarsTakeSpace ? false : true);
+                                    expectLockedScroll(false);
                                     grid.setWidth(grid.getWidth() - 400);
                                     // Will only turn the locked side's overflowX to 'scroll' if it has to match a space-taking scrollbar on the normal side
-                                    expectLockedScroll(scrollbarsTakeSpace ? 'scroll' : true);
+                                    expectLockedScroll(true);
                                 });
 
                                 it("should not show the placeholder when a resize causes an underflow", function() {
@@ -5804,9 +5943,9 @@ describe("grid-general", function() {
                                         width: 600
                                     }], 1);
                                     // Will only turn the locked side's overflowX to 'scroll' if it has to match a space-taking scrollbar on the normal side
-                                    expectLockedScroll(scrollbarsTakeSpace ? 'scroll' : true);
+                                    expectLockedScroll(true);
                                     grid.setWidth(grid.getWidth() + 400);
-                                    expectLockedScroll(scrollbarsTakeSpace ? false : true);
+                                    expectLockedScroll(false);
                                 });
 
                                 describe("column operations", function() {
@@ -5816,13 +5955,13 @@ describe("grid-general", function() {
                                         }, {
                                             width: 400
                                         }], 1);
-                                        expectLockedScroll(scrollbarsTakeSpace ? false : true);
+                                        expectLockedScroll(false);
                                         grid.normalGrid.headerCt.add({
                                             width: 400,
                                             dataIndex: 'field3'
                                         });
                                         // Will only turn the locked side's overflowX to 'scroll' if it has to match a space-taking scrollbar on the normal side
-                                        expectLockedScroll(scrollbarsTakeSpace ? 'scroll' : true);
+                                        expectLockedScroll(true);
                                     });
 
                                     it("should show the placeholder when a show causes an overflow", function() {
@@ -5834,10 +5973,10 @@ describe("grid-general", function() {
                                             width: 400,
                                             hidden: true
                                         }], 1);
-                                        expectLockedScroll(scrollbarsTakeSpace ? false : true);
+                                        expectLockedScroll(false);
                                         colRef[2].show();
                                         // Will only turn the locked side's overflowX to 'scroll' if it has to match a space-taking scrollbar on the normal side
-                                        expectLockedScroll(scrollbarsTakeSpace ? 'scroll' : true);
+                                        expectLockedScroll(true);
                                     });
 
                                     it("should not show the placeholder when a remove causes an underflow", function() {
@@ -5849,9 +5988,9 @@ describe("grid-general", function() {
                                             width: 400
                                         }], 1);
                                         // Will only turn the locked side's overflowX to 'scroll' if it has to match a space-taking scrollbar on the normal side
-                                        expectLockedScroll(scrollbarsTakeSpace ? 'scroll' : true);
+                                        expectLockedScroll(true);
                                         colRef[2].destroy();
-                                        expectLockedScroll(scrollbarsTakeSpace ? false : true);
+                                        expectLockedScroll(false);
                                     });
 
                                     it("should show the placeholder when a hide causes an underflow", function() {
@@ -5863,9 +6002,9 @@ describe("grid-general", function() {
                                             width: 400
                                         }], 1);
                                         // Will only turn the locked side's overflowX to 'scroll' if it has to match a space-taking scrollbar on the normal side
-                                        expectLockedScroll(scrollbarsTakeSpace ? 'scroll' : true);
+                                        expectLockedScroll(true);
                                         colRef[2].hide();
-                                        expectLockedScroll(scrollbarsTakeSpace ? false : true);
+                                        expectLockedScroll(false);
                                     });
                                 });
 
@@ -5877,9 +6016,9 @@ describe("grid-general", function() {
                                             }, {
                                                 width: 495
                                             }], 1);
-                                            expectLockedScroll(scrollbarsTakeSpace ? false : true);
+                                            expectLockedScroll(false);
                                             store.add({});
-                                            expectLockedScroll(scrollbarsTakeSpace ? false : true);
+                                            expectLockedScroll(false);
                                         });
 
                                         it("should retain the placeholder when the add does not trigger an underflow", function() {
@@ -5889,10 +6028,10 @@ describe("grid-general", function() {
                                                 width: 495
                                             }], scrollRowSize);
                                             // Will only turn the locked side's overflowX to 'scroll' if it has to match a space-taking scrollbar on the normal side
-                                            expectLockedScroll(scrollbarsTakeSpace ? 'scroll' : true);
+                                            expectLockedScroll(true);
                                             store.add({});
                                             // Will only turn the locked side's overflowX to 'scroll' if it has to match a space-taking scrollbar on the normal side
-                                            expectLockedScroll(scrollbarsTakeSpace ? 'scroll' : true);
+                                            expectLockedScroll(true);
                                         });
 
                                         it("should show the placeholder when an add causes an overflow via a vertical scrollbar", function() {
@@ -5901,10 +6040,10 @@ describe("grid-general", function() {
                                             }, {
                                                 width: 495
                                             }], maxRowsBeforeScroll);
-                                            expectLockedScroll(scrollbarsTakeSpace ? false : true);
+                                            expectLockedScroll(false);
                                             store.add({});
                                             // Will only turn the locked side's overflowX to 'scroll' if it has to match a space-taking scrollbar on the normal side
-                                            expectLockedScroll(scrollbarsTakeSpace ? 'scroll' : true);
+                                            expectLockedScroll(true);
                                         });
                                     });
 
@@ -5915,9 +6054,9 @@ describe("grid-general", function() {
                                             }, {
                                                 width: 495
                                             }], maxRowsBeforeScroll);
-                                            expectLockedScroll(scrollbarsTakeSpace ? false : true);
+                                            expectLockedScroll(false);
                                             store.removeAt(0);
-                                            expectLockedScroll(scrollbarsTakeSpace ? false : true);
+                                            expectLockedScroll(false);
                                         });
 
                                         it("should retain the placeholder when the remove does not trigger an underflow", function() {
@@ -5927,10 +6066,10 @@ describe("grid-general", function() {
                                                 width: 495
                                             }], scrollRowSize);
                                             // Will only turn the locked side's overflowX to 'scroll' if it has to match a space-taking scrollbar on the normal side
-                                            expectLockedScroll(scrollbarsTakeSpace ? 'scroll' : true);
+                                            expectLockedScroll(true);
                                             store.removeAt(0);
                                             // Will only turn the locked side's overflowX to 'scroll' if it has to match a space-taking scrollbar on the normal side
-                                            expectLockedScroll(scrollbarsTakeSpace ? 'scroll' : true);
+                                            expectLockedScroll(true);
                                         });
 
                                         it("should not show the placeholder when a remove causes an underflow via a vertical scrollbar", function() {
@@ -5940,16 +6079,17 @@ describe("grid-general", function() {
                                                 width: 495
                                             }], maxRowsBeforeScroll + 1);
                                             // Will only turn the locked side's overflowX to 'scroll' if it has to match a space-taking scrollbar on the normal side
-                                            expectLockedScroll(scrollbarsTakeSpace ? 'scroll' : true);
+                                            expectLockedScroll(true);
                                             store.removeAt(0);
-                                            expectLockedScroll(scrollbarsTakeSpace ? false : true);
+                                            expectLockedScroll(false);
                                         });
                                     });
 
                                     describe("update via variableRowHeight", function() {
                                         it("should not show the placeholder when there is no overflow", function() {
                                             makeScrollGrid([{
-                                                width: 495
+                                                width: 495,
+                                                variableRowHeight: true
                                             }, {
                                                 width: 495
                                             }], 1);
@@ -5972,9 +6112,9 @@ describe("grid-general", function() {
                                             grid.setHeight(grid.getHeight() + 5);
                                             store.first().set('field1', makeRowDiv(2));
                                             // Will only turn the locked side's overflowX to 'scroll' if it has to match a space-taking scrollbar on the normal side
-                                            expectLockedScroll(scrollbarsTakeSpace ? 'scroll' : true);
+                                            expectLockedScroll(true);
                                             store.first().set('field1', '1.1');
-                                            expectLockedScroll(scrollbarsTakeSpace ? false : true);
+                                            expectLockedScroll(false);
                                         });
 
                                         it("should show the placeholder when an update causes an overflow via a vertical scrollbar", function() {
@@ -5989,10 +6129,10 @@ describe("grid-general", function() {
                                                 }
                                             });
                                             grid.setHeight(grid.getHeight() + 5);
-                                            expectLockedScroll(scrollbarsTakeSpace ? false : true);
+                                            expectLockedScroll(false);
                                             store.first().set('field1', makeRowDiv(2));
                                             // Will only turn the locked side's overflowX to 'scroll' if it has to match a space-taking scrollbar on the normal side
-                                            expectLockedScroll(scrollbarsTakeSpace ? 'scroll' : true);
+                                            expectLockedScroll(true);
                                         });
 
                                         it("should not show the placeholder when an update causes an underflow via a vertical scrollbar", function() {
@@ -6011,9 +6151,9 @@ describe("grid-general", function() {
                                             grid.setHeight(grid.getHeight() + 5);
                                             store.first().set('field1', makeRowDiv(2));
                                             // Will only turn the locked side's overflowX to 'scroll' if it has to match a space-taking scrollbar on the normal side
-                                            expectLockedScroll(scrollbarsTakeSpace ? 'scroll' : true);
+                                            expectLockedScroll(true);
                                             store.first().set('field1', '1.1');
-                                            expectLockedScroll(scrollbarsTakeSpace ? false : true);
+                                            expectLockedScroll(false);
                                         });
                                     });
 
@@ -6036,10 +6176,10 @@ describe("grid-general", function() {
                                                 width: 495
                                             }], scrollRowSize);
                                             // Will only turn the locked side's overflowX to 'scroll' if it has to match a space-taking scrollbar on the normal side
-                                            expectLockedScroll(scrollbarsTakeSpace ? 'scroll' : true);
+                                            expectLockedScroll(true);
                                             store.loadData(makeRows(scrollRowSize + 10));
                                             // Will only turn the locked side's overflowX to 'scroll' if it has to match a space-taking scrollbar on the normal side
-                                            expectLockedScroll(scrollbarsTakeSpace ? 'scroll' : true);
+                                            expectLockedScroll(true);
                                         });
 
                                         it("should not show the placeholder when load causes an underflow", function() {
@@ -6049,9 +6189,9 @@ describe("grid-general", function() {
                                                 width: 495
                                             }], scrollRowSize);
                                             // Will only turn the locked side's overflowX to 'scroll' if it has to match a space-taking scrollbar on the normal side
-                                            expectLockedScroll(scrollbarsTakeSpace ? 'scroll' : true);
+                                            expectLockedScroll(true);
                                             store.loadData(makeRows(1));
-                                            expectLockedScroll(scrollbarsTakeSpace ? false : true);
+                                            expectLockedScroll(false);
                                         });
 
                                         it("should show the placeholder when load causes an overflow", function() {
@@ -6060,10 +6200,10 @@ describe("grid-general", function() {
                                             }, {
                                                 width: 495
                                             }], 1);
-                                            expectLockedScroll(scrollbarsTakeSpace ? false : true);
+                                            expectLockedScroll(false);
                                             store.loadData(makeRows(scrollRowSize));
                                             // Will only turn the locked side's overflowX to 'scroll' if it has to match a space-taking scrollbar on the normal side
-                                            expectLockedScroll(scrollbarsTakeSpace ? 'scroll' : true);
+                                            expectLockedScroll(true);
                                         });
                                     });
                                 });
@@ -6113,7 +6253,8 @@ describe("grid-general", function() {
 
                                 it("should show a vertical scrollbar if update causes an overflow", function() {
                                     makeScrollGrid([{
-                                        width: 100
+                                        width: 100,
+                                        variableRowHeight: true
                                     }, {
                                         width: 300
                                     }], maxRowsBeforeScroll);
@@ -6126,7 +6267,8 @@ describe("grid-general", function() {
                                     var data = makeRows(maxRowsBeforeScroll);
                                     data[0].field10 = makeRowDiv(2);
                                     makeScrollGrid([{
-                                        width: 100
+                                        width: 100,
+                                        variableRowHeight: true
                                     }, {
                                         width: 300
                                     }], data);
@@ -6150,13 +6292,15 @@ describe("grid-general", function() {
                     expect(grid.isMasked()).toBe(true);
                     expect(grid.headerCt.disabled).toBe(true);
                     expect(grid.headerCt.isMasked()).toBeFalsy();
-                    expect(grid.headerCt.el.dom.getAttribute('tabIndex')).toBe('-1');
+                    expect(grid.headerCt.tabGuardBeforeEl.dom.getAttribute('tabIndex')).toBe('-1');
+                    expect(grid.headerCt.tabGuardAfterEl.dom.getAttribute('tabIndex')).toBe('-1');
                     
                     grid.enable();
                     expect(grid.isMasked()).toBeFalsy();
                     expect(grid.headerCt.disabled).toBe(false);
                     expect(grid.headerCt.isMasked()).toBeFalsy();
-                    expect(grid.headerCt.el.dom.getAttribute('tabIndex')).toBe('0');
+                    expect(grid.headerCt.tabGuardBeforeEl.dom.getAttribute('tabIndex')).toBe('0');
+                    expect(grid.headerCt.tabGuardAfterEl.dom.getAttribute('tabIndex')).toBe('0');
                 });
                 
                 it("should disable locking grids", function() {
@@ -6170,13 +6314,15 @@ describe("grid-general", function() {
                     expect(grid.lockedGrid.isMasked()).toBeFalsy();
                     expect(grid.lockedGrid.headerCt.disabled).toBe(true);
                     expect(grid.lockedGrid.headerCt.isMasked()).toBeFalsy();
-                    expect(grid.lockedGrid.headerCt.el.dom.getAttribute('tabIndex')).toBe('-1');
+                    expect(grid.lockedGrid.headerCt.tabGuardBeforeEl.dom.getAttribute('tabIndex')).toBe('-1');
+                    expect(grid.lockedGrid.headerCt.tabGuardAfterEl.dom.getAttribute('tabIndex')).toBe('-1');
 
                     // Normal side
                     expect(grid.normalGrid.isMasked()).toBeFalsy();
                     expect(grid.normalGrid.headerCt.disabled).toBe(true);
                     expect(grid.normalGrid.headerCt.isMasked()).toBeFalsy();
-                    expect(grid.normalGrid.headerCt.el.dom.getAttribute('tabIndex')).toBe('-1');
+                    expect(grid.normalGrid.headerCt.tabGuardBeforeEl.dom.getAttribute('tabIndex')).toBe('-1');
+                    expect(grid.normalGrid.headerCt.tabGuardAfterEl.dom.getAttribute('tabIndex')).toBe('-1');
                     
                     grid.enable();
 
@@ -6187,13 +6333,15 @@ describe("grid-general", function() {
                     expect(grid.lockedGrid.isMasked()).toBeFalsy();
                     expect(grid.lockedGrid.headerCt.disabled).toBe(false);
                     expect(grid.lockedGrid.headerCt.isMasked()).toBeFalsy();
-                    expect(grid.lockedGrid.headerCt.el.dom.getAttribute('tabIndex')).toBe('0');
+                    expect(grid.lockedGrid.headerCt.tabGuardBeforeEl.dom.getAttribute('tabIndex')).toBe('0');
+                    expect(grid.lockedGrid.headerCt.tabGuardAfterEl.dom.getAttribute('tabIndex')).toBe('0');
 
                     // Normal side
                     expect(grid.normalGrid.isMasked()).toBeFalsy();
                     expect(grid.normalGrid.headerCt.disabled).toBe(false);
                     expect(grid.normalGrid.headerCt.isMasked()).toBeFalsy();
-                    expect(grid.normalGrid.headerCt.el.dom.getAttribute('tabIndex')).toBe('0');
+                    expect(grid.normalGrid.headerCt.tabGuardBeforeEl.dom.getAttribute('tabIndex')).toBe('0');
+                    expect(grid.normalGrid.headerCt.tabGuardAfterEl.dom.getAttribute('tabIndex')).toBe('0');
                 });
             });
 
@@ -6375,907 +6523,6 @@ describe("grid-general", function() {
     createSuite(false);
     createSuite(true);
 
-    describe("Locking configuration", function () {
-        var store, view, colRef;
-
-        function createGrid(cfg) {
-            grid = new Ext.grid.Panel(Ext.apply({
-                title: 'Test',
-                height: 300,
-                width: 400,
-                renderTo: document.body,
-                store: store,
-                columns: [{
-                    text: 'Row',
-                    dataIndex: 'row',
-                    locked: true,
-                    width: 50
-                }, {
-                    text: 'Lorem',
-                    dataIndex: 'lorem'
-                }]
-            }, cfg));
-        }
-
-        beforeEach(function () {
-            store = new Ext.data.ArrayStore({
-                data: [
-                    [ 1, 'Lorem'],
-                    [ 2, 'Ipsum'],
-                    [ 3, 'Dolor']
-                ],
-                fields: ['row', 'lorem']
-            });
-        });
-
-        describe("on init", function () {
-            beforeEach(function () {
-                createGrid({
-                    enableColumnHide: true,
-                    rowLines: true,
-                    enableColumnMove: false,
-                    normalGridConfig: {
-                        enableColumnHide: false
-                    },
-                    lockedGridConfig: {
-                        rowLines: false
-                    }
-                });
-            });
-
-            it("should pass down configs to normalGrid", function () {
-                expect(grid.enableColumnMove).toBe(false);
-                expect(grid.normalGrid.enableColumnMove).toBe(false);
-            });
-
-            it("should pass down configs to lockedGrid", function () {
-                expect(grid.enableColumnMove).toBe(false);
-                expect(grid.lockedGrid.enableColumnMove).toBe(false);
-            });
-
-            it("should not pass down configs specified in normalGridConfig", function () {
-                expect(grid.enableColumnHide).toBe(true);
-                expect(grid.normalGrid.enableColumnHide).toBe(false);
-            });
-
-            it("should not pass down configs specified in lockedGridConfig", function () {
-                expect(grid.rowLines).toBe(true);
-                expect(grid.lockedGrid.rowLines).toBe(false);
-            });
-        });
-
-        describe("when stateful", function () {
-            afterEach(function () {
-                Ext.state.Manager.set(grid.getStateId(), null);
-            });
-
-            describe("retaining state across page loads", function () {
-                function makeGrid(stateId) {
-                    createGrid({
-                        columns: [{
-                            text: 'Row',
-                            dataIndex: 'row',
-                            locked: true,
-                            width: 50
-                        }, {
-                            text: 'Lorem',
-                            stateId: stateId || null,
-                            dataIndex: 'lorem'
-                        }],
-                        stateful: true,
-                        stateId: 'foo'
-                    });
-                    view = grid.getView();
-                    colRef = grid.getColumnManager().getColumns();
-
-                }
-
-                function saveAndRecreate(stateId) {
-                    grid.saveState();
-                    Ext.destroy(grid);
-
-                    // After page refresh.
-                    makeGrid(stateId);
-                }
-
-                function testStateId(stateId) {
-                    var maybe = !!stateId ? '' : 'not';
-
-                    describe("when columns are " + maybe + ' configured with a stateId', function () {
-                        function testLockingPartner(which) {
-                            describe(which + ' locking partner', function () {
-                                var partner = which + 'Grid';
-
-                                beforeEach(function () {
-                                    makeGrid(stateId);
-                                });
-
-                                it("should retain column width", function () {
-                                    grid[partner].columnManager.getColumns()[0].setWidth(250);
-                                    saveAndRecreate(stateId);
-
-                                    expect(grid[partner].columnManager.getColumns()[0].getWidth()).toBe(250);
-                                });
-
-                                it("should retain column visibility", function () {
-                                    grid[partner].columnManager.getColumns()[0].hide();
-                                    saveAndRecreate(stateId);
-
-                                    expect(grid[partner].columnManager.getColumns()[0].hidden).toBe(true);
-                                });
-
-                                it("should retain the column sort", function () {
-                                    var column = grid[partner].columnManager.getColumns()[0];
-
-                                    column.sort();
-                                    expect(column.sortState).toBe('ASC');
-
-                                    // Let's sort again.
-                                    column.sort();
-
-                                    saveAndRecreate(stateId);
-
-                                    expect(grid[partner].columnManager.getColumns()[0].sortState).toBe('DESC');
-                                });
-
-                                it("should restore state when columns are moved between sides", function() {
-                                    grid.unlock(colRef[0], 0);
-                                    colRef[0].sort();
-                                    colRef[0].setWidth(100);
-                                    colRef[1].setWidth(200);
-
-                                    saveAndRecreate(stateId);
-
-                                    expect(colRef[0].dataIndex).toBe('row');
-                                    expect(colRef[0].getWidth()).toBe(100);
-                                    expect(colRef[0].sortState).toBe('ASC');
-                                    expect(colRef[1].dataIndex).toBe('lorem');
-                                    expect(colRef[1].getWidth()).toBe(200);
-                                });
-                            });
-                        }
-
-                        testLockingPartner('locked');
-                        testLockingPartner('normal');
-                    });
-                }
-
-                testStateId('theOwlHouse');
-                testStateId(null);
-            });
-        });
-    });
-
-    describe("BufferedStore asynchronous loading timing with rendering and preserveScrollOnReload: true", function() {
-        var view,
-            bufferedRenderer,
-            scroller,
-            scrollSize,
-            scrollEventCount,
-            scrollRequestCount,
-            TestModel = Ext.define(null, {
-                extend: 'Ext.data.Model',
-                fields: [
-                    'title', 'forumtitle', 'forumid', 'username', {
-                        name: 'replycount',
-                        type: 'int'
-                    }, {
-                        name: 'lastpost',
-                        mapping: 'lastpost',
-                        type: 'date',
-                        dateFormat: 'timestamp'
-                    },
-                    'lastposter', 'excerpt', 'threadid'
-                ],
-                idProperty: 'threadid'
-            });
-
-        function getData(start, limit) {
-            var end = start + limit,
-                recs = [],
-                i;
-
-            for (i = start; i < end; ++i) {
-                recs.push({
-                    threadid: i,
-                    title: 'Title' + i
-                });
-            }
-            return recs;
-        }
-
-        function satisfyRequests(total) {
-            var requests = Ext.Ajax.mockGetAllRequests(),
-                request, params, data;
-
-            while (requests.length) {
-                request = requests[0];
-
-                params = request.options.params;
-                data = getData(params.start, params.limit);
-
-                Ext.Ajax.mockComplete({
-                    status: 200,
-                    responseText: Ext.encode({
-                        total: total || 5000,
-                        data: data
-                    })
-                });
-
-                requests = Ext.Ajax.mockGetAllRequests();
-            }
-        }
-
-        function satisfyRequestsForPages(pages, total) {
-            var requests = Ext.Ajax.mockGetAllRequests(),
-                i, len, request, params, data;
-
-            for (i = 0, len = requests.length; i < len; i++) {
-                request = requests[i];
-                params = request.options.params;
-                
-                if (Ext.Array.contains(pages, params.page)) {
-                    data = getData(params.start, params.limit);
-
-                    Ext.Ajax.mockComplete({
-                        status: 200,
-                        responseText: Ext.encode({
-                            total: total || 5000,
-                            data: data
-                        })
-                    }, request.id);
-                }
-            }
-        }
-
-        beforeEach(function() {
-            MockAjaxManager.addMethods();
-
-            store = new Ext.data.BufferedStore({
-                model: TestModel,
-                pageSize: 50,
-                trailingBufferZone: 50,
-                leadingBufferZone: 50,
-                proxy: {
-                    type: 'ajax',
-                    url: 'fakeUrl',
-                    reader: {
-                        type: 'json',
-                        rootProperty: 'data'
-                    }
-                }
-            });
-            store.loadPage(1);
-            satisfyRequests();
-
-            scrollEventCount = 0;
-            grid = new Ext.grid.Panel({
-                columns: [{
-                    text: 'Title',
-                    dataIndex: 'title'
-                }],
-                store: store,
-                width: 600,
-                height: 300,
-                border: false,
-                viewConfig: {
-                    preserveScrollOnReload: true,
-                    mouseOverOutBuffer: 0,
-                    listeners: {
-                        scroll: function() {
-                            scrollEventCount++;
-                        }
-                    }
-                },
-                renderTo: document.body,
-                selModel: {
-                    pruneRemoved: false
-                }
-            });
-            view = grid.getView();
-            bufferedRenderer = view.bufferedRenderer;
-            scroller = view.getScrollable();
-            scrollSize = (bufferedRenderer.viewSize * 2 + store.leadingBufferZone + store.trailingBufferZone) * bufferedRenderer.rowHeight;
-
-            // Load inline in the scroll event
-            bufferedRenderer.scrollToLoadBuffer = 0;
-            
-            scrollRequestCount = 0;
-        });
-
-        afterEach(function() {
-            MockAjaxManager.removeMethods();
-        });
-
-        it("should render maintain selection when returning to a page with a previously selected record in it", function() {
-
-            // Select record 0.
-            // We plan to evict this page, but maintain that record as selected.
-            view.getSelectionModel().select(0);
-
-            // It should tolerate the focused record being evicted from the page cache.
-            view.getNavigationModel().setPosition(0, 0);
-
-            // Scroll to new areas of dataset.
-            // Satisfy page requests as they arrive so that
-            // old pages are evicted.
-            waitsFor(function() {
-                satisfyRequests();
-
-                if (scrollEventCount === scrollRequestCount) {
-                    // Scroll, until page 1 has been evicted
-                    if (!store.data.peekPage(1)) {
-                        return true;
-                    }
-                    view.scrollBy(null, 100);
-                    scrollRequestCount++;
-                }
-            }, 'Page one to have been purged from the PageCache', 20000);
-
-            runs(function() {
-                scrollEventCount = 0;
-                scroller.scrollTo(0, 0);
-            });
-            
-            waitsFor(function() {
-                return scrollEventCount === 1;
-            }, 'A scroll event to fire', 20000);
-            runs(function() {
-                satisfyRequests();
-
-                // First record still selected
-                expect(view.all.item(0).hasCls(Ext.baseCSSPrefix + 'grid-item-selected')).toBe(true);
-            });
-        });
-
-        it('should render page 1, and page 1 should still be in the page cache when returning to page 1 after scrolling down', function() {
-            // Scroll to new areas of dataset.
-            // Will queue a lot of page requests which we will satisfy in a while
-            waitsFor(function() {
-                //  Scroll until we have 20 page requests outstanding
-                if (Ext.Ajax.mockGetAllRequests().length > 20) {
-                    return true;
-                }
-
-                if (scrollEventCount === scrollRequestCount) {
-                    view.scrollBy(null, scrollSize);
-                    scrollRequestCount++;
-                }
-            });
-
-            runs(function() {
-                scrollEventCount = 0;
-                scroller.scrollTo(0, 0);
-            });
-            
-            waitsFor(function() {
-                return scrollEventCount === 1;
-            });
-            runs(function() {
-                satisfyRequests();
-
-                // Page 1 should be rendered at position zero since we scrolled back to the top
-                expect(getViewTop(view.body)).toBe(0);
-
-                // Page 1 should still be in the page map, NOT purged out by the arrival of all
-                // the other pages from the visited areas of the dataset.
-                expect(store.data.hasPage(1)).toBe(true);
-            });
-        });
-
-        it('Page 1 should still be rendered, and page 1 should still be in the page cache when returning to page 1 after scrolling down with only buffer zone pages loaded into store during scroll', function() {
-            // Scroll to new areas of dataset.
-            // Will queue a lot of page requests which we will satisfy in a while
-            waitsFor(function() {
-                //  Scroll until we have 20 page requests outstanding
-                if (Ext.Ajax.mockGetAllRequests().length > 20) {
-                    return true;
-                }
-
-                if (scrollEventCount === scrollRequestCount) {
-                    view.scrollBy(null, scrollSize);
-                    scrollRequestCount++;
-                }
-            });
-
-            runs(function() {
-                scrollEventCount = 0;
-                scroller.scrollTo(0, 0);
-            });
-            
-            waitsFor(function() {
-                return scrollEventCount === 1;
-            });
-            runs(function() {
-                // Only satisfy requests for non-rendered buffer zone pages so that no rendering is done and
-                // page 1 is left undisturbed in the rendered block.
-                satisfyRequestsForPages([3, 6, 7, 10, 11, 13, 14, 17, 18, 21, 22, 25]);
-
-                // Page 1 should be rendered at position zero since we scrolled back to the top
-                expect(getViewTop(view.body)).toBe(0);
-
-                // Page 1 should still be in the page map, NOT purged out by the arrival of all
-                // the other pages from the visited areas of the dataset.
-                expect(store.data.hasPage(1)).toBe(true);
-            });
-        });
-
-        it("should refresh the same rendered block on buffered store reload with preserveScrollOnReload: true", function() {
-            var scrollDone,
-                refreshed,
-                startRow, endRow;
-
-            expect(view.refreshCounter).toBe(1);
-
-            bufferedRenderer.scrollTo(1000, {
-                select: true,
-                focus: true,
-                callback: function() {
-                    scrollDone = true;
-                }
-            });
-
-            waitsFor(function() {
-                satisfyRequests();
-                return scrollDone;
-            }, 'scroll to finish');
-
-            runs(function() {
-                startRow = view.all.startIndex;
-                endRow = view.all.endIndex;
-                store.on({
-                    refresh: function() {
-                        refreshed = true;
-                    },
-                    single: true
-                });
-                store.reload();
-            });
-
-            waitsFor(function() {
-                satisfyRequests();
-                return refreshed;
-            }, 'store to reload');
-
-            runs(function() {
-                expect(view.refreshCounter).toBe(2);
-                expect(view.all.startIndex).toBe(startRow);
-                expect(view.all.endIndex).toBe(endRow);
-            });
-        });
-    });
-
-    describe("BufferedStore asynchronous loading timing with rendering and preserveScrollOnReload: false", function() {
-        var view,
-            bufferedRenderer,
-            scroller,
-            scrollSize,
-            scrollEventCount,
-            scrollRequestCount,
-            TestModel = Ext.define(null, {
-                extend: 'Ext.data.Model',
-                fields: [
-                    'title', 'forumtitle', 'forumid', 'username', {
-                        name: 'replycount',
-                        type: 'int'
-                    }, {
-                        name: 'lastpost',
-                        mapping: 'lastpost',
-                        type: 'date',
-                        dateFormat: 'timestamp'
-                    },
-                    'lastposter', 'excerpt', 'threadid'
-                ],
-                idProperty: 'threadid'
-            });
-
-        function getData(start, limit) {
-            var end = start + limit,
-                recs = [],
-                i;
-
-            for (i = start; i < end; ++i) {
-                recs.push({
-                    threadid: i,
-                    title: 'Title' + i
-                });
-            }
-            return recs;
-        }
-
-        function satisfyRequests(total) {
-            var requests = Ext.Ajax.mockGetAllRequests(),
-                request, params, data;
-
-            while (requests.length) {
-                request = requests[0];
-
-                params = request.options.params;
-                data = getData(params.start, params.limit);
-
-                Ext.Ajax.mockComplete({
-                    status: 200,
-                    responseText: Ext.encode({
-                        total: total || 5000,
-                        data: data
-                    })
-                });
-
-                requests = Ext.Ajax.mockGetAllRequests();
-            }
-        }
-
-        beforeEach(function() {
-            MockAjaxManager.addMethods();
-
-            store = new Ext.data.BufferedStore({
-                model: TestModel,
-                pageSize: 50,
-                trailingBufferZone: 50,
-                leadingBufferZone: 50,
-                proxy: {
-                    type: 'ajax',
-                    url: 'fakeUrl',
-                    reader: {
-                        type: 'json',
-                        rootProperty: 'data'
-                    }
-                }
-            });
-            store.loadPage(1);
-            satisfyRequests();
-
-            scrollEventCount = 0;
-            grid = new Ext.grid.Panel({
-                columns: [{
-                    text: 'Title',
-                    dataIndex: 'title'
-                }],
-                store: store,
-                width: 600,
-                height: 300,
-                border: false,
-                viewConfig: {
-                    preserveScrollOnReload: false,
-                    mouseOverOutBuffer: 0,
-                    listeners: {
-                        scroll: function() {
-                            scrollEventCount++;
-                        }
-                    }
-                },
-                renderTo: document.body,
-                selModel: {
-                    pruneRemoved: false
-                }
-            });
-            view = grid.getView();
-            bufferedRenderer = view.bufferedRenderer;
-            scroller = view.getScrollable();
-            scrollSize = (bufferedRenderer.viewSize * 2 + store.leadingBufferZone + store.trailingBufferZone) * bufferedRenderer.rowHeight;
-
-            // Load inline in the scroll event
-            bufferedRenderer.scrollToLoadBuffer = 0;
-            
-            scrollRequestCount = 0;
-        });
-
-        afterEach(function() {
-            MockAjaxManager.removeMethods();
-        });
-
-        it("should refresh from page 1 on buffered store reload with preserveScrollOnReload: false", function() {
-            var scrollDone,
-                refreshed,
-                startRow, endRow;
-
-            expect(view.refreshCounter).toBe(1);
-
-            bufferedRenderer.scrollTo(1000, {
-                select: true,
-                focus: true,
-                callback: function() {
-                    scrollDone = true;
-                }
-            });
-
-            waitsFor(function() {
-                satisfyRequests();
-                return scrollDone;
-            }, 'scroll to finish');
-
-            runs(function() {
-                startRow = view.all.startIndex;
-                endRow = view.all.endIndex;
-                store.on({
-                    refresh: function() {
-                        refreshed = true;
-                    },
-                    single: true
-                });
-                store.reload();
-            });
-
-            waitsFor(function() {
-                satisfyRequests();
-                return refreshed;
-            }, 'store to reload');
-
-            runs(function() {
-                expect(view.refreshCounter).toBe(2);
-                expect(view.all.startIndex).toBe(0);
-                expect(view.all.endIndex).toBe(bufferedRenderer.viewSize - 1);
-            });
-        });
-    });
-
-    describe("paging grid with buffered renderer", function() {
-        var grid;
-
-        afterEach(function() {
-            grid.destroy();
-        });
-
-        it("should refresh the view on each page change", function() {
-            var store, ptoolbar;
-            
-            runs(function() {
-                function getRandomDate() {
-                    var from = new Date(1900, 0, 1).getTime();
-                    var to = new Date().getTime();
-                    return new Date(from + Math.random() * (to - from));
-                }
-
-                function createFakeData(count) {
-                    var firstNames   = ['Ed', 'Tommy', 'Aaron', 'Abe'];
-                    var lastNames    = ['Spencer', 'Maintz', 'Conran', 'Elias'];
-
-                    var data = [];
-                    for (var i = 0; i < count ; i++) {
-                        var dob = getRandomDate();           
-                        var firstNameId = Math.floor(Math.random() * firstNames.length);
-                        var lastNameId  = Math.floor(Math.random() * lastNames.length);
-                        var name        = Ext.String.format("{0} {1}", firstNames[firstNameId], lastNames[lastNameId]);
-
-                        data.push([name, dob]);
-                    }
-                    return data;
-                }
-
-                // create the Data Store
-                store = Ext.create('Ext.data.Store', {
-                    fields: [
-                        'Name', 'dob'
-                    ],
-                    autoLoad: true,
-                    proxy: {
-                        type: 'memory',
-                        enablePaging: true,
-                        data: createFakeData(100),
-                        reader: {
-                            type: 'array'
-                        }
-                    },
-                    pageSize: 20
-                });
-
-                grid = Ext.create('Ext.grid.Panel', {
-                    store: store,
-                    columns: [
-                        {text: "Name", width:120, dataIndex: 'Name'},
-                        {text: "dob", flex: 1, dataIndex: 'dob'}
-                    ],                    
-                    dockedItems: [
-                        ptoolbar = Ext.create('Ext.toolbar.Paging', {
-                            dock: 'bottom',
-                            store: store
-                        })
-                    ],
-                    renderTo: document.body,
-                    width: 500,
-                    height: 200,
-                    plugins: [{
-                        ptype: 'bufferedrenderer'
-                    }]
-                });
-            });
-
-            // Wait for first refresh.
-            waitsFor(function() {
-                return grid.view.all.getCount() === 20;
-            });
-            
-            runs(function() {
-                var refreshCount = grid.view.refreshCounter;
-
-                grid.view.scrollTo(0,100);
-
-                // Wait for the scroll event to get into the BufferedRenderer                
-                waitsFor(function() {
-                    return grid.view.bufferedRenderer.scrollTop === 100;
-                });
-
-                runs(function() {
-                    jasmine.fireMouseEvent(ptoolbar.down('#next').el, 'click');
-
-                    // Should be one more page refresh
-                    expect(grid.view.refreshCounter).toBe(refreshCount + 1);
-
-                    // A new full page of 20 records should be there
-                    expect(grid.view.all.getCount()).toBe(20);
-
-                    // Should have scrolled to top on view refresh
-                    expect(grid.view.getScrollY()).toBe(0);
-                });
-            });
-        });
-    });
-
-    describe('Locking a column when grid configured with enableLocking, but no locked columns', function() {
-        var scrollY,
-            ageColumn,
-            nameColumn;
-
-        beforeEach(function() {
-            grid = new Ext.grid.Panel({
-                renderTo: Ext.getBody(),
-                width: 400,
-                height: 400,
-                title: 'Lock a column',
-                columns: [{
-                    dataIndex: 'name',
-                    text: 'Name'
-                }, {
-                    dataIndex: 'age',
-                    text: 'Age'
-                }],
-                selType: 'checkboxmodel',
-
-                enableLocking: true,
-
-                store: {
-                    fields: [{
-                        name: 'name',
-                        type: 'string'
-                    }, {
-                        name: 'age',
-                        type: 'int'
-                    }],
-                    data: (function() {
-                        var data = [];
-                        var len = 44; // <-- 43 records does not trigger error
-                        while (len--) {
-                            data.unshift({
-                                name: 'User ' + len,
-                                age: Ext.Number.randomInt(0, 100)
-                            });
-                        }
-                        return data;
-                    })()
-                },
-                bbar: ['->', Ext.versions.extjs.version]
-            });
-            ageColumn = grid.down('gridcolumn[text=Age]');
-            nameColumn = grid.down('gridcolumn[text=Name]');
-        });
-
-        // We are checking that the locked side acquires a scrollbar.
-        // This is only when regular DOM scrolling is used and there are visible scrollbars
-        if (Ext.getScrollbarSize().height) {
-            it("should show a horizontal scrollbar on the locked side when the first column is locked", function() {
-                nameColumn.setWidth(400);
-                grid.lock(ageColumn);
-                expect(grid.lockedGrid.view.el.dom.style['overflow-x']).toBe('scroll');
-            });
-            it("should NOT show a horizontal scrollbar on the locked side when the first column is locked if the normal side has flexed columns", function() {
-                nameColumn.flex = 1;
-                grid.lock(ageColumn);
-                expect(grid.lockedGrid.view.el.dom.style['overflow-x']).toBe('hidden');
-            });
-        }
-
-        it('should not throw an error, and should maintain scroll position', function() {
-            // Scroll to end (ensureVisible sanitizes the inputs)
-            grid.ensureVisible(100);
-
-            // Locked grid is hidden because there are no locked columns
-            expect(grid.lockedGrid.isVisible()).toBe(false);
-
-            // Cache vertical scroll pos
-            scrollY = grid.normalGrid.view.getScrollY();
-
-            grid.lock(ageColumn);
-
-            // Should result in showing the locked grid
-            expect(grid.lockedGrid.isVisible()).toBe(true);
-
-            // Checkbox should have migrated to the locked side.
-            expect(grid.lockedGrid.getVisibleColumnManager().getColumns().length).toBe(2);
-
-            // We want nothing more to happen here.
-            // We're waiting for a potential erroneous scroll
-            waits(10);
-
-            runs(function() {
-
-                // Scroll position should be preserved
-                expect(grid.lockedGrid.view.getScrollY()).toBe(scrollY);
-
-                grid.unlock(ageColumn);
-
-                // Should result in hiding the locked grid
-                expect(grid.lockedGrid.isVisible()).toBe(false);
-
-                // Checkbox should have migrated to the normal side.
-                expect(grid.normalGrid.getVisibleColumnManager().getColumns().length).toBe(3);
-            });
-
-            // We want nothing more to happen here.
-            // We're waiting for a potential erroneous scroll
-            waits(10);
-
-            runs(function() {
-
-                // Scroll position should be preserved
-                expect(grid.normalGrid.view.getScrollY()).toBe(scrollY);
-            });
-        });
-    });
-
-    describe("In a Window", function() {
-        var win, grid, cell00;
-        
-        afterEach(function() {
-            Ext.destroy(win);
-        });
-        it("should hide the window on ESC in navigable mode", function() {
-            win = new Ext.window.Window({
-                title: 'Test',
-                height: 300,
-                width: 400,
-                layout: 'fit',
-                items: {
-                    xtype: 'grid',
-                    store: new Ext.data.ArrayStore({
-                        data: [
-                            [ 1, 'Lorem'],
-                            [ 2, 'Ipsum'],
-                            [ 3, 'Dolor']
-                        ],
-                        fields: ['row', 'lorem']
-                    }),
-                    columns: [{
-                        text: 'Row',
-                        dataIndex: 'row',
-                        locked: true,
-                        width: 50
-                    }, {
-                        text: 'Lorem',
-                        dataIndex: 'lorem'
-                    }]
-                }
-            });
-            win.show();
-            grid = win.child('grid');
-            cell00 = new Ext.grid.CellContext(grid.view).setPosition(0, 0);
-
-            // Focus cell 0,0
-            cell00.getCell(true).focus();
-
-            // Wait for focus
-            waitsFor(function() {
-                return Ext.Element.getActiveElement() === cell00.getCell(true);
-            }, 'cell 0,0 to be focused');
-
-            runs(function() {
-                jasmine.fireKeyEvent(cell00.getCell(true), 'keydown', Ext.event.Event.ESC);
-
-                // ESC should have bubbled to the window and destroyed it
-                expect(win.destroyed).toBe(true);
-            });
-        });
-    });
-
     describe("Focus column header after deleting only row", function() {
         it("should focus the column header after activating an action item which deletes the last row", function() {
             grid = new Ext.grid.Panel({
@@ -7376,6 +6623,34 @@ describe("grid-general", function() {
                 waitsFor(function() {
                     return grid.getNavigationModel().getPosition().isEqual(cell01) && Ext.Element.getActiveElement() === cell01.getCell(true) && grid.actionableMode !== true;
                 }, 'last cell to be focused');
+            });
+        });
+
+        describe('Changing locked column width with no vertical overflow with syncRowHeight: false', function() {
+            it('should not throw a layout failure', function() {
+                grid = new Ext.grid.Panel({
+                    renderTo: Ext.getBody(),
+                    width: 400,
+                    height: 300,
+                    split: true,
+                    syncRowHeight: false,
+                    store: new Ext.data.Store({
+                        fields: ['id','name','name1'],
+                        data: [
+                            { id : 1, name : '1', name1: 'one' }
+                        ]
+                    }),
+                    columns		: [
+                        { text : 'Id', dataIndex : 'id', locked : true, width : 100 },
+                        { text : 'Name', dataIndex : 'name', locked: true, width : 100 },
+                        { text : 'Name1', dataIndex : 'name1', width : 100 }
+                    ]
+                });
+                
+                grid.columns[0].setWidth(150);
+
+                // Must have successfully layed out the table with the new first cell width
+                expect(grid.lockedGrid.getView().getCell(0, 0).getWidth()).toBe(150);
             });
         });
     });

@@ -798,7 +798,7 @@ Ext.define('Ext.carousel.Carousel', {
         }
     },
 
-    destroy: function() {
+    doDestroy: function() {
         var me = this,
             carouselItems = me.carouselItems.slice();
 
@@ -807,6 +807,5 @@ Ext.define('Ext.carousel.Carousel', {
         Ext.destroy(carouselItems, me.getIndicator(), me.translatable);
 
         me.callParent();
-        delete me.carouselItems;
     }
 });

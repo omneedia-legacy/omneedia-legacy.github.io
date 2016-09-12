@@ -1,14 +1,13 @@
 @font-face {
     font-family: 'Sencha-Examples';
-    src:    url('fonts/Sencha-Examples.eot?sbt0yo');
-    src:    url('fonts/Sencha-Examples.eot?sbt0yo#iefix') format('embedded-opentype'),
-        url('fonts/Sencha-Examples.ttf?sbt0yo') format('truetype'),
-        url('fonts/Sencha-Examples.woff?sbt0yo') format('woff'),
-        url('fonts/Sencha-Examples.svg?sbt0yo#Sencha-Examples') format('svg');
+    src: url('fonts/Sencha-Examples.eot?cgp4zv');
+    src: url('fonts/Sencha-Examples.eot?cgp4zv#iefix') format('embedded-opentype'),
+    url('fonts/Sencha-Examples.ttf?cgp4zv') format('truetype'),
+    url('fonts/Sencha-Examples.woff?cgp4zv') format('woff'),
+    url('fonts/Sencha-Examples.svg?cgp4zv#Sencha-Examples') format('svg');
     font-weight: normal;
     font-style: normal;
 }
-
 [class^="icon-"], [class*=" icon-"] {
     /* use !important to prevent issues with browser extensions that change fonts */
     font-family: 'Sencha-Examples' !important;
@@ -22,9 +21,14 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
-
+.icon-row-editing:before {
+    content: "\e93a";
+}
 .icon-locked-pivot-grid:before {
-    content: "\e903";
+    content: "\e929";
+}
+.icon-d3-view-heatmap-purchases:before {
+    content: "\e939";
 }
 .icon-d3-view-heatmap-heatmap:before {
     content: "\e913";
@@ -33,7 +37,7 @@
     content: "\e914";
 }
 .icon-grandtotals-pivot-grid:before {
-    content: "\e902";
+    content: "\e903";
 }
 .icon-cellediting-pivot-grid:before {
     content: "\e904";
@@ -111,7 +115,7 @@
     content: "\e91e";
 }
 .icon-d3-view-treemap-tooltip:before {
-    content: "\e929";
+    content: "\e955";
 }
 .icon-d3-view-treemap:before {
     content: "\e91f";
@@ -149,6 +153,120 @@
 .icon-minus-circle:before {
     content: "\e901";
 }
+.icon-amf-three:before {
+    content: "\e938";
+}
+.icon-d3-view-heatmap-pivot-configurator:before {
+    content: "\e945";
+}
+.icon-d3-view-treemap-pivot-configurator:before {
+    content: "\e946";
+}
+.icon-d3-view-day-hour-heatmap:before {
+    content: "\e947";
+}
+.icon-d3-view-heatmap-pivot:before {
+    content: "\e956";
+}
+.icon-d3-view-words:before {
+    content: "\e957";
+}
+.icon-tooltips:before {
+    content: "\e92e";
+}
+.icon-form-placeholder:before {
+    content: "\e92c";
+}
+.icon-disclosure-list:before {
+    content: "\e92d";
+}
+.icon-binding-form:before {
+    content: "\e902";
+}
+.icon-animations:before {
+    content: "\e92a";
+}
+.icon-tabs:before {
+    content: "\e952";
+}
+.icon-toolbar-menus:before {
+    content: "\e953";
+}
+.icon-toolbar:before {
+    content: "\e954";
+}
+.icon-carousel:before {
+    content: "\e92b";
+}
+.icon-dataview-basic:before {
+    content: "\e92f";
+}
+.icon-dataview-horizontal:before {
+    content: "\e930";
+}
+.icon-dataview-inline:before {
+    content: "\e931";
+}
+.icon-ajax:before {
+    content: "\e932";
+}
+.icon-jsonp:before {
+    content: "\e933";
+}
+.icon-nestedloading:before {
+    content: "\e934";
+}
+.icon-yql:before {
+    content: "\e935";
+}
+.icon-Data:before {
+    content: "\e936";
+}
+.icon-form-panel:before {
+    content: "\e937";
+}
+.icon-form-sliders:before {
+    content: "\e93e";
+}
+.icon-fa-icons:before {
+    content: "\e93f";
+}
+.icon-vector-icons:before {
+    content: "\e940";
+}
+.icon-basic-list:before {
+    content: "\e941";
+}
+.icon-grouped-list:before {
+    content: "\e948";
+}
+.icon-nested-list:before {
+    content: "\e949";
+}
+.icon-lists:before {
+    content: "\e94a";
+}
+.icon-audio:before {
+    content: "\e94b";
+}
+.icon-video:before {
+    content: "\e94c";
+}
+.icon-menus:before {
+    content: "\e94d";
+}
+.icon-overlays:before {
+    content: "\e94e";
+}
+.icon-progress-bar:before {
+    content: "\e94f";
+}
+.icon-bottom-tabs:before {
+    content: "\e950";
+}
+.icon-touch-events:before {
+    content: "\e951";
+}
 .icon-exec-dashboard:before {
     content: "\e607";
 }
@@ -157,6 +275,9 @@
 }
 .icon-border-square:before {
     content: "\e710";
+}
+.icon-amf-one:before {
+    content: "\e958";
 }
 .icon-tree-list:before {
     content: "\e63f";
@@ -316,9 +437,6 @@
 }
 .icon-ajax-tabs:before {
     content: "\e605";
-}
-.icon-toolbar-menus:before {
-    content: "\e601";
 }
 .icon-responsive-design:before {
     content: "\e602";
@@ -797,9 +915,6 @@
 .icon-trees:before {
     content: "\e75b";
 }
-.icon-tabs:before {
-    content: "\e75c";
-}
 .icon-windows:before {
     content: "\e75d";
 }
@@ -857,7 +972,7 @@
 .icon-radar-charts:before {
     content: "\e76f";
 }
-.icon-guage-charts:before {
+.icon-gauge-charts:before {
     content: "\e770";
 }
 .icon-combination-charts:before {

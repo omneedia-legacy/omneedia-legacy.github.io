@@ -72,10 +72,10 @@ describe('Ext.grid.column.Boolean', function () {
                 renderTo: Ext.getBody()
             });
 
-            expect(getCell(0, 0).el.down('.x-grid-cell-inner', true).innerHTML).toBe('False');
-            expect(getCell(1, 0).el.down('.x-grid-cell-inner', true).innerHTML).toBe('False');
-            expect(getCell(2, 0).el.down('.x-grid-cell-inner', true).innerHTML).toBe('True');
-            expect(getCell(3, 0).el.down('.x-grid-cell-inner', true).innerHTML).toBe('True');
+            expect(getCell(0, 0).el.down('.x-inner-el', true).innerHTML).toBe('False');
+            expect(getCell(1, 0).el.down('.x-inner-el', true).innerHTML).toBe('False');
+            expect(getCell(2, 0).el.down('.x-inner-el', true).innerHTML).toBe('True');
+            expect(getCell(3, 0).el.down('.x-inner-el', true).innerHTML).toBe('True');
         });
 
         it('should apply the trueText/falseText correctly', function () {
@@ -87,10 +87,10 @@ describe('Ext.grid.column.Boolean', function () {
                 renderTo: Ext.getBody()
             });
 
-            expect(getCell(0, 0).el.down('.x-grid-cell-inner', true).innerHTML).toBe('Falsch');
-            expect(getCell(1, 0).el.down('.x-grid-cell-inner', true).innerHTML).toBe('Falsch');
-            expect(getCell(2, 0).el.down('.x-grid-cell-inner', true).innerHTML).toBe('Wahr');
-            expect(getCell(3, 0).el.down('.x-grid-cell-inner', true).innerHTML).toBe('Wahr');
+            expect(getCell(0, 0).el.down('.x-inner-el', true).innerHTML).toBe('Falsch');
+            expect(getCell(1, 0).el.down('.x-inner-el', true).innerHTML).toBe('Falsch');
+            expect(getCell(2, 0).el.down('.x-inner-el', true).innerHTML).toBe('Wahr');
+            expect(getCell(3, 0).el.down('.x-inner-el', true).innerHTML).toBe('Wahr');
         });
 
         it('should apply the cell trueText/falseText correctly from a VM', function () {
@@ -116,10 +116,10 @@ describe('Ext.grid.column.Boolean', function () {
             });
 
             vm.notify();
-            expect(getCell(0, 0).el.down('.x-grid-cell-inner', true).innerHTML).toBe('Fals');
-            expect(getCell(1, 0).el.down('.x-grid-cell-inner', true).innerHTML).toBe('Fals');
-            expect(getCell(2, 0).el.down('.x-grid-cell-inner', true).innerHTML).toBe('Adevarat');
-            expect(getCell(3, 0).el.down('.x-grid-cell-inner', true).innerHTML).toBe('Adevarat');
+            expect(getCell(0, 0).el.down('.x-inner-el', true).innerHTML).toBe('Fals');
+            expect(getCell(1, 0).el.down('.x-inner-el', true).innerHTML).toBe('Fals');
+            expect(getCell(2, 0).el.down('.x-inner-el', true).innerHTML).toBe('Adevarat');
+            expect(getCell(3, 0).el.down('.x-inner-el', true).innerHTML).toBe('Adevarat');
         });
 
     });

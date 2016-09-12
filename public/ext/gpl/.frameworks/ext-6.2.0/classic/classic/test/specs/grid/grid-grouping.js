@@ -861,7 +861,7 @@ describe("grid-grouping", function() {
                                 position = bufferedRenderer.position;
 
                             waitsFor(function() {
-                                return bufferedRenderer.bodyTop === 62496;
+                                return bufferedRenderer.bodyTop === 62517;
                             });
                             runs(function() {
                                 expect(scrollTop).toBeWithin(1, scrollTop);
@@ -1132,7 +1132,7 @@ describe("grid-grouping", function() {
                          startCollapsed: true
                      });
  
-                     grouping.expand('t1');;
+                     grouping.expand('t1');
  
                      store.loadData([{
                          id: 1001,

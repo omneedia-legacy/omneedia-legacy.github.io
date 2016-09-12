@@ -209,6 +209,7 @@ Ext.define('Ext.slider.Multi', {
     focusable: true,
     needArrowKeys: true,
     tabIndex: 0,
+    skipLabelForAttribute: true,
     
     focusCls: 'slider-focus',
 
@@ -388,6 +389,10 @@ Ext.define('Ext.slider.Multi', {
         ariaAttr = data.inputElAriaAttributes;
         
         if (ariaAttr) {
+            if (!ariaAttr['aria-labelledby']) {
+                ariaAttr['aria-labelledby'] = me.id + '-labelEl';
+            }
+            
             ariaAttr['aria-orientation'] = me.vertical ? 'vertical' : 'horizontal';
             ariaAttr['aria-valuemin'] = me.minValue;
             ariaAttr['aria-valuemax'] = me.maxValue;
@@ -980,21 +985,11 @@ Ext.define('Ext.slider.Multi', {
 
     },
 
-    beforeDestroy: function() {
-        var me     = this,
-            thumbs = me.thumbs,
-            t      = 0,
-            tLen   = thumbs.length,
-            thumb;
-
-        if (me.rendered) {
-            for (; t < tLen; t++) {
-                thumb = thumbs[t];
-
-                Ext.destroy(thumb);
-            }
+    doDestroy: function() {
+        if (this.rendered) {
+            Ext.destroy(this.thumbs);
         }
 
-        me.callParent();
+        this.callParent();
     }
 });

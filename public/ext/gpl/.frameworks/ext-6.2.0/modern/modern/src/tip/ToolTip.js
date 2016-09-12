@@ -1,6 +1,75 @@
-/** */
+/**
+ * This class provides extra contextual information for components/elements by
+ * attaching to a {@link #target}. The tip will show based on mouseover (or touch, 
+ * depending on the environment) and {@link #align} itself to the {@link #target}.
+ *
+ * Typically, tooltips will be created via {@link Ext.Component#tooltip components}, however
+ * it is possible to create instances directly.
+ *
+ *     new Ext.tip.ToolTip({
+ *         target: myComponent,
+ *         html: 'Here is some help text about this!'
+ *     });
+ *
+ * # Shared instance
+ * New instances of tooltips do not need to be created for every item that requires
+ * a tooltip. In most cases it is sufficient to use a single shared instance across 
+ * the application, which provides a performance benefit. See {@link Ext.tip.Manager} 
+ * for an explanation of how shared tips are used.
+ *
+ * # Delegation
+ * 
+ * It is common to want to show a tooltip for a repeated view and dynamically update
+ * the content based on the current item within this view. This can be achieved using
+ * the {@link #delegate} configuration. This means that the tip will only activate
+ * when over an item inside the target that matches the {@link #delegate}. After this,
+ * the {@link #currentTarget} can be interrogated to get contextual information about which
+ * delegate item triggered the show.
+ *
+ *     var el = Ext.getBody().createChild({
+ *         html: '<div data-num="1" class="item">Foo</div>' +
+ *               '<div data-num="2" class="item">Bar</div>' +
+ *               '<div data-num="3" class="item">Baz</div>' +
+ *               '<div class="notip">No tip here</div>'
+ *     });
+ *
+ *     new Ext.tip.ToolTip({
+ *         target: el,
+ *         delegate: '.item',
+ *         listeners: {
+ *             beforeshow: function(tip) {
+ *                 var current = tip.currentTarget.dom;
+ *                 tip.setHtml('Item #' + current.getAttribute('data-num'));
+ *             }
+ *         }
+ *     });
+ *
+ * # Alignment
+ *
+ * The following configuration properties allow control over how the ToolTip is aligned relative to
+ * the target element and/or mouse pointer:
+ *
+ * - {@link #anchor}
+ * - {@link #anchorToTarget}
+ * - {@link #trackMouse}
+ * - {@link #mouseOffset}
+ *
+ * # Showing/Hiding
+ *
+ * The following configuration properties allow control over how and when the ToolTip is automatically
+ * shown and hidden:
+ *
+ * - {@link #autoHide}
+ * - {@link #showDelay}
+ * - {@link #hideDelay}
+ * - {@link #dismissDelay}
+ * 
+ * 
+ * @since 6.2.0
+ */
 Ext.define('Ext.tip.ToolTip', {
     extend: 'Ext.Panel',
+    xtype: 'tooltip',
 
     floated: true,
     
@@ -14,153 +83,215 @@ Ext.define('Ext.tip.ToolTip', {
 
     anchor: false,
 
+    closeAction: 'hide',
+
     config: {
         /**
-         * @cfg {Ext.dom.Element} target The element who's mouseover event should trigger showing this ToolTip.
-         */
-        target: null,
-        
-        /**
-         * @cfg {Boolean} [anchorToTarget=true] By default, the {@link #align} config aligns to the {@link #target}.
+         * @cfg {String} [align]
+         * A string which specifies how this ToolTip is to align with regard to its
+         * {@link #currentTarget} by means of identifying the point of the tooltip to
+         * join to the point of the target.
          *
-         * Configure this as `false` if an anchor is required, but positioning is still relative to the pointer position on show..
+         * By default, the tooltip shows at {@link #mouseOffset} pixels from the
+         * triggering pointer event. Using this config anchors the ToolTip to its target
+         * instead.
+         *
+         * This may take the following forms:
+         * 
+         * - **Blank**: Defaults to aligning the element's top-left corner to the target's
+         *   bottom-left corner ("tl-bl").
+         * - **Two anchors**: If two values from the table below are passed separated by a dash,
+         *   the first value is used as the element's anchor point, and the second value is
+         *   used as the target's anchor point.
+         * - **Two edge/offset descriptors:** An edge/offset descriptor is an edge initial
+         *   (`t`/`r`/`b`/`l`) followed by a percentage along that side. This describes a
+         *   point to align with a similar point in the target. So `'t0-b0'` would be
+         *   the same as `'tl-bl'`, `'l0-r50'` would place the top left corner of this item
+         *   halfway down the right edge of the target item. This allows more flexibility
+         *   and also describes which two edges are considered adjacent when positioning a tip pointer. 
+         *
+         * In addition to the anchor points, the position parameter also supports the "?"
+         * character. If "?" is passed at the end of the position string, the element will
+         * attempt to align as specified, but the position will be adjusted to constrain to
+         * the viewport if necessary. Note that the element being aligned might be swapped to
+         * align to a different position than that specified in order to enforce the viewport
+         * constraints. Following are all of the supported anchor positions:
+         *
+         *      Value  Description
+         *      -----  -----------------------------
+         *      tl     The top left corner
+         *      t      The center of the top edge
+         *      tr     The top right corner
+         *      l      The center of the left edge
+         *      c      The center
+         *      r      The center of the right edge
+         *      bl     The bottom left corner
+         *      b      The center of the bottom edge
+         *      br     The bottom right corner
+         *
+         * Example Usage:
+         *
+         *     // align the top left corner of the tooltip with the top right corner of its target
+         *     // (constrained to viewport).
+         *     align: 'tl-tr?'
+         *
+         *     // align the bottom right corner of the tooltip with the center left edge of its target.
+         *     align: 'br-l?'
+         *
+         *     // align the top center of the tooltip with the bottom left corner of its target.
+         *     align: 't-bl'
+         *
+         *     // align the 25% point on the bottom edge of this tooltip
+         *     // with the 75% point on the top edge of its target.
+         *     align: 'b25-c75'
          */
-        anchorToTarget: true,
+        align: 'l-r?',
 
         /**
-         * @cfg {String} [delegate] A selector which identifies child elements of the target which trigger showing this ToolTip.
-         * The {@link #currentTarget} property is set to the triggering element.
-         */
-        delegate: null,
-
-        /**
-         * @cfg {String} [alignDelegate] A selector which identifies child elements of the  {@link #currentTarget} to
+         * @cfg {String} [alignDelegate]
+         * A selector which identifies child elements of the  {@link #currentTarget} to
          * align to upon show.
          */
         alignDelegate: null,
 
         /**
-         * @cfg {String} [align=l-r?] A string which specifies how this ToolTip is to align with regard to its
-         * {@link #currentTarget} by means of identifying the point of the tooltip to join to the point of the target.
+         * @cfg {Boolean} [allowOver=false]
+         * Set to `true` to allow mouse exiting the target, but moving into the ToolTip to
+         * keep the ToolTip visible. This may be useful for interactive tips.
          *
-         * By default, the tooltip shows at {@link #mouseOffset} pixels from the triggering pointer event.
-         * Using this config anchors the ToolTip to its target instead.
+         * While the mouse is over the tip, the {@link dismissDelay dismiss timer} is
+         * inactive, so the tip will not {@link #autoHide}.
          *
-         * <pre>
-         * Value  Description
-         * -----  -----------------------------
-         * tl     The top left corner (default)
-         * t      The center of the top edge
-         * tr     The top right corner
-         * l      The center of the left edge
-         * c      In the center of the element
-         * r      The center of the right edge
-         * bl     The bottom left corner
-         * b      The center of the bottom edge
-         * br     The bottom right corner
-         * </pre>
+         * On touch platforms, a touch on the tooltip is the equivalent, and this cancels
+         * the dismiss timer so that a tap outside is then necessary to hide the tip.
+         *
+         * This is incompatible with the {@link #cfg-trackMouse} config.
          */
-        align: 'l-r?',
+        allowOver: null,
 
         /**
-         * @cfg {Boolean} [autoHide=true]
-         * True to automatically hide the tooltip after the
-         * mouse exits the target element or after the `{@link #dismissDelay}`
-         * has expired if set.  If `{@link #closable} = true`
-         * a close tool button will be rendered into the tooltip header.
+         * @cfg {Boolean} [anchorToTarget]
+         * By default, the {@link #align} config aligns to the {@link #target}.
+         *
+         * Configure this as `false` if an anchor is required, but positioning is still
+         * relative to the pointer position on show.
+         */
+        anchorToTarget: true,
+
+        /**
+         * @cfg {Boolean} [autoHide]
+         * True to automatically hide the tooltip after the mouse exits the target element
+         * or after the `{@link #dismissDelay}` has expired if set.
+         *
+         * If `{@link #closable} = true` a close tool button will be rendered into the
+         * tooltip header.
          */
         autoHide: true,
 
         /**
-         * @cfg {Boollean} [showOnTap=false]
-         * On touch platforms, if {@link #showOnTap} is `true`, a tap on the target shows the tip.
-         * In this case any {@link #showDelay} is ignored.
+         * @cfg {String} [delegate]
+         * A selector which identifies child elements of the target which trigger showing
+         * this ToolTip. The {@link #currentTarget} property is set to the triggering
+         * element.
+         */
+        delegate: null,
+
+        /**
+         * @cfg {Number} [dismissDelay]
+         * Delay in milliseconds before the tooltip automatically hides.
          *
-         * This is useful for adding tips on elements which do not have tap listeners. It would
-         * not be appropriate for a ToolTip on a {@link Ext.Button Button}.
-         */
-        showOnTap: null,
-
-        /**
-         * @cfg {Number} [showDelay=500]
-         * Delay in milliseconds before the tooltip displays after the mouse enters the target element.
-         *
-         * On touch platforms, if {@link #showOnTap} is `true`, a tap on the target shows the tip,
-         * and this timer is ignored - the tip is shown immediately.
-         */
-        showDelay: 500,
-
-        /**
-         * @cfg {Number} [hideDelay=300]
-         * Delay in milliseconds after the mouse exits the target element but before the tooltip actually hides.
-         * Set to 0 for the tooltip to hide immediately.
-         */
-        hideDelay: 300,
-
-        /**
-         * @cfg {Number} [dismissDelay=5000]
-         * Delay in milliseconds before the tooltip automatically hides. To disable automatic hiding, set
-         * dismissDelay = 0.
+         * Set this value to `0` to disable automatic hiding.
          */
         dismissDelay: 5000,
 
         /**
-         * @cfg {Number[]} [mouseOffset=[15,18]]
-         * An XY offset from the triggering pointer event position where the tooltip should be shown unless
-         * aligned to the target element.
+         * @cfg {Number} [hideDelay]
+         * Delay in milliseconds after the mouse exits the target element but before the
+         * tooltip actually hides.
+         *
+         * Set to `0` for the tooltip to hide immediately.
+         */
+        hideDelay: 300,
+
+        /**
+         * @cfg {Number[]} [mouseOffset]
+         * An XY offset from the triggering pointer event position where the tooltip
+         * should be shown unless aligned to the target element.
          */
         mouseOffset: [15, 18],
 
         /**
-         * @cfg {Boolean} [trackMouse=false]
-         * True to have the tooltip follow the mouse as it moves over the target element.
-         *
-         * Only effective on platforms with pointing devices, this does not address touch events.
-         */
-        trackMouse: false,
-
-        /**
-         * @cfg {Number} [quickShowInterval=250]
-         * If a show is triggered within this number of milliseconds of this ToolTip being hidden, it shows
-         * immediately regardless of the delay. If rapicly moving from target to target, this
-         * ensure that each separate target does not get its own delay.
+         * @cfg {Number} [quickShowInterval]
+         * If a show is triggered within this number of milliseconds of this ToolTip being
+         * hidden, it shows immediately regardless of the delay. If rapidly moving from
+         * target to target, this ensure that each separate target does not get its own
+         * delay.
          */
         quickShowInterval: 250,
 
         /**
-         * @cfg {Boolean} [allowOver=false]
-         * Set to `true` to allow mouse exiting the target, but moving into the ToolTip to keep
-         * the ToolTip visible. This may be useful for interactive tips.
+         * @cfg {Number} [showDelay]
+         * Delay in milliseconds before the tooltip displays after the mouse enters the
+         * target element.
          *
-         * While the mouse is over the tip, the {@link dismissDelay dismiss timer} is inactive, so the tip
-         * will not {@link #autoHide}.
-         * 
-         * On touch platforms, a touch on the tooltip is the equivalent, and this cancels the
-         * dismiss timer so that a tap outside is then necessary to hide the tip.
-         *
-         * This is incompatible with the {@link #cfg-trackMouse} config.
+         * On touch platforms, if {@link #showOnTap} is `true`, a tap on the target shows
+         * the tip, and this timer is ignored - the tip is shown immediately.
          */
-        allowOver: null
+        showDelay: 500,
+
+        /**
+         * @cfg {Boolean/String[]} [showOnTap=false]
+         * `true` to show this tip on a tap event on the target. If specified as a string,
+         * it should be the {@link Ext.event.Event#pointerType} of the event that should
+         * trigger a show. Typically, this will be `touch`.
+         *
+         * This is useful for adding tips on elements which do not have tap listeners. It
+         * would not be appropriate for a ToolTip on a {@link Ext.Button Button}.
+         */
+        showOnTap: null,
+
+        /**
+         * @cfg {Ext.Component/Ext.dom.Element} target
+         * The target that should trigger showing this ToolTip.
+         */
+        target: null,
+
+        /**
+         * @cfg {Boolean} [trackMouse]
+         * True to have the tooltip follow the mouse as it moves over the target element.
+         *
+         * Only effective on platforms with pointing devices, this does not address touch
+         * events.
+         */
+        trackMouse: false
     },
 
-    constructor: function(config) {
-        var me = this;
+    closeToolText: '',
 
-        me.callParent([config]);
-
+    constructor: function (config) {
         /**
          * @property {Ext.dom.Fly} currentTarget
          * Only attached to a DOM element  when this ToolTip is active. The current target.
-         * This is usually the {@link #cfg-target}, but if the {@link #cfg-delegate} option is used,
-         * it may be a child element of the main target.
+         * This is usually the {@link #cfg-target}, but if the {@link #cfg-delegate} option
+         * is used, it may be a child element of the main target.
+         * @readonly
          */
-        me.currentTarget = new Ext.dom.Fly();
+        this.currentTarget = new Ext.dom.Fly();
+
+        this.callParent([config]);
+
+        this.attachTargetListeners();
     },
 
-    applyAllowOver: function(allowOver) {
+    getRefOwner: function() {
+        var target = this.getTarget();
+        return (target && target.isComponent) ? target : this.callParent();
+    },
+
+    updateAllowOver: function(allowOver) {
         var me = this;
 
-        Ext.destroy(me.overListeners);
+        me.overListeners = Ext.destroy(me.overListeners);
 
         // Use the mouseleave and mouseenter events because we do not need delegation
         if (allowOver) {
@@ -171,60 +302,23 @@ Ext.define('Ext.tip.ToolTip', {
                 destroyable: true
             });
         }
-
-        return allowOver;
     },
 
     applyTarget: function(target) {
-        return Ext.get(target.el || target);
-    },
-
-    applyAnchor: function(anchor) {
-        var me = this,
-            align;
-
-        // Allow string anchor config to drive the alignment.
-        if (typeof anchor === 'string') {
-            align = me.anchorMap[anchor];
-            if (align) {
-                // In case the align config has not been processed yet, ensure we
-                // have imported any configured value because we want a string
-                // anchor property to override it.
-                me.getAlign();
-
-                me.setAlign(align);
-                anchor = true;
+        if (target) {
+            if (!target.isComponent) {
+                target = Ext.get(target.el || target);
             }
         }
-        
-        // If no anchor wanted, then align to triggering pointer event, not target
-        if (!anchor) {
-            me.setAnchorToTarget(anchor);
-        }
-
-        return anchor;
+        return target;
     },
 
     updateTarget: function(target, oldTarget) {
-        var me = this,
-            listeners;
+        var me = this;
 
-        if (me.targetListeners) {
-            me.targetListeners.destroy();
-        }
-        if (target) {
-            listeners = {
-                mouseover: 'onTargetOver',
-                mouseout: 'onTargetOut',
-                mousemove: 'onMouseMove',
-                scope: me,
-                destroyable: true
-            };
-
-            if (Ext.supports.Touch && me.getShowOnTap()) {
-                listeners.tap = 'onTargetTap';
-            }
-            me.targetListeners = target.on(listeners);
+        if (!me.isConfiguring) {
+            me.targetListeners = Ext.destroy(me.targetListeners);
+            me.attachTargetListeners();
         }
     },
 
@@ -236,41 +330,47 @@ Ext.define('Ext.tip.ToolTip', {
     },
 
     updateDisabled: function(disabled, oldDisabled) {
-        this.callParent([disabled, oldDisabled]);
+        var me = this,
+            val;
+
+        me.callParent([disabled, oldDisabled]);
         if (disabled) {
-            this.clearTimers();
-            this.hide();
+            me.clearTimers();
+            me.hide();
+            val = null;
         }
+        // If we pass null, it won't attempt to attach listeners
+        me.attachTargetListeners(val);
     },
     
     updateShowOnTap: function(showOnTap) {
-        if (Ext.supports.Touch && this.targetListeners) {
-            this.getTarget()[showOnTap ? 'on' : 'un']('tap', 'onTargetTap', this);
+        if (!this.isConfiguring) {
+            this.attachTargetListeners();
         }
     },
 
     showBy: function(target, alignment, passedOptions) {
         var me = this,
-            alignDelegate = me.getAlignDelegate(),
-            currentTarget = me.currentTarget;
+            alignDelegate = me.getAlignDelegate();
 
         // If we are trackMouse: true, we will be asked to show by a pointer event
         if (target.isEvent) {
             me.alignToEvent(target);
-        }
-        else {
+        } else {
             if (target.isElement) {
-                currentTarget.attach(target.dom);
+                me.updateCurrentTarget(target.dom);
             } else if (target.nodeType) {
-                currentTarget.attach(target);
+                me.updateCurrentTarget(target);
             }
             me.callParent([alignDelegate ? target.child(alignDelegate, true) : target, alignment || me.getAlign(), passedOptions]);
         }
     },
     
     onViewportResize: function() {
-        if (this.isVisible()) {
-            this.showByTarget(this.currentTarget);
+        var me = this;
+
+        if (me.isVisible() && !me.lastShowWasPointer) {
+            me.showByTarget(me.currentTarget);
         }
     },
 
@@ -279,8 +379,8 @@ Ext.define('Ext.tip.ToolTip', {
             dismissDelay = me.getDismissDelay();
 
         // A programmatic show should align to the target
-        if (!me.currentTarget.dom) {
-            return me.showByTarget(me.getTarget());
+        if (!me.currentTarget.dom && (me.pointerEvent || me.getTarget())) {
+            return me.showByTarget(me.getElFromTarget());
         }
         me.callParent();
         me.clearTimer('show');
@@ -297,24 +397,20 @@ Ext.define('Ext.tip.ToolTip', {
         me.clearTimer('dismiss');
         me.callParent();
         me.lastHidden = new Date();
-        me.currentTarget.detach();
+        me.updateCurrentTarget(null);
         Ext.getDoc().un('mousedown', me.onDocMouseDown, me);
     },
 
-    destroy: function() {
-        this.callParent();
-        this.clearTimers();
+    doDestroy: function() {
+        var me = this;
+
+        me.clearTimers();
+        me.setTarget(null);
+        me.overListeners = null;
+        me.callParent();
     },
 
     privates: {
-        anchorMap: {
-        // String anchor definitions to alignment specs.
-            top: 't-b?',
-            left: 'l-r?',
-            right: 'r-l?',
-            bottom: 'b-t?'
-        },
-
         onDocMouseDown: function(e) {
             var me = this,
                 delegate = me.getDelegate();
@@ -330,7 +426,7 @@ Ext.define('Ext.tip.ToolTip', {
             // Only respond to the mousedown if it's not on this tip, and it's not on a target.
             // If it's on a target, onTargetTap will handle it.
             else if (!me.getClosable()) {
-                if (e.within(me.getTarget()) && (!delegate || e.getTarget(delegate))) {
+                if (e.within(me.getElFromTarget()) && (!delegate || e.getTarget(delegate))) {
                     me.delayHide();
                 } else {
                     me.disable();
@@ -339,17 +435,23 @@ Ext.define('Ext.tip.ToolTip', {
             }
         },
 
+        forceTargetOver: function(e, newTarget) {
+            this.pointerEvent = e;
+            this.updateCurrentTarget(newTarget);
+            this.handleTargetOver();
+        },
+
         getConstrainRegion: function() {
             return this.callParent().adjust(5, -5, -5, 5);
         },
 
         onTargetOver: function(e) {
             var me = this,
-                myTarget = me.getTarget(),
+                myTarget = me.getElFromTarget(),
                 delegate = me.getDelegate(),
                 currentTarget = me.currentTarget,
-                newTarget,
-                myListeners = me.hasListeners;
+                myListeners = me.hasListeners,
+                newTarget;
 
             if (me.getDisabled()) {
                 return;
@@ -362,7 +464,7 @@ Ext.define('Ext.tip.ToolTip', {
                 }
                 newTarget = e.getTarget(delegate);
                 // Move inside a delegate with no currentTarget
-                if (newTarget && newTarget.contains(e.relatedTarget)) {
+                if (newTarget && Ext.fly(newTarget).contains(e.relatedTarget)) {
                     return;
                 }
             }
@@ -382,9 +484,7 @@ Ext.define('Ext.tip.ToolTip', {
                     me.hide();
                 }
 
-                me.pointerEvent = e;
-                currentTarget.attach(newTarget);
-                me.handleTargetOver();
+                me.forceTargetOver(e, newTarget);
             }
             // If over a non-delegate child, behave as in target out
             else if (currentTarget.dom) {
@@ -448,7 +548,7 @@ Ext.define('Ext.tip.ToolTip', {
                     me.dismissTimer = Ext.defer(me.hide, dismissDelay, me);
                 }
 
-                if (me.getTrackMouse())  {
+                if (me.getTrackMouse()) {
                     me.alignToEvent(e);
                 }
              }
@@ -459,7 +559,7 @@ Ext.define('Ext.tip.ToolTip', {
 
             me.clearTimer('hide');
             if (me.getHidden() && !me.showTimer) {
-                // Allow rapid movement from delegate to delegte to show immediately
+                // Allow rapid movement from delegate to delegate to show immediately
                 if (me.getDelegate() && Ext.Date.getElapsed(me.lastHidden) < me.getQuickShowInterval()) {
                     me.showByTarget(target);
                 } else {
@@ -473,12 +573,14 @@ Ext.define('Ext.tip.ToolTip', {
         },
 
         showByTarget: function(target) {
-            var me = this;
+            var me = this,
+                isTarget = me.getAnchorToTarget() && !me.getTrackMouse();
 
+            me.lastShowWasPointer = !isTarget;
             // Show by the correct thing.
             // If trackMouse, or we are not anchored to the target, then it's the current pointer event.
             // Otherwise it's either the current target, or the alignDelegate within that.
-            me.showBy(me.getAnchorToTarget() && !me.getTrackMouse() ? target : me.pointerEvent, me.getAlign(), {overlap: me.getTrackMouse() && !me.getAnchor()});
+            me.showBy(isTarget ? target : me.pointerEvent, me.getAlign(), {overlap: me.getTrackMouse() && !me.getAnchor()});
         },
 
         delayHide: function() {
@@ -498,15 +600,17 @@ Ext.define('Ext.tip.ToolTip', {
                     // the tip position.
                     overlap: me.getTrackMouse() && !me.getAnchor()
                 },
-                align,
                 mouseOffset = me.getMouseOffset(),
-                target = event.getPoint().adjust(-mouseOffset[1], mouseOffset[0], mouseOffset[1], -mouseOffset[0]);
+                target = event.getPoint().adjust(-mouseOffset[1], mouseOffset[0], mouseOffset[1], -mouseOffset[0]),
+                anchor = me.getAnchor(),
+                align;
 
             // The anchor must point to the mouse
             if (me.getAnchor()) {
                 align = me.getAlign();
             }
-            else {
+
+            if (!align) {
                 if (mouseOffset[0] > 0) {
                     if (mouseOffset[1] > 0) {
                         align = 'tl-br?';
@@ -540,6 +644,11 @@ Ext.define('Ext.tip.ToolTip', {
             if (timer) {
                 clearTimeout(timer);
                 me[propName] = null;
+
+                // We were going to show against the target, but now not.
+                if (name === 'show' && me.isHidden()) {
+                    me.updateCurrentTarget(null);
+                }
             }
         },
 
@@ -565,10 +674,60 @@ Ext.define('Ext.tip.ToolTip', {
                 clippingRegion = (clippingEl.isComponent ? clippingEl.el : Ext.fly(clippingEl)).getConstrainRegion();
             }
 
+            // this method is borrowed by the Widget override
+            // @noOptimize.callParent
             this.callParent([clippingRegion, sides]);
 
             // Clip the anchor to the same bounds
             this.tipElement.clipTo(clippingRegion, sides);
+        },
+
+        updateCurrentTarget: function (dom) {
+            var me = this,
+                currentTarget = me.currentTarget,
+                was = currentTarget.dom;
+
+            currentTarget.attach(dom);
+
+            if (!me.isConfiguring) {
+                me.fireEvent('hovertarget', me, currentTarget, was);
+            }
+        },
+
+        getElFromTarget: function() {
+            var target = this.getTarget();
+            if (target) {
+                if (target.isComponent) {
+                    target = target.element;
+                }
+            }
+            return target;
+        },
+
+        attachTargetListeners: function(target) {
+            var me = this,
+                listeners;
+
+            if (target !== null) {
+                target = me.getElFromTarget();
+            }
+
+            me.targetListeners = Ext.destroy(me.targetListeners);
+
+            if (target) {
+                listeners = {
+                    mouseover: 'onTargetOver',
+                    mouseout: 'onTargetOut',
+                    mousemove: 'onMouseMove',
+                    scope: me,
+                    destroyable: true
+                };
+
+                if (me.getShowOnTap()) {
+                    listeners.tap = 'onTargetTap';
+                }
+                me.targetListeners = target.on(listeners);
+            }
         }
     }
 });

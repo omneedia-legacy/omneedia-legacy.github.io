@@ -47,7 +47,6 @@
  * * {@link Ext.tab.Panel}
  * * {@link Ext.Viewport Ext.Viewport}
  * * {@link Ext.Img}
- * * {@link Ext.Map}
  * * {@link Ext.Audio}
  * * {@link Ext.Video}
  * * {@link Ext.Sheet}
@@ -147,7 +146,6 @@
  image                   Ext.Img
  label                   Ext.Label
  loadmask                Ext.LoadMask
- map                     Ext.Map
  panel                   Ext.Panel
  segmentedbutton         Ext.SegmentedButton
  sheet                   Ext.Sheet
@@ -218,14 +216,18 @@
 Ext.define('Ext.Component', {
     extend: 'Ext.Widget',
 
-    alternateClassName: 'Ext.lib.Component',
+    // @override Ext.Widget
+    alternateClassName: ['Ext.lib.Component', 'Ext.Gadget'],
+    
+    mixins: [
+        'Ext.mixin.Keyboard'
+    ],
 
     requires: [
         'Ext.ComponentManager',
         'Ext.ComponentQuery',
         'Ext.XTemplate',
-        'Ext.scroll.Scroller',
-        'Ext.behavior.Draggable'
+        'Ext.scroll.Scroller'
     ],
 
     /**
@@ -277,36 +279,6 @@ Ext.define('Ext.Component', {
 
     cachedConfig: {
         /**
-         * @cfg {String/String[]} cls The CSS class to add to this component's element, in
-         * addition to the {@link #baseCls}. In many cases, this property will be specified
-         * by the derived component class. See {@link #userCls} for adding additional CSS
-         * classes to component instances (such as items in a {@link Ext.Container}).
-         * @accessor
-         */
-        cls: null,
-
-        /**
-         * @cfg {String} [floatingCls="x-floating"] The CSS class to add to this component when it is positioned.
-         * @private
-         * @readonly
-         * @accessor
-         */
-        floatingCls: Ext.baseCSSPrefix + 'floating',
-
-        /**
-         * @cfg {String} [hiddenCls="x-item-hidden"] The CSS class to add to the component when it is hidden
-         * @accessor
-         */
-        hiddenCls: Ext.baseCSSPrefix + 'item-hidden',
-
-        /**
-         * @private
-         * @cfg {String} [centeredCls="x-centered"] The CSS class to add to the component when it is {@link #floated} and {@link #centered}.
-         * @accessor
-         */
-        centeredCls: Ext.baseCSSPrefix + 'centered',
-
-        /**
          * @cfg {Number/String} margin The margin to use on this Component. Can be specified as a number (in which case
          * all edges get the same margin) or a CSS string like '5 10 10 10'
          * @accessor
@@ -319,50 +291,6 @@ Ext.define('Ext.Component', {
          * @accessor
          */
         padding: null,
-
-        /**
-         * @cfg {Boolean} border Enables or disables bordering on this component.
-         * The following values are accepted:
-         *
-         * - `null` or `true (default): Do nothing and allow the border to be specified by the theme.
-         * - `false`: suppress the default border provided by the theme.
-         *
-         * Please note that enabling bordering via this config will not add a `border-color`
-         * or `border-style` CSS property to the component; you provide the `border-color`
-         * and `border-style` via CSS rule or {@link #style} configuration
-         * (if not already provide by the theme).
-         *
-         * ## Using {@link #style}:
-         *
-         *     Ext.Viewport.add({
-         *         centered: true,
-         *         width: 100,
-         *         height: 100,
-         *
-         *         style: 'border: 1px solid blue;'
-         *         // ...
-         *     });
-         *
-         * ## Using CSS:
-         *
-         *     Ext.Viewport.add({
-         *         centered: true,
-         *         width: 100,
-         *         height: 100,
-         *
-         *         cls: 'my-component'
-         *         // ...
-         *     });
-         *
-         * And your CSS file:
-         *
-         *     .my-component {
-         *         border: 1px solid red;
-         *     }
-         *
-         * @accessor
-         */
-        border: null,
 
         /**
          * @cfg {String} [styleHtmlCls="x-html"]
@@ -515,16 +443,6 @@ Ext.define('Ext.Component', {
         centered: null,
 
         /**
-         * @cfg {Boolean} [hidden]
-         * Whether or not this Component is hidden (its CSS `display` property is set to `none`).
-         *
-         * Defaults to `true` for {@link #floated} Components.
-         * @accessor
-         * @evented
-         */
-        hidden: null,
-
-        /**
          * @cfg {Boolean} [disabled]
          * Whether or not this component is disabled
          * @accessor
@@ -544,6 +462,7 @@ Ext.define('Ext.Component', {
         /**
          * @cfg {Object} [draggable] Configuration options to make this Component draggable
          * @accessor
+         * @cmd-auto-dependency {defaultType: "Ext.behavior.Draggable"}
          */
         draggable: null,
 
@@ -631,12 +550,6 @@ Ext.define('Ext.Component', {
         data: null,
 
         /**
-         * @cfg {String} [disabledCls="x-item-disabled"] The CSS class to add to the component when it is disabled
-         * @accessor
-         */
-        disabledCls: Ext.baseCSSPrefix + 'item-disabled',
-
-        /**
          * @cfg {Ext.Element/HTMLElement/String} contentEl The configured element will automatically be
          * added as the content of this component. When you pass a string, we expect it to be an element id.
          * If the content element is hidden, we will automatically show it.
@@ -653,77 +566,6 @@ Ext.define('Ext.Component', {
         record: null,
 
         /**
-         * @cfg {Object/Array} plugins
-         * @accessor
-         * An object or array of objects that will provide custom functionality for this component.  The only
-         * requirement for a valid plugin is that it contain an init method that accepts a reference of type Ext.Component.
-         *
-         * When a component is created, if any plugins are available, the component will call the init method on each
-         * plugin, passing a reference to itself.  Each plugin can then call methods or respond to events on the
-         * component as needed to provide its functionality.
-         *
-         * For examples of plugins, see Ext.plugin.PullRefresh and Ext.plugin.ListPaging
-         *
-         * ## Example code
-         *
-         * A plugin by alias:
-         *
-         *     Ext.create('Ext.dataview.List', {
-         *         config: {
-         *             plugins: 'listpaging',
-         *             itemTpl: '<div class="item">{title}</div>',
-         *             store: 'Items'
-         *         }
-         *     });
-         *
-         * Multiple plugins by alias:
-         *
-         *     Ext.create('Ext.dataview.List', {
-         *         config: {
-         *             plugins: ['listpaging', 'pullrefresh'],
-         *             itemTpl: '<div class="item">{title}</div>',
-         *             store: 'Items'
-         *         }
-         *     });
-         *
-         * Single plugin by class name with config options:
-         *
-         *     Ext.create('Ext.dataview.List', {
-         *         config: {
-         *             plugins: {
-         *                 xclass: 'Ext.plugin.ListPaging', // Reference plugin by class
-         *                 autoPaging: true
-         *             },
-         *
-         *             itemTpl: '<div class="item">{title}</div>',
-         *             store: 'Items'
-         *         }
-         *     });
-         *
-         * Multiple plugins by class name with config options:
-         *
-         *     Ext.create('Ext.dataview.List', {
-         *         config: {
-         *             plugins: [
-         *                 {
-         *                     xclass: 'Ext.plugin.PullRefresh',
-         *                     pullRefreshText: 'Pull to refresh...'
-         *                 },
-         *                 {
-         *                     xclass: 'Ext.plugin.ListPaging',
-         *                     autoPaging: true
-         *                 }
-         *             ],
-         *
-         *             itemTpl: '<div class="item">{title}</div>',
-         *             store: 'Items'
-         *         }
-         *     });
-         *
-         */
-        plugins: null,
-
-        /**
          * @private
          */
         useBodyElement: null,
@@ -731,7 +573,18 @@ Ext.define('Ext.Component', {
         /**
          * @cfg {String/Object} tooltip
          * The tooltip for this component - can be a string to be used as innerHTML
-         * (html tags are accepted) or {@link Ext.tip.ToolTip} config object
+         * (html tags are accepted) or {@link Ext.tip.ToolTip} config object.
+         *
+         * The default behavior is to use a shared tip instance. The tooltip configuration is registered with the
+         * {@link Ext.tip.Manager}. To enable this, your application can set the {@link Ext.app.Application#quickTips}
+         * config, or an instance of the {@link Ext.tip.Manager} may be created manually.
+         *
+         * To force a unique tooltip instance to be created, specify `autoCreate: true` on this configuration.
+         *
+         * Configuring this with `autoHide: false` implies `autoCreate: true` so that the desired persistent
+         * behavior can be obtained with other targets still showing the singleton instance.
+         *
+         * @cmd-auto-dependency {defaultType: "Ext.tip.ToolTip"}
          */
         tooltip: null,
 
@@ -749,6 +602,7 @@ Ext.define('Ext.Component', {
          * that covers its parent and does not allow the user to interact with any other Components until this
          * Component is dismissed.
          * @accessor
+         * @cmd-auto-dependency {defaultType: "Ext.Mask"}
          */
         modal: null,
 
@@ -874,7 +728,7 @@ Ext.define('Ext.Component', {
      * @param {Number} toIndex The new index of the item.
      * @param {Number} fromIndex The old index of the item.
      */
-    
+
     /**
      * @inheritdoc
      */
@@ -915,8 +769,18 @@ Ext.define('Ext.Component', {
 
     element: {
         reference: 'element',
-        classList: ['x-unsized']
+        classList: [Ext.baseCSSPrefix + 'unsized']
     },
+
+    classCls: Ext.baseCSSPrefix + 'component',
+    floatingCls: Ext.baseCSSPrefix + 'floating',
+    hiddenCls: Ext.baseCSSPrefix + 'hidden',
+    disabledCls: Ext.baseCSSPrefix + 'disabled',
+    heightedCls: Ext.baseCSSPrefix + 'heighted',
+    widthedCls: Ext.baseCSSPrefix + 'widthed',
+
+    widthed: false,
+    heighted: false,
 
     widthLayoutSized: false,
 
@@ -989,10 +853,7 @@ Ext.define('Ext.Component', {
      * @param {Object} config The standard configuration object.
      */
     constructor: function(config) {
-        var me = this,
-            plugins = config && config.plugins,
-            responsive = 'responsive',
-            i, p;
+        var me = this;
 
         me.onInitializedListeners = [];
 
@@ -1002,29 +863,13 @@ Ext.define('Ext.Component', {
             // configs (esp cached configs like "ui") can be set() prior to copying of
             // such properties.
             me.$initParent = config.$initParent;
-        }
 
-        // The Responsive plugin must be created before initConfig runs in order to
-        // process the initial responsiveConfig block. The simplest and safest solution
-        // is to accelerate the creation of this plugin here and leave the timing as it
-        // has always been for other plugins.
-        if (plugins) {
-            plugins = Ext.Array.from(plugins);
-
-            for (i = plugins.length; i-- > 0; ) {
-                p = plugins[i];
-
-                if (p === responsive || p.type === responsive) {
-                    me.initialConfig = config = Ext.apply({}, config);
-                    config.plugins = plugins = plugins.slice(0);
-
-                    // Put the instance in the plugins array so it will be included in
-                    // the applyPlugins loop for normal processing of plugins.
-                    plugins[i] = me.createPlugin(p);
-
-                    config = me.initialConfig;
-                    break;
-                }
+            // The Responsive plugin must be created before initConfig runs in order to
+            // process the initial responsiveConfig block. The simplest and safest solution
+            // is to accelerate the activation of this plugin here and leave the timing
+            // as it has always been for other plugins.
+            if (me.activatePlugin('responsive')) {
+                config = me.initialConfig;
             }
         }
 
@@ -1055,6 +900,8 @@ Ext.define('Ext.Component', {
         }
 
         me.fireEvent('initialize', me);
+
+        me.initKeyMap();
     },
 
     /**
@@ -1094,7 +941,7 @@ Ext.define('Ext.Component', {
 
         if (parentWrap) {
             parent = Ext.Component.fromElement(parentWrap);
-            
+
             // Get the .x-floated elements, or .x-float-wrap elements which wrap floateds which have children.
             floatedEls = Ext.supports.Selectors2
                     ? parentWrap.query(':scope>' + me.floatedSelector + ',:scope>.' + me.floatWrapCls)
@@ -1227,65 +1074,6 @@ Ext.define('Ext.Component', {
         }
     },
 
-    applyPlugins: function(plugins) {
-        var me = this,
-            config, ln, i, plugin;
-
-        if (!plugins) {
-            return plugins;
-        }
-
-        plugins = [].concat(plugins);
-
-        for (i = 0, ln = plugins.length; i < ln; i++) {
-            plugins[i] = me.createPlugin(plugins[i]);
-        }
-
-        return plugins;
-    },
-
-    createPlugin: function (config) {
-        if (typeof config === 'string') {
-            config = {
-                type: config
-            };
-        }
-
-        var ret = config;
-
-        if (!config.isInstance) {
-            // The owner may be needed by plugin's initConfig so provide it:
-            config.cmp = this;
-
-            ret = Ext.factory(config, null, null, 'plugin');
-
-            // Cleanup the user's config object:
-            delete config.cmp;
-        }
-
-        if (ret.setCmp) {
-            ret.setCmp(this);
-        }
-
-        return ret;
-    },
-
-    updatePlugins: function(newPlugins, oldPlugins) {
-        var ln, i;
-
-        if (newPlugins) {
-            for (i = 0, ln = newPlugins.length; i < ln; i++) {
-                newPlugins[i].init(this);
-            }
-        }
-
-        if (oldPlugins) {
-            for (i = 0, ln = oldPlugins.length; i < ln; i++) {
-                Ext.destroy(oldPlugins[i]);
-            }
-        }
-    },
-
     applyScrollable: function(scrollable, oldScrollable) {
         var me = this,
             scrollableCfg;
@@ -1320,10 +1108,6 @@ Ext.define('Ext.Component', {
 
     updateRenderTo: function(newContainer) {
         this.renderTo(newContainer);
-    },
-
-    updateBorder: function(border) {
-        this.element.setStyle('border-width', border ? '' : '0');
     },
 
     updatePadding: function(padding) {
@@ -1479,38 +1263,6 @@ Ext.define('Ext.Component', {
     },
 
     /**
-     * @private
-     * Checks if the `cls` is a string. If it is, changed it into an array.
-     * @param {String/Array} cls
-     * @return {Array/null}
-     */
-    applyCls: function(cls) {
-        if (typeof cls == "string") {
-            cls = [cls];
-        }
-
-        //reset it back to null if there is nothing.
-        if (!cls || !cls.length) {
-            cls = null;
-        }
-
-        return cls;
-    },
-
-    /**
-     * @private
-     * All cls methods directly report to the {@link #cls} configuration, so anytime it changes, {@link #updateCls} will be called
-     */
-    updateCls: function (newCls, oldCls) {
-        var el = this.element;
-
-        if (el && ((newCls && !oldCls) || (!newCls && oldCls) || newCls.length != oldCls.length || Ext.Array.difference(newCls,
-            oldCls).length > 0)) {
-            el.replaceCls(oldCls, newCls);
-        }
-    },
-
-    /**
      * Updates the {@link #styleHtmlCls} configuration
      */
     updateStyleHtmlCls: function(newHtmlCls, oldHtmlCls) {
@@ -1569,10 +1321,16 @@ Ext.define('Ext.Component', {
     },
 
     updateUseBodyElement: function(useBodyElement) {
+        var me = this,
+            bodyEl;
+
         if (useBodyElement) {
-            this.link('bodyElement', this.innerElement.wrap({
-                cls: 'x-body'
+            bodyEl = me.link('bodyElement', me.innerElement.wrap({
+                cls: Ext.baseCSSPrefix + 'body'
             }));
+
+            bodyEl.toggleCls(me.widthedCls, me.widthed);
+            bodyEl.toggleCls(me.heightedCls, me.heighted);
         }
     },
 
@@ -1689,18 +1447,33 @@ Ext.define('Ext.Component', {
     setSizeFlags: function(flags) {
         var me = this,
             el = me.element,
-            hasWidth, hasHeight, stretched;
+            innerEl = me.innerElement,
+            heightedCls = me.heightedCls,
+            widthedCls = me.widthedCls,
+            bodyEl, hasWidth, hasHeight, stretched;
 
         if (flags !== this.sizeFlags) {
             me.sizeFlags = flags;
 
-            hasWidth = !!(flags & this.LAYOUT_WIDTH);
-            hasHeight = !!(flags & this.LAYOUT_HEIGHT);
+            me.widthed = hasWidth = !!(flags & this.LAYOUT_WIDTH);
+            me.heighted = hasHeight = !!(flags & this.LAYOUT_HEIGHT);
             stretched = !!(flags & this.LAYOUT_STRETCHED);
-
 
             el.toggleCls(Ext.baseCSSPrefix + 'has-width', hasWidth && !stretched && !hasHeight);
             el.toggleCls(Ext.baseCSSPrefix + 'has-height', hasHeight && !stretched && !hasWidth);
+
+            el.toggleCls(widthedCls, hasWidth);
+            el.toggleCls(heightedCls, hasHeight);
+
+            innerEl.toggleCls(widthedCls, hasWidth);
+            innerEl.toggleCls(heightedCls, hasHeight);
+
+            if (me.getUseBodyElement()) {
+                bodyEl = me.bodyElement;
+
+                bodyEl.toggleCls(widthedCls, hasWidth);
+                bodyEl.toggleCls(heightedCls, hasHeight);
+            }
 
             if (me.initialized) {
                 me.fireEvent('sizeflagschange', me, flags);
@@ -1786,7 +1559,7 @@ Ext.define('Ext.Component', {
                 me.centerResizeListener = Ext.destroy(me.centerResizeListener);
             }
         } else {
-            me.el.toggleCls(me.getFloatingCls(), centered);
+            me.el.toggleCls(me.floatingCls, centered);
             if (centered) {
                 me.refreshInnerState = Ext.emptyFn;
 
@@ -1837,9 +1610,13 @@ Ext.define('Ext.Component', {
     },
 
     updateDocked: function(docked, oldDocked) {
-        this.fireEvent('afterdockedchange', this, docked, oldDocked);
-        if (!docked) {
-            this.refreshInnerState();
+        var me = this;
+
+        if (!me.isConfiguring) {
+            me.fireEvent('afterdockedchange', me, docked, oldDocked);
+            if (!docked) {
+                me.refreshInnerState();
+            }
         }
     },
 
@@ -1862,7 +1639,7 @@ Ext.define('Ext.Component', {
     doRefreshPositioned: function() {
         var me = this,
             positioned = true,
-            floatingCls = this.getFloatingCls();
+            floatingCls = this.floatingCls;
 
         if (me.isFloated() || (me.getTop() === null && me.getBottom() === null &&
             me.getRight() === null && me.getLeft() === null)) {
@@ -1903,28 +1680,12 @@ Ext.define('Ext.Component', {
         }
     },
 
-    /**
-     * Updates the floatingCls if the component is currently positioned
-     * @private
-     */
-    updateFloatingCls: function(newFloatingCls, oldFloatingCls) {
-        if (this.isPositioned()) {
-            this.replaceCls(oldFloatingCls, newFloatingCls);
-        }
-    },
-
     applyDisabled: function(disabled) {
         return Boolean(disabled);
     },
 
     updateDisabled: function(disabled) {
-        this.element.toggleCls(this.getDisabledCls(), disabled);
-    },
-
-    updateDisabledCls: function(newDisabledCls, oldDisabledCls) {
-        if (this.isDisabled()) {
-            this.element.replaceCls(oldDisabledCls, newDisabledCls);
-        }
+        this.element.toggleCls(this.disabledCls, disabled);
     },
 
     /**
@@ -1989,7 +1750,7 @@ Ext.define('Ext.Component', {
             styleHtmlCls;
 
         if (!innerHtmlElement || !innerHtmlElement.dom || !innerHtmlElement.dom.parentNode) {
-            this.innerHtmlElement = innerHtmlElement = Ext.Element.create({ cls: 'x-innerhtml' });
+            this.innerHtmlElement = innerHtmlElement = Ext.Element.create({ cls: Ext.baseCSSPrefix + 'innerhtml' });
 
             if (this.getStyleHtmlContent()) {
                 styleHtmlCls = this.getStyleHtmlCls();
@@ -2015,11 +1776,7 @@ Ext.define('Ext.Component', {
         }
     },
 
-    applyHidden: function(hidden) {
-        return !!hidden;
-    },
-
-    updateHidden: function(hidden) {
+    updateHidden: function(hidden, oldHidden) {
         var me = this,
             element = me.renderElement,
             modal = me.getModal();
@@ -2047,13 +1804,10 @@ Ext.define('Ext.Component', {
             }
         }
 
+        me.callParent([hidden, oldHidden]);
+
         if (element && !element.destroyed) {
-            if (hidden) {
-                element.hide();
-            } else {
-                element.show();
-            }
-            element.toggleCls(me.getHiddenCls(), hidden);
+            element.toggleCls(me.hiddenCls, hidden);
 
             // Updating to hidden during config should not fire events
             if (!me.isConfiguring) {
@@ -2061,45 +1815,6 @@ Ext.define('Ext.Component', {
                 me[hidden ? 'afterHide' : 'afterShow'](me);
             }
         }
-    },
-
-    updateHiddenCls: function(newHiddenCls, oldHiddenCls) {
-        if (this.isHidden()) {
-            this.element.replaceCls(oldHiddenCls, newHiddenCls);
-        }
-    },
-
-    /**
-     * Returns `true` if this Component is currently hidden.
-     * @param {Boolean} [deep=false] `true` to check if this component
-     * is hidden because a parent container is hidden.
-     * @return {Boolean} `true` if currently hidden.
-     */
-    isHidden: function(deep) {
-        var hidden = !!this.getHidden(),
-            owner;
-
-        if (!hidden && deep) {
-            owner = this.getRefOwner();
-            while (owner) {
-                hidden = !!owner.getHidden();
-                if (hidden) {
-                    break;
-                }
-                owner = owner.getRefOwner();
-            }
-        }
-        return hidden;
-    },
-
-    /**
-     * Returns `true` if this Component is currently visible.
-     * @param {Boolean} [deep=false] `true` to check if this component
-     * is visible and all parents are also visible.
-     * @return {Boolean} `true` if currently visible.
-     */
-    isVisible: function(deep) {
-        return !this.isHidden(deep);
     },
 
     /**
@@ -2114,7 +1829,7 @@ Ext.define('Ext.Component', {
             modal;
 
         // Allow veto of hide.
-        if (me.hasListeners.beforeshow && me.fireEvent('beforehide', me) === false) {
+        if (me.hasListeners.beforehide && me.fireEvent('beforehide', me) === false) {
             return;
         }
 
@@ -2237,7 +1952,7 @@ Ext.define('Ext.Component', {
 
         if (element) {
             me.renderElement.show();
-            element.removeCls(me.getHiddenCls());
+            element.removeCls(me.hiddenCls);
             if (me.isFloated() && me.isCentered()) {
                 me.center();
             }
@@ -2274,7 +1989,7 @@ Ext.define('Ext.Component', {
                     me.activeAnimation = null;
                     controller.resume();
 
-                    if (me.isFloated()) {
+                    if (!me.destroyed && me.isFloated()) {
                         me.syncXYPosition();
                     }
                 });
@@ -2411,14 +2126,16 @@ Ext.define('Ext.Component', {
         var behavior = this.draggableBehavior;
 
         if (!behavior) {
-            behavior = this.draggableBehavior = new Ext.behavior.Draggable(this);
+            behavior = this.draggableBehavior = new Ext.behavior['Draggable'](this);
         }
 
         return behavior;
     },
 
     applyDraggable: function(config) {
-        this.getDraggableBehavior().setConfig(config);
+        if (config) {
+            this.getDraggableBehavior().setConfig(config);
+        }
     },
 
     getDraggable: function() {
@@ -2466,7 +2183,7 @@ Ext.define('Ext.Component', {
      *     panel.showBy(button, "br-cl");
      *
      * @param {Ext.Component} component The target component to show this component by.
-     * @param {String} alignment (optional) The specific alignment.
+     * @param {String} [alignment] The specific alignment.
      * @param {Object} [options] An object containing options for the {@link Ext.util.Region#alignTo} method.
      */
     showBy: function(component, alignment, options) {
@@ -2525,31 +2242,51 @@ Ext.define('Ext.Component', {
     },
 
     applyTooltip: function(tooltip) {
-        var result;
-
         if (tooltip) {
-            result = {
-                target: this.el,
-                trackMouse: true,
-                anchor: false
-            };
-
             if (typeof tooltip === 'string') {
-                result.html = tooltip;
+                tooltip = {
+                    html: tooltip
+                };
             } else {
-                Ext.apply(result, tooltip);
+                tooltip = Ext.apply({}, tooltip);
+            }
+
+            // autocreate means we own an instance.
+            // autoHide: false implies that too, otherwise
+            // any other component's use of the singleton would defeat autoHide: false
+            if (tooltip.autoCreate || tooltip.autoHide === false) {
+                delete tooltip.autoCreate;
+                tooltip.target = this;
+                tooltip.xtype = tooltip.xtype || 'tooltip';
+                tooltip = Ext.create(tooltip);
+            } else {
+                delete tooltip.xtype;
             }
         }
 
-        return result;
+        return tooltip;
     },
 
     updateTooltip: function(tooltip, oldTooltip) {
-        Ext.destroy(oldTooltip);
-        if (tooltip) {
-            tooltip = new Ext.tip.ToolTip(tooltip);
+        var data, target;
+        
+        if (oldTooltip) {
+            if (oldTooltip.isInstance) {
+                Ext.destroy(oldTooltip);
+            }
+            else {
+                target = Ext.fly(oldTooltip.target);
+                data = target && target.getData(true);
+                
+                if (data) {
+                    delete data.qtip;
+                }
+            }
         }
-        return tooltip;
+
+        if (tooltip && !tooltip.isInstance) {
+            Ext.fly(this.el).getData().qtip = tooltip;
+        }
     },
 
     applyModal: function(modal, currentModal) {
@@ -2564,7 +2301,7 @@ Ext.define('Ext.Component', {
             isVisible = false;
         }
 
-        currentModal = Ext.factory(modal, Ext.Mask, typeof currentModal === 'boolean' ? null : currentModal);
+        currentModal = Ext.factory(modal, Ext['Mask'], typeof currentModal === 'boolean' ? null : currentModal);
 
         if (currentModal) {
             currentModal.setVisibility(isVisible);
@@ -2620,15 +2357,57 @@ Ext.define('Ext.Component', {
         }
     },
 
+    applyHideAnimation: function(config) {
+        if (config === true) {
+            config = {
+                type: 'fadeOut'
+            };
+        }
+        if (Ext.isString(config)) {
+            config = {
+                type: config
+            };
+        }
+
+        return config ? Ext.factory(config, Ext.fx.Animation) : null;
+    },
+
+    applyShowAnimation: function(config) {
+        if (config === true) {
+            config = {
+                type: 'fadeIn'
+            };
+        }
+        if (Ext.isString(config)) {
+            config = {
+                type: config
+            };
+        }
+
+        return config ? Ext.factory(config, Ext.fx.Animation) : null;
+    },
+
     /**
-     * Destroys this Component. If it is currently added to a Container it will first be removed from that Container.
-     * All Ext.Element references are also deleted and the Component is de-registered from Ext.ComponentManager
+     * Perform the actual destruction sequence. This is the method to override in your
+     * subclasses to add steps specific to the destruction of custom Component.
+     *
+     * If the Component is currently added to a Container it will first be removed
+     * from that Container. All {@link Ext.Element} references are also deleted and
+     * the Component is de-registered from {@link Ext.ComponentManager}.
+     *
+     * As a rule of thumb, subclasses should destroy their child Components, Elements,
+     * and/or other objects before calling parent method. Any object references will be
+     * nulled after this method has finished, to prevent the possibility of memory leaks.
+     *
+     * @since 6.2.0
      */
-    destroy: function() {
+    doDestroy: function() {
         var me = this;
 
-        // isDestroying added for compat reasons
-        me.isDestroying = me.destroying = true;
+        // Ensure mask is cleaned up and focus is taken care of(!)
+        if (me.isVisible()) {
+            me.hide();
+        }
 
         if (me.hasListeners.destroy) {
             me.fireEvent('destroy', me);
@@ -2636,20 +2415,19 @@ Ext.define('Ext.Component', {
 
         Ext.destroy(
             me.getModal(),
-            me.getPlugins(),
             me.innerHtmlElement,
             me.scrollerElement,
-            me.getScrollable()
+            me.getScrollable(),
+            // animations should also be destroyed
+            me.getShowAnimation(),
+            // destroy of the hide animation calls the 'updateHidden'
+            me.getHideAnimation()
         );
         
+        me.setPlugins(null);
         me.setRecord(null);
+        me.setTooltip(null);
         me.callParent();
-
-        // Ensure mask is cleaned up and focus is taken care of(!)
-        me.setHidden(true);
-
-        // isDestroying added for compat reasons
-        me.isDestroying = me.destroying = false;
     },
 
     privates: {

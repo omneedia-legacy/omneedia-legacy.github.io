@@ -5,11 +5,12 @@ Ext.define('KitchenSink.Component', {
 },
 function (C) {
     var classRe = /^KitchenSink/,
-        propRe = /^[$][{](\w+)[}]$/,
-        propsRe = /[$][{](\w+)[}]/g,
+        propRe = /^\$\{(\w+)\}$/,
+        propsRe = /\$\{(\w+)\}/g,
         inherited = {
             'gray': 'classic',
             'crisp-touch': 'neptune-touch',
+            'neptune-touch': 'neptune',
             'crisp': 'neptune',
             'triton': 'neptune'
         };
@@ -101,5 +102,5 @@ function (C) {
             }
             //</debug>
         }
-    })
+    });
 });

@@ -192,7 +192,14 @@ Ext.define('Ext.draw.Container', {
          *         strokeStyle: 'url(#gradientId2)'
          *     });
          */
-        gradients: []
+        gradients: [],
+
+        touchAction: {
+            panX: false,
+            panY: false,
+            pinchZoom: false,
+            doubleTapZoom: false
+        }
     },
 
     /**
@@ -281,6 +288,7 @@ Ext.define('Ext.draw.Container', {
             if (!(surface && surface.isSurface)) {
                 if (Ext.isString(surface)) {
                     surface = this.getSurface(surface);
+                    delete sprite.surface;
                 } else {
                     surface = this.getSurface('main');
                 }
@@ -459,7 +467,7 @@ Ext.define('Ext.draw.Container', {
      * Downloads an image or PDF of the chart / drawing or opens it in a separate 
      * browser tab/window if the download can't be triggered. The exact behavior is 
      * platform and browser specific. For more consistent results on mobile devices use 
-     * the {@link #preview} method instead.
+     * the {@link #preview} method instead. This method doesn't work in IE8.
      *
      * @param {Object} [config] The following config options are supported:
      *
@@ -535,6 +543,10 @@ Ext.define('Ext.draw.Container', {
             inputs = [],
             markup, name, value;
 
+        if (Ext.isIE8) {
+            return false;
+        }
+
         config = Ext.apply({
             version: 2,
             data: me.getImage().data
@@ -599,9 +611,11 @@ Ext.define('Ext.draw.Container', {
      * Displays an image of a Ext.draw.Container on screen.
      * On mobile devices this lets users tap-and-hold to bring up the menu
      * with image saving options.
-     * Note: some browsers won't save the preview image if it's SVG based
-     * (i.e. generated from a draw container that uses 'Ext.draw.engine.Svg' engine).
-     * And some platforms may not have the means of viewing successfully saved SVG images.
+     * Notes:
+     * - some browsers won't save the preview image if it's SVG based
+     *   (i.e. generated from a draw container that uses 'Ext.draw.engine.Svg' engine);
+     * - some platforms may not have the means of viewing successfully saved SVG images;
+     * - this method does not work on IE8.
      */
 
     destroy: function () {

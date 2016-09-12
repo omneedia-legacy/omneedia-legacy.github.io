@@ -208,8 +208,6 @@ describe('Ext.grid.plugin.BufferedRenderer', function () {
         Ext.data.ProxyStore.prototype.load = proxyStoreLoad;
         Ext.data.TreeStore.prototype.load = treeStoreLoad;
 
-        MockAjaxManager.removeMethods();
-
         if (grid) {
             Ext.destroy(grid);
         }
@@ -217,6 +215,8 @@ describe('Ext.grid.plugin.BufferedRenderer', function () {
         if (tree) {
             Ext.destroy(tree);
         }
+
+        MockAjaxManager.removeMethods();
 
         store = grid = tree = view = plugin = null;
     });
@@ -621,8 +621,8 @@ describe('Ext.grid.plugin.BufferedRenderer', function () {
                 data: makeData(100)
             });
 
-            maxScroll = normalView.getScrollable().getMaxPosition().y;
-            normalView.setScrollY(maxScroll);
+            maxScroll = grid.getScrollable().getMaxPosition().y;
+            grid.getScrollable().scrollTo(null, maxScroll);
 
             // Important: Simulate Ajax delay before returning data
             waits(100);
@@ -1736,7 +1736,7 @@ describe('Ext.grid.plugin.BufferedRenderer', function () {
                     }
                     else {
                         // Scroll incrementally until the correct end point is found
-                        view.scrollBy(null, 40);
+                        grid.getScrollable().scrollBy(null, 40);
                     }
                 }, 'last node to scroll into view', 40000, 50);
 
@@ -1838,11 +1838,11 @@ describe('Ext.grid.plugin.BufferedRenderer', function () {
 
                     // If row 99 is in the nodeCache, we're done
                     if (reachedTargetRow) {
-                        return view.getScrollY() === lockedView.getScrollY() && nodeCache.startIndex === lockedView.all.startIndex && lockedView.position === view.position && lockedView.bodyTop === view.bodyTop;
+                        return nodeCache.startIndex === lockedView.all.startIndex && lockedView.position === view.position && lockedView.bodyTop === view.bodyTop;
                     }
                     else {
                         // Scroll incrementally until the correct end point is found
-                        view.scrollBy(null, 40);
+                        grid.getScrollable().scrollBy(null, 40);
                     }
                 }, 'row 99 to be rendered', 40000, 50);
 
@@ -1859,11 +1859,11 @@ describe('Ext.grid.plugin.BufferedRenderer', function () {
                     var reachedTargetRow = view.bufferedRenderer.getLastVisibleRowIndex() > 990;
 
                     if (reachedTargetRow) {
-                        return view.getScrollY() === lockedView.getScrollY() && view.all.startIndex === lockedView.all.startIndex;
+                        return true;
                     }
                     else {
                         // Scroll in teleporting chunks until the correct end point is found
-                        view.scrollBy(null, 1000);
+                        grid.getScrollable().scrollBy(null, 1000);
                     }
                 }, 'row 990 to scroll into view', 30000, 100);
                 
@@ -1971,11 +1971,11 @@ describe('Ext.grid.plugin.BufferedRenderer', function () {
 
                     // If row 99 is in the nodeCache, we're done
                     if (reachedTargetRow) {
-                        return view.getScrollY() === lockedView.getScrollY() && nodeCache.startIndex === lockedView.all.startIndex && lockedView.position === view.position && lockedView.bodyTop === view.bodyTop;
+                        return nodeCache.startIndex === lockedView.all.startIndex && lockedView.position === view.position && lockedView.bodyTop === view.bodyTop;
                     }
                     else {
                         // Scroll incrementally until the correct end point is found
-                        view.scrollBy(null, 40);
+                        grid.getScrollable().scrollBy(null, 40);
                     }
                 }, 'row 99 to be rendered', 40000, 50);
 
@@ -1991,11 +1991,11 @@ describe('Ext.grid.plugin.BufferedRenderer', function () {
                     var reachedTargetRow = view.bufferedRenderer.getLastVisibleRowIndex() > 990;
 
                     if (reachedTargetRow) {
-                        return view.getScrollY() === lockedView.getScrollY() && view.all.startIndex === lockedView.all.startIndex;
+                        return true;
                     }
                     else {
                         // Scroll in teleporting chunks until the correct end point is found
-                        view.scrollBy(null, 1000);
+                        grid.getScrollable().scrollBy(null, 1000);
                     }
                 }, 'row 990 to scroll into view', 30000, 100);
                 
@@ -2306,7 +2306,7 @@ describe('Ext.grid.plugin.BufferedRenderer', function () {
         var Hobbit, store;
 
         afterEach(function() {
-            Ext.destroy(Hobbit, store);
+            Ext.destroy(Hobbit);
         });
 
         it('should reset the cached position so the grid-item-container is at the top of the view on filter', function () {
@@ -2704,7 +2704,7 @@ describe('Ext.grid.plugin.BufferedRenderer', function () {
             // Scroll all the way to the start
             waitsFor(function () {
                 view.scrollBy(null, -100);
-                return view.getScrollY() === 0;;
+                return view.getScrollY() === 0;
             }, 'scroll to top', 10000);
 
             runs(function() {
@@ -2928,6 +2928,41 @@ describe('Ext.grid.plugin.BufferedRenderer', function () {
                 expect(view.all.startIndex).toBe(0);
             });
 
+        });
+    });
+    
+    describe('refreshView', function() {
+        it('should scroll to an appropriate position when refreshing the view at a specified startIndex', function() {
+            var columns = [{
+                    text: 'Col 1',
+                    dataIndex: 'field1',
+                    width: 100
+                }, {
+                    text: 'Col 2',
+                    dataIndex: 'field2',
+                    width: 100
+                }, {
+                    text: 'Col 3',
+                    dataIndex: 'field3',
+                    width: 100
+                }, {
+                    text: 'Col 4',
+                    dataIndex: 'field4',
+                    width: 100
+                }];
+
+            makeGrid({
+                columns: columns
+            }, {
+                fields: ['field1', 'field2', 'field3', 'field4', 'field5'],
+                data: createData(1000)
+            });
+            view.bufferedRenderer.refreshView(500);
+
+            // After a refresh at a teleported position (no overlapping records with previous rendered block),
+            // the view has moved downwards, so the first visible row index must be "trailingBufferZone" rows
+            // after the requested refresh start row.
+            expect(view.bufferedRenderer.getFirstVisibleRowIndex()).toBe(500 + view.bufferedRenderer.trailingBufferZone);
         });
     });
 });

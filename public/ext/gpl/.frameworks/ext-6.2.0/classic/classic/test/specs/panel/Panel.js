@@ -895,17 +895,14 @@ describe("Ext.panel.Panel", function() {
         });
 
         describe("collapseTool", function(){
-            var getTool;
-
-            beforeEach(function(){
-                getTool = function(){
-                    return panel.down('tool');
-                };
-            });
-
-            afterEach(function(){
-                getTool = null;
-            });
+            function getTool() {
+                return panel.down('tool');
+            }
+            // Gets the *Panel's* tool, NOT the placeholder's tool.
+            // Panel's getRefItems returns the placeholder.
+            function getPlaceholderCollapsedTool() {
+                return panel.collapsed ? panel.getRefItems()[1].down('tool') : getTool();
+            }
 
             it("should not create a collapse tool if collapsible: false", function(){
                 makePanel({
@@ -919,67 +916,63 @@ describe("Ext.panel.Panel", function() {
 
             // collapsed, collapseDirection, expectedTool
             Ext.Array.forEach([
-                        { collapsed: false, collapseDirection: 'top',    expect: 'collapse-top' },
-                        { collapsed: false, collapseDirection: 'right',  expect: 'collapse-right' },
-                        { collapsed: false, collapseDirection: 'bottom', expect: 'collapse-bottom' },
-                        { collapsed: false, collapseDirection: 'left',   expect: 'collapse-left' },
-                        { collapsed: true,  collapseDirection: 'top',    expect: 'expand-bottom' },
-                        { collapsed: true,  collapseDirection: 'right',  expect: 'expand-left' },
-                        { collapsed: true,  collapseDirection: 'bottom', expect: 'expand-top' },
-                        { collapsed: true,  collapseDirection: 'left',   expect: 'expand-right' }
-                    ],
-                function(item){
-                    var answer = item.expect;
-                    delete item.expect;
+                { collapsed: false, collapseDirection: 'top',    expect: 'collapse-top' },
+                { collapsed: false, collapseDirection: 'right',  expect: 'collapse-right' },
+                { collapsed: false, collapseDirection: 'bottom', expect: 'collapse-bottom' },
+                { collapsed: false, collapseDirection: 'left',   expect: 'collapse-left' },
+                { collapsed: true,  collapseDirection: 'top',    expect: 'expand-bottom' },
+                { collapsed: true,  collapseDirection: 'right',  expect: 'expand-left' },
+                { collapsed: true,  collapseDirection: 'bottom', expect: 'expand-top' },
+                { collapsed: true,  collapseDirection: 'left',   expect: 'expand-right' }
+            ],
+            function(item){
+                var answer = item.expect;
+                delete item.expect;
 
-                    it("should render the correct tool with default collapseMode "+
-                            Ext.encode(item),
-                        function(){
-                            makePanel(Ext.apply({
-                                width: 50,
-                                height: 50,
-                                title: 'x',
-                                collapsible: true
-                            }, item));
-                            expect(getTool().type).toBe(answer);
-                        });
+                it("should render the correct tool with default collapseMode " + Ext.encode(item), function(){
+                    makePanel(Ext.apply({
+                        width: 50,
+                        height: 50,
+                        title: 'x',
+                        collapsible: true
+                    }, item));
+                    expect(getTool().type).toBe(answer);
                 });
+            });
 
             // When using placeHolder, it should never modify the tool of the original panel
             Ext.Array.forEach([
-                    { collapsed: false, collapseDirection: 'top',    expect: 'collapse-top' },
-                    { collapsed: false, collapseDirection: 'right',  expect: 'collapse-right' },
-                    { collapsed: false, collapseDirection: 'bottom', expect: 'collapse-bottom' },
-                    { collapsed: false, collapseDirection: 'left',   expect: 'collapse-left' },
-                    { collapsed: true,  collapseDirection: 'top',    expect: 'collapse-top' },
-                    { collapsed: true,  collapseDirection: 'right',  expect: 'collapse-right' },
-                    { collapsed: true,  collapseDirection: 'bottom', expect: 'collapse-bottom' },
-                    { collapsed: true,  collapseDirection: 'left',   expect: 'collapse-left' }
-                ],
-                function(item){
-                    var answer = item.expect;
-                    delete item.expect;
+                { collapsed: false, collapseDirection: 'top',    expect: 'collapse-top' },
+                { collapsed: false, collapseDirection: 'right',  expect: 'collapse-right' },
+                { collapsed: false, collapseDirection: 'bottom', expect: 'collapse-bottom' },
+                { collapsed: false, collapseDirection: 'left',   expect: 'collapse-left' },
+                { collapsed: true,  collapseDirection: 'top',    expect: 'collapse-top' },
+                { collapsed: true,  collapseDirection: 'right',  expect: 'collapse-right' },
+                { collapsed: true,  collapseDirection: 'bottom', expect: 'collapse-bottom' },
+                { collapsed: true,  collapseDirection: 'left',   expect: 'collapse-left' }
+            ],
+            function(item){
+                var answer = item.expect;
+                delete item.expect;
 
-                    it("should render the correct tool with the collapseMode placeHolder "+
-                            Ext.encode(item),
-                        function(){
-                            // collapsed, collapseDirection, expectedTool
-                            var ct = new Ext.container.Container({
-                                renderTo: Ext.getBody()
-                            });
-                            makePanel(Ext.apply({
-                                renderTo: null,
-                                width: 50,
-                                height: 50,
-                                title: 'x',
-                                collapsible: true,
-                                collapseMode: 'placeholder'
-                            }, item));
-                            ct.add(panel);
-                            expect(getTool().type).toBe(answer);
-                            Ext.destroy(ct);
-                        });
+                it("should render the correct tool with the collapseMode placeHolder " + Ext.encode(item), function(){
+                    // collapsed, collapseDirection, expectedTool
+                    var ct = new Ext.container.Container({
+                        renderTo: Ext.getBody()
+                    });
+                    makePanel(Ext.apply({
+                        renderTo: null,
+                        width: 50,
+                        height: 50,
+                        title: 'x',
+                        collapsible: true,
+                        collapseMode: 'placeholder'
+                    }, item));
+                    ct.add(panel);
+                    expect(getPlaceholderCollapsedTool().type).toBe(answer);
+                    Ext.destroy(ct);
                 });
+            });
         });
         
         describe("animation", function() {
@@ -2062,6 +2055,40 @@ describe("Ext.panel.Panel", function() {
                     expect(westRegion.isVisible()).toBe(false);
                     expect(westRegion.splitter.isVisible()).toBe(false);
                     expect(centerRegion.getWidth()).toBe(viewport.getWidth());
+                });
+            });
+            
+            // https://sencha.jira.com/browse/EXTJS-21507
+            it("should not set display:none on the placeholder when removed while collapsing", function() {
+                createViewport({
+                    layout: 'border',
+                    items: [{
+                        region: 'west',
+                        title: 'west',
+                        collapsible: true,
+                        width: 150
+                    }, {
+                        region: 'center',
+                        title: 'center',
+                        items: []
+                    }],
+                    renderTo: Ext.getBody()
+                }, false);
+
+                var collapseSpy = spyOn(westRegion, 'doPlaceholderCollapse').andCallThrough();
+                
+                // Start collapsing but don't let the animation kick off yet
+                westRegion.collapse();
+                
+                // Remove but don't destroy
+                viewport.remove(westRegion, false);
+                
+                // Async from now on
+                waitForSpy(collapseSpy);
+                
+                runs(function() {
+                    // It's invisible because it's detached - should NOT be display:none
+                    expect(westRegion.placeholder.el.dom.style.display).not.toBe('none');
                 });
             });
         });
@@ -3891,24 +3918,6 @@ describe("Ext.panel.Panel", function() {
     });
     
     describe("ARIA", function() {
-        var expectAriaAttr = jasmine.expectAriaAttr;
-        
-        function expectAria(attr, value) {
-            jasmine.expectAriaAttr(panel, attr, value);
-        }
-        
-        function expectNoAria(attr) {
-            jasmine.expectNoAriaAttr(panel, attr);
-        }
-        
-        function expectBodyAria(attr, value) {
-            jasmine.expectAriaAttr(panel.body, attr, value);
-        }
-        
-        function expectNoBodyAria(attr) {
-            jasmine.expectNoAriaAttr(panel.body, attr);
-        }
-        
         describe("attributes", function() {
             describe("ariaEl", function() {
                 beforeEach(function() {
@@ -3927,7 +3936,7 @@ describe("Ext.panel.Panel", function() {
                     });
                     
                     it("should have presentation role by default", function() {
-                        expectAria('role', 'presentation');
+                        expect(panel).toHaveAttr('role', 'presentation');
                     });
                 });
                 
@@ -3938,15 +3947,15 @@ describe("Ext.panel.Panel", function() {
                         });
                         
                         it("should set el role to ariaRole", function() {
-                            expectAria('role', 'foo');
+                            expect(panel).toHaveAttr('role', 'foo');
                         });
                         
                         it("should not set ariaRole on the body el", function() {
-                            expectBodyAria('role', 'presentation');
+                            expect(panel.body).toHaveAttr('role', 'presentation');
                         });
                         
                         it("should not have aria-expanded", function() {
-                            expectNoAria('aria-expanded');
+                            expect(panel).not.toHaveAttr('aria-expanded');
                         });
                     });
                     
@@ -3958,11 +3967,11 @@ describe("Ext.panel.Panel", function() {
                         });
                         
                         it("should not have aria-label", function() {
-                            expectNoAria('aria-label');
+                            expect(panel).not.toHaveAttr('aria-label');
                         });
                         
                         it("should not have aria-labelledby", function() {
-                            expectNoAria('aria-labelledby');
+                            expect(panel).not.toHaveAttr('aria-labelledby');
                         });
                         
                         it("should replace aria-labelledby", function() {
@@ -3970,7 +3979,7 @@ describe("Ext.panel.Panel", function() {
                             
                             panel.setTitle('blerg');
                             
-                            expectAria('aria-labelledby', panel.header.titleCmp.textEl.id);
+                            expect(panel).toHaveAttr('aria-labelledby', panel.header.titleCmp.textEl.id);
                         });
                     });
                     
@@ -3984,12 +3993,12 @@ describe("Ext.panel.Panel", function() {
                         });
                         
                         it("should not have aria-labelledby", function() {
-                            expectNoAria('aria-labelledby');
+                            expect(panel).not.toHaveAttr('aria-labelledby');
                         });
                         
                         // https://sencha.jira.com/browse/EXTJS-18939
                         xit("should have aria-label", function() {
-                            expectAria('aria-label', 'blerg');
+                            expect(panel).toHaveAttr('aria-label', 'blerg');
                         });
                         
                         it("should not remove aria-labelledby", function() {
@@ -3997,13 +4006,13 @@ describe("Ext.panel.Panel", function() {
                             
                             panel.setTitle('throbbe');
                             
-                            expectAria('aria-labelledby', 'xyzzy');
+                            expect(panel).toHaveAttr('aria-labelledby', 'xyzzy');
                         });
                         
                         it("should strip HTML markup from title", function() {
                             panel.setTitle('<span style="background-color: red">foo</span>');
                             
-                            expectAria('aria-label', 'foo');
+                            expect(panel).toHaveAttr('aria-label', 'foo');
                         });
                     });
                     
@@ -4016,25 +4025,25 @@ describe("Ext.panel.Panel", function() {
                         });
                         
                         it("should have aria-labelledby", function() {
-                            expectAria('aria-labelledby', panel.header.titleCmp.textEl.id);
+                            expect(panel).toHaveAttr('aria-labelledby', panel.header.titleCmp.textEl.id);
                         });
                         
                         it("should not have aria-label", function() {
-                            expectNoAria('aria-label');
+                            expect(panel).not.toHaveAttr('aria-label');
                         });
                         
                         it("should have presentation role on the header with no tools", function() {
-                            expectAriaAttr(panel.header, 'role', 'presentation');
+                            expect(panel.header).toHaveAttr('role', 'presentation');
                         });
                         
                         it("should have presentation role on titleCmp", function() {
-                            expectAriaAttr(panel.header.titleCmp, 'role', 'presentation');
+                            expect(panel.header.titleCmp).toHaveAttr('role', 'presentation');
                         });
                         
                         it("should not remove aria-labelledby", function() {
                             panel.setTitle('bonzo');
                             
-                            expectAria('aria-labelledby', panel.header.titleCmp.textEl.id);
+                            expect(panel).toHaveAttr('aria-labelledby', panel.header.titleCmp.textEl.id);
                         });
                     });
                 });
@@ -4048,11 +4057,11 @@ describe("Ext.panel.Panel", function() {
                     });
                     
                     it("should have aria-labelledby", function() {
-                        expectAria('aria-labelledby', panel.headingEl.id);
+                        expect(panel).toHaveAttr('aria-labelledby', panel.headingEl.id);
                     });
                     
                     it("should not have aria-label", function() {
-                        expectNoAria('aria-label');
+                        expect(panel).not.toHaveAttr('aria-label');
                     });
                 });
                 
@@ -4067,12 +4076,12 @@ describe("Ext.panel.Panel", function() {
                     
                     // TabPanel sets it
                     it("should not set aria-labelledby", function() {
-                        expectNoAria('aria-labelledby');
+                        expect(panel).not.toHaveAttr('aria-labelledby');
                     });
                     
                     // This would get in the way
                     it("should not set aria-label", function() {
-                        expectNoAria('aria-label');
+                        expect(panel).not.toHaveAttr('aria-label');
                     });
                 });
             });
@@ -4088,11 +4097,11 @@ describe("Ext.panel.Panel", function() {
                     });
                     
                     it("should have presentation role by default", function() {
-                        expectBodyAria('role', 'presentation');
+                        expect(panel.body).toHaveAttr('role', 'presentation');
                     });
                     
                     it("should not render body ARIA attributes", function() {
-                        expectNoBodyAria('aria-foo');
+                        expect(panel.body).not.toHaveAttr('aria-foo');
                     });
                 });
                 
@@ -4107,15 +4116,15 @@ describe("Ext.panel.Panel", function() {
                     });
                     
                     it("should set role to bodyAriaRole", function() {
-                        expectBodyAria('role', 'frob');
+                        expect(panel.body).toHaveAttr('role', 'frob');
                     });
                     
                     it("should render body ARIA attributes", function() {
-                        expectBodyAria('aria-qux', 'bonzo');
+                        expect(panel.body).toHaveAttr('aria-qux', 'bonzo');
                     });
                     
                     it("should not set bodyAriaRole on the main el", function() {
-                        expectAria('role', 'presentation');
+                        expect(panel).toHaveAttr('role', 'presentation');
                     });
                 });
             });
@@ -4150,11 +4159,11 @@ describe("Ext.panel.Panel", function() {
                     });
                     
                     it("should have button role", function() {
-                        expectAriaAttr(closeTool, 'role', 'button');
+                        expect(closeTool).toHaveAttr('role', 'button');
                     });
                     
                     it("should have aria-label", function() {
-                        expectAriaAttr(closeTool, 'aria-label', 'Close panel');
+                        expect(closeTool).toHaveAttr('aria-label', 'Close panel');
                     });
                 });
                 
@@ -4164,11 +4173,11 @@ describe("Ext.panel.Panel", function() {
                     });
                     
                     it("should have button role", function() {
-                        expectAriaAttr(collapseTool, 'role', 'button');
+                        expect(collapseTool).toHaveAttr('role', 'button');
                     });
                     
                     it("should have aria-label", function() {
-                        expectAriaAttr(collapseTool, 'aria-label', 'Collapse panel');
+                        expect(collapseTool).toHaveAttr('aria-label', 'Collapse panel');
                     });
                 });
                 
@@ -4182,11 +4191,11 @@ describe("Ext.panel.Panel", function() {
                     });
                     
                     it("should have button role", function() {
-                        expectAriaAttr(expandTool, 'role', 'button');
+                        expect(expandTool).toHaveAttr('role', 'button');
                     });
                     
                     it("should have aria-label", function() {
-                        expectAriaAttr(expandTool, 'aria-label', 'Expand panel');
+                        expect(expandTool).toHaveAttr('aria-label', 'Expand panel');
                     });
                 });
             });
@@ -4338,14 +4347,14 @@ describe("Ext.panel.Panel", function() {
                                 it("should set aria-expanded to true by default", function() {
                                     panel.render(Ext.getBody());
                                     
-                                    expectAria('aria-expanded', 'true');
+                                    expect(panel).toHaveAttr('aria-expanded', 'true');
                                 });
                                 
                                 it("should set aria-expanded to false after collapsing", function() {
                                     panel.collapse();
                                     panel.render(Ext.getBody());
                                     
-                                    expectAria('aria-expanded', 'false');
+                                    expect(panel).toHaveAttr('aria-expanded', 'false');
                                 });
                                 
                                 it("should set aria-expanded to true after expanding", function() {
@@ -4353,7 +4362,7 @@ describe("Ext.panel.Panel", function() {
                                     panel.expand();
                                     panel.render(Ext.getBody());
                                     
-                                    expectAria('aria-expanded', 'true');
+                                    expect(panel).toHaveAttr('aria-expanded', 'true');
                                 });
                             });
                             
@@ -4365,14 +4374,14 @@ describe("Ext.panel.Panel", function() {
                                 it("should set aria-expanded to false by default", function() {
                                     panel.render(Ext.getBody());
                                     
-                                    expectAria('aria-expanded', 'false');
+                                    expect(panel).toHaveAttr('aria-expanded', 'false');
                                 });
                                 
                                 it("should set aria-expanded to true after expanding", function() {
                                     panel.expand();
                                     panel.render(Ext.getBody());
                                     
-                                    expectAria('aria-expanded', 'true');
+                                    expect(panel).toHaveAttr('aria-expanded', 'true');
                                 });
                                 
                                 it("should set aria-expanded to false after collapsing", function() {
@@ -4380,7 +4389,7 @@ describe("Ext.panel.Panel", function() {
                                     panel.collapse();
                                     panel.render(Ext.getBody());
                                     
-                                    expectAria('aria-expanded', 'false');
+                                    expect(panel).toHaveAttr('aria-expanded', 'false');
                                 });
                             });
                         });
@@ -4405,7 +4414,7 @@ describe("Ext.panel.Panel", function() {
                             });
                             
                             it("should set aria-expanded to true by default", function() {
-                                expectAria('aria-expanded', 'true');
+                                expect(panel).toHaveAttr('aria-expanded', 'true');
                             });
                             
                             it("should set aria-expanded to false after collapsing", function() {
@@ -4416,7 +4425,7 @@ describe("Ext.panel.Panel", function() {
                                 waitsForSpy(collapseSpy, 'collapse', 1000);
                                 
                                 runs(function() {
-                                    expectAria('aria-expanded', 'false');
+                                    expect(panel).toHaveAttr('aria-expanded', 'false');
                                 });
                             });
                             
@@ -4434,7 +4443,7 @@ describe("Ext.panel.Panel", function() {
                                 waitsForSpy(expandSpy, 'expand', 1000);
                                 
                                 runs(function() {
-                                    expectAria('aria-expanded', 'true');
+                                    expect(panel).toHaveAttr('aria-expanded', 'true');
                                 });
                             });
                         });
@@ -4445,6 +4454,130 @@ describe("Ext.panel.Panel", function() {
                 makeSuite(false);
             }); // aria-expanded
         }); // state
+        
+        describe("collapsible", function() {
+            var ct, west;
+            
+            function makeContainer(itemConfig, ctConfig) {
+                ctConfig = Ext.apply({
+                    renderTo: Ext.getBody(),
+                    width: 600,
+                    height: 600,
+                    layout: 'border',
+                    
+                    items: [Ext.apply({
+                        xtype: 'panel',
+                        title: 'West',
+                        region: 'west',
+                        collapsible: true,
+                        collapseMode: undefined,
+                        width: 200
+                    }, itemConfig), {
+                        region: 'center'
+                    }]
+                }, ctConfig);
+                
+                ct = new Ext.container.Container(ctConfig);
+                
+                west = ct.down('[region=west]');
+                
+                west.collapse();
+            }
+            
+            afterEach(function() {
+                ct = Ext.destroy(ct);
+            });
+            
+            describe("reexpander", function() {
+                it("should copy enableFocusableContainer", function() {
+                    makeContainer({
+                        header: {
+                            enableFocusableContainer: false
+                        }
+                    });
+                    
+                    expect(west.reExpander.enableFocusableContainer).toBe(false);
+                });
+                
+                it("should copy inactiveChildTabIndex", function() {
+                    makeContainer({
+                        header: {
+                            inactiveChildTabIndex: -10
+                        }
+                    });
+                    
+                    expect(west.reExpander.inactiveChildTabIndex).toBe(-10);
+                });
+                
+                it("should copy allowFocusingDisabledChildren", function() {
+                    makeContainer({
+                        header: {
+                            allowFocusingDisabledChildren: true
+                        }
+                    });
+                    
+                    expect(west.reExpander.allowFocusingDisabledChildren).toBe(true);
+                });
+                
+                it("should set tabIndex to the reExpander tabGuards", function() {
+                    makeContainer({
+                        header: {
+                            activeChildTabIndex: 42
+                        }
+                    });
+                    
+                    expect(west.reExpander.tabGuardBeforeEl).toHaveAttr('tabIndex', '42');
+                    expect(west.reExpander.tabGuardAfterEl).toHaveAttr('tabIndex', '42');
+                });
+            });
+            
+            describe("placeholder", function() {
+                it("should copy enableFocusableContainer", function() {
+                    makeContainer({
+                        collapseMode: 'placeholder',
+                        header: {
+                            enableFocusableContainer: false
+                        }
+                    });
+                    
+                    expect(west.placeholder.enableFocusableContainer).toBe(false);
+                });
+                
+                it("should copy inactiveChildTabIndex", function() {
+                    makeContainer({
+                        collapseMode: 'placeholder',
+                        header: {
+                            inactiveChildTabIndex: -2
+                        }
+                    });
+                    
+                    expect(west.placeholder.inactiveChildTabIndex).toBe(-2);
+                });
+                
+                it("should copy allowFocusingDisabledChildren", function() {
+                    makeContainer({
+                        collapseMode: 'placeholder',
+                        header: {
+                            allowFocusingDisabledChildren: true
+                        }
+                    });
+                    
+                    expect(west.placeholder.allowFocusingDisabledChildren).toBe(true);
+                });
+                
+                it("should set tabIndex on the placeholder tabGuards", function() {
+                    makeContainer({
+                        collapseMode: 'placeholder',
+                        header: {
+                            activeChildTabIndex: 42
+                        }
+                    });
+                    
+                    expect(west.placeholder.tabGuardBeforeEl).toHaveAttr('tabIndex', '42');
+                    expect(west.placeholder.tabGuardAfterEl).toHaveAttr('tabIndex', '42');
+                });
+            });
+        });
 
         describe("tab guards", function () {
             it("should contain tab guard elements with no dockedItems", function() {
@@ -4786,5 +4919,153 @@ describe("Ext.panel.Panel", function() {
 
         });
 
+    });
+    
+    describe("stateful", function() {
+        describe("getState", function() {
+            describe("basic", function() {
+                beforeEach(function() {
+                    makePanel({
+                        title: 'foo',
+                        width: 300,
+                        height: 300,
+                        html: 'throbbe'
+                    });
+                });
+                    
+                it("should return empty object", function() {
+                    expect(panel.getState()).toEqual({});
+                });
+            });
+            
+            describe("collapsible", function() {
+                describe("via header", function() {
+                    describe("vertical", function() {
+                        beforeEach(function() {
+                            makePanel({
+                                collapsible: true,
+                                animCollapse: false,
+                                title: 'bar',
+                                width: 300,
+                                height: 300,
+                                html: 'gurgle'
+                            });
+        
+                            panel.collapse();
+                        });
+                        
+                        it("should populate properties", function() {
+                            expect(panel.getState()).toEqual({
+                                collapsed: {
+                                    height: 300,
+                                    'last.height': 300,
+                                    minHeight: null,
+                                    minWidth: null,
+                                    width: 300
+                                }
+                            });
+                        });
+                    });
+                    
+                    describe("horizontal", function() {
+                        beforeEach(function() {
+                            makePanel({
+                                collapsible: true,
+                                animCollapse: false,
+                                collapseDirection: 'left',
+                                title: 'bar',
+                                width: 300,
+                                height: 300,
+                                html: 'gurgle'
+                            });
+        
+                            panel.collapse();
+                        });
+                        
+                        it("should populate properties", function() {
+                            expect(panel.getState()).toEqual({
+                                collapsed: {
+                                    height: 300,
+                                    'last.width': 300,
+                                    minHeight: null,
+                                    minWidth: null,
+                                    width: 300
+                                }
+                            });
+                        });
+                    });
+                });
+                
+                describe("placeholder", function() {
+                    var ct, p;
+                    
+                    afterEach(function() {
+                        ct = p = Ext.destroy(ct);
+                    });
+                    
+                    describe("vertical", function() {
+                        beforeEach(function() {
+                            ct = new Ext.container.Container({
+                                renderTo: Ext.getBody(),
+                                width: 400,
+                                height: 400,
+                                layout: 'border',
+                                items: [{
+                                    title: 'North',
+                                    region: 'north',
+                                    collapsible: true,
+                                    animCollapse: false,
+                                    height: 200
+                                }, {
+                                    region: 'center'
+                                }]
+                            });
+                            
+                            p = ct.items.first();
+                            
+                            p.collapse();
+                        });
+                        
+                        it("should populate properties", function() {
+                            expect(p.getState()).toEqual({
+                                collapsed: {},
+                                weight: 20
+                            });
+                        });
+                    });
+                    
+                    describe("horizontal", function() {
+                        beforeEach(function() {
+                            ct = new Ext.container.Container({
+                                renderTo: Ext.getBody(),
+                                width: 400,
+                                height: 400,
+                                layout: 'border',
+                                items: [{
+                                    title: 'West',
+                                    region: 'west',
+                                    collapsible: true,
+                                    animCollapse: false,
+                                    width: 200
+                                }, {
+                                    region: 'center'
+                                }]
+                            });
+                            
+                            p = ct.items.first();
+                            
+                            p.collapse();
+                        });
+                        
+                        it("should populate properties", function() {
+                            expect(p.getState()).toEqual({
+                                collapsed: {},
+                                weight: -10
+                            });
+                        });
+                    });
+                });
+            });
+        });
     });
 });

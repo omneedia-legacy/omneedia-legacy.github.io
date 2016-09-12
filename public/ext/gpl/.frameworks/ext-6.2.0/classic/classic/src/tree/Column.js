@@ -205,7 +205,7 @@ Ext.define('Ext.tree.Column', {
 
         rendererData = me.initTemplateRendererData(value, metaData, record, rowIdx, colIdx, store, view);
         
-        return me.getTpl('cellTpl').apply(rendererData);
+        return me.lookupTpl('cellTpl').apply(rendererData);
     },
 
     initTemplateRendererData: function(value, metaData, record, rowIdx, colIdx, store, view) {

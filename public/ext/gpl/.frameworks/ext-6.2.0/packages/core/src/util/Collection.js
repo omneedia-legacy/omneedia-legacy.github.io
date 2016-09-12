@@ -104,7 +104,7 @@ Ext.define('Ext.util.Collection', {
 
         /**
          * @cfg {Object} extraKeys
-         * One or more `Ext.util.CollectionKey' configuration objects or key properties.
+         * One or more `Ext.util.CollectionKey` configuration objects or key properties.
          * Each property of the given object is the name of the `CollectionKey` instance
          * that is stored on this collection. The value of each property configures the
          * `CollectionKey` instance.
@@ -2165,7 +2165,7 @@ Ext.define('Ext.util.Collection', {
                     } else {
                         // If we are adding one item we can position it properly now and
                         // avoid a full sort.
-                        insertAt = sorters.findInsertionIndex(adds.items[0], items, me.getSortFn());
+                        insertAt = sorters.findInsertionIndex(adds.items[0], items, me.getSortFn(), index);
                     }
                 }
 
@@ -3366,17 +3366,26 @@ Ext.define('Ext.util.Collection', {
         return this.sortItems(sortFn);
     },
 
-    //-------------------------------------------------------------------------
-    // Private
-    // Can be called to find the insertion index of a passed object in this collection.
-    // Or can be passed an items array to search in, and may be passed a comparator
-    findInsertionIndex: function(item, items, comparatorFn) {
-        if (!items) {
-            items = this.items;
+    /*
+     * @private
+     * Can be called to find the insertion index of a passed object in this collection.
+     * Or can be passed an items array to search in, and may be passed a comparator
+     */
+    findInsertionIndex: function(item, items, comparatorFn, index) {
+        var beforeCheck, afterCheck, len;
+        
+        items = items || this.items;
+        comparatorFn = comparatorFn || this.getSortFn();
+        len = items.length;
+        
+        if (index < len) {
+            beforeCheck = index > 0 ? comparatorFn(items[index - 1], item) : 0;
+            afterCheck = index < len - 1 ? comparatorFn(item, items[index]) : 0;
+            if (beforeCheck < 1 && afterCheck < 1) {
+                return index;
+            }
         }
-        if (!comparatorFn) {
-            comparatorFn = this.getSortFn();
-        }
+        
         return Ext.Array.binarySearch(items, item, comparatorFn);
     },
 
@@ -3456,7 +3465,7 @@ Ext.define('Ext.util.Collection', {
     updateSorters: function (newSorters, oldSorters) {
         var me = this;
 
-        if (oldSorters) {
+        if (oldSorters && !oldSorters.destroyed) {
             // Do not disconnect from owning Filterable because
             // default options (eg _rootProperty) are read from there.
             // SorterCollections are detached from the Collection when the owning Store is remoteSort: true
@@ -3663,8 +3672,12 @@ Ext.define('Ext.util.Collection', {
 
     updateSource: function (newSource, oldSource) {
         var auto = this.autoSource;
+        
         if (oldSource) {
-            oldSource.removeObserver(this);
+            if (!oldSource.destroyed) {
+                oldSource.removeObserver(this);
+            }
+            
             if (oldSource === auto) {
                 auto.destroy();
                 this.autoSource = null;

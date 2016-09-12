@@ -239,7 +239,7 @@ describe("Ext.app.ViewModel", function() {
             });
 
             it('should be able to set a value to undefined even after an unbound stub has been purged', function() {
-                var myViewModel = Ext.Factory.viewModel({
+                var child = new Ext.app.ViewModel({
                     parent: viewModel,
                     data: {
                         frob: 2
@@ -250,9 +250,8 @@ describe("Ext.app.ViewModel", function() {
                 viewModel.doCollect();
 
                 expect(function() {
-                    myViewModel.set('frob');
+                    child.set('frob');
                 }).not.toThrow();
-                Ext.destroy(myViewModel);
             });
         });
 
@@ -2192,6 +2191,17 @@ describe("Ext.app.ViewModel", function() {
                                 expect(store.getAt(1)).toBe(session.getRecord('Post', 2));
                             });
                         }
+
+                        it("should not throw when dropping the owner that causes the store to destroy", function() {
+                            makeUser(1);
+                            var posts = user.posts();
+                            bindNotify('{user.posts}', spy);
+                            setNotify('user', user);
+                            expect(function() {
+                                user.drop();
+                            }).not.toThrow();
+                            expect(posts.destroyed).toBe(true);
+                        });
                     });
                 });
 
@@ -4807,6 +4817,76 @@ describe("Ext.app.ViewModel", function() {
                 expect(ctrl.someFn).toHaveBeenCalled();
 
                 Ext.destroy(ct);
+            });
+        });
+
+        describe("cleanup", function() {
+            it("should listen to destroy on the store and set the value to null", function() {
+                var store = new Ext.data.Store();
+
+                viewModel.set('foo', store);
+                bindNotify('{foo}', spy);
+                spy.reset();
+                store.destroy();
+                notify();
+                expectArgs(null, store);
+            });
+
+            it("should detach listeners on the store when the value is changed", function() {
+                var store = new Ext.data.Store(),
+                    load = store.hasListeners.load,
+                    destroy = store.hasListeners.destroy;
+
+                viewModel.set('foo', store);
+                bindNotify('{foo}', spy);
+                setNotify('foo', 'something');
+                expect(store.hasListeners.load).toBe(load);
+                expect(store.hasListeners.destroy).toBe(destroy);
+            });
+
+            it("should detach store listeners when the vm is destroyed", function() {
+                var store = new Ext.data.Store(),
+                    load = store.hasListeners.load,
+                    destroy = store.hasListeners.destroy;
+
+                viewModel.set('foo', store);
+                bindNotify('{foo}', spy);
+                spy.reset();
+                viewModel.destroy();
+                expect(spy).not.toHaveBeenCalled();
+                expect(store.hasListeners.load).toBe(load);
+                expect(store.hasListeners.destroy).toBe(destroy);
+            });
+
+            it("should detach store listeners when the stub is destroyed via collection", function() {
+                var store = new Ext.data.Store(),
+                    load = store.hasListeners.load,
+                    destroy = store.hasListeners.destroy;
+
+                viewModel.set('foo', store);
+                var b = bindNotify('{foo}', spy);
+                spy.reset();
+                b.destroy();
+                viewModel.collectTimeout = 0;
+                viewModel.collect();
+                expect(spy).not.toHaveBeenCalled();
+                expect(store.hasListeners.load).toBe(load);
+                expect(store.hasListeners.destroy).toBe(destroy);
+            });
+
+            it("should not trigger a bind when the store is destroyed with the VM", function() {
+                var store = new Ext.data.Store({
+                    autoDestroy: true
+                });
+
+                viewModel.setStores({
+                    foo: store
+                });
+
+                bindNotify('{foo}', spy);
+                spy.reset();
+                viewModel.destroy();
+                expect(spy).not.toHaveBeenCalled();
             });
         });
     });

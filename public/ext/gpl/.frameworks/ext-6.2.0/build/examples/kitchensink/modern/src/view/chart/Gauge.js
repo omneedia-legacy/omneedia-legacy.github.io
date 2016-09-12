@@ -11,6 +11,18 @@ Ext.define('KitchenSink.view.chart.Gauge', {
     controller: 'chart',
 
     layout: 'fit',
+    // <example>
+    otherContent: [{
+        type: 'Controller',
+        path: 'modern/src/view/chart/ChartController.js'
+    }, {
+        type: 'Store',
+        path: 'modern/src/store/Pie.js' 
+    }],
+    // </example>
+    
+    shadow: true,
+
     items: [{
         xtype: 'toolbar',
         docked: 'top',

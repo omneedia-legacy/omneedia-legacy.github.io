@@ -379,9 +379,10 @@ Ext.define('Ext.form.Panel', {
         return this.form.hasInvalidField();
     },
 
-    beforeDestroy: function() {
+    doDestroy: function() {
         this.stopPolling();
         this.form.destroy();
+        
         this.callParent();
     },
 

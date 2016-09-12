@@ -1,3 +1,8 @@
 // private
-$gridviewoptions-icon-font-size: dynamic(1.23em);
-$gridviewoptions-icon-font-size-big: dynamic(1.6em);
+$gridviewoptions-icon-size: dynamic(px-to-rem(16px, 12px));
+$gridviewoptions-icon-size-big: dynamic(px-to-rem(24px, 14px));
+$gridviewoptions-sortablehandle-icon: dynamic('menu');
+$gridviewoptions-visibleindicator-icon: dynamic('remove_red_eye');
+$gridviewoptions-groupindicator-icon: dynamic('group');
+$gridviewoptions-folder-icon: dynamic('folder');
+$gridviewoptions-leaf-icon: dynamic('description');

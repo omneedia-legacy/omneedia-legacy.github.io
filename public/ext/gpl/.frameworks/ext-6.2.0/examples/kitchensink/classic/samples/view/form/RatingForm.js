@@ -4,6 +4,7 @@
 Ext.define('KitchenSink.view.form.RatingForm', {
     extend: 'Ext.panel.Panel',
     xtype: 'form-rating',
+    controller: 'form-rating',
 
     requires: [
         'Ext.ux.rating.Picker'
@@ -11,6 +12,9 @@ Ext.define('KitchenSink.view.form.RatingForm', {
     //<example>
     exampleTitle: 'Rating Form',
     otherContent: [{
+        type: 'Controller',
+        path: 'classic/samples/view/form/RatingFormController.js'
+    }, {
         type: 'Store',
         path: 'classic/samples/store/BigData.js'
     }, {
@@ -32,14 +36,19 @@ Ext.define('KitchenSink.view.form.RatingForm', {
         align: 'stretch'
     },
 
+    keyMap: {
+        '+': 'onKeyPlus',
+        '-': 'onKeyMinus'
+    },
+
     items: [{
         xtype: 'grid',
+        reference: 'employeeGrid',
         flex: 1,
         style: {
             borderBottomWidth: '1px',
             borderBottomStyle: 'solid'
         },
-        reference: 'employeeGrid',
         store: {
             type: 'big-data'
         },

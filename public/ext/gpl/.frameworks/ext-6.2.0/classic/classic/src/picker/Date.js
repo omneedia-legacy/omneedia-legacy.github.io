@@ -1402,11 +1402,7 @@ Ext.define('Ext.picker.Date', {
         return me;
     },
 
-    /**
-     * @private
-     * @inheritdoc
-     */
-    beforeDestroy: function() {
+    doDestroy: function() {
         var me = this;
 
         if (me.rendered) {
@@ -1419,9 +1415,8 @@ Ext.define('Ext.picker.Date', {
                 me.todayBtn,
                 me.todayElSpan
             );
-            delete me.textNodes;
-            delete me.cells.elements;
         }
+        
         me.callParent();
     },
 

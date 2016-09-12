@@ -897,7 +897,7 @@ Ext.define("Ext.form.Labelable", {
             actionEl, activeError, tpl, targetEl, ariaTpl, errStr, errText;
 
         errors = Ext.Array.from(errors);
-        tpl = me.getTpl('activeErrorsTpl');
+        tpl = me.lookupTpl('activeErrorsTpl');
 
         me.activeErrors = errors;
         activeError = me.activeError = tpl.apply({
@@ -923,7 +923,7 @@ Ext.define("Ext.form.Labelable", {
 
             // If msgTarget is title, setting an alert is redundant for ARIA purposes
             if (msgTarget !== 'title' && ariaErrorEl) {
-                ariaTpl = me.getTpl('ariaActiveErrorsTpl');
+                ariaTpl = me.lookupTpl('ariaActiveErrorsTpl');
                 errStr = ariaTpl.apply({ errors: errors });
                 
                 // Setting innerHTML on aria-live element will replace inner text node,

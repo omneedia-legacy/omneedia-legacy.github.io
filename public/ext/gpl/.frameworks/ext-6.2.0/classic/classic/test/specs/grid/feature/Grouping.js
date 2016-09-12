@@ -103,14 +103,14 @@ describe('Ext.grid.feature.Grouping', function () {
     });
 
     afterEach(function(){
+        Ext.undefine('spec.Restaurant');
+        schema.clear(true);
+        grid = view = store = menu = schema = groupingFeature = Ext.destroy(grid, store);
+        
         MockAjaxManager.removeMethods();
 
         // Undo the overrides.
         Ext.data.ProxyStore.prototype.load = proxyStoreLoad;
-
-        Ext.undefine('spec.Restaurant');
-        schema.clear(true);
-        grid = view = store = menu = schema = groupingFeature = Ext.destroy(grid);
     });
 
     describe('init', function () {

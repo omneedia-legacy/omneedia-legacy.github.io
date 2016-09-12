@@ -42,12 +42,17 @@
  *  - {@link Ext.grid.column.Number}: Renders for numeric values
  *  - {@link Ext.grid.column.Template}: Renders a value using an {@link Ext.XTemplate} using the record data
  *
- * # Setting Sizes
+ * # Setting Widths
  *
  * The columns are laid out by a {@link Ext.layout.container.HBox} layout, so a column can either
- * be given an explicit width value or a flex configuration. If no width is specified the grid will
- * automatically the size the column to 100px. For column groups, the size is calculated by measuring
- * the width of the child columns, so a width option should not be specified in that case.
+ * be given an explicit width value or a {@link #flex} configuration. If no width is specified the grid will
+ * automatically the size the column to 100px.
+ * 
+ * Group columns (columns with {@link #columns child columns}) may be sized using {@link #flex},
+ * in which case they will apply `forceFit` to their child columns so as not to leave blank space.
+ * 
+ * If a group column is not flexed, its width is calculated by measuring the width of the
+ * child columns, so a width option should not be specified in that case.
  *
  * # Header Options
  *
@@ -113,11 +118,20 @@ Ext.define('Ext.grid.column.Column', {
          *
          * @since 6.0.1
          */
-        sorter: null
-    },
+        sorter: null,
 
-    // TODO: Implement visible triggers for touch-based platforms.
-    // Styling will need tweaking - looks a bit ugly with all triggers always visible.
+        /**
+         * @cfg {'start'/'center'/'end'} [align='start']
+         * Sets the alignment of the header and rendered columns.
+         * Possible values are: `'start'`, `'center'`, and `'end'`.
+         *
+         * Since 6.2.0, `'left'` and `'right'` will still work, but retain their meaning
+         * even when the application is in RTL mode.
+         *
+         * `'start'` and `'end'` always conform to the locale's text direction.
+         */
+        align: 'start'
+    },
 
     baseCls: Ext.baseCSSPrefix + 'column-header',
 
@@ -171,7 +185,7 @@ Ext.define('Ext.grid.column.Column', {
                 '</div>',
             '</div>',
             '<tpl if="!menuDisabled">',
-                '<div id="{id}-triggerEl" data-ref="triggerEl" role="presentation" class="', Ext.baseCSSPrefix, 'column-header-trigger',
+                '<div id="{id}-triggerEl" data-ref="triggerEl" role="presentation" unselectable="on" class="', Ext.baseCSSPrefix, 'column-header-trigger',
                 '{childElCls}" style="{triggerStyle}"></div>',
             '</tpl>',
         '</div>',
@@ -207,7 +221,7 @@ Ext.define('Ext.grid.column.Column', {
      * The header text to be used as innerHTML (html tags are accepted) to display in the Grid.
      * **Note**: to have a clickable header with no text displayed you can use the default of `&#160;` aka `&nbsp;`.
      */
-    text: '&#160;',
+    text: '\u00a0',
 
     /**
      * @cfg {String} header
@@ -228,7 +242,7 @@ Ext.define('Ext.grid.column.Column', {
      *
      * Defaults to `&#160;` aka `&nbsp;`.
      */
-    emptyCellText: '&#160;',
+    emptyCellText: '\u00a0',
 
     /**
      * @cfg {Boolean} sortable
@@ -621,13 +635,6 @@ Ext.define('Ext.grid.column.Column', {
      */
 
     /**
-     * @cfg {String} align
-     * Sets the alignment of the header and rendered columns.
-     * Possible values are: `'left'`, `'center'`, and `'right'`.
-     */
-    align: 'left',
-
-    /**
      * @cfg {Boolean} draggable
      * False to disable drag-drop reordering of this column.
      */
@@ -662,6 +669,15 @@ Ext.define('Ext.grid.column.Column', {
      * **Note:** The {@link Ext.form.field.HtmlEditor HtmlEditor} field is not a
      * supported editor field type.
      */
+    
+    //<locale>
+    /**
+     * @cfg {String} [dirtyText="Cell value has been edited"]
+     * This text will be announced by Assistive Technologies such as screen readers when
+     * a cell with changed ("dirty") value is focused.
+     */
+    dirtyText: "Cell value has been edited",
+    //</locale>
 
     /**
      * @cfg {Object/String} field
@@ -695,7 +711,7 @@ Ext.define('Ext.grid.column.Column', {
     /**
      * @cfg {Ext.exporter.file.Style/Ext.exporter.file.Style[]} exportStyle
      *
-     * A style definition that is used during data export via the {@link Ext.grid.plugin.Exporter exporter plugin}.
+     * A style definition that is used during data export via the {@link Ext.grid.plugin.Exporter}.
      * This style will be applied to the columns generated in the exported file.
      *
      * You could define it as a single object that will be used by all exporters:
@@ -742,6 +758,7 @@ Ext.define('Ext.grid.column.Column', {
      * - one object with no `type` key that is considered the style to use by all exporters
      * - objects with the `type` key defined that are exceptions of the above rule
      *
+     *
      *      {
      *          xtype: 'numbercolumn',
      *          dataIndex: 'price',
@@ -772,6 +789,15 @@ Ext.define('Ext.grid.column.Column', {
     /**
      * @property {Ext.dom.Element} textEl
      * Element that contains the text in column header.
+     */
+
+    /**
+     * @cfg {Boolean} [cellFocusable=true]
+     * Configure as `false` to remove all cells in this column from navigation.
+     *
+     * This is currently used by the PivotGrid package to create columns which have
+     * no semantic role, but are purely for visual indentation purposes.
+     * @since 6.2.0.
      */
 
     /**
@@ -853,14 +879,14 @@ Ext.define('Ext.grid.column.Column', {
             if (me.dataIndex) {
                 Ext.raise('Ext.grid.column.Column: Group header may not accept a dataIndex');
             }
-            if ((me.width && me.width !== Ext.grid.header.Container.prototype.defaultWidth) || me.flex) {
-                Ext.raise('Ext.grid.column.Column: Group header does not support setting explicit widths or flexs. The group header width is calculated by the sum of its children.');
+            if ((me.width && me.width !== Ext.grid.header.Container.prototype.defaultWidth)) {
+                Ext.raise('Ext.grid.column.Column: Group header does not support setting explicit widths. A group header either shrinkwraps its children, or must be flexed.');
             }
             //</debug>
 
             // The headers become child items
             me.items = me.columns;
-            me.columns = me.flex = me.width = null;
+            me.columns = null;
             me.cls = (me.cls||'') + ' ' + me.groupHeaderCls;
 
             // A group cannot be sorted, or resized - it shrinkwraps its children
@@ -883,6 +909,30 @@ Ext.define('Ext.grid.column.Column', {
 
         // Initialize as a HeaderContainer
         me.callParent(arguments);
+    },
+    
+    beforeLayout: function() {
+        var items = this.items,
+            len,
+            i,
+            hasFlexedChildren;
+
+        if (!Ext.isArray(items)) {
+            items = items.items;
+        }
+        len = items.length;
+
+        if (len) {
+            for (i = 0; !hasFlexedChildren && i < len; i++) {
+                hasFlexedChildren = items[i].flex;
+            }
+
+            // If all children have been given a width, we must fall back to shrinkwrapping them.
+            if (!hasFlexedChildren) {
+                this.flex = null;
+            }
+        }
+        this.callParent();
     },
 
     onAdded: function(container, pos, instanced) {
@@ -951,6 +1001,12 @@ Ext.define('Ext.grid.column.Column', {
         }
 
         return ret;
+    },
+
+    updateAlign: function(align) {
+        // Translate according to the locale.
+        // This property is read by Ext.view.Table#renderCell
+        this.textAlign = this._alignMap[align] || align;
     },
 
     bindFormatter: function (format) {
@@ -1109,7 +1165,8 @@ Ext.define('Ext.grid.column.Column', {
         //
         // Note that we don't want to remove any grouped headers that have a descendant that is currently the drag target of an even lower stacked
         // grouped header.  See the comments in Ext.grid.header.Container#isNested.
-        if (!(me.destroyed || me.destroying) && !me.hasVisibleChildColumns() && !me.ownerCt.isNested()) {
+        if (!(me.destroyed || me.destroying) && !me.hasVisibleChildColumns() && 
+            (me.ownerCt && !me.ownerCt.isNested())) {
             me.hide();
         }
     },
@@ -1127,7 +1184,7 @@ Ext.define('Ext.grid.column.Column', {
 
         return Ext.applyIf(me.callParent(arguments), {
             text: text,
-            empty: text == null || text === '&#160;' || text === ' ' || text === '',
+            empty: me.isEmptyText(text),
             menuDisabled: me.menuDisabled,
             tipMarkup: tipMarkup,
             triggerStyle: this.getTriggerVisible() ? 'display:block' : ''
@@ -1182,7 +1239,6 @@ Ext.define('Ext.grid.column.Column', {
     getColumnState: function () {
         var me = this,
             items = me.items.items,
-            i,
             state = {
                 id: me.getStateId()
             };
@@ -1205,9 +1261,15 @@ Ext.define('Ext.grid.column.Column', {
      * @param {String} text The header to display on this Column.
      */
     setText: function(text) {
-        this.text = text;
-        if (this.rendered) {
-            this.textInnerEl.setHtml(text);
+        var me = this,
+            grid;
+
+        me.text = text;
+        if (me.rendered) {
+            grid = me.getView().ownerGrid;
+            me.textInnerEl.setHtml(text);
+            me.titleEl.toggleCls(Ext.baseCSSPrefix + 'column-header-inner-empty', me.isEmptyText(text));
+            grid.syncHeaderVisibility();
         }
     },
 
@@ -1236,7 +1298,7 @@ Ext.define('Ext.grid.column.Column', {
             labels = [],
             parent;
 
-        while (parent = child.up('headercontainer')) {
+        while ((parent = child.up('headercontainer'))) {
             if (parent.text) {
                 labels.unshift(Ext.util.Format.stripTags(parent.text));
             }
@@ -1321,12 +1383,11 @@ Ext.define('Ext.grid.column.Column', {
         }
     },
 
-    onDestroy: function() {
-        var me = this;
+    doDestroy: function() {
         // force destroy on the textEl, IE reports a leak
-        Ext.destroy(me.field);
-        me.field = null;
-        me.callParent(arguments);
+        Ext.destroy(this.field, this.editor);
+        
+        this.callParent();
     },
 
     onTitleMouseOver: function() {
@@ -1412,30 +1473,48 @@ Ext.define('Ext.grid.column.Column', {
                 headerCt.autoSizeColumn(leafColumns[i]);
             }
             Ext.resumeLayouts(true);
+
+            // If we are a isolated layout due to being one half of a locking asembly
+            // where one is collapsed, the top level Ext.grid.locking.Lockable#afterLayout
+            // will NOT have been called, so we have to explicitly run it here.
+            if (grid.ownerGrid.lockable && grid.isLayoutRoot()) {
+                grid.ownerGrid.syncLockableLayout();
+            }
             return;
         }
 
         me.getRootHeaderCt().autoSizeColumn(me);
     },
 
+    isEmptyText: function(text) {
+        return text == null || text === '&#160;' || text === ' ' || text === '';
+    },
+
     onTitleElClick: function(e, t, sortOnClick) {
         var me = this,
-            activeHeader,
-            prevSibling;
+            activeHeader, prevSibling, tapMargin;
 
         // Tap on the resize zone triggers the menu
         if (e.pointerType === 'touch') {
             prevSibling = me.previousSibling(':not([hidden])');
-
+            
             // Tap on right edge, activate this header
-            if (!me.menuDisabled && me.isAtEndEdge(e, parseInt(me.triggerEl.getStyle('width'), 10))) {
-                if (!me.menuDisabled) {
+            if (!me.menuDisabled) {
+                tapMargin = parseInt(me.triggerEl.getStyle('width'), 10);
+
+                // triggerEl can have width: auto, in which case we use handle width * 3
+                // that yields 30px for touch events. Should be enough in most cases.
+                if (isNaN(tapMargin)) {
+                    tapMargin = me.getHandleWidth(e) * 3;
+                }
+
+                if (me.isAtEndEdge(e, tapMargin)) {
                     activeHeader = me;
                 }
             }
 
             // Tap on left edge, activate previous header
-            else if (prevSibling && !prevSibling.menuDisabled && me.isAtStartEdge(e)) {
+            if (!activeHeader && prevSibling && !prevSibling.menuDisabled && me.isAtStartEdge(e)) {
                 activeHeader = prevSibling;
             }
         }
@@ -1503,6 +1582,13 @@ Ext.define('Ext.grid.column.Column', {
             store.sort(me.getSortParam(), direction, grid.multiColumnSort ? 'multi' : 'replace');
         }
         Ext.resumeLayouts(true);
+
+        // If we are a isolated layout due to being one half of a locking asembly
+        // where one is collapsed, the top level Ext.grid.locking.Lockable#afterLayout
+        // will NOT have been called, so we have to explicitly run it here.
+        if (grid.ownerGrid.lockable && grid.isLayoutRoot()) {
+            grid.ownerGrid.syncLockableLayout();
+        }
     },
 
     /**
@@ -1706,6 +1792,13 @@ Ext.define('Ext.grid.column.Column', {
         rootHeaderCt.onHeaderHide(me);
 
         Ext.resumeLayouts(true);
+
+        // If we are a isolated layout due to being one half of a locking asembly
+        // where one is collapsed, the top level Ext.grid.locking.Lockable#afterLayout
+        // will NOT have been called, so we have to explicitly run it here.
+        if (rootHeaderCt.grid.ownerGrid.lockable && rootHeaderCt.grid.isLayoutRoot()) {
+            rootHeaderCt.grid.ownerGrid.syncLockableLayout();
+        }
         return me;
     },
 
@@ -1750,6 +1843,13 @@ Ext.define('Ext.grid.column.Column', {
         }
 
         Ext.resumeLayouts(true);
+
+        // If we are a isolated layout due to being one half of a locking asembly
+        // where one is collapsed, the top level Ext.grid.locking.Lockable#afterLayout
+        // will NOT have been called, so we have to explicitly run it here.
+        if (rootHeaderCt.grid.ownerGrid.lockable && rootHeaderCt.grid.isLayoutRoot()) {
+            rootHeaderCt.grid.ownerGrid.syncLockableLayout();
+        }
         return me;
 
     },
@@ -1859,11 +1959,28 @@ Ext.define('Ext.grid.column.Column', {
 
     privates: {
         /**
+         * @private
+         * Mapping for locale-neutral align setting.
+         * Overridden in Ext.rtl.grid.column.Column
+         */
+        _alignMap: {
+            start: 'left',
+            end: 'right'
+        },
+
+        /**
          * A method called by the render template to allow extra content after the header text.
          * @private
          */
         afterText: function(out, values) {
-
+            if (this.dirtyText) {
+                this.dirtyTextElementId = this.id + '-dirty-cell-text';
+                out.push(
+                    '<span id="' + this.dirtyTextElementId + '" class="' +
+                        Ext.baseCSSPrefix + 'hidden-offsets">' + this.dirtyText +
+                    '</span>'
+                );
+            }
         },
 
         calculateHeaderId: function() {
@@ -1969,4 +2086,3 @@ Ext.define('Ext.grid.column.Column', {
      * assumed.
      */
 });
-

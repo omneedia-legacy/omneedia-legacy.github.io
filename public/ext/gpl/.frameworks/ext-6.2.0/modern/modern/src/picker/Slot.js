@@ -391,6 +391,7 @@ Ext.define('Ext.picker.Slot', {
             me.selectedIndex = index;
             me.selectedNode = item;
 
+            this.setValueAnimated(this.getValue(true));
             me.fireEvent('slotpick', me, me.getValue(), me.selectedNode);
         }
     },
@@ -459,14 +460,11 @@ Ext.define('Ext.picker.Slot', {
         me.selectedIndex = index;
 
         if (item) {
-            me.scrollToItem(item, (animated) ? {
-                duration: 100
-            } : false);
-
+            me.scrollToItem(item, animated);
             if (hasSelection) {
                 // only set selection if an item is actually selected
                 me.select(me.selectedIndex);
-            }            
+            }
         }
 
         me._value = value;

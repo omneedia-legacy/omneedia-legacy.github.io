@@ -76,7 +76,16 @@
             }
         },
 
+        // <example>
+        otherContent: [{
+            type: 'Controller',
+            path: 'modern/src/view/chart/ChartController.js'
+        }],
+        // </example>
+    
         layout: 'fit',
+        shadow: true,
+
         items: [{
             xtype: 'toolbar',
             docked: 'top',
@@ -89,9 +98,6 @@
                 handler: function() {
                     Ext.getStore('PlotStore').setData(createData(ct, fn[++i % fn.length]));
                 }
-            }, {
-                text: 'Reset',
-                handler: 'onReset'
             }]
         }, {
             xtype: 'cartesian',

@@ -7,6 +7,8 @@
 Ext.define('Ext.event.gesture.SingleTouch', {
     extend: 'Ext.event.gesture.Recognizer',
 
+    isSingleTouch: true,
+
     onTouchStart: function(e) {
         if (e.touches.length > 1) {
             return this.cancel(e);

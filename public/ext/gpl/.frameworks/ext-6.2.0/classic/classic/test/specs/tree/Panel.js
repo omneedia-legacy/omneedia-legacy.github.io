@@ -251,7 +251,7 @@ describe("Ext.tree.Panel", function(){
 
         function getCheckedCount() {
             var checkedNodes = [];
-            store.getRootNode().cascadeBy(function(node){
+            store.getRootNode().cascade(function(node){
                 if (node.get('checked') === true) {
                     checkedNodes.push(node);
                 }
@@ -268,7 +268,7 @@ describe("Ext.tree.Panel", function(){
                     }
                 }
             });
-            store.getRoot().cascadeBy(function(r) {
+            store.getRoot().cascade(function(r) {
                 r.set('checked', false);
             });
             tree.expandAll();

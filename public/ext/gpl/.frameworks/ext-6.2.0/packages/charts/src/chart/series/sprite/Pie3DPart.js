@@ -188,7 +188,7 @@ Ext.define('Ext.chart.series.sprite.Pie3DPart', {
     },
 
     partColorUpdater: function (attr) {
-        var color = Ext.draw.Color.fly(attr.baseColor),
+        var color = Ext.util.Color.fly(attr.baseColor),
             colorString = color.toString(),
             colorSpread = attr.colorSpread,
             fillStyle;
@@ -416,7 +416,7 @@ Ext.define('Ext.chart.series.sprite.Pie3DPart', {
         var me = this,
             attr = me.attr;
 
-        if (!attr.globalAlpha) {
+        if (!attr.globalAlpha || Ext.Number.isEqual(attr.startAngle, attr.endAngle, 1e-8)) {
             return;
         }
         me.callParent([surface, ctx]);
@@ -543,7 +543,7 @@ Ext.define('Ext.chart.series.sprite.Pie3DPart', {
 
     bottomRenderer: function (path) {
         var attr = this.attr,
-            none = Ext.draw.Color.RGBA_NONE;
+            none = Ext.util.Color.RGBA_NONE;
 
         if (attr.globalAlpha < 1 || attr.fillOpacity < 1 || attr.shadowColor !== none) {
             this.lidRenderer(path, attr.thickness);

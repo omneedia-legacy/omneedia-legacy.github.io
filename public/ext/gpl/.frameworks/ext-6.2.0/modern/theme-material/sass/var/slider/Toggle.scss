@@ -1,19 +1,19 @@
-$toggle-thumb-size: dynamic(18px);
-$toggle-thumb-border: dynamic(none);
-$toggle-thumb-border-radius: dynamic(50%);
-$toggle-thumb-background-color: dynamic($faded-color);
-$toggle-thumb-background-gradient: dynamic(null);
-$toggle-thumb-on-background-color: dynamic($base-color);
-$toggle-thumb-on-background-gradient: dynamic(null);
-$toggle-thumb-padding: dynamic(0);
-$toggle-thumb-top: dynamic(-1.5px);
-$toggle-thumb-left: dynamic(0);
+$toggleslider-width: dynamic(32px);
+$toggleslider-track-height-big: dynamic(32px);
+$toggleslider-track-height: dynamic(16px);
+$toggleslider-track-height-big: dynamic(16px);
+$toggleslider-track-border-radius: dynamic(8px);
 
-$toggle-height: dynamic($content-padding);
-$toggle-width: dynamic($content-padding * 2);
-$toggle-border: dynamic(none);
-$toggle-border-radius: dynamic(($toggle-height - $toggle-thumb-padding) /2);
-$toggle-background-color: dynamic($divider-color);
-$toggle-background-gradient: dynamic(null);
-$toggle-on-background-color: dynamic($base-pressed-color);
-$toggle-on-background-gradient: dynamic(null);
+@mixin thumb-toggle-on-ui {
+    @include thumb-ui(
+        $ui: 'toggle-on',
+        $background-color: $base-color
+    );
+}
+
+@mixin thumb-toggle-off-ui {
+    @include thumb-ui(
+        $ui: 'toggle-off',
+        $background-color: $faded-color
+    );
+}

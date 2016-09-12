@@ -129,6 +129,7 @@ Ext.define('Ext.drag.Source', {
     defaultIdPrefix: 'source-',
 
     requires: [
+        'Ext.GlobalEvents',
         'Ext.drag.Constraint'
     ],
 
@@ -257,6 +258,7 @@ Ext.define('Ext.drag.Source', {
             delete config.describe;
         }
         this.callParent([config]);
+
         // Use bracket syntax to prevent Cmd from creating an
         // auto dependency. Will be pulled in by the target if
         // required.
@@ -378,6 +380,16 @@ Ext.define('Ext.drag.Source', {
             constrain = Ext.Factory.dragConstraint(constrain);
         }
         return constrain;
+    },
+
+    updateElement: function(element, oldElement) {
+        if (element && !this.getHandle()) {
+            element.setTouchAction({
+                panX: false,
+                panY: false
+            });
+        }
+        this.callParent([element, oldElement]);
     },
 
     updateHandle: function() {
@@ -506,6 +518,8 @@ Ext.define('Ext.drag.Source', {
                 me.fireEvent('dragcancel', me, info, e);
             }
 
+            Ext.fireEvent('dragcancel', me, info, e);
+
             me.dragCleanup(info);
         },
 
@@ -536,6 +550,7 @@ Ext.define('Ext.drag.Source', {
             if (me.hasListeners.dragend) {
                 me.fireEvent('dragend', me, info, e);
             }
+            Ext.fireEvent('dragend', me, info, e);
 
             if (revert && proxyEl) {
                 proxyEl.addCls(me.revertCls);
@@ -638,6 +653,7 @@ Ext.define('Ext.drag.Source', {
             if (hasListeners.dragstart) {
                 me.fireEvent('dragstart', me, info, e);
             }
+            Ext.fireEvent('dragstart', me, info, e);
         },
 
         /**

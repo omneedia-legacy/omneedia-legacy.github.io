@@ -18,6 +18,17 @@ Ext.define('KitchenSink.view.chart.Area', {
         }
     },
 
+    // <example>
+    otherContent: [{
+        type: 'Controller',
+        path: 'modern/src/view/chart/ChartController.js'
+    },{
+        type: 'Store',
+        path: 'modern/src/store/OrderItems.js'
+    }],
+    // </example>
+    
+    shadow: true,
     layout: 'fit',
     items: [{
         xtype: 'toolbar',
@@ -33,9 +44,6 @@ Ext.define('KitchenSink.view.chart.Area', {
             iconCls: 'x-fa fa-refresh',
             text: 'Refresh',
             handler: 'onRefresh'
-        }, {
-            text: 'Reset',
-            handler: 'onReset'
         }]
     }, {
         xtype: 'cartesian',

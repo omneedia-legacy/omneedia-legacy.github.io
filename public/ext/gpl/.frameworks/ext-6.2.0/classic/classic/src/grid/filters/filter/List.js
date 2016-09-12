@@ -200,6 +200,16 @@ Ext.define('Ext.grid.filters.filter.List', {
      * time of filter invocation.
      */
 
+    /**
+     * @private
+     */
+    gridStoreListenersCfg: {
+        add: 'onDataChanged',
+        refresh: 'onDataChanged',
+        remove: 'onDataChanged',
+        update: 'onDataChanged'
+    },
+
     constructor: function (config) {
         var me = this,
             gridStore;
@@ -246,10 +256,18 @@ Ext.define('Ext.grid.filters.filter.List', {
             gridStore = me.getGridStore();
 
             if (me.value != null && me.active && !gridStore.isEmptyStore) {
-                gridStore.on(me.getGridStoreListeners());
+                me.gridStoreListeners = gridStore.on(Ext.apply({
+                    scope: me,
+                    destroyable: true
+                }, me.gridStoreListenersCfg));
             }
 
-            me.grid.on('reconfigure', me.onReconfigure, me);
+            me.gridListeners = me.grid.on({
+                reconfigure: me.onReconfigure,
+                scope: me,
+                destroyable: true
+            });
+            
             me.inferOptionsFromGridStore = true;
         }
     },
@@ -257,8 +275,7 @@ Ext.define('Ext.grid.filters.filter.List', {
     destroy: function () {
         var me = this,
             store = me.store,
-            autoStore = me.autoStore,
-            gridStoreListeners = me.gridStoreListeners;
+            autoStore = me.autoStore;
 
         // We may bind listeners to both the options store & grid store, so we
         // need to unbind both sets here
@@ -271,15 +288,8 @@ Ext.define('Ext.grid.filters.filter.List', {
 
             me.store = null;
         }
-
-        if (me.inferOptionsFromGridStore) {
-            me.grid.un('reconfigure', me.onReconfigure, me);
-        }
-
-        if (gridStoreListeners) {
-            me.getGridStore().un(gridStoreListeners);
-            me.gridStoreListeners = null;
-        }
+        
+        Ext.destroy(me.gridStoreListeners, me.gridListeners);
 
         me.callParent();
     },
@@ -384,7 +394,10 @@ Ext.define('Ext.grid.filters.filter.List', {
             // Note that the grid store listeners may have been bound in the constructor if it was determined
             // that the grid filter was active and defined with a value.
             if (me.inferOptionsFromGridStore & !me.gridStoreListeners) {
-                me.getGridStore().on(me.getGridStoreListeners());
+                me.gridStoreListeners = me.getGridStore().on(Ext.apply({
+                    scope: me,
+                    destroyable: true
+                }, me.gridStoreListenersCfg));
             }
 
             me.loaded = true;
@@ -500,18 +513,6 @@ Ext.define('Ext.grid.filters.filter.List', {
         // _value would be undefined.
         config.value = config.value || [];
         return this.callParent([config, key]);
-    },
-
-    getGridStoreListeners: function () {
-        var me = this;
-
-        return me.gridStoreListeners = {
-            scope: me,
-            add: me.onDataChanged,
-            refresh: me.onDataChanged,
-            remove: me.onDataChanged,
-            update: me.onDataChanged
-        };
     },
 
     getOptionsFromStore: function (store) {

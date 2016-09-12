@@ -11,7 +11,7 @@
  * Be careful not to make `CellContext` objects *too* persistent. If the owning record is removed, or the owning column
  * is removed, the reference will be stale.
  *
- * Freshly created context objects, such as those exposed by events from the {Ext.grid.selection.SpreadsheetModel spreadsheet selection model}
+ * Freshly created context objects, such as those exposed by events from the {@link Ext.grid.selection.SpreadsheetModel spreadsheet selection model}
  * are safe to use until your application mutates the store, or changes the column set.
  */
 Ext.define('Ext.grid.CellContext', {
@@ -252,6 +252,10 @@ Ext.define('Ext.grid.CellContext', {
             if (cell) {
                 return !cell.nextSibling;
             }
+        },
+        
+        isLastRenderedRow: function() {
+            return this.view.all.endIndex === this.rowIdx;
         },
 
         getLastColumnIndex: function() {

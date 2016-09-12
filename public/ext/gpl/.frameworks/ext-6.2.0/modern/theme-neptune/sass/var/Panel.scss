@@ -86,6 +86,19 @@ $panel-body-line-height-big: dynamic($panel-body-line-height);
  */
 $panel-body-font-family: dynamic($font-family);
 
+
+/**
+ * @var {number/list}
+ * Panel body padding
+ */
+$panel-body-padding: dynamic(null);
+
+/**
+ * @var {number/list}
+ * Panel body padding in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$panel-body-padding-big: dynamic(null);
+
 /**
  * @var {color}
  * Panel Header background-color
@@ -451,6 +464,7 @@ $panel-anchor-width: dynamic($panel-anchor-height * 2.33);
     $body-line-height-big: null,
     $body-font-family: null,
     $body-padding: null,
+    $body-padding-big: null,
 
     $header-background-color: null,
     $header-background-gradient: null,
@@ -560,34 +574,34 @@ $panel-anchor-width: dynamic($panel-anchor-height * 2.33);
             // If background is a different color, create the overlay triangle.
             @if $body-background-color != $border-color and $border-width != 0 {
                 .#{$prefix}anchor:after {
-                    border: calc(#{$anchor-border-width or $default-calc-value} - #{$border-width or $panel-border-width or $default-calc-value}) solid transparent;
+                    border: $anchor-border-width solid transparent;
                 }
 
                 .#{$prefix}anchor-top:after {
                     border-top-width: 0;
-                    border-bottom: calc(#{$anchor-height or $default-calc-value} - #{$border-width or $panel-border-width or $default-calc-value}) solid $body-background-color;
-                    left: calc(-#{$anchor-border-width or $default-calc-value} + #{($border-width * 2) or $default-calc-value});
+                    border-bottom: $anchor-height solid $body-background-color;
+                    left: calc(-#{$anchor-border-width or $default-calc-value} + #{$border-width or $default-calc-value});
                     top: $border-width;
                 }
 
                 .#{$prefix}anchor-bottom:after {
                     border-bottom-width: 0;
-                    border-top: calc(#{$anchor-height or $default-calc-value} - #{$border-width or $panel-border-width or $default-calc-value}) solid $body-background-color;
-                    left: calc(-#{$anchor-border-width or $default-calc-value} + #{($border-width * 2) or $default-calc-value});
+                    border-top: $anchor-height solid $body-background-color;
+                    left: calc(-#{$anchor-border-width or $default-calc-value} + #{$border-width or $default-calc-value});
                     bottom: $border-width;
                 }
 
                 .#{$prefix}anchor-left:after {
                     border-left-width: 0;
-                    border-right: calc(#{$anchor-height or $default-calc-value} - #{$border-width or $panel-border-width or $default-calc-value}) solid $body-background-color;
-                    top: calc(-#{$anchor-border-width or $default-calc-value} + #{($border-width * 2) or $default-calc-value});
+                    border-right: $anchor-height solid $body-background-color;
+                    top: calc(-#{$anchor-border-width or $default-calc-value} + #{$border-width or $default-calc-value});
                     left: $border-width;
                 }
 
                 .#{$prefix}anchor-right:after {
                     border-right-width: 0;
-                    border-left: calc(#{$anchor-height or $default-calc-value} - #{$border-width or $panel-border-width or $default-calc-value}) solid $body-background-color;
-                    top: calc(-#{$anchor-border-width or $default-calc-value} + #{($border-width * 2) or $default-calc-value});
+                    border-left: $anchor-height solid $body-background-color;
+                    top: calc(-#{$anchor-border-width or $default-calc-value} + #{$border-width or $default-calc-value});
                     right: $border-width;
                 }
             }
@@ -595,9 +609,7 @@ $panel-anchor-width: dynamic($panel-anchor-height * 2.33);
     }
 
     .x-panel-inner#{$ui-suffix} {
-        @if not is-null($body-padding) {
-            padding: $body-padding;
-        }
+        padding: $body-padding;
         background-color: $body-background-color;
         color: $body-color;
         @include border($body-border-width, $body-border-style, $body-border-color);
@@ -611,6 +623,8 @@ $panel-anchor-width: dynamic($panel-anchor-height * 2.33);
                 @if $body-line-height-big != $body-line-height {
                     line-height: $body-line-height-big;
                 }
+
+                padding: $body-padding-big;
             }
         }
     }
@@ -644,6 +658,8 @@ $panel-anchor-width: dynamic($panel-anchor-height * 2.33);
             opacity: $tool-opacity;
             cursor: $tool-cursor;
             margin-left: $tool-spacing;
+
+            color: $tool-color;
 
             &:hover {
                 opacity: $tool-opacity-over;

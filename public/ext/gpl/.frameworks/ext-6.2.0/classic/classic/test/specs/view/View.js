@@ -206,7 +206,7 @@ describe("Ext.view.View", function() {
                 sm = view.getSelectionModel();
 
                 view.destroy();
-                expect(sm.getStore()).toBeNull();
+                expect(sm.store).toBeNull();
             });
         });
 
@@ -569,7 +569,7 @@ describe("Ext.view.View", function() {
             });
             expect(view.getStore()).toBe(store);
             view.destroy();
-            expect(view.getStore()).toBeNull();
+            expect(view.store).toBeNull();
         });
 
         it("should destroy a load mask", function() {

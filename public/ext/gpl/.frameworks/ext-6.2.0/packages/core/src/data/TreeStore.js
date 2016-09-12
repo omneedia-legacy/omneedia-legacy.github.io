@@ -194,6 +194,7 @@ Ext.define('Ext.data.TreeStore', {
 
     fillCount: 0,
     bulkUpdate: 0,
+    nodesToUnregister: 0,
 
     /**
      * @cfg {Object[]/String[]} fields
@@ -390,8 +391,7 @@ Ext.define('Ext.data.TreeStore', {
             prevVisibleNodeIndex,
             isVisible = node.get('visible'),
             toAdd,
-            removeStart,
-            lastNodeIndexPlus;
+            removeStart;
 
         // If the node visibility flag is not matched by the Store state, correct it.
         // The hidden root node is a special case. That never appears in the flat store
@@ -521,6 +521,10 @@ Ext.define('Ext.data.TreeStore', {
         }
     },
 
+    onCollectionFilter: Ext.emptyFn,
+    // We add listeners to the FilterCollection and do the filtering in a hierarchical
+    // way. We are not interested in notifications as an observer on the data collection.
+
     onFilterEndUpdate: function(filters) {
         var me = this,
             length = filters.length,
@@ -532,7 +536,7 @@ Ext.define('Ext.data.TreeStore', {
             if (length) {
                 me.doFilter(root);
             } else {
-                root.cascadeBy({
+                root.cascade({
                     after: function(node) {
                         // Set visible field silently: do not fire update events to views.
                         // Views will receive refresh event from onNodeFilter.
@@ -867,13 +871,13 @@ Ext.define('Ext.data.TreeStore', {
         // If found, and there are child nodes, do the same operation on the last child
         if (result) {
             if (result.isExpanded() && result.lastChild) {
-                return this.indexOfPreviousVisibleNode(result.lastChild)
+                return this.indexOfPreviousVisibleNode(result.lastChild);
             }
         }
         // If there is no previous visible sibling, we use the parent node.
         // We only even ATTEMPT to insert into the flat store children of visible nodes.
         else {
-            result = node.parentNode
+            result = node.parentNode;
         }
 
         return this.indexOf(result);
@@ -901,6 +905,10 @@ Ext.define('Ext.data.TreeStore', {
 
     getNewRecords: function() {
         return Ext.Array.filter(Ext.Object.getValues(this.byIdMap), this.filterNew, this);
+    },
+
+    getRejectRecords: function() {
+        return Ext.Array.filter(Ext.Object.getValues(this.byIdMap), this.filterRejects, this);
     },
 
     getUpdatedRecords: function() {
@@ -983,7 +991,7 @@ Ext.define('Ext.data.TreeStore', {
         // the above code would only collect "bletch" and "blivit".
         // We now have to collect bletch, zarg, blivit, uk, screeble, raz and poot.
         for (i = 0; i < len; i++) {
-            childNodes[i].cascadeBy(function(node) {
+            childNodes[i].cascade(function(node) {
                 // We have to unregister all descendant nodes.
                 me.unregisterNode(node, true);
 
@@ -1140,10 +1148,25 @@ Ext.define('Ext.data.TreeStore', {
      */
     registerNode: function(node, includeChildren) {
         var me = this,
+            was = me.byIdMap[node.id],
             children, length, i;
 
         // Key the node hash by the node's IDs
         me.byIdMap[node.id] = node;
+
+        // If the node requires to be informed upon register, and is not already
+        // registered, keep it informed.
+        if (node.onRegisterTreeNode && node !== was) {
+            node.onRegisterTreeNode(me)
+        }
+
+        // Keep a count of nodes which require to be informed upon unregister.
+        // If we are destroyed, or change root nodes, a cascade will be
+        // necessary if this is non-zero.
+        if (node.onUnregisterTreeNode) {
+            me.nodesToUnregister++;
+        }
+
         if (includeChildren === true) {
             children = node.childNodes;
             length = children.length;
@@ -1161,6 +1184,7 @@ Ext.define('Ext.data.TreeStore', {
      */
     unregisterNode: function(node, includeChildren) {
         var me = this,
+            was = me.byIdMap[node.id],
             children, length, i;
 
         delete me.byIdMap[node.id];
@@ -1170,6 +1194,13 @@ Ext.define('Ext.data.TreeStore', {
             for (i = 0; i < length; i++) {
                 me.unregisterNode(children[i], true);
             }
+        }
+
+        // If the node requires to be informed upon unregster, and it was
+        // registered, keep it informed.
+        if (node.onUnregisterTreeNode && node === was) {
+            node.onUnregisterTreeNode(me);
+            me.nodesToUnregister--;
         }
     },
 
@@ -1234,9 +1265,6 @@ Ext.define('Ext.data.TreeStore', {
             toRemove,
             removeRange = [];
 
-        // Drop all registered nodes
-        me.byIdMap = {};
-
         // Ensure that the removedNodes array is correct, and that the base class's removed array is null
         me.getTrackRemoved();
 
@@ -1260,6 +1288,11 @@ Ext.define('Ext.data.TreeStore', {
             oldRoot.fireEvent('rootchange', null);
             oldRoot.clearListeners();
             oldRoot.store = oldRoot.treeStore = null;
+
+            // If rootVisible is false, the root will not have been unregistered by
+            // the beforeNodeRemove call which calls a recursive unregister on all
+            // *visible* nodes being removed from the flat store.
+            me.unregisterNode(oldRoot);
         }
 
         me.getData().clear();
@@ -1357,6 +1390,24 @@ Ext.define('Ext.data.TreeStore', {
         me.resumeEvent('add', 'remove');
     },
 
+    doDestroy: function () {
+        var me = this,
+            root = me.getRoot();
+
+        // If we contain some nodes which require to be informed upon unregister
+        // then we must cascade the whole tree and inform any that require it.
+        // The cascade method calls the passed function on the topmost node.
+        if (root && me.nodesToUnregister) {
+            root.cascade(function(node) {
+                if (node.onUnregisterTreeNode) {
+                    node.onUnregisterTreeNode(me);
+                }
+            });
+        }
+
+        me.callParent();
+    },
+
     /**
      * @method getById
      * @inheritdoc Ext.data.LocalStore
@@ -1394,7 +1445,7 @@ Ext.define('Ext.data.TreeStore', {
         }
 
         if (includeCollapsed) {
-            this.getRoot().cascadeBy(function(node) {
+            this.getRoot().cascade(function(node) {
                 if (bypassFilters === true || node.get('visible')) {
                     return fn.call(scope || node, node, i++);
                 }
@@ -1431,7 +1482,7 @@ Ext.define('Ext.data.TreeStore', {
         }
 
         if (includeCollapsed || bypassFilters) {
-            this.getRoot().cascadeBy(function(node) {
+            this.getRoot().cascade(function(node) {
                 if (bypassFilters === true || node.get('visible')) {
                     value = node.get(dataIndex);
                     strValue = String(value);
@@ -1485,7 +1536,7 @@ Ext.define('Ext.data.TreeStore', {
         }
 
         // If they are looking up by the idProperty, do it the fast way.
-        if (value === this.model.idProperty && arguments.length < 3) {
+        if (property === this.model.idProperty && arguments.length < 3) {
             return this.byIdMap[value];
         }
         var regex = Ext.String.createRegex(value, startsWith, endsWith, ignoreCase),
@@ -1806,7 +1857,9 @@ Ext.define('Ext.data.TreeStore', {
             newNodeCount = newNodes ? newNodes.length : 0;
 
         // If we're filling, increment the counter so nodes can react without doing expensive operations
-        ++me.bulkUpdate;
+        if (++me.bulkUpdate === 1) {
+            me.suspendEvent('datachanged');
+        };
         if (newNodeCount) {
             me.setupNodes(newNodes);
         }
@@ -1820,10 +1873,10 @@ Ext.define('Ext.data.TreeStore', {
         if (newNodes.length) {
             node.appendChild(newNodes, undefined, true);
         }
-        --me.bulkUpdate;
-
+        if (!--me.bulkUpdate) {
+            me.resumeEvent('datachanged');
+        }
         // No need to call registerNode here, because each child will register itself as it joins
-
         return newNodes;
     },
 
@@ -1950,6 +2003,7 @@ Ext.define('Ext.data.TreeStore', {
         // Collect all nodes keyed by ID, so that regardless of order, they can all be linked to a parent.
         for (i = 0; i < len; i++) {
             node = records[i];
+            node.data.depth = 1;
             nodeMap[node.id] = node;
         }
 
@@ -1969,6 +2023,7 @@ Ext.define('Ext.data.TreeStore', {
                 parent = nodeMap[parentId];
                 parent.$children = parent.$children || [];
                 parent.$children.push(node);
+                node.data.depth = parent.data.depth + 1;
             }
         }
 

@@ -404,20 +404,50 @@ Ext.define('Ext.toolbar.Paging', {
     },
 
     beforeRender: function() {
+        this.callParent(arguments);
+
+        this.updateBarInfo();
+    },
+
+    onAdded: function (owner) {
         var me = this,
-            store = me.store,
-            ownerCt = me.ownerCt,
-            ownerStore = ownerCt && ownerCt.store;
+            oldStore = me.store,
+            autoStore = me._autoStore,
+            listener, store;
 
-        me.callParent(arguments);
-
-        if (store.isEmptyStore && ownerStore && store !== ownerStore) {
-            // If we are bound to the "empty-store" and we have an owner with a
-            // real store, switch to that store.
-            me.setStore(ownerStore);
+        // When we are added to our first container, if we have no meaningful store,
+        // switch into "autoStore" mode:
+        if (autoStore === undefined) {
+            me._autoStore = autoStore = !(oldStore && !oldStore.isEmptyStore);
         }
 
-        me.updateBarInfo();
+        if (autoStore) {
+            listener = me._storeChangeListener;
+
+            if (listener) {
+                listener.destroy();
+                listener = null;
+            }
+
+            store = owner && owner.store;
+            if (store) {
+                listener = owner.on({
+                    destroyable: true,
+                    scope: me,
+
+                    storechange: 'onOwnerStoreChange'
+                })
+            }
+
+            me._storeChangeListener = listener;
+            me.onOwnerStoreChange(owner, store);
+        }
+
+        me.callParent(arguments);
+    },
+
+    onOwnerStoreChange: function (owner, store) {
+        this.setStore(store || Ext.getStore('ext-empty-store'));
     },
 
     updateBarInfo: function() {
@@ -739,11 +769,17 @@ Ext.define('Ext.toolbar.Paging', {
         }
     },
 
-    /**
-     * @private
-     */
-    onDestroy : function(){
-        this.bindStore(null);
-        this.callParent();
+    doDestroy: function() {
+        var me = this,
+            listener = me._storeChangeListener;
+
+        if (listener) {
+            listener.destroy();
+            me._storeChangeListener = null;
+        }
+
+        me.bindStore(null);
+
+        me.callParent();
     }
 });

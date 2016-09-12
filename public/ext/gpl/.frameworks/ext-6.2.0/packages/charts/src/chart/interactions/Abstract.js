@@ -32,15 +32,7 @@ Ext.define('Ext.chart.interactions.Abstract', {
         /**
          * @cfg {Boolean} enabled 'true' if the interaction is enabled.
          */
-        enabled: true,
-
-        /**
-         * @cfg {String/String[]/Object}
-         * touch-action to apply to the chart when this interaction is in use.
-         *
-         * See {@link Ext.Component#touchAction} for more details.
-         */
-        touchAction: null
+        enabled: true
     },
 
     /**
@@ -70,8 +62,7 @@ Ext.define('Ext.chart.interactions.Abstract', {
     },
 
     updateChart: function (newChart, oldChart) {
-        var me = this,
-            touchAction;
+        var me = this;
 
         if (oldChart === newChart) {
             return;
@@ -83,12 +74,6 @@ Ext.define('Ext.chart.interactions.Abstract', {
         if (newChart) {
             newChart.register(me);
             me.addChartListener();
-
-            touchAction = me.getTouchAction();
-
-            if (touchAction) {
-                newChart.setTouchAction(touchAction);
-            }
         }
     },
 

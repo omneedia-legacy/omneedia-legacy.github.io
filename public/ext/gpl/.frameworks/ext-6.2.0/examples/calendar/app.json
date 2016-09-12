@@ -143,6 +143,7 @@
         "var": [
             "sass/var/all.scss",
             "sass/var",
+            "${toolkit.name}/sass/var/all.scss",
             "${toolkit.name}/sass/var"
         ],
 
@@ -222,9 +223,9 @@
     "classic": {
         "js": [
             // Remove this entry to individually load sources from the framework.
-            {
-                "path": "${framework.dir}/build/ext-all-rtl-debug.js"
-            }
+            //{
+            //    "path": "${framework.dir}/build/ext-all-rtl-debug.js"
+            //}
         ]
     },
 
@@ -234,9 +235,9 @@
     "modern": {
         "js": [
             // Remove this entry to individually load sources from the framework.
-            {
-                "path": "${framework.dir}/build/ext-modern-all-debug.js"
-            }
+            //{
+            //    "path": "${framework.dir}/build/ext-modern-all-debug.js"
+            //}
         ]
     },
 

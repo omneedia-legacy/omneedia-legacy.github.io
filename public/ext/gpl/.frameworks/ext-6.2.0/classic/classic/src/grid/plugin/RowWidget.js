@@ -9,7 +9,8 @@
 Ext.define('Ext.grid.plugin.RowWidget', {
     extend: 'Ext.grid.plugin.RowExpander',
     mixins: [
-        'Ext.mixin.Identifiable'
+        'Ext.mixin.Identifiable',
+        'Ext.mixin.StyleCacher'
     ],
 
     lockableScope: 'top',
@@ -170,12 +171,15 @@ Ext.define('Ext.grid.plugin.RowWidget', {
             id = me.getId();
 
         me.viewListeners.destroy();
+        
         if (me.grid.lockable) {
             me.grid.destroyManagedWidgets(id + '-' + me.lockedView.getId());
             me.grid.destroyManagedWidgets(id + '-' + me.normalView.getId());
         } else {
             me.grid.destroyManagedWidgets(id + '-' + me.view.getId());
         }
+        
+        me.callParent();
     },
 
     privates: {
@@ -231,11 +235,6 @@ Ext.define('Ext.grid.plugin.RowWidget', {
 
         destroyFreeWidget: function(widget) {
             widget.destroy();
-        },
-
-        getCachedStyle: function(el, style) {
-            var cachedStyles = this.cachedStyles;
-            return cachedStyles[style] || (cachedStyles[style] = Ext.fly(el).getStyle(style));
         },
 
         onItemAdd: function(newRecords, startIndex, newItems, view) {
@@ -428,6 +427,10 @@ Ext.define('Ext.grid.plugin.RowWidget', {
             me.view.fireEvent(wasCollapsed ? 'expandbody' : 'collapsebody', rowNode, record, nextBd, widget);
             view.updateLayout();
             Ext.resumeLayouts(true);
+
+            if (me.scrollIntoViewOnExpand && wasCollapsed) {
+                me.grid.ensureVisible(rowIdx);
+            }
         }
     }
 });

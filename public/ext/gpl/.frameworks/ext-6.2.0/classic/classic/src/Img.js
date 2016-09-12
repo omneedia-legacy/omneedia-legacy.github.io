@@ -180,7 +180,7 @@ Ext.define('Ext.Img', {
         }
     },
 
-    onDestroy: function () {
+    doDestroy: function() {
         var me = this,
             imgEl = me.imgEl;
 
@@ -190,6 +190,7 @@ Ext.define('Ext.Img', {
             imgEl.destroy();
         }
         me.imgEl = null;
+        
         me.callParent();
     },
 
@@ -244,6 +245,53 @@ Ext.define('Ext.Img', {
         if (imgEl) {
             imgEl.dom.alt = alt || '';
         }
+    },
+
+    _naturalSize: null,
+
+    /**
+     * Returns the size of the image as an object.
+     * @return {Object} The size and aspect ratio of the image.
+     * @return {Number} return.aspect The aspect ration of the image (`width / height`).
+     * @return {Number} return.height The height of the image.
+     * @return {Number} return.width The width of the image.
+     * @since 6.2.0
+     */
+    getNaturalSize: function () {
+        var me = this,
+            img = me.imgEl,
+            naturalSize = me._naturalSize,
+            style, w, h;
+
+        if (img && !naturalSize) {
+            img = img.dom;
+
+            me._naturalSize = naturalSize = {
+                width: w = img.naturalWidth,
+                height: img.naturalHeight
+            };
+
+            if (!w) {
+                style = img.style;
+
+                w = style.width;
+                h = style.height;
+
+                // As long as the width/height styles are "auto", the IMG dom element
+                // will have "width" and "height" properties that are the natural size.
+                style.width = style.height = 'auto';
+
+                naturalSize.width = img.width;
+                naturalSize.height = img.height;
+
+                style.width = w;
+                style.height = h;
+            }
+
+            naturalSize.aspect = naturalSize.width / naturalSize.height;
+        }
+
+        return naturalSize;
     },
 
     updateSrc: function (src) {

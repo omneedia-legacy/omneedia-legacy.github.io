@@ -22,30 +22,54 @@ Ext.define('Ext.grid.Row', {
     isGridRow: true,
 
     config: {
-        baseCls: Ext.baseCSSPrefix + 'grid-row',
-        expandedCls: Ext.baseCSSPrefix + 'row-expanded',
-
         // Lazy mean if anything calls getter this will be spun up, otherwise it will not
         // update list to not call getHeader unless grouped is true
         header: {
             $value: {
-                xtype: 'component',
-                cls: 'x-grid-header',
-                html: ' '
+                xtype: 'rowheader'
             },
             lazy: true
         },
 
+        /**
+         * @cfg {Object}
+         * A config object for this row's {@link Ext.grid.RowBody Row Body}.
+         * When a {@link Ext.grid.plugin.RowExpander Row Expander} is used all row bodies
+         * begin collapsed, and can be expanded by clicking on the row expander icon.
+         * When no Row Expander is present row bodies are always expanded by default but
+         * can be collapsed programmatically using {@link #collapse}.
+         */
         body: null,
 
-        grid: null
+        grid: null,
+
+        /**
+         * @cfg {String} [expandedField]
+         * The name of a `boolean` field in the grid's record which is to be used to check expanded state.
+         * Note that this field should be `true` to indicate expanded, and `false` to indicate collapsed.
+         * By default the expanded state of a record is stored on the associated `grid` component allowing
+         * that record to have different expand/collapse states on a per-grid basis.
+         */
+        expandedField: null,
+
+        /**
+         * A default {@link #ui ui} to use for {@link Ext.grid.cell.Base cells} in this row.
+         */
+        defaultCellUI: null
     },
+
+    classCls: [
+        Ext.baseCSSPrefix + 'listitem',
+        Ext.baseCSSPrefix + 'gridrow'
+    ],
+
+    expandedCls: Ext.baseCSSPrefix + 'expanded',
 
     element: {
         reference: 'element',
         children: [{
             reference: 'cellsElement',
-            className: Ext.baseCSSPrefix + 'grid-row-cells'
+            className: Ext.baseCSSPrefix + 'cells-el'
         }]
     },
 
@@ -64,29 +88,57 @@ Ext.define('Ext.grid.Row', {
         this.setCollapsed(!this.getCollapsed());
     },
 
+    /**
+     * Collapses the row {@link #body}
+     */
     collapse: function () {
         this.setCollapsed(true);
     },
 
+    /**
+     * Expands the row {@link #body}
+     */
     expand: function () {
         this.setCollapsed(false);
     },
 
     updateCollapsed: function (collapsed) {
-        var body = this.getBody(),
-            grid = this.getGrid(),
-            expandedCls = this.getExpandedCls();
+        var me = this,
+            body = me.getBody(),
+            grid = me.getGrid(),
+            record = me.getRecord(),
+            expandField = me.getExpandedField(),
+            expandedCls = me.expandedCls,
+            recordsExpanded;
+
+        // Set state correctly before any other code executes which may read this.
+        if (record) {
+            // We have to track the state separately, if we are not using a record
+            // field to track expanded state.
+            if (expandField) {
+                record.set(expandField, !collapsed);
+            } else {
+                recordsExpanded = grid.$recordsExpanded || (grid.$recordsExpanded = {});
+                if (collapsed) {
+                    delete recordsExpanded[record.internalId];
+                } else {
+                    recordsExpanded[record.internalId] = true;
+                }
+            }
+        }
 
         if (body) {
             if (collapsed) {
                 body.hide();
-                this.removeCls(expandedCls);
+                me.removeCls(expandedCls);
             } else {
                 body.show();
-                this.addCls(expandedCls);
+                me.addCls(expandedCls);
             }
 
-            grid.onItemHeightChange();
+            if (!me.$updating) {
+                grid.onItemHeightChange();
+            }
         }
     },
 
@@ -115,7 +167,8 @@ Ext.define('Ext.grid.Row', {
     },
 
     updateBody: function (body, oldBody) {
-        var me = this;
+        var me = this,
+            grid = me.getGrid();
 
         if (oldBody) {
             oldBody.destroy();
@@ -123,6 +176,10 @@ Ext.define('Ext.grid.Row', {
 
         if (body) {
             me.innerElement.appendChild(body.element);
+        }
+
+        if (grid && !grid.hasRowExpander) {
+            me.expand();
         }
     },
 
@@ -197,10 +254,12 @@ Ext.define('Ext.grid.Row', {
             return;
         }
 
-        var cells = this.cells,
-            body = this.getBody(),
+        var me = this,
+            cells = me.cells,
+            body = me.getBody(),
             len = cells.length,
-            i, cell;
+            expandField = me.getExpandedField(),
+            i, cell, grid, recordsExpanded;
 
         for (i = 0; i < len; ++i) {
             cell = cells[i];
@@ -212,10 +271,24 @@ Ext.define('Ext.grid.Row', {
         }
 
         if (body) {
+            grid = me.getGrid();
             if (body.getRecord() === record) {
                 body.updateRecord(record);
             } else {
                 body.setRecord(record);
+            }
+
+            // If the plugin knows that the record contains an expanded flag
+            // ensure our state is synchronized with our record.
+            // Maintainer: We are testing the result of the assignment of expandedField
+            // in order to avoid a messy, multiple level if...else.
+            if (expandField) {
+                me.setCollapsed(!record.get(expandField));
+            } else {
+                recordsExpanded = grid.$recordsExpanded || (grid.$recordsExpanded = {});
+                if (grid.hasRowExpander) {
+                    me.setCollapsed(!recordsExpanded[record.internalId]);
+                }
             }
         }
     },
@@ -243,7 +316,7 @@ Ext.define('Ext.grid.Row', {
         return cell.getColumn();
     },
 
-    destroy: function () {
+    doDestroy: function() {
         var me = this;
 
         Ext.destroy(me.getBody());
@@ -264,14 +337,30 @@ Ext.define('Ext.grid.Row', {
         },
 
         getCellCfg: function (column) {
-            return Ext.apply({
-                parent: this,
-                column: column,
-                align: column.getAlign(),
-                record: this.getRecord(),
-                hidden: column.getHidden(),
-                width: column.getComputedWidth() || column.getWidth()
-            }, column.getCell());
+            var me = this,
+                cfg = {
+                    parent: me,
+                    column: column,
+                    record: me.getRecord(),
+                    ui: me.getDefaultCellUI(),
+                    hidden: column.isHidden(me.getGrid().getHeaderContainer()),
+                    width: column.getComputedWidth() || column.getWidth()
+                },
+                align = column.getAlign();
+
+            if (align) {
+                // only put align on the config object if it is not null.  This prevents
+                // the column's default value of null from overriding a value set on the
+                // cell's class definition (e.g. widgetcell)
+                cfg.align = align;
+            }
+
+            return Ext.apply(cfg, me.getColumnCell(column));
+        },
+
+        // Overridden by Summary Row to return getSummaryCell()
+        getColumnCell: function(column) {
+            return column.getCell();
         },
 
         setCellHidden: function (column, hidden) {

@@ -1,13 +1,14 @@
 /* global expect, jasmine, Ext */
 
 describe("Ext.grid.column.Check", function() {
-    var grid, view, store, col;
+    var grid, view, store, col, invert = false;
 
     function getColCfg() {
         return {
             xtype: 'checkcolumn',
             text: 'Checked',
-            dataIndex: 'val'
+            dataIndex: 'val',
+            invert: invert
         };
     }
     
@@ -88,12 +89,26 @@ describe("Ext.grid.column.Check", function() {
             
             expect(hasCls(getCellImg(0), 'x-grid-checkcolumn')).toBe(true);
         });
-        
+
         it("should set the x-grid-checkcolumn-checked class on checked items", function() {
             makeGrid();
-            
+
             expect(hasCls(getCellImg(0), 'x-grid-checkcolumn-checked')).toBe(true);
+            expect(hasCls(getCellImg(1), 'x-grid-checkcolumn-checked')).toBe(true);
             expect(hasCls(getCellImg(2), 'x-grid-checkcolumn-checked')).toBe(false);
+            expect(hasCls(getCellImg(3), 'x-grid-checkcolumn-checked')).toBe(true);
+            expect(hasCls(getCellImg(4), 'x-grid-checkcolumn-checked')).toBe(false);
+        });
+        it("should set the x-grid-checkcolumn-checked class on checked items with invert: true", function() {
+            invert = true;
+            makeGrid();
+            invert = false;
+
+            expect(hasCls(getCellImg(0), 'x-grid-checkcolumn-checked')).toBe(false);
+            expect(hasCls(getCellImg(1), 'x-grid-checkcolumn-checked')).toBe(false);
+            expect(hasCls(getCellImg(2), 'x-grid-checkcolumn-checked')).toBe(true);
+            expect(hasCls(getCellImg(3), 'x-grid-checkcolumn-checked')).toBe(false);
+            expect(hasCls(getCellImg(4), 'x-grid-checkcolumn-checked')).toBe(true);
         });
     });
     
@@ -238,13 +253,26 @@ describe("Ext.grid.column.Check", function() {
                 expect(called).toBe(false);
             });
         });
-        
-        it("should invert the record value", function() {
+
+        it("should toggle the record value", function() {
             makeGrid();
             triggerCellMouseEvent(col.triggerEvent, 0);
             expect(store.getAt(0).get('val')).toBe(false);
+            expect(hasCls(getCellImg(0), 'x-grid-checkcolumn-checked')).toBe(false);
             triggerCellMouseEvent(col.triggerEvent, 2);
             expect(store.getAt(2).get('val')).toBe(true);
+            expect(hasCls(getCellImg(2), 'x-grid-checkcolumn-checked')).toBe(true);
+        });
+        it("should toggle the record value with invert: true", function() {
+            invert = true;
+            makeGrid();
+            invert = false;
+            triggerCellMouseEvent(col.triggerEvent, 0);
+            expect(store.getAt(0).get('val')).toBe(false);
+            expect(hasCls(getCellImg(0), 'x-grid-checkcolumn-checked')).toBe(true);
+            triggerCellMouseEvent(col.triggerEvent, 2);
+            expect(store.getAt(2).get('val')).toBe(true);
+            expect(hasCls(getCellImg(2), 'x-grid-checkcolumn-checked')).toBe(false);
         });
         
         it("should not trigger any changes when disabled", function() {

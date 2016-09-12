@@ -211,7 +211,7 @@ Ext.onReady(function() {
     var patientView = Ext.create('Ext.view.View', {
         cls: 'patient-view',
         tpl: '<tpl for=".">' +
-                '<div class="patient-source"><table><tbody>' +
+                '<div class="patient-source x-unselectable"><table><tbody>' +
                     '<tr><td class="patient-label">Name</td><td class="patient-name">{name}</td></tr>' +
                     '<tr><td class="patient-label">Address</td><td class="patient-name">{address}</td></tr>' +
                     '<tr><td class="patient-label">Telephone</td><td class="patient-name">{telephone}</td></tr>' +

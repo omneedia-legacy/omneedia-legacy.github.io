@@ -1,46 +1,35 @@
-.#{$prefix}check-column {
-    .#{$prefix}innerhtml {
-
-        .#{$prefix}checkcolumn-checkbox:after {
-            display: inline-block;
-            color: #b0b0b0;
-            height: 1em;
-            width: 1em;
-            font-size: 1.24rem;
-            content: "\f096";
-            font: 1.24rem/1 FontAwesome;
-        }
-    }
-}
-
-.#{$prefix}check-column.#{$prefix}checkcolumn-allchecked {
-    .#{$prefix}innerhtml {
-
-        .#{$prefix}checkcolumn-checkbox:after {
-            content: "\f046";
-        }
-    }
-}
-
-.#{$prefix}grid-checkcell {
-
-    .#{$prefix}checkcell-checkbox:after {
-        display: inline-block;
-        color: #b0b0b0;
-        height: 1em;
-        width: 1em;
-        font-size: 1.24rem;
-        content: "\f096";
-        font: 1.24rem/1 FontAwesome;
-    }
-}
-
-.#{$prefix}checkcell-checked {
-
-    .#{$prefix}grid-cell-inner {
-
-        .#{$prefix}checkcell-checkbox:after {
-            content: "\f046";
-        }
-    }
-}
+@include checkcolumn-ui(
+    $color: $checkcolumn-color,
+    $background-color: $checkcolumn-background-color,
+    $sorted-background-color: $checkcolumn-sorted-background-color,
+    $border-width: $checkcolumn-border-width,
+    $border-style: $checkcolumn-border-style,
+    $border-color: $checkcolumn-border-color,
+    $font-weight: $checkcolumn-font-weight,
+    $font-size: $checkcolumn-font-size,
+    $font-size-big: $checkcolumn-font-size-big,
+    $line-height: $checkcolumn-line-height,
+    $line-height-big: $checkcolumn-line-height-big,
+    $font-family: $checkcolumn-font-family,
+    $padding: $checkcolumn-padding,
+    $padding-big: $checkcolumn-padding-big,
+    $sort-icon-margin: $checkcolumn-sort-icon-margin,
+    $sort-icon-margin-big: $checkcolumn-sort-icon-margin-big,
+    $sort-icon-size: $checkcolumn-sort-icon-size,
+    $sort-icon-size-big: $checkcolumn-sort-icon-size-big,
+    $sort-icon-font-size: $checkcolumn-sort-icon-font-size,
+    $sort-icon-font-size-big: $checkcolumn-sort-icon-font-size-big,
+    $sort-icon-color: $checkcolumn-sort-icon-color,
+    $sort-asc-icon: $checkcolumn-sort-asc-icon,
+    $sort-desc-icon: $checkcolumn-sort-desc-icon,
+    $checkbox-size: $checkcolumn-checkbox-size,
+    $checkbox-size-big: $checkcolumn-checkbox-size-big,
+    $checkbox-font-size: $checkcolumn-checkbox-font-size,
+    $checkbox-font-size-big: $checkcolumn-checkbox-font-size-big,
+    $checkbox-icon: $checkcolumn-checkbox-icon,
+    $checked-checkbox-icon: $checkcolumn-checked-checkbox-icon,
+    $checkbox-color: $checkcolumn-checkbox-color,
+    $checked-checkbox-color: $checkcolumn-checked-checkbox-color,
+    $disabled-checkbox-opacity: $checkcolumn-disabled-checkbox-opacity,
+    $disabled-checkbox-color: $checkcolumn-disabled-checkbox-color
+);

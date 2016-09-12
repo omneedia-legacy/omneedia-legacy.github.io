@@ -13,7 +13,7 @@ Ext.define('KitchenSink.view.layout.Accordion', {
     //<example>
     otherContent: [{
         type: 'Controller',
-        path: 'classic/samples/view/Grid/BasicGridController.js'
+        path: 'classic/samples/view/grid/BasicGridController.js'
     }, {
         type: 'Model',
         path: 'classic/samples/model/Company.js'

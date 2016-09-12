@@ -4,13 +4,13 @@
  *
  *  googleApis: { 'calendar': { version: 'v3' } }
  */
-Ext.define('Ext.ux.google.Client', {
+Ext.define('Ext.google.ux.Client', {
     extend: 'Ext.Mixin',
     mixins: [
         'Ext.mixin.Mashup'
     ],
     requiredScripts: [
-        '//apis.google.com/js/client.js?onload=_ext_ux_google_client_initialize_'
+        '//apis.google.com/js/client.js?onload=_ext_google_ux_client_initialize_'
     ],
     statics: {
         getApiVersion: function(api) {
@@ -113,19 +113,19 @@ Ext.define('Ext.ux.google.Client', {
     }
 });
 // See https://developers.google.com/api-client-library/javascript/features/authentication
-_ext_ux_google_client_initialize_ = function() {
+_ext_google_ux_client_initialize_ = function() {
     gapi.auth.init(function() {
-        Ext.ux.google.Client.initialize();
+        Ext.google.ux.Client.initialize();
     });
 };
 
 /**
  * Base proxy for accessing **[Google API](https://developers.google.com/apis-explorer/#p/)** resources.
  */
-Ext.define('Ext.data.google.AbstractProxy', {
+Ext.define('Ext.google.data.AbstractProxy', {
     extend: 'Ext.data.proxy.Server',
     mixins: [
-        'Ext.ux.google.Client'
+        'Ext.google.ux.Client'
     ],
     // TODO: Batch actions
     // https://developers.google.com/api-client-library/javascript/features/batch
@@ -172,7 +172,8 @@ Ext.define('Ext.data.google.AbstractProxy', {
             // BUG: when using the gapi batch feature and trying to modify the same event
             // more than one time, the request partially fails and returns a 502 error.
             // See https://code.google.com/a/google.com/p/apps-api-issues/issues/detail?id=4528
-            // TODO: use the following code once fixed!
+            // TODO: use the following code once fixed! also check that it doesn't break
+            // maxResults limit for event list requests.
             //var batch = gapi.client.newBatch();
             //Ext.Array.each(requests, function(r, i) { batch.add(r, { id: i }); });
             //return batch.execute();
@@ -226,8 +227,8 @@ Ext.define('Ext.data.google.AbstractProxy', {
 /**
  * Proxy to access Google **[event resources](https://developers.google.com/google-apps/calendar/v3/reference/events)**.
  */
-Ext.define('Ext.data.google.EventsProxy', {
-    extend: 'Ext.data.google.AbstractProxy',
+Ext.define('Ext.google.data.EventsProxy', {
+    extend: 'Ext.google.data.AbstractProxy',
     alias: 'proxy.google-events',
     googleApis: {
         'calendar': {
@@ -356,13 +357,30 @@ Ext.define('Ext.data.google.EventsProxy', {
         },
         // See https://developers.google.com/google-apps/calendar/v3/reference/events/list
         buildReadApiRequests: function(request) {
-            var rparams = request.getParams();
-            return gapi.client.calendar.events.list({
-                calendarId: rparams.calendar,
-                timeMin: rparams.startDate,
-                timeMax: rparams.endDate,
-                singleEvents: true
-            });
+            // by default, the API returns max 250 events per request, up to 2500. Since we
+            // don't have control on the min & max requested times, and don't know how many
+            // events will be returned, let's split requests per 3 months and set maxResults
+            // to 2500 (~26 events per day - should be enough!?).
+            var rparams = request.getParams(),
+                start = new Date(rparams.startDate),
+                end = new Date(rparams.endDate),
+                requests = [],
+                next;
+            while (start < end) {
+                next = Ext.Date.add(start, Ext.Date.MONTH, 3);
+                if (next > end) {
+                    next = end;
+                }
+                requests.push(gapi.client.calendar.events.list({
+                    calendarId: rparams.calendar,
+                    timeMin: Ext.Date.format(start, 'C'),
+                    timeMax: Ext.Date.format(next, 'C'),
+                    singleEvents: true,
+                    maxResults: 2500
+                }));
+                start = next;
+            }
+            return requests;
         },
         // https://developers.google.com/google-apps/calendar/v3/reference/events/insert
         buildCreateApiRequests: function(request) {
@@ -417,11 +435,11 @@ Ext.define('Ext.data.google.EventsProxy', {
 /**
  * Proxy to access Google **[calendar resources](https://developers.google.com/google-apps/calendar/v3/reference/calendarList)**.
  */
-Ext.define('Ext.data.google.CalendarsProxy', {
-    extend: 'Ext.data.google.AbstractProxy',
+Ext.define('Ext.google.data.CalendarsProxy', {
+    extend: 'Ext.google.data.AbstractProxy',
     alias: 'proxy.google-calendars',
     requires: [
-        'Ext.data.google.EventsProxy'
+        'Ext.google.data.EventsProxy'
     ],
     googleApis: {
         'calendar': {
@@ -627,6 +645,389 @@ Ext.define('Ext.ux.google.Feeds', {
     requiresGoogle: {
         api: 'feeds',
         nocss: true
+    }
+});
+
+/**
+ * Wraps a Google Map in an Ext.Component using the [Google Maps API](http://code.google.com/apis/maps/documentation/v3/introduction.html).
+ *
+ * This component will automatically include the google maps API script from: 
+ * `//maps.google.com/maps/api/js`
+ *
+ * ## Example
+ *
+ *     Ext.Viewport.add({
+ *         xtype: 'map',
+ *         useCurrentLocation: true
+ *     });
+ */
+Ext.define('Ext.ux.google.Map', {
+    extend: 'Ext.Container',
+    xtype: [
+        'map',
+        'google-map'
+    ],
+    alternateClassName: 'Ext.Map',
+    requires: [
+        'Ext.util.Geolocation'
+    ],
+    mixins: [
+        'Ext.mixin.Mashup'
+    ],
+    requiredScripts: [
+        '//maps.googleapis.com/maps/api/js'
+    ],
+    isMap: true,
+    config: {
+        /**
+         * @event maprender
+         * Fired when Map initially rendered.
+         * @param {Ext.ux.google.Map} this
+         * @param {google.maps.Map} map The rendered google.map.Map instance
+         */
+        /**
+         * @event centerchange
+         * Fired when map is panned around.
+         * @param {Ext.ux.google.Map} this
+         * @param {google.maps.Map} map The rendered google.map.Map instance
+         * @param {google.maps.LatLng} center The current LatLng center of the map
+         */
+        /**
+         * @event typechange
+         * Fired when display type of the map changes.
+         * @param {Ext.ux.google.Map} this
+         * @param {google.maps.Map} map The rendered google.map.Map instance
+         * @param {Number} mapType The current display type of the map
+         */
+        /**
+         * @event zoomchange
+         * Fired when map is zoomed.
+         * @param {Ext.ux.google.Map} this
+         * @param {google.maps.Map} map The rendered google.map.Map instance
+         * @param {Number} zoomLevel The current zoom level of the map
+         */
+        /**
+         * @cfg {String} baseCls
+         * The base CSS class to apply to the Map's element
+         * @accessor
+         */
+        baseCls: Ext.baseCSSPrefix + 'map',
+        /**
+         * @cfg {Boolean/Ext.util.Geolocation} useCurrentLocation
+         * Pass in true to center the map based on the geolocation coordinates or pass a
+         * {@link Ext.util.Geolocation GeoLocation} config to have more control over your GeoLocation options
+         * @accessor
+         */
+        useCurrentLocation: false,
+        /**
+         * @cfg {google.maps.Map} map
+         * The wrapped map.
+         * @accessor
+         */
+        map: null,
+        /**
+         * @cfg {Ext.util.Geolocation} geo
+         * Geolocation provider for the map.
+         * @accessor
+         */
+        geo: null,
+        /**
+         * @cfg {Object} mapOptions
+         * MapOptions as specified by the Google Documentation:
+         * [http://code.google.com/apis/maps/documentation/v3/reference.html](http://code.google.com/apis/maps/documentation/v3/reference.html)
+         * @accessor
+         */
+        mapOptions: {},
+        /**
+         * @cfg {Object} mapListeners
+         * Listeners for any Google Maps events specified by the Google Documentation:
+         * [http://code.google.com/apis/maps/documentation/v3/reference.html](http://code.google.com/apis/maps/documentation/v3/reference.html)
+         *
+         * @accessor
+         */
+        mapListeners: null
+    },
+    constructor: function(config) {
+        this.callParent([
+            config
+        ]);
+        if (!(window.google || {}).maps) {
+            this.setHtml('Google Maps API is required');
+        }
+    },
+    initialize: function() {
+        this.callParent();
+        this.initMap();
+        this.on({
+            painted: 'doResize',
+            scope: this
+        });
+        this.innerElement.on('touchstart', 'onTouchStart', this);
+    },
+    initMap: function() {
+        var map = this.getMap();
+        if (!map) {
+            var gm = (window.google || {}).maps;
+            if (!gm)  {
+                return null;
+            }
+            
+            var element = this.mapContainer,
+                mapOptions = this.getMapOptions(),
+                event = gm.event,
+                me = this;
+            //Remove the API Required div
+            if (element.dom.firstChild) {
+                Ext.fly(element.dom.firstChild).destroy();
+            }
+            if (Ext.os.is.iPad) {
+                Ext.merge({
+                    navigationControlOptions: {
+                        style: gm.NavigationControlStyle.ZOOM_PAN
+                    }
+                }, mapOptions);
+            }
+            mapOptions.mapTypeId = mapOptions.mapTypeId || gm.MapTypeId.ROADMAP;
+            mapOptions.center = mapOptions.center || new gm.LatLng(37.381592, -122.135672);
+            // Palo Alto
+            if (mapOptions.center && mapOptions.center.latitude && !Ext.isFunction(mapOptions.center.lat)) {
+                mapOptions.center = new gm.LatLng(mapOptions.center.latitude, mapOptions.center.longitude);
+            }
+            mapOptions.zoom = mapOptions.zoom || 12;
+            map = new gm.Map(element.dom, mapOptions);
+            this.setMap(map);
+            event.addListener(map, 'zoom_changed', Ext.bind(me.onZoomChange, me));
+            event.addListener(map, 'maptypeid_changed', Ext.bind(me.onTypeChange, me));
+            event.addListener(map, 'center_changed', Ext.bind(me.onCenterChange, me));
+            event.addListenerOnce(map, 'tilesloaded', Ext.bind(me.onTilesLoaded, me));
+            this.addMapListeners();
+        }
+        return this.getMap();
+    },
+    // added for backwards compatibility for touch < 2.3
+    renderMap: function() {
+        this.initMap();
+    },
+    getElementConfig: function() {
+        return {
+            reference: 'element',
+            className: 'x-container',
+            children: [
+                {
+                    reference: 'innerElement',
+                    className: 'x-inner',
+                    children: [
+                        {
+                            reference: 'mapContainer',
+                            className: Ext.baseCSSPrefix + 'map-container'
+                        }
+                    ]
+                }
+            ]
+        };
+    },
+    onTouchStart: function(e) {
+        e.makeUnpreventable();
+    },
+    applyMapOptions: function(options) {
+        return Ext.merge({}, this.options, options);
+    },
+    updateMapOptions: function(newOptions) {
+        var gm = (window.google || {}).maps,
+            map = this.getMap();
+        if (gm && map) {
+            map.setOptions(newOptions);
+        }
+    },
+    doMapCenter: function() {
+        this.setMapCenter(this.getMapOptions().center);
+    },
+    getMapOptions: function() {
+        return Ext.merge({}, this.options || this.getInitialConfig('mapOptions'));
+    },
+    updateUseCurrentLocation: function(useCurrentLocation) {
+        this.setGeo(useCurrentLocation);
+        if (!useCurrentLocation) {
+            this.setMapCenter();
+        }
+    },
+    applyGeo: function(config) {
+        return Ext.factory(config, Ext.util.Geolocation, this.getGeo());
+    },
+    updateGeo: function(newGeo, oldGeo) {
+        var events = {
+                locationupdate: 'onGeoUpdate',
+                locationerror: 'onGeoError',
+                scope: this
+            };
+        if (oldGeo) {
+            oldGeo.un(events);
+        }
+        if (newGeo) {
+            newGeo.on(events);
+            newGeo.updateLocation();
+        }
+    },
+    doResize: function() {
+        var gm = (window.google || {}).maps,
+            map = this.getMap();
+        if (gm && map) {
+            gm.event.trigger(map, "resize");
+        }
+    },
+    /**
+     * @private
+     */
+    onTilesLoaded: function() {
+        this.fireEvent('maprender', this, this.getMap());
+    },
+    /**
+     * @private
+     */
+    addMapListeners: function() {
+        var gm = (window.google || {}).maps,
+            map = this.getMap(),
+            mapListeners = this.getMapListeners();
+        if (gm) {
+            var event = gm.event,
+                me = this,
+                listener, scope, fn, callbackFn, handle;
+            if (Ext.isSimpleObject(mapListeners)) {
+                for (var eventType in mapListeners) {
+                    listener = mapListeners[eventType];
+                    if (Ext.isSimpleObject(listener)) {
+                        scope = listener.scope;
+                        fn = listener.fn;
+                    } else if (Ext.isFunction(listener)) {
+                        scope = null;
+                        fn = listener;
+                    }
+                    if (fn) {
+                        callbackFn = function() {
+                            this.fn.apply(this.scope, [
+                                me
+                            ]);
+                            if (this.handle) {
+                                event.removeListener(this.handle);
+                                delete this.handle;
+                                delete this.fn;
+                                delete this.scope;
+                            }
+                        };
+                        handle = event.addListener(map, eventType, Ext.bind(callbackFn, callbackFn));
+                        callbackFn.fn = fn;
+                        callbackFn.scope = scope;
+                        if (listener.single === true)  {
+                            callbackFn.handle = handle;
+                        }
+                        
+                    }
+                }
+            }
+        }
+    },
+    /**
+     * @private
+     */
+    onGeoUpdate: function(geo) {
+        if (geo) {
+            this.setMapCenter(new google.maps.LatLng(geo.getLatitude(), geo.getLongitude()));
+        }
+    },
+    /**
+     * @method
+     * @private
+     */
+    onGeoError: Ext.emptyFn,
+    /**
+     * Moves the map center to the designated coordinates hash of the form:
+     *
+     *     { latitude: 37.381592, longitude: -122.135672 }
+     *
+     * or a google.maps.LatLng object representing to the target location.
+     *
+     * @param {Object/google.maps.LatLng} coordinates Object representing the desired Latitude and
+     * longitude upon which to center the map.
+     */
+    setMapCenter: function(coordinates) {
+        var me = this,
+            map = me.getMap(),
+            mapOptions = me.getMapOptions(),
+            gm = (window.google || {}).maps;
+        if (gm) {
+            if (!coordinates) {
+                if (map && map.getCenter) {
+                    coordinates = map.getCenter();
+                } else if (mapOptions.hasOwnProperty('center')) {
+                    coordinates = mapOptions.center;
+                } else {
+                    coordinates = new gm.LatLng(37.381592, -122.135672);
+                }
+            }
+            // Palo Alto
+            if (coordinates && !(coordinates instanceof gm.LatLng) && 'longitude' in coordinates) {
+                coordinates = new gm.LatLng(coordinates.latitude, coordinates.longitude);
+            }
+            if (!map) {
+                mapOptions.center = mapOptions.center || coordinates;
+                me.renderMap();
+                map = me.getMap();
+            }
+            if (map && coordinates instanceof gm.LatLng) {
+                map.panTo(coordinates);
+            } else {
+                this.options = Ext.apply(this.getMapOptions(), {
+                    center: coordinates
+                });
+            }
+        }
+    },
+    /**
+     * @private
+     */
+    onZoomChange: function() {
+        var mapOptions = this.getMapOptions(),
+            map = this.getMap(),
+            zoom;
+        zoom = (map && map.getZoom) ? map.getZoom() : mapOptions.zoom || 10;
+        this.options = Ext.apply(mapOptions, {
+            zoom: zoom
+        });
+        this.fireEvent('zoomchange', this, map, zoom);
+    },
+    /**
+     * @private
+     */
+    onTypeChange: function() {
+        var mapOptions = this.getMapOptions(),
+            map = this.getMap(),
+            mapTypeId;
+        mapTypeId = (map && map.getMapTypeId) ? map.getMapTypeId() : mapOptions.mapTypeId;
+        this.options = Ext.apply(mapOptions, {
+            mapTypeId: mapTypeId
+        });
+        this.fireEvent('typechange', this, map, mapTypeId);
+    },
+    /**
+     * @private
+     */
+    onCenterChange: function() {
+        var mapOptions = this.getMapOptions(),
+            map = this.getMap(),
+            center;
+        center = (map && map.getCenter) ? map.getCenter() : mapOptions.center;
+        this.options = Ext.apply(mapOptions, {
+            center: center
+        });
+        this.fireEvent('centerchange', this, map, center);
+    },
+    doDestroy: function() {
+        Ext.destroy(this.getGeo());
+        var map = this.getMap();
+        if (map && (window.google || {}).maps) {
+            google.maps.event.clearInstanceListeners(map);
+        }
+        this.callParent();
     }
 });
 

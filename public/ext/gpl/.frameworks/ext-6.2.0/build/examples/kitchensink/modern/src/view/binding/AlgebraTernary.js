@@ -6,6 +6,8 @@ Ext.define('KitchenSink.view.binding.AlgebraTernary', {
     alias: 'widget.binding-algebra-ternary',
 
     bodyPadding: 10,
+    shadow: true,
+    cls: 'demo-solid-background',
 
     viewModel: {
         type: 'default',

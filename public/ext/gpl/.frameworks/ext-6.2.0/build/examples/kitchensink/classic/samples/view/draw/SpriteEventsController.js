@@ -4,7 +4,7 @@ Ext.define('KitchenSink.view.draw.SpriteEventsController', {
 
     onSpriteClick: function (item, event) {
         var sprite = item && item.sprite,
-            color = Ext.draw.Color.create(
+            color = Ext.util.Color.create(
                 Math.random() * 255,
                 Math.random() * 255,
                 Math.random() * 255

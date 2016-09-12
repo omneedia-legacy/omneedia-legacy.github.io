@@ -8,6 +8,13 @@ Ext.define('KitchenSink.view.calendar.Month', {
         'Ext.calendar.List'
     ],
 
+    // <example>
+    otherContent: [{
+        type: 'Store',
+        path: 'samples/data/calendar/Month.js'
+    }],
+    // </example>
+
     viewModel: {
         data: {
             value: Ext.Date.getFirstDateOfMonth(new Date())
@@ -23,6 +30,8 @@ Ext.define('KitchenSink.view.calendar.Month', {
             }
         }
     },
+
+    shadow: true,
 
     layout: {
         type: 'hbox',
@@ -57,4 +66,4 @@ Ext.define('KitchenSink.view.calendar.Month', {
         }
     }]
 
-})
+});

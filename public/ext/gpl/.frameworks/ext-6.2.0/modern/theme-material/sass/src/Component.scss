@@ -10,11 +10,13 @@ require("../extensions/string.js");
     --base-dark-color: export;
     --base-pressed-color: export;
     --base-invisible-color: export;
+    --base-foreground-color: export;
     --accent-color: export;
     --accent-light-color: export;
     --accent-dark-color: export;
     --accent-pressed-color: export;
     --accent-invisible-color: export;
+    --accent-foreground-color: export;
     --confirm-color: export;
     --confirm-pressed-color: export;
     --alert-color: export;
@@ -28,10 +30,13 @@ require("../extensions/string.js");
     --reverse-disabled-color: export;
     --reverse-divider-color: export;
     --background-color: export;
-    --background-light-color: export;
+    --alt-background-color: export;
+    --reverse-background-color: export;
+    --reverse-alt-background-color: export;
     --faded-color: export;
     --overlay-color: export;
     --content-padding: export;
+    --listitem-selected-background-color: export;
   }
 }
 
@@ -47,11 +52,6 @@ require("../extensions/string.js");
       }
     }
   }
-}
-
-// Icon Styles
-.md-icon {
-  @include material-icon-style();
 }
 
 // Add all the icons
@@ -116,10 +116,6 @@ $roboto-path: $font-path + '/roboto';
   src: local('Material Icons'),
   local('MaterialIcons-Regular'),
   url($font-path + '/MaterialIcons-Regular.ttf') format('truetype');
-}
-
-.material-icons {
-  @include material-icon-style();
 }
 
 html, body {

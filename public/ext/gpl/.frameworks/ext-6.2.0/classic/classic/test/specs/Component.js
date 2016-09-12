@@ -1264,15 +1264,7 @@ describe("Ext.Component", function(){
         });
 
         afterEach(function() {
-            if (cmp) {
-                cmp.destroy();
-            }
-            if (parent) {
-                parent.destroy();
-            }
-            if (grandparent) {
-                grandparent.destroy();
-            }
+            cmp = parent = grandparent = Ext.destroy(cmp, parent, grandparent);
         });
 
         describe("listener declared on class body", function() {
@@ -5774,6 +5766,34 @@ describe("Ext.Component", function(){
             
         });
     });
+
+    describe("findParentBy", function () {
+        var ct;
+
+        describe("findParentByType", function () {
+            beforeEach(function() {
+                ct = new Ext.toolbar.Toolbar({
+                    renderTo: document.body
+                });
+                makeComponent({
+                    renderTo: null
+                });
+                ct.add(c);
+            });
+
+            afterEach(function(){
+                ct.destroy();
+            });
+
+            it("should find by xtype", function() {
+                expect(c.findParentByType('toolbar')).toBe(ct);
+            });
+
+            it("should find by class", function() {
+                expect(c.findParentByType(Ext.toolbar.Toolbar)).toBe(ct);
+            });
+        });
+    });
     
     describe("nextSibling", function(){
         var ct;
@@ -9533,14 +9553,6 @@ describe("Ext.Component", function(){
     });
     
     describe("ARIA attributes", function() {
-        function expectAttr(attr, value) {
-            jasmine.expectAriaAttr(c, attr, value);
-        }
-        
-        function expectNoAttr(attr) {
-            jasmine.expectNoAriaAttr(c, attr);
-        }
-        
         describe("static roles", function() {
             function createSuite(role) {
                 describe(role, function() {
@@ -9553,39 +9565,39 @@ describe("Ext.Component", function(){
                     
                     describe('aria-hidden', function() {
                         it("should not be present after render", function() {
-                            expectNoAttr('aria-hidden');
+                            expect(c).not.toHaveAttr('aria-hidden');
                         });
                         
                         it("should not be present after hiding", function() {
                             c.hide();
                             
-                            expectNoAttr('aria-hidden');
+                            expect(c).not.toHaveAttr('aria-hidden');
                         });
                         
                         it("should not be present after showing", function() {
                             c.hide();
                             c.show();
                             
-                            expectNoAttr('aria-hidden');
+                            expect(c).not.toHaveAttr('aria-hidden');
                         });
                     });
                     
                     describe('aria-disabled', function() {
                         it("should not be present after render", function() {
-                            expectNoAttr('aria-disabled');
+                            expect(c).not.toHaveAttr('aria-disabled');
                         });
                         
                         it("should not be present after disabling", function() {
                             c.disable();
                             
-                            expectNoAttr('aria-disabled');
+                            expect(c).not.toHaveAttr('aria-disabled');
                         });
                         
                         it("should not be present after enabling", function() {
                             c.disable();
                             c.enable();
                             
-                            expectNoAttr('aria-disabled');
+                            expect(c).not.toHaveAttr('aria-disabled');
                         });
                     });
                 });
@@ -9606,39 +9618,39 @@ describe("Ext.Component", function(){
             
             describe("aria-hidden", function() {
                 it("should be false after render", function() {
-                    expectAttr('aria-hidden', 'false');
+                    expect(c).toHaveAttr('aria-hidden', 'false');
                 });
             
                 it("should be true after hiding", function() {
                     c.hide();
                 
-                    expectAttr('aria-hidden', 'true');
+                    expect(c).toHaveAttr('aria-hidden', 'true');
                 });
             
                 it("should be false again after showing", function() {
                     c.hide();
                     c.show();
                 
-                    expectAttr('aria-hidden', 'false');
+                    expect(c).toHaveAttr('aria-hidden', 'false');
                 });
             });
         
             describe("aria-disabled", function() {
                 it("should be false after render", function() {
-                    expectAttr('aria-disabled', 'false');
+                    expect(c).toHaveAttr('aria-disabled', 'false');
                 });
             
                 it("should be true after disabling", function() {
                     c.disable();
                 
-                    expectAttr('aria-disabled', 'true');
+                    expect(c).toHaveAttr('aria-disabled', 'true');
                 });
             
                 it("should be false again after enabling", function() {
                     c.disable();
                     c.enable();
                 
-                    expectAttr('aria-disabled', 'false');
+                    expect(c).toHaveAttr('aria-disabled', 'false');
                 });
             });
         });

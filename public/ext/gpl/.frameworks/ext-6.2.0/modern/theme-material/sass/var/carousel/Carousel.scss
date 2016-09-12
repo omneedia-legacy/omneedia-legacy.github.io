@@ -3,11 +3,10 @@ $carousel-indicator-spacing: dynamic(3px);
 $carousel-indicator-border-radius: dynamic(50%);
 $carousel-indicator-active-size: dynamic(16px);
 
-// Private variables
 @mixin carousel-light-ui {
   @include sencha-carousel-indicator-ui(
   $ui-label: 'light',
-  $color: $disabled-color,
+  $color: $reverse-disabled-color,
   $active-color: $base-color
   )
 }

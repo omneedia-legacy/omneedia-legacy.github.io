@@ -1,40 +1,4 @@
-@mixin material-icon($icon, $pseudo: 'after') {
-  @include material-icon-style($pseudo);
-  &::#{$pseudo} {
-    content: '#{$icon}';
-  }
-}
-
-@mixin material-icon-style($pseudo: 'after') {
-  &::#{$pseudo} {
-    font-family: 'Material Icons';
-    font-weight: normal;
-    font-style: normal;
-    font-size: 24px; /* Preferred icon size */
-    display: inline-block;
-    width: 1em;
-    height: 1em;
-    line-height: 1;
-    text-transform: none;
-    letter-spacing: normal;
-    word-wrap: normal;
-    white-space: nowrap;
-    direction: ltr;
-
-    /* Support for all WebKit browsers. */
-    -webkit-font-smoothing: antialiased;
-    /* Support for Safari and Chrome. */
-    text-rendering: optimizeLegibility;
-
-    /* Support for Firefox. */
-    -moz-osx-font-smoothing: grayscale;
-
-    /* Support for IE. */
-    font-feature-settings: 'liga';
-  }
-}
-
-@mixin material-icon-class($name, $pseudo: 'after') {
+@mixin material-icon-class($name, $pseudo: 'before') {
   // Convert to dashes so we can write everything dash-like (eg 3d_rotation === 3d-rotation)
   $dash-name: str-replace-regex($name, '_', '-', true);
 

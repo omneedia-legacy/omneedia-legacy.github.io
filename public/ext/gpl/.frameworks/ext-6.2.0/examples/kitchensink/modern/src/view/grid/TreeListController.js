@@ -13,7 +13,7 @@ Ext.define('KitchenSink.view.grid.TreeListController', {
             navBtn.setPressed(true);
             navBtn.disable();
             this.oldWidth = treelist.getWidth();
-            treelist.setWidth(44);
+            treelist.setWidth(this.measureWidth(treelist));
         } else {
             treelist.setWidth(this.oldWidth);
             navBtn.enable();
@@ -25,5 +25,9 @@ Ext.define('KitchenSink.view.grid.TreeListController', {
 
         treelist.setExpanderFirst(!pressed);
         treelist.setUi(pressed ? 'nav' : null);
+    },
+
+    measureWidth: function(treelist) {
+        return treelist.toolsElement.getWidth();
     }
 });

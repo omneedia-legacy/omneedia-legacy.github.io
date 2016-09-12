@@ -13,7 +13,9 @@ $picker-item-height-big: dynamic(2.46em);
 $picker-item-padding: dynamic(0 .6em);
 $picker-item-font-weight: dynamic(null);
 $picker-item-font-size: dynamic(null);
+$picker-item-font-size-big: dynamic(null);
 $picker-item-font-line-height: dynamic(null);
+$picker-item-font-line-height-big: dynamic(null);
 $picker-item-font-family: dynamic(null);
 
 $picker-bar-border-width: dynamic(null);
@@ -43,8 +45,12 @@ $picker-with-title-bar-margin: dynamic($picker-title-height 0 0 0);
 
 $picker-title-font-weight: dynamic(null);
 $picker-title-font-size: dynamic(null);
+$picker-title-font-size-big: dynamic(null);
 $picker-title-font-line-height: dynamic(null);
+$picker-title-font-line-height-big: dynamic(null);
 $picker-title-font-family: dynamic(null);
 
 $picker-item-selected-color: dynamic(null);
+$picker-item-selected-font-weight: dynamic($font-weight-bold);
 $picker-item-selected-font-size: dynamic(null);
+$picker-item-selected-font-size-big: dynamic(null);

@@ -9,10 +9,14 @@ Ext.define('Ext.util.translatable.CssTransform', {
     isCssTransform: true,
 
     doTranslate: function(x, y) {
-        var element = this.getElement();
-        if (!this.destroyed && !element.destroyed) {
+        var me = this,
+            element = me.getElement();
+
+        if (!me.destroyed && !element.destroyed) {
             element.translate(x, y);
         }
+
+        me.callParent([x, y]);
     },
 
     destroy: function() {

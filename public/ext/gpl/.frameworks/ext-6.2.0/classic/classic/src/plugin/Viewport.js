@@ -196,7 +196,7 @@ Ext.define('Ext.plugin.Viewport', {
                     }
                 },
 
-                beforeDestroy: function(){
+                doDestroy: function() {
                     var me = this,
                         root = Ext.rootInheritedState,
                         key;
@@ -213,6 +213,7 @@ Ext.define('Ext.plugin.Viewport', {
                     me.removeUIFromElement();
                     me.el.removeCls(me.baseCls);
                     Ext.fly(document.body.parentNode).removeCls(me.viewportCls);
+                    
                     me.callParent();
                 },
 

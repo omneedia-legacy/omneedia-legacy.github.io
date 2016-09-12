@@ -154,12 +154,16 @@ Ext.define('Ext.form.RadioGroup', {
     
     checkChange: function() {
         var me = this,
-            value = me.getValue(),
-            key = Ext.Object.getKeys(value)[0];
+            value, key;
+        
+        value = me.getValue();
+
+        // Safari might throw an exception on trying to get the keys of a Number
+        key = typeof value === 'object' && Ext.Object.getKeys(value)[0];
             
         // If the value is an array we skip out here because it's during a change
         // between multiple items, so we never want to fire a change
-        if (me.simpleValue || !Ext.isArray(value[key])) {
+        if (me.simpleValue || (key && !Ext.isArray(value[key]))) {
             me.callParent(arguments);
         }
     },

@@ -1113,7 +1113,9 @@ Ext.define('Ext.grid.feature.Grouping', {
      * @private
      */
     onGroupMousedown: function(view, rowElement, groupName, e) {
-        e.preventDefault();
+        if (e.pointerType === 'mouse') {
+            e.preventDefault();
+        }
     },
 
     /**
@@ -1329,6 +1331,7 @@ Ext.define('Ext.grid.feature.Grouping', {
             updateSummaryRow = me.updateSummaryRow,
             data = {},
             ownerCt = me.view.ownerCt,
+            columnsChanged = me.didColumnsChange(),
             i, len, group, metaGroup, record, hasRemote, remoteData;
 
         /**
@@ -1346,7 +1349,7 @@ Ext.define('Ext.grid.feature.Grouping', {
             metaGroup = me.getMetaGroup(group);
 
             // Something has changed or it doesn't exist, populate it.
-            if (updateSummaryRow || hasRemote || store.updating || me.grid.reconfiguring || me.didGroupChange(group, metaGroup, filters)) {
+            if (updateSummaryRow || hasRemote || store.updating || me.grid.reconfiguring || columnsChanged || me.didGroupChange(group, metaGroup, filters)) {
                 record = me.populateRecord(group, metaGroup, remoteData);
 
                 // Clear the dirty state of the group if this is the only Summary, or this is the right hand (normal grid's) summary.
@@ -1444,12 +1447,12 @@ Ext.define('Ext.grid.feature.Grouping', {
         me.view = me.prunedHeader = me.grid = me.dataSource = me.groupers = null;
         me.invalidateCache();
 
-        me.callParent();
-
-        if (dataSource) {
+        if (dataSource && !dataSource.destroyed) {
             dataSource.bindStore(null);
             Ext.destroy(dataSource);
         }
+        
+        me.callParent();
     },
 
     beforeReconfigure: function(grid, store, columns, oldStore, oldColumns) {
@@ -1543,6 +1546,15 @@ Ext.define('Ext.grid.feature.Grouping', {
                 ret = metaGroup.lastGroupGeneration !== group.generation || metaGroup.lastFilterGeneration !== filters.generation;
             }
             return ret;
+        },
+
+        didColumnsChange: function() {
+            var me = this,
+                result = (me.view.headerCt.items.generation !== me.lastHeaderCtGeneration);
+
+            me.lastHeaderCtGeneration = me.view.headerCt.items.generation;
+            
+            return result;
         },
 
         setupStoreListeners: function(store) {

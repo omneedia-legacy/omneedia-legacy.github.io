@@ -13,7 +13,7 @@ describe('Ext.Action', function() {
     }
 
     afterEach(function () {
-        panel = action = cmp1 = cmp2 = Ext.destroy(panel, action, cmp1, cmp2);
+        panel = action = cmp1 = cmp2 = Ext.destroy(panel, cmp1, cmp2, action);
     });
 
     describe('invoking Action handlers on click', function() {

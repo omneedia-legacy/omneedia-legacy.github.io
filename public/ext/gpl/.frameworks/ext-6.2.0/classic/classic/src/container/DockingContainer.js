@@ -160,7 +160,7 @@ Ext.define('Ext.container.DockingContainer', {
 
         var me = renderData.$comp,
             layout = me.componentLayout,
-            tabGuard = me.tabGuard && me.getTpl('tabGuardTpl'),
+            tabGuard = me.tabGuard && me.lookupTpl('tabGuardTpl'),
             items, tree;
 
         if (layout.getDockedItems) {

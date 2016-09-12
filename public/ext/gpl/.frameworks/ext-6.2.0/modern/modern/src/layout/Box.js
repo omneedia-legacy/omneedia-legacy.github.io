@@ -54,7 +54,15 @@ Ext.define('Ext.layout.Box', {
          *
          * @accessor
          */
-        pack: 'start'
+        pack: 'start',
+
+        /**
+         * @cfg {Boolean} vertical
+         * `true` to layout items vertically, otherwise horizontally.
+         *
+         * @since 6.2.0
+         */
+        vertical: false
     },
 
     alias: 'layout.tablebox',
@@ -69,6 +77,10 @@ Ext.define('Ext.layout.Box', {
         container.on('flexchange', 'onItemFlexChange', this, {
             delegate: '> component'
         });
+    },
+
+    updateVertical: function(vertical) {
+        this.setOrient(vertical ? 'vertical' : 'horizontal');
     },
 
     onItemFlexChange: Ext.emptyFn

@@ -16,11 +16,7 @@ Ext.define('KitchenSink.view.calendar.ValidationController', {
         o.validate = o.validate.then(function() {
             return new Ext.Promise(function(resolve, reject) {
                 Ext.Msg.confirm('Are you sure', 'Allow the action to go ahead?', function(btn) {
-                    if (btn === 'yes') {
-                        resolve();
-                    } else {
-                        reject();
-                    }
+                    resolve(btn === 'yes');
                 });
             });
         });

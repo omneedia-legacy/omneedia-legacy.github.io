@@ -9,9 +9,21 @@ Ext.define('KitchenSink.view.chart.Pie', {
         'Ext.chart.interactions.Rotate'
     ],
 
+    // <example>
+    otherContent: [{
+        type: 'Controller',
+        path: 'modern/src/view/chart/ChartController.js'
+    }, {
+        type: 'Store',
+        path: 'modern/src/store/Pie.js' 
+    }],
+    // </example>
+    
     controller: 'chart',
 
     layout: 'fit',
+    shadow: true,
+
     items: [{
         xtype: 'toolbar',
         docked: 'top',
@@ -26,9 +38,6 @@ Ext.define('KitchenSink.view.chart.Pie', {
             iconCls: 'x-fa fa-refresh',
             text: 'Refresh',
             handler: 'onRefresh'
-        }, {
-            text: 'Reset',
-            handler: 'onReset'
         }]
     }, {
         xtype: 'polar',

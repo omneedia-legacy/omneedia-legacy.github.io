@@ -56,6 +56,7 @@ Ext.define('Ext.event.publisher.Gesture', {
         me.changedTouches = [];
         me.recognizers = [];
         me.eventToRecognizer = {};
+        me.cancelEvents = [];
 
         if (supportsTouchEvents) {
             // bind handlers that are only invoked when the browser has touchevents
@@ -122,11 +123,14 @@ Ext.define('Ext.event.publisher.Gesture', {
         me.recognizers.push(recognizer);
     },
 
-    onRecognized: function(eventName, e, info) {
+    onRecognized: function(recognizer, eventName, e, info, isCancel) {
         var me = this,
+            touches = e.touches,
             changedTouches = e.changedTouches,
             ln = changedTouches.length,
             events = me.events,
+            queueWasEmpty = !events.length,
+            cancelEvents = me.cancelEvents,
             targetGroups, targets, i, touch;
 
         info = info || {};
@@ -176,9 +180,18 @@ Ext.define('Ext.event.publisher.Gesture', {
             me.gestureTargets = targets;
         }
 
-        events.push(e);
+        if (isCancel && recognizer.isSingleTouch && (touches.length > 1)) {
+            // single touch recognizer cancelled by the start of a second touch.
+            // push into a separate queue which does not use the targets common to all
+            // touches (this.gestureTargets) as the targets for publishing but rather
+            // only uses the targets for the initial touch.
+            e.target = touches[0].target;
+            cancelEvents.push(e);
+        } else {
+            events.push(e);
+        }
 
-        if (events.length === 1) {
+        if (queueWasEmpty) {
             // if there were no events in the queue previously, it means the dom event
             // has already been published, which means a recognizer must have recognized
             // a gesture asynchronously (e.g. singletap fires on a timer)
@@ -311,16 +324,24 @@ Ext.define('Ext.event.publisher.Gesture', {
 
     publishGestures: function(claimed) {
         var me = this,
+            cancelEvents = me.cancelEvents,
             events = me.events,
             gestureTargets = me.gestureTargets;
 
-        // Reset the events variable to an empty array since since events may be added
-        // to the array during publishing. This can happen if an event is claimed, thus
-        // triggering "cancel" gesture events.
-        me.events = [];
-        me.gestureTargets = null;
+        if (cancelEvents.length) {
+            me.cancelEvents = [];
+            // Since cancellation events cannot be claimed we pass true here which
+            // prevents them from being claimed.
+            me.publish(cancelEvents, me.getPropagatingTargets(cancelEvents[0].target), true);
+        }
 
         if (events.length) {
+            // It is important to reset the events property to an empty array before
+            // publishing since since events may be added to the array during publishing.
+            // This can happen if an event is claimed, thus triggering "cancel" gesture events.
+            me.events = [];
+            me.gestureTargets = null;
+
             me.publish(events, gestureTargets || me.getPropagatingTargets(events[0].target), claimed);
         }
     },
@@ -600,6 +621,8 @@ Ext.define('Ext.event.publisher.Gesture', {
         me.changedTouches = [];
         me.isStarted = false;
         me.gestureTargets = null;
+        me.events = [];
+        me.cancelEvents = [];
 
         for (i = 0; i < ln; i++) {
             recognizer = recognizers[i];

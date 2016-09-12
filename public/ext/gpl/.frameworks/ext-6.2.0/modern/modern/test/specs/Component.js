@@ -27,6 +27,45 @@ describe('Ext.Component', function() {
         component = Ext.destroy(component);
     });
 
+    describe('configuration', function() {
+        it('should not fire show/hide events during configuration', function() {
+            var beforeShowCalled = false,
+                showCalled = false,
+                beforeHideCalled = false,
+                hideCalled = false,
+                InstrumentedComponent = Ext.define(null, {
+                    extend: 'Ext.Component',
+
+                    fireEvent: function(eventName) {
+                        if (eventName === 'beforeshow') {
+                            beforeShowCalled = true;
+                        }
+                        if (eventName === 'show') {
+                            showCalled = true;
+                        }
+                        if (eventName === 'beforehide') {
+                            beforeHideCalled = true;
+                        }
+                        if (eventName === 'hide') {
+                            hideCalled = true;
+                        }
+                        this.callParent(arguments);
+                    }
+                });
+
+            component = new InstrumentedComponent();
+            Ext.destroy(component);
+            // "hide" is fired during destroy
+            hideCalled = false;
+            component = new InstrumentedComponent({hidden: true});
+
+            expect(beforeShowCalled).toBe(false);
+            expect(showCalled).toBe(false);
+            expect(beforeHideCalled).toBe(false);
+            expect(hideCalled).toBe(false);
+        });
+    });
+
     describe("bind", function() {
         describe("defaultBindProperty", function() {
             it("should bind with a string", function() {
@@ -1651,6 +1690,37 @@ describe('Ext.Component', function() {
             cmp.destroy();
 
             expect(isFired).toBe(true);
+        });
+
+        it("should destroy the animations when destroying the component", function() {
+            var cmp = makeComponent({
+                renderTo: Ext.getBody(),
+                showAnimation: {
+                    type: 'slideIn',
+                    duration: 250,
+                    easing: 'ease-out'
+                },
+
+                hideAnimation: {
+                    type: 'slideOut',
+                    duration: 250,
+                    easing: 'ease-in'
+                },
+                modal: true,
+                floated: true,
+                html: 'Test'
+            }),
+            showAnim = cmp.getShowAnimation(),
+            hideAnim = cmp.getHideAnimation();
+
+            cmp.show();
+            cmp.hide();
+
+            spyOn(showAnim, 'destroy');
+            spyOn(hideAnim, 'destroy');
+            cmp.destroy();
+            expect(showAnim.destroy).toHaveBeenCalled();
+            expect(hideAnim.destroy).toHaveBeenCalled();
         });
     });
 

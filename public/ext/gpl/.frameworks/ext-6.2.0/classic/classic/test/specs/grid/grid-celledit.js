@@ -957,9 +957,13 @@ describe("grid-celledit", function(){
 
                     it("should pass new value and old value in context", function() {
                         var spy = jasmine.createSpy(),
-                            callContext;
+                            callContext, value, originalValue;
 
-                        plugin.on('validateedit', spy);
+                        plugin.on('validateedit', function(ed, ctx) {
+                            spy.call(this, ed, ctx);
+                            value = ctx.value;
+                            originalValue = ctx.originalValue;
+                        });
 
                         startEditing(0,0);
 
@@ -975,8 +979,10 @@ describe("grid-celledit", function(){
                         runs(function(){
                             expect(spy.callCount).toBe(1);
                             callContext = spy.mostRecentCall.object.context;
-                            expect(callContext.value).toBe('foo');
-                            expect(callContext.originalValue).toBe('1.1');
+                            expect(value).toBe('foo');
+                            expect(callContext.value).toBe(value);
+                            expect(originalValue).toBe('1.1');
+                            expect(callContext.originalValue).toBe(originalValue);
                         });
                     });
                 });
@@ -1039,7 +1045,6 @@ describe("grid-celledit", function(){
                     });
                     
                     it("should update the value in the model", function(){
-
                         startEditing(0,0);
                         runs(function() {
                             plugin.getActiveEditor().field.setValue('foo');
@@ -1052,6 +1057,26 @@ describe("grid-celledit", function(){
                         
                         runs(function() {
                             expect(getRec(0).get('field1')).toBe('foo');
+                        });
+                    });
+
+                    it("should be able to refresh the view on edit", function() {
+                        plugin.on('edit', function() {
+                            grid.getView().refreshView();
+                        });
+
+                        startEditing(0,0);
+
+                        runs(function(){
+                            jasmine.fireKeyEvent(plugin.getActiveEditor().field.inputEl, 'keydown', ENTER);
+                        });
+
+                        waitsFor(function () {
+                            return !plugin.editing;
+                        });
+
+                        runs(function() {
+                            expect(view.actionableMode).toBe(false);
                         });
                     });
                 });

@@ -261,6 +261,33 @@ Ext.define('Ext.view.NodeCache', {
         return -1;
     },
 
+    clip: function(removeEnd, removeCount) {
+        var me = this,
+            elements = me.elements,
+            removed = [],
+            start, end, el, i;
+
+        // Clipping from start
+        if (removeEnd === 1) {
+            start = me.startIndex;
+            me.startIndex += removeCount;
+        }
+        // Clipping from end
+        else {
+            me.endIndex -= removeCount;
+            start = me.endIndex + 1;
+        }
+        for (i = start, end = start + removeCount - 1; i <= end; i++) {
+            el = elements[i];
+
+            removed.push(el);
+            Ext.removeNode(el);
+            delete elements[i];
+        }
+        me.count -= removeCount;
+        me.view.fireItemMutationEvent('itemremove', me.view.dataSource.getRange(start, end), start, removed, me.view);
+    },
+
     removeRange: function(start, end, removeDom) {
         var me = this,
             elements = me.elements,
@@ -383,6 +410,7 @@ Ext.define('Ext.view.NodeCache', {
     scroll: function(newRecords, direction, removeCount) {
         var me = this,
             view = me.view,
+            vm = view.lookupViewModel(),
             store = view.store,
             elements = me.elements,
             recCount = newRecords.length,
@@ -484,7 +512,12 @@ Ext.define('Ext.view.NodeCache', {
         }
         // Keep count consistent.
         me.count = me.endIndex - me.startIndex + 1;
-        
+
+        // The content height MUST be measurable by the caller (the buffered renderer), so data must be flushed to it immediately.
+        if (vm) {
+            vm.notify();
+        }
+ 
         return children;
     },
 

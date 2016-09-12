@@ -620,8 +620,6 @@ Ext.define('Ext.grid.plugin.CellEditing', {
             context.rowIdx = view.indexOf(record);
         }
 
-        me.fireEvent('edit', me, context);
-
         // We clear down our context here in response to the CellEditor completing.
         // We only do this if we have not already started editing a new context.
         if (me.context === context) {
@@ -630,6 +628,8 @@ Ext.define('Ext.grid.plugin.CellEditing', {
             me.setActiveRecord(null);
             me.editing = false;
         }
+
+        me.fireEvent('edit', me, context);
     },
 
     /**

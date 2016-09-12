@@ -28,7 +28,7 @@ describe("Ext.util.KeyMap", function(){
     });
     
     afterEach(function(){
-        if (map) {
+        if (map && !map.destroyed) {
             map.disable();
         }
         

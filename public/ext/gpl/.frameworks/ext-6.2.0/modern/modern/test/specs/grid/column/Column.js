@@ -2,16 +2,17 @@ describe('Ext.grid.column.Column', function () {
     var panel, container, store,
         synchronousLoad = true,
         proxyStoreLoad = Ext.data.ProxyStore.prototype.load,
-        loadStore, Controller;
+        loadStore;
 
     function createGrid(gridCfg, storeCfg) {
         store = new Ext.data.Store(Ext.apply({
             fields: ['name', 'email', 'phone', 'income'],
             data: [
-                { 'name': 'Lisa',  'email':'lisa@simpsons.com',  'phone':'555-111-1224', income: 1244.246 },
-                { 'name': 'Bart',  'email':'bart@simpsons.com',  'phone':'555-222-1234', income: 3444.985 },
-                { 'name': 'Homer', 'email':'homer@simpsons.com', 'phone':'555-222-1244', income: 2474.45 },
-                { 'name': 'Marge', 'email':'marge@simpsons.com', 'phone':'555-222-1254', income: 244.745 }
+                { name: 'Lisa',  email:'lisa@simpsons.com',  phone:'555-111-1224', income: 1244.246 },
+                { name: 'Bart',  email:'bart@simpsons.com',  phone:'555-222-1234', income: 3444.985 },
+                { name: 'Homer', email:'homer@simpsons.com', phone:'555-222-1244', income: 2474.45 },
+                { name: 'Marge', email:'marge@simpsons.com', phone:'555-222-1254', income: 244.745 },
+                { name: 'Kid', email:'kid@simpsons.com', phone:'555-222-1254', income: 0 }
             ],
             autoDestroy: true
         }, storeCfg));
@@ -31,8 +32,9 @@ describe('Ext.grid.column.Column', function () {
         panel.onContainerResize(container, { height: container.element.getHeight() });
     }
 
-    function getCell(row, column) {
-        return panel.getItem(store.getAt(row)).query('gridcell')[column];
+    function getCell(row, column, query) {
+        query = query || 'gridcell';
+        return panel.getItem(store.getAt(row)).query(query)[column];
     }
 
     beforeEach(function() {
@@ -44,23 +46,36 @@ describe('Ext.grid.column.Column', function () {
             }
             return this;
         };
-
-        Controller = Ext.define('spec.TestController', {
-            extend: 'Ext.app.ViewController',
-            alias: 'controller.test'
-        });
     });
 
     afterEach(function() {
         // Undo the overrides.
         Ext.data.ProxyStore.prototype.load = proxyStoreLoad;
 
-        Ext.destroy(panel);
-        panel = store = null;
+        panel = store = Ext.destroy(panel);
+    });
 
-        Ext.undefine('spec.TestController');
-        Controller = null;
-        Ext.Factory.controller.instance.clearCache();
+    describe("binding", function() {
+        it("should be able to bind column properties", function() {
+            createGrid({
+                renderTo: Ext.getBody(),
+                viewModel: {
+                    data: {
+                        theName: 'Foo'
+                    }
+                },
+                columns: [{
+                    dataIndex: 'name',
+                    itemId: 'col',
+                    bind: {
+                        text: '{theName}'
+                    }
+                }]
+            });
+            panel.getViewModel().notify();
+            var col = panel.down('#col');
+            expect(col.getInnerHtmlElement()).hasHTML('Foo');
+        });
     });
 
     describe('grids', function () {
@@ -72,10 +87,88 @@ describe('Ext.grid.column.Column', function () {
                 renderTo: Ext.getBody()
             });
 
-            expect(getCell(0, 0).el.down('.x-grid-cell-inner', true).innerHTML).toBe('1244.246');
-            expect(getCell(1, 0).el.down('.x-grid-cell-inner', true).innerHTML).toBe('3444.985');
-            expect(getCell(2, 0).el.down('.x-grid-cell-inner', true).innerHTML).toBe('2474.45');
-            expect(getCell(3, 0).el.down('.x-grid-cell-inner', true).innerHTML).toBe('244.745');
+            expect(getCell(0, 0).el.down('.x-inner-el', true).innerHTML).toBe('1244.246');
+            expect(getCell(1, 0).el.down('.x-inner-el', true).innerHTML).toBe('3444.985');
+            expect(getCell(2, 0).el.down('.x-inner-el', true).innerHTML).toBe('2474.45');
+            expect(getCell(3, 0).el.down('.x-inner-el', true).innerHTML).toBe('244.745');
+        });
+
+        it('should show the correct zeroValue in the gridcell', function () {
+            createGrid({
+                columns: [{
+                    header: 'Income', dataIndex: 'income', width: 100,
+                    cell: {
+                        zeroValue: 'zero'
+                    }
+                }],
+                renderTo: Ext.getBody()
+            });
+
+            expect(getCell(4, 0).el.down('.x-inner-el', true).innerHTML).toBe('zero');
+        });
+
+        it('should show the correct zeroValue in the textcell', function () {
+            createGrid({
+                columns: [{
+                    header: 'Income', dataIndex: 'income', width: 100,
+                    cell: {
+                        xtype: 'textcell',
+                        zeroValue: 'zero'
+                    }
+                }],
+                renderTo: Ext.getBody()
+            });
+
+            expect(getCell(4, 0, 'textcell').el.down('.x-inner-el', true).innerHTML).toBe('zero');
+        });
+
+        it('should apply the zeroValue of gridcell correctly from a VM', function () {
+            var vm = new Ext.app.ViewModel({
+                data: {
+                    zeroValue: 'zero'
+                }
+            });
+
+            createGrid({
+                columns: [{
+                    header: 'Income', dataIndex: 'income', width: 100,
+                    cell: {
+                        viewModel: vm,
+                        bind: {
+                            zeroValue: '{zeroValue}'
+                        }
+                    }
+                }],
+                renderTo: Ext.getBody()
+            });
+
+            vm.notify();
+            expect(getCell(4, 0).el.down('.x-inner-el', true).innerHTML).toBe('zero');
+        });
+
+        it('should apply the zeroValue of textcell correctly from a VM', function () {
+            var vm = new Ext.app.ViewModel({
+                data: {
+                    zeroValue: 'zero'
+                }
+            });
+
+            createGrid({
+                columns: [{
+                    header: 'Income', dataIndex: 'income', width: 100,
+                    cell: {
+                        xtype: 'textcell',
+                        viewModel: vm,
+                        bind: {
+                            zeroValue: '{zeroValue}'
+                        }
+                    }
+                }],
+                renderTo: Ext.getBody()
+            });
+
+            vm.notify();
+            expect(getCell(4, 0, 'textcell').el.down('.x-inner-el', true).innerHTML).toBe('zero');
         });
 
         it('should apply the formatter correctly', function () {
@@ -87,10 +180,10 @@ describe('Ext.grid.column.Column', function () {
                 renderTo: Ext.getBody()
             });
 
-            expect(getCell(0, 0).el.down('.x-grid-cell-inner', true).innerHTML).toBe('1,244.25');
-            expect(getCell(1, 0).el.down('.x-grid-cell-inner', true).innerHTML).toBe('3,444.99');
-            expect(getCell(2, 0).el.down('.x-grid-cell-inner', true).innerHTML).toBe('2,474.45');
-            expect(getCell(3, 0).el.down('.x-grid-cell-inner', true).innerHTML).toBe('244.75');
+            expect(getCell(0, 0).el.down('.x-inner-el', true).innerHTML).toBe('1,244.25');
+            expect(getCell(1, 0).el.down('.x-inner-el', true).innerHTML).toBe('3,444.99');
+            expect(getCell(2, 0).el.down('.x-inner-el', true).innerHTML).toBe('2,474.45');
+            expect(getCell(3, 0).el.down('.x-inner-el', true).innerHTML).toBe('244.75');
         });
 
         it('should apply the scoped formatter correctly', function () {
@@ -107,10 +200,10 @@ describe('Ext.grid.column.Column', function () {
                 renderTo: Ext.getBody()
             });
 
-            expect(getCell(0, 0).el.down('.x-grid-cell-inner', true).innerHTML).toBe('1,244.25');
-            expect(getCell(1, 0).el.down('.x-grid-cell-inner', true).innerHTML).toBe('3,444.99');
-            expect(getCell(2, 0).el.down('.x-grid-cell-inner', true).innerHTML).toBe('2,474.45');
-            expect(getCell(3, 0).el.down('.x-grid-cell-inner', true).innerHTML).toBe('244.75');
+            expect(getCell(0, 0).el.down('.x-inner-el', true).innerHTML).toBe('1,244.25');
+            expect(getCell(1, 0).el.down('.x-inner-el', true).innerHTML).toBe('3,444.99');
+            expect(getCell(2, 0).el.down('.x-inner-el', true).innerHTML).toBe('2,474.45');
+            expect(getCell(3, 0).el.down('.x-inner-el', true).innerHTML).toBe('244.75');
         });
 
         it('should apply the cell formatter correctly from a VM', function () {
@@ -134,10 +227,10 @@ describe('Ext.grid.column.Column', function () {
             });
 
             vm.notify();
-            expect(getCell(0, 0).el.down('.x-grid-cell-inner', true).innerHTML).toBe('1,244');
-            expect(getCell(1, 0).el.down('.x-grid-cell-inner', true).innerHTML).toBe('3,445');
-            expect(getCell(2, 0).el.down('.x-grid-cell-inner', true).innerHTML).toBe('2,474');
-            expect(getCell(3, 0).el.down('.x-grid-cell-inner', true).innerHTML).toBe('245');
+            expect(getCell(0, 0).el.down('.x-inner-el', true).innerHTML).toBe('1,244');
+            expect(getCell(1, 0).el.down('.x-inner-el', true).innerHTML).toBe('3,445');
+            expect(getCell(2, 0).el.down('.x-inner-el', true).innerHTML).toBe('2,474');
+            expect(getCell(3, 0).el.down('.x-inner-el', true).innerHTML).toBe('245');
         });
 
         it('should apply the renderer correctly', function () {
@@ -149,10 +242,10 @@ describe('Ext.grid.column.Column', function () {
                 renderTo: Ext.getBody()
             });
 
-            expect(getCell(0, 0).el.down('.x-grid-cell-inner', true).innerHTML).toBe('1,244.25');
-            expect(getCell(1, 0).el.down('.x-grid-cell-inner', true).innerHTML).toBe('3,444.99');
-            expect(getCell(2, 0).el.down('.x-grid-cell-inner', true).innerHTML).toBe('2,474.45');
-            expect(getCell(3, 0).el.down('.x-grid-cell-inner', true).innerHTML).toBe('244.75');
+            expect(getCell(0, 0).el.down('.x-inner-el', true).innerHTML).toBe('1,244.25');
+            expect(getCell(1, 0).el.down('.x-inner-el', true).innerHTML).toBe('3,444.99');
+            expect(getCell(2, 0).el.down('.x-inner-el', true).innerHTML).toBe('2,474.45');
+            expect(getCell(3, 0).el.down('.x-inner-el', true).innerHTML).toBe('244.75');
         });
 
         it('should apply the scoped renderer correctly', function () {
@@ -169,10 +262,10 @@ describe('Ext.grid.column.Column', function () {
                 renderTo: Ext.getBody()
             });
 
-            expect(getCell(0, 0).el.down('.x-grid-cell-inner', true).innerHTML).toBe('1,244.25');
-            expect(getCell(1, 0).el.down('.x-grid-cell-inner', true).innerHTML).toBe('3,444.99');
-            expect(getCell(2, 0).el.down('.x-grid-cell-inner', true).innerHTML).toBe('2,474.45');
-            expect(getCell(3, 0).el.down('.x-grid-cell-inner', true).innerHTML).toBe('244.75');
+            expect(getCell(0, 0).el.down('.x-inner-el', true).innerHTML).toBe('1,244.25');
+            expect(getCell(1, 0).el.down('.x-inner-el', true).innerHTML).toBe('3,444.99');
+            expect(getCell(2, 0).el.down('.x-inner-el', true).innerHTML).toBe('2,474.45');
+            expect(getCell(3, 0).el.down('.x-inner-el', true).innerHTML).toBe('244.75');
         });
 
         it('should apply the cell renderer correctly from a VM', function () {
@@ -196,10 +289,10 @@ describe('Ext.grid.column.Column', function () {
             });
 
             vm.notify();
-            expect(getCell(0, 0).el.down('.x-grid-cell-inner', true).innerHTML).toBe('1,244');
-            expect(getCell(1, 0).el.down('.x-grid-cell-inner', true).innerHTML).toBe('3,445');
-            expect(getCell(2, 0).el.down('.x-grid-cell-inner', true).innerHTML).toBe('2,474');
-            expect(getCell(3, 0).el.down('.x-grid-cell-inner', true).innerHTML).toBe('245');
+            expect(getCell(0, 0).el.down('.x-inner-el', true).innerHTML).toBe('1,244');
+            expect(getCell(1, 0).el.down('.x-inner-el', true).innerHTML).toBe('3,445');
+            expect(getCell(2, 0).el.down('.x-inner-el', true).innerHTML).toBe('2,474');
+            expect(getCell(3, 0).el.down('.x-inner-el', true).innerHTML).toBe('245');
         });
 
         it('should apply the template correctly without dataIndex', function () {
@@ -211,10 +304,10 @@ describe('Ext.grid.column.Column', function () {
                 renderTo: Ext.getBody()
             });
 
-            expect(getCell(0, 0).el.down('.x-grid-cell-inner', true).innerHTML).toBe('1,244.25');
-            expect(getCell(1, 0).el.down('.x-grid-cell-inner', true).innerHTML).toBe('3,444.99');
-            expect(getCell(2, 0).el.down('.x-grid-cell-inner', true).innerHTML).toBe('2,474.45');
-            expect(getCell(3, 0).el.down('.x-grid-cell-inner', true).innerHTML).toBe('244.75');
+            expect(getCell(0, 0).el.down('.x-inner-el', true).innerHTML).toBe('1,244.25');
+            expect(getCell(1, 0).el.down('.x-inner-el', true).innerHTML).toBe('3,444.99');
+            expect(getCell(2, 0).el.down('.x-inner-el', true).innerHTML).toBe('2,474.45');
+            expect(getCell(3, 0).el.down('.x-inner-el', true).innerHTML).toBe('244.75');
         });
 
         it('should apply the scoped template correctly without dataIndex', function () {
@@ -233,10 +326,10 @@ describe('Ext.grid.column.Column', function () {
                 renderTo: Ext.getBody()
             });
 
-            expect(getCell(0, 0).el.down('.x-grid-cell-inner', true).innerHTML).toBe('1,244.25');
-            expect(getCell(1, 0).el.down('.x-grid-cell-inner', true).innerHTML).toBe('3,444.99');
-            expect(getCell(2, 0).el.down('.x-grid-cell-inner', true).innerHTML).toBe('2,474.45');
-            expect(getCell(3, 0).el.down('.x-grid-cell-inner', true).innerHTML).toBe('244.75');
+            expect(getCell(0, 0).el.down('.x-inner-el', true).innerHTML).toBe('1,244.25');
+            expect(getCell(1, 0).el.down('.x-inner-el', true).innerHTML).toBe('3,444.99');
+            expect(getCell(2, 0).el.down('.x-inner-el', true).innerHTML).toBe('2,474.45');
+            expect(getCell(3, 0).el.down('.x-inner-el', true).innerHTML).toBe('244.75');
         });
 
         it('should apply the template correctly with dataIndex', function () {
@@ -248,10 +341,10 @@ describe('Ext.grid.column.Column', function () {
                 renderTo: Ext.getBody()
             });
 
-            expect(getCell(0, 0).el.down('.x-grid-cell-inner', true).innerHTML).toBe('1,244.25');
-            expect(getCell(1, 0).el.down('.x-grid-cell-inner', true).innerHTML).toBe('3,444.99');
-            expect(getCell(2, 0).el.down('.x-grid-cell-inner', true).innerHTML).toBe('2,474.45');
-            expect(getCell(3, 0).el.down('.x-grid-cell-inner', true).innerHTML).toBe('244.75');
+            expect(getCell(0, 0).el.down('.x-inner-el', true).innerHTML).toBe('1,244.25');
+            expect(getCell(1, 0).el.down('.x-inner-el', true).innerHTML).toBe('3,444.99');
+            expect(getCell(2, 0).el.down('.x-inner-el', true).innerHTML).toBe('2,474.45');
+            expect(getCell(3, 0).el.down('.x-inner-el', true).innerHTML).toBe('244.75');
         });
 
         it('should apply the scoped template correctly with dataIndex', function () {
@@ -270,10 +363,10 @@ describe('Ext.grid.column.Column', function () {
                 renderTo: Ext.getBody()
             });
 
-            expect(getCell(0, 0).el.down('.x-grid-cell-inner', true).innerHTML).toBe('1,244.25');
-            expect(getCell(1, 0).el.down('.x-grid-cell-inner', true).innerHTML).toBe('3,444.99');
-            expect(getCell(2, 0).el.down('.x-grid-cell-inner', true).innerHTML).toBe('2,474.45');
-            expect(getCell(3, 0).el.down('.x-grid-cell-inner', true).innerHTML).toBe('244.75');
+            expect(getCell(0, 0).el.down('.x-inner-el', true).innerHTML).toBe('1,244.25');
+            expect(getCell(1, 0).el.down('.x-inner-el', true).innerHTML).toBe('3,444.99');
+            expect(getCell(2, 0).el.down('.x-inner-el', true).innerHTML).toBe('2,474.45');
+            expect(getCell(3, 0).el.down('.x-inner-el', true).innerHTML).toBe('244.75');
         });
 
         it('should apply the cell template correctly from a VM', function () {
@@ -304,10 +397,10 @@ describe('Ext.grid.column.Column', function () {
             });
 
             vm.notify();
-            expect(getCell(0, 0).el.down('.x-grid-cell-inner', true).innerHTML).toBe('1,244');
-            expect(getCell(1, 0).el.down('.x-grid-cell-inner', true).innerHTML).toBe('3,445');
-            expect(getCell(2, 0).el.down('.x-grid-cell-inner', true).innerHTML).toBe('2,474');
-            expect(getCell(3, 0).el.down('.x-grid-cell-inner', true).innerHTML).toBe('245');
+            expect(getCell(0, 0).el.down('.x-inner-el', true).innerHTML).toBe('1,244');
+            expect(getCell(1, 0).el.down('.x-inner-el', true).innerHTML).toBe('3,445');
+            expect(getCell(2, 0).el.down('.x-inner-el', true).innerHTML).toBe('2,474');
+            expect(getCell(3, 0).el.down('.x-inner-el', true).innerHTML).toBe('245');
         });
 
     });

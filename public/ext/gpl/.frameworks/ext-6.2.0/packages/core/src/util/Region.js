@@ -127,7 +127,7 @@ Ext.define('Ext.util.Region', function() {
                         overlapLength = overlapLine.getHeight();
 
                         // Not enough vertical intersection to make the anchor display correctly
-                        if (overlapLength < anchorSize.x + 4) {
+                        if (overlapLength < target.width && overlapLength < anchorSize.x + 4) {
                             if (overlapLength < minOverlap) {
                                 if (overlapLine.getAnchorPoint_c()[1] > target.getAnchorPoint_c()[1]) {
                                     y = target.bottom - minOverlap;
@@ -179,7 +179,7 @@ Ext.define('Ext.util.Region', function() {
                         overlapLength = overlapLine.getWidth();
 
                         // Not enough horizontal intersection to make the anchor display correctly
-                        if (overlapLength < anchorSize.x + 4) {
+                        if (overlapLength < target.height && overlapLength < anchorSize.x + 4) {
                             if (overlapLength < minOverlap) {
                                 if (overlapLine.getAnchorPoint_c()[0] > target.getAnchorPoint_c()[0]) {
                                     x = target.right - minOverlap;
@@ -307,6 +307,9 @@ Ext.define('Ext.util.Region', function() {
          * This not only allows more flexibility in the alignment possibilities,
          * but it also resolves any ambiguity as to chich two edges are desired
          * to be adjacent if an anchor pointer is required.
+         * 
+         * @param {String} align The align spec, eg `"tl-br"`
+         * @param {Boolean} [rtl] Pass `true` to use RTL calculations.
          */
         getAlignInfo: function(align, rtl) {
             if (typeof align === 'object') {
@@ -383,6 +386,8 @@ Ext.define('Ext.util.Region', function() {
         me.right = right;
         me.bottom = bottom;
         me.x = me.left = me[0] = left;
+        me.height = me.bottom - me.top;
+        me.width = me.right - me.left;
     },
 
     /**
@@ -712,7 +717,7 @@ Ext.define('Ext.util.Region', function() {
      * @param {Ext.util.Offset/Number[]} [options.offset] An extra exclusion zone round the target.
      * @param {Ext.util.Offset/Number[]} [options.anchorSize] The width and height of any external anchor
      * element. This is used to calculate the true bounds of the Region inclusive of the anchor.
-     * The `x` dimention is the height of the arrow in all orientations, and the `y` dimension
+     * The `x` dimension is the height of the arrow in all orientations, and the `y` dimension
      * is the width of the baseline of the arrow in all dimensions.
      * If this option is used, and the returned region successfully clears the 
      * bounds of the target, then the anchor region will be returned in the return value
@@ -1111,7 +1116,7 @@ Ext.define('Ext.util.Region', function() {
     },
 
     getAnchorPoint: function(align, rtl) {
-        align = (typeof align === 'string') ? this.getAlignInfo(align, rtl) : align;
+        align = (typeof align === 'string') ? this.getAlignInfo(align + '-tl', rtl) : align;
 
         return this['getAnchorPoint_' + align.myEdge](align.myOffset);
     },
@@ -1255,6 +1260,21 @@ Ext.define('Ext.util.Region', function() {
      */
     equals: function(region) {
         return (this.top === region.top && this.right === region.right && this.bottom === region.bottom && this.left === region.left);
+    },
+
+    /**
+     * Returns the offsets of this region from the passed region or point.
+     * @param {Ext.util.Region/Ext.util.Point} offsetsTo The region or point to get get
+     * the offsets from.
+     * @return {Object} The XY page offsets
+     * @return {Number} return.x The x offset
+     * @return {Number} return.y The y offset
+     */
+    getOffsetsTo: function(offsetsTo) {
+        return {
+            x: this.x - offsetsTo.x,
+            y: this.y - offsetsTo.y
+        };
     }
 };
 },

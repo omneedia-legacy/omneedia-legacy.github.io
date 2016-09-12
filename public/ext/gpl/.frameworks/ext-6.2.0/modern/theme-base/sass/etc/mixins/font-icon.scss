@@ -90,6 +90,7 @@ require('font-icon');
  * and grid grouping headers.
  *
  * @private
+ * @deprecated
  */
 @mixin font-icon($glyph, $pseudo: true, $line-height: 1, $color: null, $style-pseudo: false) {
     $args: parseFontIconArgs($glyph);

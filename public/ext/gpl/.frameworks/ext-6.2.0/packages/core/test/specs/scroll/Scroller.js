@@ -344,6 +344,100 @@ describe("Ext.scroll.Scroller", function() {
                 y: 200
             });
         });
+
+        it("should not change the existing y size when setting the x size", function() {
+            makeScroller();
+
+            scroller.setSize({
+                y: 300
+            });
+
+            scroller.setSize({
+                x: 200
+            });
+
+            expect(scroller.getSize()).toEqual({
+                x: 200,
+                y: 300
+            });
+        });
+
+        it("should not change the existing x size when setting the y size", function() {
+            makeScroller();
+
+            scroller.setSize({
+                x: 300
+            });
+
+            scroller.setSize({
+                y: 200
+            });
+
+            expect(scroller.getSize()).toEqual({
+                x: 300,
+                y: 200
+            });
+        });
+
+        it("should reset the x size using 0", function() {
+            makeScroller();
+
+            scroller.setSize(300);
+
+            scroller.setSize({
+                x: 0
+            });
+
+            expect(scroller.getSize()).toEqual({
+                x: 100 - Ext.getScrollbarSize().width,
+                y: 300
+            });
+        });
+
+        it("should reset the y size using 0", function() {
+            makeScroller();
+
+            scroller.setSize(300);
+
+            scroller.setSize({
+                y: 0
+            });
+
+            expect(scroller.getSize()).toEqual({
+                x: 300,
+                y: 100 - Ext.getScrollbarSize().height
+            });
+        });
+
+        it("should reset the x size using null", function() {
+            makeScroller();
+
+            scroller.setSize(300);
+
+            scroller.setSize({
+                x: null
+            });
+
+            expect(scroller.getSize()).toEqual({
+                x: 100 - Ext.getScrollbarSize().width,
+                y: 300
+            });
+        });
+
+        it("should reset the y size using null", function() {
+            makeScroller();
+
+            scroller.setSize(300);
+
+            scroller.setSize({
+                y: null
+            });
+
+            expect(scroller.getSize()).toEqual({
+                x: 300,
+                y: 100 - Ext.getScrollbarSize().height
+            });
+        });
     });
 
     describe("getClientSize", function() {

@@ -14,7 +14,7 @@ describe("Ext.tip.QuickTipManager", function() {
     describe("init", function() {
 
         it("should create a new Ext.QuickTip instance", function() {
-            expect(Ext.tip.QuickTipManager.getQuickTip()).not.toBeDefined();
+            expect(Ext.tip.QuickTipManager.getQuickTip()).toBe(null);
             Ext.tip.QuickTipManager.init();
             expect(Ext.tip.QuickTipManager.getQuickTip()).toBeDefined();
             expect(Ext.tip.QuickTipManager.getQuickTip() instanceof Ext.tip.QuickTip).toBeTruthy();
@@ -40,7 +40,7 @@ describe("Ext.tip.QuickTipManager", function() {
         it("should destroy the QuickTip instance", function() {
             Ext.tip.QuickTipManager.init();
             Ext.tip.QuickTipManager.destroy();
-            expect(Ext.tip.QuickTipManager.getQuickTip()).not.toBeDefined();
+            expect(Ext.tip.QuickTipManager.getQuickTip()).toBe(null);
         });
     });
 

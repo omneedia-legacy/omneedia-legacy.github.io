@@ -215,6 +215,7 @@ Ext.define('Ext.form.field.ComboBox', {
     hiddenDataCls: Ext.baseCSSPrefix + 'hidden-display ' + Ext.baseCSSPrefix + 'form-data-hidden',
     
     ariaRole: 'combobox',
+    autoDestroyBoundStore: true,
 
     childEls: {
         'hiddenDataEl': true
@@ -952,6 +953,7 @@ Ext.define('Ext.form.field.ComboBox', {
             rawValue = me.getRawValue(),
             displayValue = me.getDisplayValue(),
             lastRecords = me.lastSelectedRecords,
+            preventChange = false,
             value, rec;
 
         if (me.forceSelection) {
@@ -965,17 +967,29 @@ Ext.define('Ext.form.field.ComboBox', {
                 // For single-select, match the displayed value to a record and select it,
                 // if it does not match a record then revert to the most recent selection.
                 rec = me.findRecordByDisplay(rawValue);
-                if (rec) {
-                    // Prevent an issue where we have duplicate display values with
-                    // different underlying values.
-                    if (me.getDisplayValue([me.getRecordDisplayData(rec)]) !== displayValue) {
-                        me.select(rec, true);
-                        me.fireEvent('select', me, rec);
+                if (!rec) {
+                    if (lastRecords && (!me.allowBlank || me.rawValue)) {
+                        rec = lastRecords[0];
+                    } 
+                    // if we have a custom displayTpl it's likely that findRecordByDisplay won't
+                    // find the value based on RawValue, so we give it another try using the data
+                    // stored in displayTplData if there is any.
+                    else if (me.displayTplData && me.displayTplData.length) {
+                        rec = me.findRecordByValue(me.displayTplData[0][me.valueField]);
                     }
-                } else if (lastRecords && (!me.allowBlank || me.rawValue)) {
-                    me.setValue(lastRecords);
-                } else {
-                    if(lastRecords) {
+                } 
+                // Prevent an issue where we have duplicate display values with
+                // different underlying values.
+                else if (me.getDisplayValue([me.getRecordDisplayData(rec)]) === displayValue) {
+                    rec = null;
+                    preventChange = true;
+                }
+
+                if (rec) {
+                    me.select(rec, true);
+                    me.fireEvent('select', me, rec);
+                } else if (!preventChange) {
+                    if (lastRecords) {
                         delete me.lastSelectedRecords;
                     }
                     // We need to reset any value that could have been set in the dom before or during a store load
@@ -988,9 +1002,9 @@ Ext.define('Ext.form.field.ComboBox', {
         } 
         // we can only call getValue() in this process if forceSelection is false
         // otherwise it will break the grid edit on tab
-        else if ((value = me.getValue()) && value == rawValue && me.displayField !== me.valueField) {
+        else if ((value = me.getValue()) && value == rawValue) {
             rec = me.findRecordByDisplay(value);
-            if (rec) {
+            if (rec && (rec !== (lastRecords && lastRecords[0]) || me.displayField !== me.valueField)) {
                 me.select(rec, true);
                 me.fireEvent('select', me, rec);
             }
@@ -1038,10 +1052,12 @@ Ext.define('Ext.form.field.ComboBox', {
         if (me.queryFilter && !me.store.destroyed) {
             me.clearLocalFilter();
         }
-        me.pickerSelectionModel.destroy();
+        
         if (picker) {
             picker.bindStore(null);
         }
+
+        me.pickerSelectionModel.destroy();
     },
 
     onBindStore: function(store, initial) {
@@ -1625,6 +1641,7 @@ Ext.define('Ext.form.field.ComboBox', {
         // Also, do not process TAB event which fires on arrival.
         if (!me.readOnly && (rawValue !== me.lastMutatedValue || isDelete) && key !== e.TAB) {
             me.lastMutatedValue = rawValue;
+            me.refreshEmptyText();
             if (len && (e.type !== 'keyup' || (!e.isSpecialKey() || isDelete))) {
                 me.doQueryTask.delay(me.queryDelay);
             } else {
@@ -1669,7 +1686,7 @@ Ext.define('Ext.form.field.ComboBox', {
         }
     },
 
-    onDestroy: function() {
+    doDestroy: function() {
         var me = this;
 
         me.doQueryTask.cancel();
@@ -1681,7 +1698,6 @@ Ext.define('Ext.form.field.ComboBox', {
 
         me.bindStore(null);
         Ext.destroy(me.altArrowKeyNav, me.valueCollection);
-        me.altArrowKeyNav = me.valueCollection = null;
         
         me.callParent();
     },
@@ -2102,7 +2118,6 @@ Ext.define('Ext.form.field.ComboBox', {
                 // if display is value, let's remove the empty text since the store might not be loaded yet
                 if (displayIsValue && !Ext.isEmpty(value) && me.inputEl && me.emptyText) {
                     me.inputEl.removeCls(me.emptyUICls);
-                    me.valueContainsPlaceholder = false;
                 }
             }
 
@@ -2204,13 +2219,6 @@ Ext.define('Ext.form.field.ComboBox', {
         } else {
             me.updateValue();
         }
-
-        if (me.inputEl && me.emptyText) {
-            me.inputEl.removeCls(me.emptyCls);
-            me.valueContainsPlaceholder = false;
-        }
-
-        me.applyEmptyText();
         
         return me;
     },
@@ -2249,21 +2257,16 @@ Ext.define('Ext.form.field.ComboBox', {
         }
         me.displayTplData = displayTplData; //store for getDisplayValue method
 
-        if (inputEl && me.emptyText && !Ext.isEmpty(me.value)) {
-            inputEl.removeCls(me.emptyCls);
-        }
-
         displayValue = me.getDisplayValue();
         // Calculate raw value from the collection of Model data
         me.setRawValue(displayValue);
+        me.refreshEmptyText();
         me.checkChange();
         
         if (inputEl && me.typeAhead && me.hasFocus) {
             // if typeahead is configured, deselect any partials
             me.selectText(displayValue.length);
         }
-
-        me.applyEmptyText();
     },
 
     /**

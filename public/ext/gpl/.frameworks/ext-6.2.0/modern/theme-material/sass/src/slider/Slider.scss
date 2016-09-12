@@ -1,15 +1,13 @@
 .#{$prefix}slider {
-  .#{$prefix}thumb-pressing:after {
-    @include scale(1.5);
-  }
-}
+    .#{$prefix}thumb {
+        transition: transform .15s ease-out;
 
-.#{$prefix}thumb {
-  &:after {
-    transition: transform .15s ease-out;
-  }
+        &:active {
+            @include scale(1.5);
+        }
 
-  &:before {
-    @include transform(none);
-  }
+        &.#{$prefix}disabled:active {
+            @include scale(1);
+        }
+    }
 }

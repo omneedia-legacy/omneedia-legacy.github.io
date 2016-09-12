@@ -98,12 +98,6 @@ Ext.define('Ext.Toolbar', {
 
     config: {
         /**
-         * @cfg baseCls
-         * @inheritdoc
-         */
-        baseCls: Ext.baseCSSPrefix + 'toolbar',
-
-        /**
          * @cfg {String/Ext.Title} title
          * The title of the toolbar.
          * @accessor
@@ -170,6 +164,10 @@ Ext.define('Ext.Toolbar', {
             align: 'center'
         }
     },
+
+    border: false,
+
+    classCls: Ext.baseCSSPrefix + 'toolbar',
 
     hasCSSMinHeight: true,
 

@@ -2,7 +2,7 @@ Ext = window.Ext || {};
 Ext.samples = {
     samplesCatalog: [
         {
-            "title": "Application Templates",
+            "title": "Sample Applications",
             "items": [
                 {
                     "text": "Admin Dashboard",
@@ -22,16 +22,16 @@ Ext.samples = {
             "title": "Combination Examples",
             "items": [
                 {
-                    "text": "Kitchen Sink",
+                    "text": "Kitchen Sink (Classic)",
                     "url": "kitchensink/",
                     "icon": "kitchensink",
-                    "desc": "Showcase of Ext JS components and features"
+                    "desc": "Showcase of Ext JS components and features in the Classic Toolkit"
                 },
                 {
-                    "text": "Sencha Charts Kitchen Sink",
-                    "url": "kitchensink/?charts=true",
-                    "icon": "charts",
-                    "desc": "Showcase of Sencha Charts"
+                    "text": "Kitchen Sink (Modern)",
+                    "url": "kitchensink/?modern",
+                    "icon": "kitchensink",
+                    "desc": "Showcase of Ext JS components and features in the Modern Toolkit"
                 },
                 {
                     "text": "Feed Viewer",
@@ -43,7 +43,7 @@ Ext.samples = {
                     "text": "Ext JS Calendar",
                     "url": "calendar/",
                     "icon": "calendar",
-                    "desc": "Example Calendar application"
+                    "desc": "Example Calendar application using Google's Calendar API"
                 },
                 {
                     "text": "Ticket App",
@@ -93,6 +93,12 @@ Ext.samples = {
                     "url": "classic/desktop/index.html",
                     "icon": "webdesktop",
                     "desc": "Demonstrates how one could build a desktop in the browser using Ext JS"
+                },
+                {
+                    "text": "Accessibility Demo",
+                    "url": "classic/aria/",
+                    "icon": "keyboard",
+                    "desc": "Shows Ext JS's extensive keyboard and ARIA support"
                 }
             ]
         },
@@ -128,12 +134,6 @@ Ext.samples = {
                     "url": "classic/grid/remote-group-summary-grid.html",
                     "icon": "grid-group-summaries",
                     "desc": "Grouping grid with cell editing and remotely loaded dynamic summary calculations"
-                },
-                {
-                    "text": "Grid Row Editing",
-                    "url": "classic/grid/row-editing.html",
-                    "icon": "grid-row-editor",
-                    "desc": "An editable grid which allows the user to make modifications to an entire record at onc"
                 },
                 {
                     "text": "RESTful Store with GridPanel and RowEditor",
@@ -182,82 +182,6 @@ Ext.samples = {
                     "url": "classic/grid/locking-grp-summary-grp-hdrs-grid.html",
                     "icon": "grid-summary-head",
                     "desc": "Grouped grid with locked columns and grouped column headers"
-                }
-            ]
-        },
-        {
-            "title": "Modern Toolkit",
-            "items": [
-                //{
-                //    "text": "US Energy",
-                //    "url": "modern/energy/index.html",
-                //    "icon": "us-energy",
-                //    "desc": "A demo of energy consumption/production of The United States."
-                //},
-                {
-                    "text": "Stock Chart",
-                    "url": "modern/stockapp/index.html",
-                    "icon": "stock-chart",
-                    "desc": "A demo of a stock market chart application."
-                },
-                {
-                    "text": "2010 Census",
-                    "url": "modern/states/index.html",
-                    "icon": "census",
-                    "desc": "A demo to visualize 2010 Census."
-                },
-                {
-                    "text": "GeoCongress",
-                    "url": "modern/geocongress/index.html",
-                    "icon": "geo-congress",
-                    "desc": "Find information on your local Legislators"
-                },
-                {
-                    "text": "O'Reilly",
-                    "url": "modern/oreilly/index.html",
-                    "icon": "oreilly",
-                    "desc": "Sample conference application with a connection to remote backend data."
-                },
-                /*{
-                    "text": "Touch Tomatoes",
-                    "url": "modern/touchtomatoes/index.html",
-                    "icon": "",
-                    "desc": "Rotten Tomatoes application featuring Intro Overlay, JSONP and AJAX Search."
-                },
-                {
-                    "text": "TouchStyle",
-                    "url": "modern/touchstyle/index.html",
-                    "icon": "",
-                    "desc": "Example of dynamic carousel and device profiles"
-                },*/
-                {
-                    "text": "Address Book",
-                    "url": "modern/addressbook/index.html",
-                    "icon": "address-book",
-                    "desc": "A sample application using navigationview"
-                },
-                {
-                    "text": "Blackberry",
-                    "url": "modern/blackberry/index.html",
-                    "icon": "data-view",
-                    "desc": "A demo of blackberry components and theme."
-                }
-            ]
-        },
-        {
-            "title": "Windows",
-            "items": [
-                {
-                    "text": "Window Variations",
-                    "url": "classic/window/window.html",
-                    "icon": "window",
-                    "desc": "A collection of Windows in different configurations"
-                },
-                {
-                    "text": "Layout Window",
-                    "url": "classic/window/layout.html",
-                    "icon": "window-layout",
-                    "desc": "A window containing a basic BorderLayout with nested TabPanel"
                 }
             ]
         },
@@ -331,17 +255,6 @@ Ext.samples = {
             ]
         },
         {
-            "title": "Accessibility",
-            "items": [
-                {
-                    "text": "ARIA demo",
-                    "url": "classic/aria/",
-                    "icon": "keyboard",
-                    "desc": "Shows Ext JS's comprehensive keyboard support for users who have difficulty using a pointing device"
-                }
-            ]
-        },
-        {
             "title": "Miscellaneous",
             "items": [
                 {
@@ -374,12 +287,6 @@ Ext.samples = {
                     "url": "classic/slider/slider.html",
                     "icon": "slider",
                     "desc": "A slider component that supports vertical mode, snapping, tooltips, customized styles and multiple thumbs"
-                },
-                {
-                    "text": "QuickTips",
-                    "url": "classic/qtips/qtips.html",
-                    "icon": "qtips",
-                    "desc": "Various tooltip and quick tip configuration options including Ajax loading and mouse tracking"
                 },
                 {
                     "text": "Progress Bar",
@@ -447,15 +354,6 @@ Ext.samples = {
                     "icon": "form-multiselect",
                     "desc": "Example controls for selecting a list of items in forms"
                 }
-                /* Disabled until this is updated to work with the new theming system
-                   NOTE: when uncommenting this, also add it back in to examples.json
-                {
-                    "text": "Bubble Panel",
-                    "url": "classic/panel/bubble-panel/bubble-panel.html",
-                    "icon": "panel-bubble.gif",
-                    "desc": "This is a custom panel UI to achieve a different look and feel while not changing the default appearance of an Ext.Panel."
-                }
-                */
             ]
         }
     ]

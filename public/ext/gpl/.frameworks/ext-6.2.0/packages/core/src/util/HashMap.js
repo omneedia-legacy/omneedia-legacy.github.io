@@ -369,12 +369,6 @@ Ext.define('Ext.util.HashMap', {
             }
         }
         return undefined;
-    },
-
-    destroy: function() {
-        this.callParent();
-        this.map = null;
-
     }
 }, function(HashMap) {
     var prototype = HashMap.prototype;

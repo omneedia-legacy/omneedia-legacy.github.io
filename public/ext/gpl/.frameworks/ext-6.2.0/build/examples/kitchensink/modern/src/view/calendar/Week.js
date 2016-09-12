@@ -9,6 +9,13 @@ Ext.define('KitchenSink.view.calendar.Week', {
         'Ext.SegmentedButton'
     ],
 
+    // <example>
+    otherContent: [{
+        type: 'Store',
+        path: 'samples/data/calendar/Week.js'
+    }],
+    // </example>
+
     viewModel: {
         data: {
             value: new Date(),
@@ -38,6 +45,8 @@ Ext.define('KitchenSink.view.calendar.Week', {
             }
         }
     },
+
+    shadow: true,
 
     layout: {
         type: 'hbox',

@@ -96,11 +96,7 @@ describe("Ext.data.ChainedStore", function() {
         MockAjaxManager.removeMethods();
         Ext.data.Model.schema.clear();
         Ext.undefine('spec.User');
-        if (source) {
-            source.destroy();
-        }
-        store.destroy();
-        User = source = store = null;
+        User = source = store = Ext.destroy(source, store);
         Ext.data.Model.schema.clear(true);
     });
     

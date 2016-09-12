@@ -492,8 +492,10 @@ Ext.define('Ext.dd.DragDropManager', {
             listeners.pointerup = pointerup;
             listeners.pointermove = pointermove;
         } else if (supports.MSPointerEvents) {
-            listeners.MSPointerUp = pointerup;
-            listeners.MSPointerMove = pointermove;
+            // https://sencha.jira.com/browse/EXTJS-21512
+            // Spurious pointer events from -ms-pointer-events devices
+            listeners.mouseup = pointerup;
+            listeners.mousemove = pointermove;
         } else if (e.pointerType === 'mouse') {      
             listeners.mouseup = pointerup;
             listeners.mousemove = pointermove;
@@ -567,7 +569,7 @@ Ext.define('Ext.dd.DragDropManager', {
                 
                 // This will allow pointer events to bubble through the shim iframe
                 // to the parent document
-                if (dragEl.shim) {
+                if (dragEl.shim && dragEl.shim.el) {
                     dragEl.shim.el.addCls(me.dragCls);
                 }
             }
@@ -584,7 +586,7 @@ Ext.define('Ext.dd.DragDropManager', {
     handleMouseUp: function(e) {
         var me = this;
 
-        // We only listen for pointermove after a trigger even
+        // We only listen for pointermove after a trigger event
         me.pointerMoveListeners.destroy();
         me.isMouseDown = false;
 
@@ -625,7 +627,7 @@ Ext.define('Ext.dd.DragDropManager', {
             e.stopPropagation();
         }
 
-        if (this.preventDefault) {
+        if (this.preventDefault && e.pointerType === 'touch') {
             e.preventDefault();
         }
     },
@@ -646,11 +648,11 @@ Ext.define('Ext.dd.DragDropManager', {
             if (me.dragThreshMet) {
                 // Remove current drag class from dragged element
                 dragEl = Ext.fly(current.getDragEl());
-                
+
                 if (dragEl) {
                     dragEl.removeCls(me.dragCls);
-                    
-                    if (dragEl.shim) {
+
+                    if (dragEl.shim && dragEl.shim.el) {
                         dragEl.shim.el.removeCls(me.dragCls);
                     }
                 }
@@ -697,11 +699,11 @@ Ext.define('Ext.dd.DragDropManager', {
         }
 
         if (!me.dragThreshMet) {
-            e.claimGesture();
-
             diffX = Math.abs(me.offsetX);
             diffY = Math.abs(me.offsetY);
+            
             if (diffX > me.clickPixelThresh || diffY > me.clickPixelThresh) {
+                e.claimGesture();
                 me.startDrag(me.startX, me.startY);
             }
         }
@@ -787,16 +789,24 @@ Ext.define('Ext.dd.DragDropManager', {
                 continue;
             }
 
-            // If notifyOccluded set, we use mouse position
-            if (me.notifyOccluded) {
-                if (!this.isOverTarget(mousePoint, overTarget, me.mode)) {
-                    outEvts.push(overTarget);
+            // On mouseup/pointerup/touchend, we destroy our
+            // pointerMoveListeners, (see handleMouseUp). So will will recieve no
+            // further move notifications to cause the terminating "out"
+            // events, so create the out events now.
+            if (isDrop) {
+                outEvts.push(overTarget);
+            } else {
+                // If notifyOccluded set, we use mouse position
+                if (me.notifyOccluded) {
+                    if (!this.isOverTarget(mousePoint, overTarget, me.mode)) {
+                        outEvts.push(overTarget);
+                    }
                 }
-            }
-            // Otherwise we use event source of the mousemove event
-            else {
-                if (!e.within(overTarget.getEl())) {
-                    outEvts.push(overTarget);
+                // Otherwise we use event source of the mousemove event
+                else {
+                    if (!e.within(overTarget.getEl())) {
+                        outEvts.push(overTarget);
+                    }
                 }
             }
 
@@ -884,11 +894,6 @@ Ext.define('Ext.dd.DragDropManager', {
         }
 
         if (me.mode) {
-            if (outEvts.length) {
-                dragCurrent.b4DragOut(e, outEvts);
-                dragCurrent.onDragOut(e, outEvts);
-            }
-
             if (enterEvts.length) {
                 dragCurrent.onDragEnter(e, enterEvts);
             }
@@ -903,13 +908,14 @@ Ext.define('Ext.dd.DragDropManager', {
                 dragCurrent.onDragDrop(e, dropEvts);
             }
 
-        } else {
-            // fire dragout events
-            for (i=0, len=outEvts.length; i<len; ++i) {
-                dragCurrent.b4DragOut(e, outEvts[i].id);
-                dragCurrent.onDragOut(e, outEvts[i].id);
+            // fire dragout events.
+            // These are fires on mouseup/pointerup/touchend
+            // in addition to the dropEvt, so must happen *after* the drop
+            if (outEvts.length) {
+                dragCurrent.b4DragOut(e, outEvts);
+                dragCurrent.onDragOut(e, outEvts);
             }
-
+        } else {
             // fire enter events
             for (i=0,len=enterEvts.length; i<len; ++i) {
                 // dc.b4DragEnter(e, oDD.id);
@@ -928,6 +934,13 @@ Ext.define('Ext.dd.DragDropManager', {
                 dragCurrent.onDragDrop(e, dropEvts[i].id);
             }
 
+            // fire dragout events.
+            // These are fires on mouseup/pointerup/touchend
+            // in addition to the dropEvt, so must happen *after* the drop
+            for (i=0, len=outEvts.length; i<len; ++i) {
+                dragCurrent.b4DragOut(e, outEvts[i].id);
+                dragCurrent.onDragOut(e, outEvts[i].id);
+            }
         }
 
         // notify about a drop that did not find a target

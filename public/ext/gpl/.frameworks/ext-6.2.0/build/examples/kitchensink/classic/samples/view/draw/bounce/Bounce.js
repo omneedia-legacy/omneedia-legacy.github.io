@@ -31,8 +31,7 @@ Ext.define('KitchenSink.view.draw.bounce.Bounce', {
     },
 
     listeners: {
-        afterrender: 'onAfterRender',
-        destroy: 'onDestroy'
+        afterrender: 'onAfterRender'
     }
 
 });

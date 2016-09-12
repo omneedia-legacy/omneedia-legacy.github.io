@@ -8,6 +8,16 @@ Ext.define('KitchenSink.view.calendar.Validation', {
         'Ext.calendar.panel.Days'
     ],
 
+    // <example>
+    otherContent: [{
+        type: 'Controller',
+        path: 'modern/src/view/calendar/ValidationController.js'
+    },{
+        type: 'Store',
+        path: 'samples/data/calendar/Validation.js'
+    }],
+    // </example>
+
     controller: 'calendar-validation',
 
     viewModel: {
@@ -30,6 +40,8 @@ Ext.define('KitchenSink.view.calendar.Validation', {
     },
 
     layout: 'fit',
+    shadow: true,
+
     items: [{
         xtype: 'calendar-days',
         startTime: 8,

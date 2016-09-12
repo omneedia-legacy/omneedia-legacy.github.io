@@ -417,7 +417,7 @@ Ext.define('Ext.form.field.Base', {
                 }
                 
                 data.inputElAriaAttributes = inputElAttr;
-            };
+            }
             
             if (me.ariaRole !== 'native') {
                 ariaAttr.role = me.ariaRole;
@@ -449,15 +449,15 @@ Ext.define('Ext.form.field.Base', {
     getSubTplMarkup: function(fieldData) {
         var me = this,
             data = me.getSubTplData(fieldData),
-            preSubTpl = me.getTpl('preSubTpl'),
-            postSubTpl = me.getTpl('postSubTpl'),
+            preSubTpl = me.lookupTpl('preSubTpl'),
+            postSubTpl = me.lookupTpl('postSubTpl'),
             markup = '';
 
         if (preSubTpl) {
             markup += preSubTpl.apply(data);
         }
 
-        markup += me.getTpl('fieldSubTpl').apply(data);
+        markup += me.lookupTpl('fieldSubTpl').apply(data);
 
         if (postSubTpl) {
             markup += postSubTpl.apply(data);
@@ -581,9 +581,7 @@ Ext.define('Ext.form.field.Base', {
 
         value = Ext.valueFrom(value, '');
 
-        // We always need to go ahead with the set if valueContainsPlaceholder
-        // TODO: Remove this when IE8 retires and we can use HTML5 placeholder everywhere.
-        if (rawValue === undefined || rawValue !== value || me.valueContainsPlaceholder) {
+        if (rawValue === undefined || rawValue !== value) {
             me.rawValue = value;
 
             // Some Field subclasses may not render an inputEl
@@ -985,15 +983,17 @@ Ext.define('Ext.form.field.Base', {
         me.mixins.labelable.renderActiveError.call(me);
     },
 
-    beforeDestroy: function() {
+    doDestroy: function() {
         var me = this,
             task = me.checkChangeTask;
 
         if (task) {
             task.cancel();
         }
-        me.checkChangeTask = me.bindNotifyListener = Ext.destroy(me.bindNotifyListener);
+        
+        Ext.destroy(me.bindNotifyListener);
         me.cleanupField();
+        
         me.callParent();
     },
 
@@ -1055,7 +1055,7 @@ Ext.define('Ext.form.field.Base', {
         initRenderTpl: function() {
             var me = this;
             if (!me.hasOwnProperty('renderTpl')) {
-                me.renderTpl = me.getTpl('labelableRenderTpl');
+                me.renderTpl = me.lookupTpl('labelableRenderTpl');
             }
             return me.callParent();
         },

@@ -65,6 +65,12 @@ Ext.define('Ext.drag.proxy.Placeholder', {
                 html: me.getHtml()
             });
             el.addCls(me.placeholderCls);
+            
+            el.setTouchAction({
+                panX: false,
+                panY: false
+            });
+
         }
         el.show();
 
@@ -96,7 +102,7 @@ Ext.define('Ext.drag.proxy.Placeholder', {
                 el.removeCls(oldCls);
             }
 
-            if (newCls) {
+            if (cls) {
                 el.addCls(cls);
             }
         }

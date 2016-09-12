@@ -14,7 +14,7 @@ Ext.define('KitchenSink.view.grid.GroupedHeaderGrid', {
     //<example>
     otherContent: [{
         type: 'Controller',
-        path: 'classic/samples/view/Grid/BasicGridController.js'
+        path: 'classic/samples/view/grid/BasicGridController.js'
     }, {
         type: 'Store',
         path: 'classic/samples/store/Companies.js'

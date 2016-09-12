@@ -1,3 +1,11 @@
+/**
+ * The 'd3-treemap' component visualizes tree nodes as rectangles, where parent rectangles
+ * contain the child ones. This makes a more efficient use of space than 'd3-pack',
+ * but at the expense of some visual clarity.
+ * In this example the component is used to show the day performance of the SP500 stocks
+ * categorized by market sector. It's very easy to see the stocks and sectors that are doing
+ * well and those that are not.
+ */
 Ext.define('KitchenSink.view.d3.TreeMap', {
     extend: 'Ext.panel.Panel',
     xtype: 'd3-view-treemap',
@@ -40,9 +48,6 @@ Ext.define('KitchenSink.view.d3.TreeMap', {
     },
 
     session: true,
-    resizable: {
-        constrain: true
-    },
 
     items: [
         {
@@ -59,7 +64,8 @@ Ext.define('KitchenSink.view.d3.TreeMap', {
             displayField: 'name',
             bind: {
                 store: '{store}',
-                selection: '{selection}'
+                selection: '{selection}',
+                focused: '{selection}'
             },
             tbar: {
                 xtype: 'segmentedbutton',

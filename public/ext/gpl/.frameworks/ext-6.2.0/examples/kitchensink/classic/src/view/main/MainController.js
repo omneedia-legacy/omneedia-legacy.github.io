@@ -27,9 +27,13 @@ Ext.define('KitchenSink.view.main.MainController', {
     },
 
     showBreadcrumbNav: function() {
-        var refs = this.getReferences(),
+        var me = this,
+            refs = me.getReferences(),
             navToolbar = refs['navigation-toolbar'],
-            treeNav = refs.tree;
+            treeNav = refs.tree,
+            viewModel = me.getViewModel(),
+            selectedView = viewModel.get('selectedView'),
+            selection = me.preFilterSelection;
 
         Ext.suspendLayouts();
 
@@ -41,11 +45,15 @@ Ext.define('KitchenSink.view.main.MainController', {
             });
         }
 
+        if (!selectedView && selection) {
+            viewModel.set('selectedView', selection);
+        }
+
         treeNav.hide();
         refs.contentPanel.getHeader().hide();
 
-        this._hasTreeNav = false;
-        this.getView().saveState();
+        me._hasTreeNav = false;
+        me.getView().saveState();
         Ext.resumeLayouts(true);
 
         // Ensure focus is not lost when treeNav panel is hidden

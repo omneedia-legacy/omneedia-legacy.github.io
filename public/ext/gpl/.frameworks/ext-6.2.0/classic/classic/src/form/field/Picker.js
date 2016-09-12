@@ -36,11 +36,11 @@ Ext.define('Ext.form.field.Picker', {
     },
     
     keyMap: {
-        target: 'inputEl',
         scope: 'this',
         DOWN: 'onDownArrow',
         ESC: 'onEsc'
     },
+    keyMapTarget: 'inputEl',
 
     /**
      * @property {Boolean} isPickerField
@@ -411,16 +411,18 @@ Ext.define('Ext.form.field.Picker', {
         }
     },
 
-    beforeDestroy : function(){
+    doDestroy: function(){
         var me = this,
             picker = me.picker;
 
-        me.callParent();
         Ext.un('resize', me.alignPicker, me);
         Ext.destroy(me.keyNav, picker);
+        
         if (picker) {
             me.picker = picker.pickerField = null;
         }
+
+        me.callParent();
     },
 
     privates: {

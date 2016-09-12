@@ -13,6 +13,7 @@
      */
     "classpath": [
         "${app.dir}/app",
+        "${app.dir}/ux",
         "${app.dir}/samples",
         "${app.dir}/${toolkit.name}/src",
         "${app.dir}/${toolkit.name}/samples"
@@ -201,6 +202,10 @@
             "mode": "relative"
         },
         {
+            "path": "samples/data/calendar",
+            "mode": "relative"
+        },
+        {
             "path": "lib",
             "mode": "relative"
         },
@@ -247,20 +252,14 @@
         ]
     },
 
-    "classic": {
-        "js": [
-        	{
-                "path": "../classic/shared/examples.js",
-                "includeInBundle": true
-            }
-        ]
-    },
-
     /**
      * override objects for setting build environment specific
      * settings.
      */
     "production": {
+        "compressor": {
+            "type": "yui"
+        },
         "output": {
             "appCache": {
                 "enable": false
@@ -327,6 +326,7 @@
         "page": "index.html",
         "manifest": "${build.id}.json",
         "js": "${build.id}/app.js",
+        "framework": "${build.id}/framework.js",
         "resources": {
             "path": "./${build.id}/resources",
             "images": "./${build.id}/resources/images",
@@ -342,14 +342,6 @@
         }
     },
 
-    /**
-     * TODO: https://sencha.jira.com/browse/EXTJS-16742
-     */
-    "locales": [
-        "en",
-        "he"
-    ],
-
     "overrides": [
         "${app.dir}/overrides",
         "${app.dir}/locale/${app.locale}",
@@ -357,250 +349,95 @@
         "${app.dir}/${toolkit.name}/locale/${app.locale}"
     ],
 
-    "builds": {
+    "requires": [
+        "font-awesome",
+        "ux",
+        "amf",
+        "soap",
+        "pivot",
+        "charts",
+        "d3",
+        "calendar",
+        "pivot-d3"
+    ],
+
+    "classic": {
+        "js": [
+            {
+                "path": "../classic/shared/examples.js",
+                "includeInBundle": true
+            }
+        ],
+        "locales": [
+            "en",
+            "he"
+        ],
+        "requires": [
+            "locale",
+            "font-ext"
+        ]
+    },
+
+    "modern": {
+        "slicer": null,
+        "requires": [
+            "google"
+        ],
+        "locales": [
+            "en"
+        ]
+    },
+
+   "builds": {
         "classic": {
             "toolkit": "classic",
-            "requires": [
-                "font-awesome",
-                "font-ext",
-                "locale",
-                "ux",
-                "amf",
-                "soap",
-                "pivot",
-                "charts",
-                "d3",
-                "calendar"
-            ],
-            "locales": [
-                "en",
-                "he"
-            ],
             "theme": "theme-classic"
         },
         "gray": {
             "toolkit": "classic",
-            "requires": [
-                "font-awesome",
-                "font-ext",
-                "locale",
-                "ux",
-                "amf",
-                "soap",
-                "pivot",
-                "charts",
-                "d3",
-                "calendar"
-            ],
-            "locales": [
-                "en",
-                "he"
-            ],
             "theme": "theme-gray"
         },
         "crisp": {
             "toolkit": "classic",
-            "requires": [
-                "font-awesome",
-                "font-ext",
-                "locale",
-                "ux",
-                "amf",
-                "soap",
-                "pivot",
-                "charts",
-                "d3",
-                "calendar"
-            ],
-            "locales": [
-                "en",
-                "he"
-            ],
             "theme": "theme-crisp"
         },
         "crisp-touch": {
             "toolkit": "classic",
-            "requires": [
-                "font-awesome",
-                "font-ext",
-                "locale",
-                "ux",
-                "amf",
-                "soap",
-                "pivot",
-                "charts",
-                "d3",
-                "calendar"
-            ],
-            "locales": [
-                "en",
-                "he"
-            ],
             "theme": "theme-crisp-touch"
         },
         "neptune": {
             "toolkit": "classic",
-            "requires": [
-                "font-awesome",
-                "font-ext",
-                "locale",
-                "ux",
-                "amf",
-                "soap",
-                "pivot",
-                "charts",
-                "d3",
-                "calendar"
-            ],
-            "locales": [
-                "en",
-                "he"
-            ],
             "theme": "theme-neptune"
         },
         "neptune-touch": {
             "toolkit": "classic",
-            "requires": [
-                "font-awesome",
-                "font-ext",
-                "locale",
-                "ux",
-                "amf",
-                "soap",
-                "pivot",
-                "charts",
-                "d3",
-                "calendar"
-            ],
-            "locales": [
-                "en",
-                "he"
-            ],
             "theme": "theme-neptune-touch"
         },
         "triton": {
             "toolkit": "classic",
-            "requires": [
-                "font-awesome",
-                "font-ext",
-                "locale",
-                "ux",
-                "amf",
-                "soap",
-                "pivot",
-                "charts",
-                "d3",
-                "calendar"
-            ],
-            "locales": [
-                "en",
-                "he"
-            ],
             "theme": "theme-triton"
         },
 
         "modern-triton": {
             "toolkit": "modern",
-            "slicer": null,
-            "requires": [
-                "font-awesome",
-                "amf",
-                "ux",
-                "soap",
-                "pivot",
-                "charts",
-                "d3",
-                "calendar"
-            ],
             "theme": "theme-triton"
         },
         "modern-neptune": {
             "toolkit": "modern",
-            "slicer": null,
-            "requires": [
-                "font-awesome",
-                "amf",
-                "ux",
-                "soap",
-                "pivot",
-                "charts",
-                "d3",
-                "calendar"
-            ],
             "theme": "theme-neptune"
-        },
-        "windows": {
-            "toolkit": "modern",
-            "slicer": null,
-            "requires": [
-                "font-awesome",
-                "amf",
-                "ux",
-                "soap",
-                "pivot",
-                "charts",
-                "d3",
-                "calendar"
-            ],
-            "theme": "theme-windows"
-        },
-        "device": {
-            "toolkit": "modern",
-            "slicer": null,
-            "material" : {
-                "toolbar": {
-                    "color": "#1976d2",
-                    "dynamic": true
-                }
-            },
-            "requires": [
-                "font-awesome",
-                "ux",
-                "amf",
-                "ux",
-                "soap",
-                "pivot",
-                "charts",
-                "d3",
-                "calendar"
-            ],
-            "theme": "theme-material"
         },
         "material": {
             "toolkit": "modern",
-            "slicer": null,
             "material" : {
                 "toolbar": {
                     "color": "#1976d2",
                     "dynamic": true
                 }
             },
-            "requires": [
-                "font-awesome",
-                "ux",
-                "amf",
-                "ux",
-                "soap",
-                "pivot",
-                "charts",
-                "d3",
-                "calendar"
-            ],
             "theme": "theme-material"
         },
         "ios": {
             "toolkit": "modern",
-            "slicer": null,
-            "requires": [
-                "ux",
-                "font-awesome",
-                "amf",
-                "soap",
-                "pivot",
-                "charts",
-                "d3",
-                "calendar"
-            ],
             "theme": "theme-ios"
         }
     },

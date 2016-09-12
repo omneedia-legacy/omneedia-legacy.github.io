@@ -1,20 +1,25 @@
-@include toggle-ui(
-$width: $toggle-width,
-$height: $toggle-height,
-$border: $toggle-border,
-$border-radius: $toggle-border-radius,
-$background-color: $toggle-background-color,
-$background-gradient: $toggle-background-gradient,
-$on-background-color: $toggle-on-background-color,
-$on-background-gradient: $toggle-on-background-gradient,
-$thumb-size: $toggle-thumb-size,
-$thumb-border: $toggle-thumb-border,
-$thumb-border-radius: $toggle-thumb-border-radius,
-$thumb-background-color: $toggle-thumb-background-color,
-$thumb-background-gradient: $toggle-thumb-background-gradient,
-$thumb-on-background-color: $toggle-thumb-on-background-color,
-$thumb-on-background-gradient: $toggle-thumb-on-background-gradient,
-$thumb-top: $toggle-thumb-top,
-$thumb-left: $toggle-thumb-left,
-$thumb-padding: $toggle-thumb-padding
+@include toggleslider-ui(
+    $width: $toggleslider-width,
+    $width-big: $toggleslider-width-big,
+
+    $track-height: $toggleslider-track-height,
+    $track-height-big: $toggleslider-track-height-big,
+    $track-background-color: $toggleslider-track-background-color,
+    $track-border-width: $toggleslider-track-border-width,
+    $track-border-style: $toggleslider-track-border-style,
+    $track-border-color: $toggleslider-track-border-color,
+    $track-border-radius: $toggleslider-track-border-radius,
+    $track-border-radius-big: $toggleslider-track-border-radius-big,
+
+    $fill-background-color: $toggleslider-fill-background-color,
+    $disabled-fill-background-color: $toggleslider-disabled-fill-background-color,
+    $fill-border-color: $toggleslider-fill-border-color,
+    $disabled-fill-border-color: $toggleslider-disabled-fill-border-color,
+
+    $disabled-opacity: $toggleslider-disabled-opacity,
+    $thumb-inset: $toggleslider-thumb-inset
 );
+
+@include thumb-toggle-on-ui;
+@include thumb-toggle-off-ui;
+

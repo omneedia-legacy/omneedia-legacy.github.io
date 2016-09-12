@@ -41,55 +41,59 @@ Ext.define('KitchenSink.view.pivot.Locked', {
     collapsible: true,
     multiSelect: true,
 
-    enableLocking: true,
-
-    store: {
-        type: 'sales'
-    },
     selModel: {
         type: 'rowmodel'
     },
 
-    // Set layout type to "outline". If this config is missing then the default layout is "outline"
-    viewLayoutType: 'outline',
-
+    // Set this to true to lock leftAxis dimensions
+    enableLocking: true,
     // Set this to false if multiple dimensions are configured on leftAxis and
     // you want to automatically expand the row groups when calculations are ready.
     startRowGroupsCollapsed: false,
 
-    // Configure the aggregate dimensions. Multiple dimensions are supported.
-    aggregate: [{
-        dataIndex:  'value',
-        header:     'Total',
-        aggregator: 'sum',
-        width:      90
-    }],
+    matrix: {
+        type: 'local',
+        store: {
+            type: 'sales'
+        },
 
-    // Configure the left axis dimensions that will be used to generate the grid rows
-    leftAxis: [{
-        dataIndex:  'person',
-        header:     'Person',
-        width:      80
-    },{
-        dataIndex:  'company',
-        header:     'Company',
-        sortable:   false,
-        width:      80
-    }],
+        // Set layout type to "outline". If this config is missing then the default layout is "outline"
+        viewLayoutType: 'outline',
 
-    /**
-     * Configure the top axis dimensions that will be used to generate the columns.
-     * When columns are generated the aggregate dimensions are also used. If multiple aggregation dimensions
-     * are defined then each top axis result will have in the end a column header with children
-     * columns for each aggregate dimension defined.
-     */
-    topAxis: [{
-        dataIndex:  'year',
-        header:     'Year'
-    },{
-        dataIndex:  'country',
-        header:     'Country'
-    }],
+        // Configure the aggregate dimensions. Multiple dimensions are supported.
+        aggregate: [{
+            dataIndex: 'value',
+            header: 'Total',
+            aggregator: 'sum',
+            width: 90
+        }],
+
+        // Configure the left axis dimensions that will be used to generate the grid rows
+        leftAxis: [{
+            dataIndex: 'person',
+            header: 'Person',
+            width: 80
+        }, {
+            dataIndex: 'company',
+            header: 'Company',
+            sortable: false,
+            width: 80
+        }],
+
+        /**
+         * Configure the top axis dimensions that will be used to generate the columns.
+         * When columns are generated the aggregate dimensions are also used. If multiple aggregation dimensions
+         * are defined then each top axis result will have in the end a column header with children
+         * columns for each aggregate dimension defined.
+         */
+        topAxis: [{
+            dataIndex: 'year',
+            header: 'Year'
+        }, {
+            dataIndex: 'country',
+            header: 'Country'
+        }]
+    },
 
     tbar: [{
         text: 'Collapsing',
@@ -105,7 +109,7 @@ Ext.define('KitchenSink.view.pivot.Locked', {
         menu: {
             defaults: {
                 xtype: 'menucheckitem',
-                group:  'subtotals',
+                group: 'subtotals',
                 checkHandler: 'subtotalsHandler'
             },
             items: [{
@@ -122,7 +126,7 @@ Ext.define('KitchenSink.view.pivot.Locked', {
         menu: {
             defaults: {
                 xtype: 'menucheckitem',
-                group:  'totals',
+                group: 'totals',
                 checkHandler: 'totalsHandler'
             },
             items: [{

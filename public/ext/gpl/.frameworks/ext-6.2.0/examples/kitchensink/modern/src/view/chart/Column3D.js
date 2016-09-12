@@ -22,7 +22,19 @@ Ext.define('KitchenSink.view.chart.Column3D', {
         }
     },
 
+    // <example>
+    otherContent: [{
+        type: 'Controller',
+        path: 'modern/src/view/chart/ChartController.js'
+    }, {
+        type: 'Store',
+        path: 'modern/src/store/OrderItems.js' 
+    }],
+    // </example>
+    
     layout: 'fit',
+    shadow: true,
+
     items: [{
         xtype: 'toolbar',
         docked: 'top',
@@ -37,9 +49,6 @@ Ext.define('KitchenSink.view.chart.Column3D', {
             iconCls: 'x-fa fa-refresh',
             text: 'Refresh',
             handler: 'onRefresh'
-        }, {
-            text: 'Reset',
-            handler: 'onReset'
         }]
     }, {
         xtype: 'cartesian',

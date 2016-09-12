@@ -848,12 +848,35 @@ Ext.define('Ext.data.AbstractStore', {
 
     destroy: function() {
         var me = this;
+        
+        if (me.hasListeners.beforedestroy) {
+            me.fireEvent('beforedestroy', me);
+        }
+        
+        me.destroying = true;
+        
         if (me.getStoreId()) {
             Ext.data.StoreManager.unregister(me);
         }
+        
+        me.doDestroy();
+        
+        if (me.hasListeners.destroy) {
+            me.fireEvent('destroy', me);
+        }
+        
+        me.destroying = false;
+
+        // This will finish the sequence and null object references
         me.callParent();
-        me.onDestroy();
     },
+    
+    /**
+     * Perform the Store destroying sequence. Override this method to add destruction
+     * behaviors to your custom Stores.
+     *
+     */
+    doDestroy: Ext.emptyFn,
 
     /**
      * Sorts the data in the Store by one or more of its properties. Example usage:
@@ -917,7 +940,8 @@ Ext.define('Ext.data.AbstractStore', {
         var me = this,
             sorters;
 
-        // If we're in the middle of grouping, it will take care of loading
+        // If we're in the middle of grouping, it will take care of loading.
+        // If the collection is not instantiated yet, it's because we are constructing.
         sorters = me.getSorters(false);
         if (me.settingGroups || !sorters) {
             return;
@@ -946,7 +970,13 @@ Ext.define('Ext.data.AbstractStore', {
 
     onFilterEndUpdate: function() {
         var me = this,
-            suppressNext = me.suppressNextFilter;
+            suppressNext = me.suppressNextFilter,
+            filters = me.getFilters(false);
+
+        // If the collection is not instantiated yet, it's because we are constructing.
+        if (!filters) {
+            return;
+        }
 
         if (me.getRemoteFilter()) {
             //<debug>

@@ -164,41 +164,66 @@ Ext.define('Ext.grid.NavigationModel', {
 
     onCellMouseDown: function(view, cell, cellIndex, record, row, recordIndex, mousedownEvent) {
         var targetComponent = Ext.Component.fromElement(mousedownEvent.target, cell),
+            targetEl = mousedownEvent.getTarget(null, null, true),
+            onActionable = targetEl.isFocusable() && !targetEl.is(view.getCellSelector()),
             ac;
 
         // If actionable mode, and		
-        //  (mousedown on a tabbable, or anywhere in the ownership tree of the active component),		
-        // we should not get involved.		
-        // The tabbable element will be part of actionability.		
+        //  (mousedown on a tabbable, or anywhere in the ownership tree of an inner active component),		
+        // we should just keep the actino position synchronized.		
+        // The tabbable element will be part of actionability.	
+        // If the mousedown was NOT on some focusable object, we need to exit actionable mode.
         if (view.actionableMode) {
-            // If mousedown was NOT in a "live" part of an actionable, that is not on a tabbable element, and
-            // not inside the active component tree (eg a combobox's bound list), then exit actionable mode.
-            if (!(mousedownEvent.getTarget(null, null, true).isTabbable() || ((ac = Ext.ComponentManager.getActiveComponent()) && ac.owns(mousedownEvent)))) {		
+            // If mousedown is on a focusable element, or in the component tree of the active component (which is NOT this)
+            if (!onActionable) {
+                onActionable = (ac = Ext.ComponentManager.getActiveComponent()) && ac !== view && ac.owns(mousedownEvent);
+            }
+            if (onActionable) {
+                // Keep actionPosition synched
+                view.setActionableMode(true, mousedownEvent.position);
+            }
+            // Not on anything actionable, then exit actionable mode
+            else {
                 view.setActionableMode(false, mousedownEvent.position);
             }
             return;
         }
 
         // If the event is a touchstart, leave it until the click to focus.
+        // Mousedowns may have a focusing effect.
         if (mousedownEvent.pointerType !== 'touch') {
-            // If we are explicitly focusing the cell, do not allow the event
-            // to continue. If they mousedown on some potentially actionable
-            // element, it should not focus. Actionable is only on F2 or ENTER.
-            cell.focus();
-            if (mousedownEvent.button === 2) {
-                this.fireNavigateEvent(mousedownEvent);
+            if (mousedownEvent.position.column.cellFocusable !== false) {
+                if (onActionable) {
+
+                    // So that the impending onFocusEnter does not
+                    // process the event and delegate focus. We
+                    // control that here. This means disabling tabbability.
+                    if (!view.containsFocus) {
+                        view.containsFocus = true;
+                        view.toggleChildrenTabbability(false);
+                    }
+                    view.setActionableMode(true, mousedownEvent.position);
+                } else {
+                    cell.focus();
+                }
+                if (mousedownEvent.button === 2) {
+                    this.fireNavigateEvent(mousedownEvent);
+                }
             }
-        }
+            else {
+                mousedownEvent.preventDefault(true);
+            }
 
-        // If mousedowning on a focusable Component.
-        // After having set the position according to the mousedown, we then
-        // enter actionable mode and focus the component just as if the user
-        // Had navigated here and pressed F2.
-        if (targetComponent && targetComponent.isFocusable && targetComponent.isFocusable()) {
-            view.setActionableMode(true, mousedownEvent.position);
+            // If mousedowning on a focusable Component.
+            // After having set the position according to the mousedown, we then
+            // enter actionable mode and focus the component just as if the user
+            // Had navigated here and pressed F2.
+            if (targetComponent && targetComponent.isFocusable && targetComponent.isFocusable()) {
+                view.setActionableMode(true, mousedownEvent.position);
 
-            // Focus the targeted Component
-            targetComponent.focus();
+                // Focus the targeted Component
+                targetComponent.focus();
+            }
         }
     },
 
@@ -209,7 +234,10 @@ Ext.define('Ext.grid.NavigationModel', {
 
         // If a prior click handler has moved focus out of the view
         // we cannot navigate because navigation has moved outside of the view.
-        if (!Ext.isIE10m && !view.containsFocus && clickEvent.pointerType !== 'touch') {
+        // Must check that we contains the focused element, not the containsFocus flag
+        // because asynchronous focus events might mean that flag is not yet set
+        // even though the active element is within the view.
+        if (!Ext.isIE10m && !view.el.contains(Ext.Element.getActiveElement()) && clickEvent.pointerType !== 'touch') {
             return;
         }
         // In actionable mode, we fire a navigate event in case the column's stopSelection is false
@@ -222,7 +250,7 @@ Ext.define('Ext.grid.NavigationModel', {
                 // Must still set position so that the other actionable
                 // at the different action position blurs and finishes.
                 if (!clickOnFocusable) {
-                    me.setPosition(clickEvent.position, null, clickEvent);
+                    view.setActionableMode(false, clickEvent.position);
                 }
             }
             me.fireEvent('navigate', {
@@ -256,8 +284,13 @@ Ext.define('Ext.grid.NavigationModel', {
                 }
                 //</legacyBrowser>
                 me.fireNavigateEvent(clickEvent);
-            } else {
+            }
+            // If the column is focusable, focus the cell.
+            // The onFocusMove listener will react to the focus change
+            else if (clickEvent.position.column.cellFocusable !== false) {
                 me.setPosition(clickEvent.position, null, clickEvent);
+            } else {
+                clickEvent.preventDefault();
             }
         }
     },
@@ -276,25 +309,24 @@ Ext.define('Ext.grid.NavigationModel', {
             column,
             newPosition;
 
-        // If what was focused was a cell, and we are not in actionable mode, navigate to that cell.
-        if (view && !view.actionableMode && Ext.fly(cell).is(view.cellSelector)) {
+        if (view) {
 
-            // If we focus a cell, we must exit actionable mode
-            view.ownerGrid.setActionableMode(false);
+            // If what was focused was a cell...
+            if (!view.actionableMode && isCell) {
+                record = view.getRecord(cell);
+                column = view.getHeaderByCell(cell);
+                if (record && column) {
+                    newPosition = new Ext.grid.CellContext(view).setPosition(record, column);
 
-            record = view.getRecord(cell);
-            column = view.getHeaderByCell(cell);
-            if (record && column) {
-                newPosition = new Ext.grid.CellContext(view).setPosition(record, column);
-
-                // The focus might have been the *result* of setting the position
-                if (!newPosition.isEqual(this.position)) {
-                    this.setPosition(newPosition);
+                    // The focus might have been the *result* of setting the position
+                    if (!newPosition.isEqual(this.position)) {
+                        this.setPosition(newPosition);
+                    }
                 }
             }
-        }
-        else if ((view.actionableMode || view.activating) && !isCell && view.el.contains(e.target) && view.el.dom !== e.target) {
-            view.ownerGrid.fireEvent('cellactivate', view.ownerGrid, view.actionPosition);
+            else if ((view.actionableMode || view.activating) && !isCell && view.el.contains(e.target) && view.el.dom !== e.target) {
+                view.ownerGrid.fireEvent('cellactivate', view.ownerGrid, view.actionPosition);
+            }
         }
     },
 
@@ -304,6 +336,8 @@ Ext.define('Ext.grid.NavigationModel', {
         // If the event is a touchstart, leave it until the click to focus
         // A mousedown outside a cell. Must be in a Feature, or on a row border
         if (!mousedownEvent.position.cellElement && (mousedownEvent.pointerType !== 'touch')) {
+            // We are going to redirect focus, so do not allow default focus to proceed
+            mousedownEvent.preventDefault();
 
             // Stamp the closest cell into the event as if it were a cellmousedown
             me.getClosestCell(mousedownEvent);
@@ -827,12 +861,19 @@ Ext.define('Ext.grid.NavigationModel', {
 
     move: function(dir, keyEvent) {
         var me = this,
-            position = me.getPosition();
-
+            position = me.getPosition(),
+            result = position;
         
         if (position && position.record) {
-            // Do not allow SHIFT+(left|right) to wrap.
-            return position.view.walkCells(position, dir, keyEvent.shiftKey && (dir === 'right' || dir === 'left') ? me.vetoRowChange : null, me);
+            while (result) {
+                // Do not allow SHIFT+(left|right) to wrap.
+                result = position.view.walkCells(result, dir, keyEvent.shiftKey && (dir === 'right' || dir === 'left') ? me.vetoRowChange : null, me);
+
+                // If the new position is fousable, we're done.
+                if (result && result.column.cellFocusable !== false) {
+                    return result;
+                }
+            }
         }
         // <debug>
         // Enforce code correctness in unbuilt source.

@@ -8,6 +8,13 @@ Ext.define('KitchenSink.view.calendar.Timezone', {
         'Ext.field.Select'
     ],
 
+    // <example>
+    otherContent: [{
+        type: 'Store',
+        path: 'samples/data/calendar/Timezone.js'
+    }],
+    // </example>
+
     referenceHolder: true,
     viewModel: {
         data: {
@@ -29,6 +36,8 @@ Ext.define('KitchenSink.view.calendar.Timezone', {
     },
 
     layout: 'fit',
+    shadow: true,
+
     bind: {
         title: '{value:date("M Y")}'
     },

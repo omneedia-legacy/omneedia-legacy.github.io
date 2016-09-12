@@ -129,6 +129,18 @@ Ext.define('KitchenSink.view.window.MessageBoxController', {
                 yes: "Definitely!", 
                 no: "No chance!" 
             },
+            buttonTips: {
+                yes: {
+                    text: "We would't!",
+                    anchor: true,
+                    align: 't-b'
+                },
+                no: {
+                    text: "Probably best!",
+                    anchor: true,
+                    align: 't-b'
+                }
+            },
             scope: this,
             fn: this.showResult,
             maskClickAction: this.getMaskClickAction()

@@ -8,6 +8,13 @@ Ext.define('KitchenSink.view.calendar.Days', {
         'Ext.calendar.List'
     ],
 
+    // <example>
+    otherContent: [{
+        type: 'Store',
+        path: 'samples/data/calendar/MultiDay.js'
+    }],
+    // </example>
+
     viewModel: {
         data: {
             value: new Date()
@@ -26,6 +33,8 @@ Ext.define('KitchenSink.view.calendar.Days', {
             }
         }
     },
+
+    shadow: true,
 
     layout: {
         type: 'hbox',

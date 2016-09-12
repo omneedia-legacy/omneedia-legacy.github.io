@@ -6,6 +6,8 @@ Ext.define('KitchenSink.view.binding.AlgebraBinary', {
     alias: 'widget.binding-algebra-binary',
 
     bodyPadding: 10,
+    shadow: true,
+    cls: 'demo-solid-background',
 
     viewModel: {
         type: 'default',
@@ -24,9 +26,12 @@ Ext.define('KitchenSink.view.binding.AlgebraBinary', {
             readOnly: true
         }
     },
+
     layout: 'hbox',
+    scrollable: true,
 
     items: [{
+        layout: 'vbox',
         items: [{
             xtype: 'spinnerfield',
             stepValue: 1,
@@ -56,6 +61,7 @@ Ext.define('KitchenSink.view.binding.AlgebraBinary', {
             bind: '{x > y && y >= 10}'
         }]
     }, {
+        layout: 'vbox',
         items: [{
             xtype: 'spinnerfield',
             stepValue: 1,

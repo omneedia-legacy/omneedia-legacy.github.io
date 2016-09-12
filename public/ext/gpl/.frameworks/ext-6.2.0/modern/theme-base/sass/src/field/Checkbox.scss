@@ -1,3 +1,15 @@
-.#{$prefix}checkbox {
-    display: none;
+.#{$prefix}checkboxfield {
+    .#{$prefix}body-el {
+        text-align: center;
+    }
+
+    .#{$prefix}input-el {
+        display: none;
+    }
+}
+
+.#{$prefix}field.#{$prefix}checkboxfield {
+    .#{$prefix}input {
+        @include st-box();
+    }
 }

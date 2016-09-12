@@ -2,7 +2,11 @@
  */
 Ext.define('Ext.grid.plugin.SummaryRow', {
     extend: 'Ext.grid.Row',
-    alias: 'plugin.gridsummaryrow',
+    alias: ['plugin.summaryrow', 'plugin.gridsummaryrow'],
+
+    requires: [
+        'Ext.grid.cell.Summary'
+    ],
 
     mixins: [
         'Ext.mixin.Hookable'
@@ -12,14 +16,14 @@ Ext.define('Ext.grid.plugin.SummaryRow', {
 
     config: {
         grid: null,
-        cls: Ext.baseCSSPrefix + 'grid-summaryrow',
         emptyText: '',
-        emptyCls: Ext.baseCSSPrefix + 'grid-summaryrow-empty',
         docked: 'bottom',
         translatable: {
             translationMethod: 'csstransform'
         }
     },
+
+    classCls: Ext.baseCSSPrefix + 'summaryrow',
 
     init: function(grid) {
         this.setGrid(grid);
@@ -58,10 +62,10 @@ Ext.define('Ext.grid.plugin.SummaryRow', {
             });
 
             if (grid.initialized) {
-                grid.container.insertAfter(me, headerContainer);
+                grid.insertAfter(me, headerContainer);
             } else {
                 grid.on('initialize', function() {
-                    grid.container.insertAfter(me, headerContainer);
+                    grid.insertAfter(me, headerContainer);
                 }, me, {single: true});
             }
 
@@ -117,7 +121,7 @@ Ext.define('Ext.grid.plugin.SummaryRow', {
     },
 
     updateRowWidth: function() {
-        this.setWidth(this.getGrid().getTotalColumnWidth());
+        this.setWidth(this.getGrid().calculateTotalColumnWidth());
     },
 
     doUpdateSummary: function() {
@@ -127,7 +131,6 @@ Ext.define('Ext.grid.plugin.SummaryRow', {
             columns = grid.getColumns(),
             ln = columns.length,
             emptyText = me.getEmptyText(),
-            emptyCls = me.getEmptyCls(),
             i, column, type, renderer, formatter, cell, value, field, scope;
 
         for (i = 0; i < ln; i++) {
@@ -171,20 +174,18 @@ Ext.define('Ext.grid.plugin.SummaryRow', {
                     if (type === 'function') {
                         value = renderer.call(scope, value, store, field, cell);
                     } else if (type === 'string') {
-                        value = Ext.callback(renderer, scope, [value, store, field, cell], 0, me);
+                        value = Ext.callback(renderer, scope, [value, store, field, cell], 0, column);
                     }
                 }
 
-                cell.element.removeCls(emptyCls);
                 cell.setValue(value);
             } else {
-                cell.element.addCls(emptyCls);
                 cell.setValue(emptyText);
             }
         }
     },
 
-    destroy: function() {
+    doDestroy: function() {
         this.setGrid(null);
         this.callParent();
     },
@@ -200,6 +201,10 @@ Ext.define('Ext.grid.plugin.SummaryRow', {
             var cfg = Ext.apply({}, this.callParent([column]));
             delete cfg.bind;
             return cfg;
+        },
+
+        getColumnCell: function(column) {
+            return column.getSummaryCell();
         }
     }
 });

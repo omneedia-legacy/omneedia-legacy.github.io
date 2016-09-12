@@ -255,7 +255,8 @@ Ext.define('Ext.event.Event', {
             CMD: 'metaKey',
             COMMAND: 'metaKey',
             CMDORCTRL: Ext.isMac ? 'metaKey' : 'ctrlKey',
-            COMMANDORCONTROL: Ext.isMac ? 'metaKey' : 'ctrlKey'
+            COMMANDORCONTROL: Ext.isMac ? 'metaKey' : 'ctrlKey',
+            META: 'metaKey'
         },
 
         modifierGlyphs: {
@@ -390,8 +391,16 @@ Ext.define('Ext.event.Event', {
             me.buttons = 1;
         }
         
-        if (self.forwardTab !== undefined && self.focusEvents[type]) {
-            me.forwardTab = self.forwardTab;
+        if (self.focusEvents[type]) {
+            if (self.forwardTab !== undefined) {
+                me.forwardTab = self.forwardTab;
+            }
+        }
+        else if (type !== 'keydown') {
+            // Normally this property should be cleaned up in keyup handler;
+            // however that one might never come if something prevented default
+            // on the keydown. Make sure the property won't get stuck.
+            delete self.forwardTab;
         }
 
         if (self.mouseEvents[type]) {

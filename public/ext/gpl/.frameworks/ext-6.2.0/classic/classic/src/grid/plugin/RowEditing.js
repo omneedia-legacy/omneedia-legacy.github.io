@@ -63,10 +63,20 @@ Ext.define('Ext.grid.plugin.RowEditing', {
 
     /**
      * @cfg {Boolean} [autoCancel=true]
-     * `true` to automatically cancel any pending changes when the row editor begins editing a new row.
-     * `false` to force the user to explicitly cancel the pending changes.
+     * `true` to automatically cancel any pending changes when the row editor begins editing
+     * a new row. `false` to force the user to explicitly cancel the pending changes.
+     * Note that this option is mutually exclusive with {@link #autoUpdate}.
      */
     autoCancel: true,
+    
+    /**
+     * @cfg {Boolean} [autoUpdate=false]
+     * Set this to `true` to automatically confirm any pending changes when the row editor
+     * begins editing a new row. When `false`, the user will need to explicitly confirm
+     * the pending changes.
+     * Note that if this is set to `true`, {@link #autoCancel} will be set to `false`.
+     */
+    autoUpdate: false,
 
     /**
      * @cfg {Boolean} [removeUnmodified=false]
@@ -86,6 +96,25 @@ Ext.define('Ext.grid.plugin.RowEditing', {
      * in the row editor. Set to false to prevent the tooltip from showing.
      */
     errorSummary: true,
+    
+    //<locale>
+    /**
+     * @cfg {String} [formAriaLabel="'Editing row {0}'"]
+     * The ARIA label template for screen readers to announce when row editing starts.
+     * This label can be a {@link Ext.String#format} template, with the only parameter
+     * being the row number. Note that row numbers start at base {@link #formAriaLabelRowBase}.
+     */
+    formAriaLabel: 'Editing row {0}',
+    
+    /**
+     * @cfg {Number} [formAriaLabelRowBase=2]
+     * Screen readers will announce grid column header as first row of the ARIA table,
+     * so the first actual data row is #2 for screen reader users. If your grid has
+     * more than one column header row, you might want to increase this number.
+     * If the column header is not visible, the base will be decreased automatically.
+     */
+    formAriaLabelRowBase: 2,
+    //</locale>
 
     constructor: function() {
         var me = this;
@@ -97,6 +126,11 @@ Ext.define('Ext.grid.plugin.RowEditing', {
         }
 
         me.autoCancel = !!me.autoCancel;
+        me.autoUpdate = !!me.autoUpdate;
+        
+        if (me.autoUpdate) {
+            me.autoCancel = false;
+        }
     },
 
     init: function(grid) {
@@ -299,8 +333,11 @@ Ext.define('Ext.grid.plugin.RowEditing', {
             bLen     = btns.length,
             cfg      = {
                 autoCancel: me.autoCancel,
+                autoUpdate: me.autoUpdate,
                 removeUnmodified: me.removeUnmodified,
                 errorSummary: me.errorSummary,
+                formAriaLabel: me.formAriaLabel,
+                formAriaLabelRowBase: me.formAriaLabelRowBase + (grid.hideHeaders ? -1 : 0),
                 fields: headerCt.getGridColumns(),
                 hidden: true,
                 view: view,
@@ -473,12 +510,26 @@ Ext.define('Ext.grid.plugin.RowEditing', {
 
     createColumnField: function(column, defaultField) {
         var editor = this.editor,
-            def;
+            def, field;
 
         if (editor) {
             def = editor.getDefaultFieldCfg();
         }
 
-        return this.callParent([column, defaultField || def]);
+        field = this.callParent([column, defaultField || def]);
+        
+        if (field) {
+            field.skipLabelForAttribute = true;
+            field.ariaAttributes = field.ariaAttributes || {};
+            
+            if (this.grid.hideHeaders) {
+                field.ariaAttributes['aria-label'] = column.text;
+            }
+            else {
+                field.ariaAttributes['aria-labelledby'] = column.id;
+            }
+        }
+        
+        return field;
     }
 });

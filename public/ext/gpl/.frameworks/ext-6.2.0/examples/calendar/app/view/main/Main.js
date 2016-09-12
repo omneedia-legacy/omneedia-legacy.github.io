@@ -10,15 +10,21 @@ Ext.define('Calendar.view.main.Main', {
     items: [{
         xtype: 'app-calendar',
         reference: 'calendar',
-        sidebarTitle: 'Ext JS Calendar',
+        views: {
+            day: {
+                startTime: 0,
+                endTime: 24
+            },
+            week: {
+                startTime: 0,
+                endTime: 24
+            }
+        },
         bind: {
             store: '{calendars}'
         },
-        sideHeaderCfg: {
-            xtype: 'app-profile-side',
-            bind: {
-                user: '{user}'
-            }
+        sideBarHeader: {
+            xtype: 'app-profile-side'
         }
     }]
 });

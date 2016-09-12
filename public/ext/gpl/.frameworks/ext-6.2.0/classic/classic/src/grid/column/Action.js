@@ -480,11 +480,12 @@ Ext.define('Ext.grid.column.Action', {
         }
     },
 
-    beforeDestroy: function() {
-        // Don't delete the items, if we're subclassed with items then we'll be
-        // left with an items array.
+    doDestroy: function() {
+        // Action column items property is an array, unlike the normal Container's MixedCollection.
+        // If we don't null it here, parent doDestroy() can blow up.
         this.renderer = this.items = null;
-        return this.callParent(arguments);
+        
+        return this.callParent();
     },
 
     /**
@@ -493,7 +494,7 @@ Ext.define('Ext.grid.column.Action', {
      * Also fires any configured click handlers. By default, cancels the mousedown event to prevent selection.
      * Returns the event handler's status to allow canceling of GridView's bubbling process.
      */
-    processEvent : function(type, view, cell, recordIndex, cellIndex, e, record, row){
+    processEvent: function(type, view, cell, recordIndex, cellIndex, e, record, row) {
         var me = this,
             target = e.getTarget(),
             key = type === 'keydown' && e.getKey(),
@@ -537,8 +538,17 @@ Ext.define('Ext.grid.column.Action', {
                     // 
                     // If the handler moved focus outside of the view, do not allow this event to propagate
                     // to cause any navigation.
-                    if (!view.destroyed && !view.el.contains(Ext.Element.getActiveElement())) {
+                    if (view.destroyed) {
                         return false;
+                    } else {
+                        // If the record was deleted by the handler, refresh
+                        // the position based upon coordinates.
+                        if (!e.position.getNode()) {
+                            e.position.refresh();
+                        }
+                        if (!view.el.contains(Ext.Element.getActiveElement())) {
+                            return false;
+                        }
                     }
                 }
             }

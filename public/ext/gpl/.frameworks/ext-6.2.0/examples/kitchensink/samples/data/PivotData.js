@@ -23,7 +23,7 @@ Ext.define('KitchenSink.data.PivotData', {
         i, j;
 
     for (i = 0; i < items; i++){
-        j = rand % companies
+        j = rand % companies;
         data.push({
             id:         i,
             company:    randomItem(companies),

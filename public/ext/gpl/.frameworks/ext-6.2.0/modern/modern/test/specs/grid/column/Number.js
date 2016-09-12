@@ -72,10 +72,10 @@ describe('Ext.grid.column.Number', function () {
                 renderTo: Ext.getBody()
             });
 
-            expect(getCell(0, 0).el.down('.x-grid-cell-inner', true).innerHTML).toBe('1,244.25');
-            expect(getCell(1, 0).el.down('.x-grid-cell-inner', true).innerHTML).toBe('3,444.99');
-            expect(getCell(2, 0).el.down('.x-grid-cell-inner', true).innerHTML).toBe('2,474.45');
-            expect(getCell(3, 0).el.down('.x-grid-cell-inner', true).innerHTML).toBe('244.75');
+            expect(getCell(0, 0).el.down('.x-inner-el', true).innerHTML).toBe('1,244.25');
+            expect(getCell(1, 0).el.down('.x-inner-el', true).innerHTML).toBe('3,444.99');
+            expect(getCell(2, 0).el.down('.x-inner-el', true).innerHTML).toBe('2,474.45');
+            expect(getCell(3, 0).el.down('.x-inner-el', true).innerHTML).toBe('244.75');
         });
 
         it('should apply the format correctly', function () {
@@ -87,10 +87,10 @@ describe('Ext.grid.column.Number', function () {
                 renderTo: Ext.getBody()
             });
 
-            expect(getCell(0, 0).el.down('.x-grid-cell-inner', true).innerHTML).toBe('1244.25');
-            expect(getCell(1, 0).el.down('.x-grid-cell-inner', true).innerHTML).toBe('3444.99');
-            expect(getCell(2, 0).el.down('.x-grid-cell-inner', true).innerHTML).toBe('2474.45');
-            expect(getCell(3, 0).el.down('.x-grid-cell-inner', true).innerHTML).toBe('244.75');
+            expect(getCell(0, 0).el.down('.x-inner-el', true).innerHTML).toBe('1244.25');
+            expect(getCell(1, 0).el.down('.x-inner-el', true).innerHTML).toBe('3444.99');
+            expect(getCell(2, 0).el.down('.x-inner-el', true).innerHTML).toBe('2474.45');
+            expect(getCell(3, 0).el.down('.x-inner-el', true).innerHTML).toBe('244.75');
         });
 
         it('should apply the cell format correctly from a VM', function () {
@@ -114,10 +114,10 @@ describe('Ext.grid.column.Number', function () {
             });
 
             vm.notify();
-            expect(getCell(0, 0).el.down('.x-grid-cell-inner', true).innerHTML).toBe('1,244');
-            expect(getCell(1, 0).el.down('.x-grid-cell-inner', true).innerHTML).toBe('3,445');
-            expect(getCell(2, 0).el.down('.x-grid-cell-inner', true).innerHTML).toBe('2,474');
-            expect(getCell(3, 0).el.down('.x-grid-cell-inner', true).innerHTML).toBe('245');
+            expect(getCell(0, 0).el.down('.x-inner-el', true).innerHTML).toBe('1,244');
+            expect(getCell(1, 0).el.down('.x-inner-el', true).innerHTML).toBe('3,445');
+            expect(getCell(2, 0).el.down('.x-inner-el', true).innerHTML).toBe('2,474');
+            expect(getCell(3, 0).el.down('.x-inner-el', true).innerHTML).toBe('245');
         });
 
     });

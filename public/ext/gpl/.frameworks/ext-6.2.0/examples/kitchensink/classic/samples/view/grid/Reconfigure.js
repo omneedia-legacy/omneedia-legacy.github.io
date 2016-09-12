@@ -50,17 +50,13 @@ Ext.define('KitchenSink.view.grid.Reconfigure', {
             text: 'Show Offices',
             itemId: 'Offices',
             handler: 'onShowClick',
-            bind: {
-                disabled: '{nowShowing === "Offices"}'
-            }
+            reference: 'showOffices'
         }, {
             text: 'Show Employees',
             itemId: 'Employees',
             margin: '0 0 0 10',
             handler: 'onShowClick',
-            bind: {
-                disabled: '{nowShowing === "Employees"}'
-            }
+            reference: 'showEmployees'
         }]
     }, {
         xtype: 'grid',

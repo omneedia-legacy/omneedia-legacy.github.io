@@ -95,6 +95,11 @@ describe("Ext.view.MultiSelector", function(){
     }
 
     beforeEach(function() {
+        // Override so that we can control asynchronous loading
+        Ext.data.ProxyStore.prototype.load = loadStore;
+
+        MockAjaxManager.addMethods();
+
         Employee = Ext.define('spec.Employee', {
             extend: 'Ext.data.Model',
             fields: [{
@@ -116,6 +121,10 @@ describe("Ext.view.MultiSelector", function(){
         Ext.undefine('spec.Employee');
         Ext.data.Model.schema.clear();
         multiSelector = Ext.destroy(multiSelector);
+
+        // Undo the overrides.
+        Ext.data.ProxyStore.prototype.load = proxyStoreLoad;
+        MockAjaxManager.removeMethods();
     });
 
     describe("search popup", function () {
@@ -144,18 +153,7 @@ describe("Ext.view.MultiSelector", function(){
         describe("synchronizing selection", function () {
             describe("store with remote data", function () {
                 beforeEach(function() {
-                    // Override so that we can control asynchronous loading
-                    Ext.data.ProxyStore.prototype.load = loadStore;
-
-                    MockAjaxManager.addMethods();
-
                     makeSelector();
-                });
-
-                afterEach(function() {
-                    // Undo the overrides.
-                    Ext.data.ProxyStore.prototype.load = proxyStoreLoad;
-                    MockAjaxManager.removeMethods();
                 });
 
                 it("should select the records in the searcher which match by ID the records in the selector", function() {

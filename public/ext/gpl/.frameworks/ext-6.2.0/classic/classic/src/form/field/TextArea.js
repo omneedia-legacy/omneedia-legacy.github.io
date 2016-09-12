@@ -265,12 +265,13 @@ Ext.define('Ext.form.field.TextArea', {
         }
     },
 
-    beforeDestroy: function(){
+    doDestroy: function() {
         var task = this.pasteTask;
+        
         if (task) {
             task.cancel();
-            this.pasteTask = null;
         }    
+        
         this.callParent();
     }
 });

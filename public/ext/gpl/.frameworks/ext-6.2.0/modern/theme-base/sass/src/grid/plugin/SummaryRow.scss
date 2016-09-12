@@ -1,6 +1,9 @@
 // Summary Rows do not get expanders
-.#{$prefix}grid-summaryrow {
-  .#{$prefix}grid-expander-cell:before {
-    display: none
-  }
+.#{$prefix}summaryrow {
+    position: relative !important;
+
+    .#{$prefix}expandercell .#{$prefix}inner-el:before {
+        display: none
+    }
+
 }

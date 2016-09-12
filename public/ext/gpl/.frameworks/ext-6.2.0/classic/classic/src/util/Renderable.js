@@ -626,7 +626,7 @@ Ext.define('Ext.util.Renderable', {
             baseCls: me.baseCls,
             componentCls: me.componentCls,
             frame: me.frame,
-            hasTabGuard: me.tabGuard,
+            hasTabGuard: !!me.tabGuard,
             scrollerCls: me.scrollerCls,
             childElCls: '', // overridden in RTL
             ariaEl: me.ariaEl
@@ -1321,7 +1321,7 @@ Ext.define('Ext.util.Renderable', {
          * @private
          */
         getFrameTpl: function(table) {
-            return this.getTpl(table ? 'frameTableTpl' : 'frameTpl');
+            return this.lookupTpl(table ? 'frameTableTpl' : 'frameTpl');
         },
 
         initContainer: function(container) {
@@ -1375,7 +1375,7 @@ Ext.define('Ext.util.Renderable', {
          * @private
          */
         initRenderTpl: function() {
-            var tpl = this.getTpl('renderTpl');
+            var tpl = this.lookupTpl('renderTpl');
 
             if (tpl && !tpl.renderContent) {
                 this.setupRenderTpl(tpl);
@@ -1425,9 +1425,13 @@ Ext.define('Ext.util.Renderable', {
             // the raw DOM nodes due to the duplicate id's (which prevents us from using
             // an Element wrapper until we resolve the duplicates).
 
-            // First off , render the new frameTpl to an off-document element.
+            // First off, render the new frameTpl to an off-document element.
             div = document.createElement('div');
             frameData = me.getFrameRenderData();
+            
+            // If the container was configured with tab guards, they were already rendered.
+            frameData.hasTabGuard = false;
+            
             frameTpl = me.getFrameTpl(frameInfo.table);
             frameTpl.insertFirst(div, frameData);
 

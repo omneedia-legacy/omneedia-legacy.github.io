@@ -35,6 +35,9 @@ describe("Ext.tip.ToolTip", function() {
     function mouseOverTarget() {
         jasmine.fireMouseEvent(target, 'mouseover', target.getX(), target.getY());
     }
+    function mouseOutTarget() {
+        jasmine.fireMouseEvent(target, 'mouseout', 1000, 1000);
+    }
 
     describe("basic", function() {
         it("should extend Ext.tip.Tip", function() {
@@ -54,6 +57,15 @@ describe("Ext.tip.ToolTip", function() {
         it("should accept an HTMLElement for the 'target' config", function() {
             createTip({target: target.dom});
             expect(tip.target.dom).toBe(target.dom);
+        });
+
+        it('should show with no errors thrown', function() {
+            createTip({
+                target: null
+            });
+            expect(function() {
+                tip.show();
+            }).not.toThrow();
         });
     });
 
@@ -432,14 +444,14 @@ describe("Ext.tip.ToolTip", function() {
         }
 
         afterEach(function() {
-            Ext.getBody().on({
+            Ext.getBody().un({
                 touchstart: showTip,
                 mouseover: showTip
             });
         });
 
         it("should show at the 'pointerEvent' position if there's no target", function() {
-            createTip({target: null, html: 'Shown by pointer event'});
+            createTip({target: null, html: 'Shown by pointer event', showOnTap: true});
             if (Ext.supports.TouchEvents) {
                 Ext.getBody().on({
                     touchstart: showTip,
@@ -453,6 +465,135 @@ describe("Ext.tip.ToolTip", function() {
                 });
                 jasmine.fireMouseEvent(document.body, 'mouseover', 100, 100);
             }
+        });
+    });
+
+    describe('alwaysOnTop', function() {
+        var alwaysOnTopWindow,
+            extraWindow,
+            centerWindow,
+            combo;
+
+        afterEach(function() {
+            Ext.destroy(
+                alwaysOnTopWindow,
+                extraWindow,
+                centerWindow,
+                combo
+            );
+        });
+
+        it('should move the tooltip to the top above any other alwaysOnTop floater', function() {
+            var states = Ext.create('Ext.data.Store', {
+                fields: ['abbr', 'name'],
+                data: [{
+                    "abbr": 'a', "name": 'TestName'
+                }, {
+                    "abbr": 'b', "name":'TestName2'
+                }]
+            });
+
+            alwaysOnTopWindow = Ext.create('Ext.window.Window', {
+                floating: true,
+                title: 'Top Window (Always On Top)',
+                shadow: false,
+                height: 170,
+                width: 200,
+                x: 200,
+                y: 0,
+                alwaysOnTop: true,
+                renderTo: Ext.getBody()
+            }).show();
+            extraWindow = Ext.create('Ext.window.Window', {
+                title: 'Some Extra Window',
+                height: 100,
+                width: 450,
+                x: 200,
+                y: 250,
+                items: [{
+                    xtype: "textfield"
+                }]
+            }).show();
+            
+            // This will not be the topmost window.
+            // The "Top Window" will be above its mask and visible
+            // That "Top Window" should not automatically attract focus
+            // upon zIndex stack sort unless
+            centerWindow = Ext.create('Ext.window.Window', {
+                title: 'Center Window',
+                height: 170,
+                width: 200,
+                modal: true,
+                x: 200,
+                y: 300,
+                items: [{
+                    xtype: "combo",
+                    allowBlank: false,
+                    store: states,
+                    displayField: 'name',
+                    valueField: 'abbr',
+                    listConfig : {
+                        getInnerTpl : function() {
+                            return '<div data-qtip="<b>Name:</b>{name} <br/><b>Abbreviation:</b>{abbr} <br/>">{name} ({abbr})</div>';
+                        }
+                    }
+                }]
+            }).show();
+
+            // We use a QuickTip instance for convenience
+            tip = new Ext.tip.QuickTip({
+                showDelay: 100,
+                autoHide: true,
+                dismissDelay: 100
+            });
+
+            combo = centerWindow.down('combobox');
+            combo.focus();
+            combo.expand();
+
+            // Mouseover the dropdown.
+            jasmine.fireMouseEvent(Ext.fly(combo.getPicker().getNode(0)).down('[data-qtip]'), 'mouseover');
+
+            // Tip should show, and should be topmost in stack.
+            // Bug was that the alwaysOnTop window stayed on top and the tip
+            // remained below.
+            waitsFor(function() {
+                return tip.isVisible(true) && centerWindow.zIndexManager.getActive() === tip;
+            });
+
+            // After its dismissDelay, tip should hide, and focus should remain in the combobox
+            waitsFor(function() {
+                return !tip.isVisible();
+            });
+
+            // Picker should be visible.
+            // Bug was that the alwaysOnTop" window, on being moved back to the top
+            // on tooltip hide, was acquiring focus and causing combo collapse.
+            runs(function() {
+                expect(combo.getPicker().isVisible()).toBe(true);
+            });
+
+        });
+    });
+
+    describe('cancel show', function() {
+        it('should show when rehovering after a show has been canceked', function() {
+            createTip({
+                target: document.body,
+                delegate: '#tipTarget',
+                showDelay: 1000
+            });
+            mouseOverTarget();
+
+            mouseOutTarget();
+
+            tip.showDelay = 1;
+
+            mouseOverTarget();
+            
+            waitsFor(function() {
+                return tip.isVisible();
+            }, 1000, 'tooltip to show');
         });
     });
 });

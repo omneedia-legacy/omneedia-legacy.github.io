@@ -79,13 +79,7 @@ Ext.define('Ext.chart.interactions.Rotate', {
          * Saves the current rotation of the series. Accepts negative values and values > 360 ( / 180 * Math.PI)
          * @private
          */
-        rotation: 0,
-
-        touchAction: {
-            panX: false,
-            panY: false,
-            pinchZoom: false
-        }
+        rotation: 0
     },
 
     oldRotations: null,

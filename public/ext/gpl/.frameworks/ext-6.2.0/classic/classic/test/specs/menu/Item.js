@@ -464,14 +464,6 @@ describe('Ext.menu.Item', function () {
     });
     
     describe("ARIA", function() {
-        function expectAria(attr, value) {
-            jasmine.expectAriaAttr(item, attr, value);
-        }
-        
-        function expectNoAria(attr) {
-            jasmine.expectNoAriaAttr(item, attr);
-        }
-        
         describe("simple", function() {
             beforeEach(function() {
                 makeMenu({
@@ -486,15 +478,15 @@ describe('Ext.menu.Item', function () {
             });
             
             it("should have menuitem role", function() {
-                expectAria('role', 'menuitem');
+                expect(item).toHaveAttr('role', 'menuitem');
             });
             
             it("should not have aria-haspopup", function() {
-                expectNoAria('aria-haspopup');
+                expect(item).not.toHaveAttr('aria-haspopup');
             });
             
             it("should not have aria-owns", function() {
-                expectNoAria('aria-owns');
+                expect(item).not.toHaveAttr('aria-owns');
             });
         });
         
@@ -513,15 +505,15 @@ describe('Ext.menu.Item', function () {
             });
             
             it("should have menuitem role", function() {
-                expectAria('role', 'menuitem');
+                expect(item).toHaveAttr('role', 'menuitem');
             });
 
             it("should not have aria-haspopup", function() {
-                expectNoAria('aria-haspopup');
+                expect(item).not.toHaveAttr('aria-haspopup');
             });
             
             it("should not have aria-owns", function() {
-                expectNoAria('aria-owns');
+                expect(item).not.toHaveAttr('aria-owns');
             });
         });
         
@@ -541,11 +533,11 @@ describe('Ext.menu.Item', function () {
                 });
                 
                 it("should have aria-haspopup", function() {
-                    expectAria('aria-haspopup', 'true');
+                    expect(item).toHaveAttr('aria-haspopup', 'true');
                 });
                 
                 it("should have aria-owns", function() {
-                    expectAria('aria-owns', item.menu.id);
+                    expect(item).toHaveAttr('aria-owns', item.menu.id);
                 });
             });
             
@@ -568,11 +560,11 @@ describe('Ext.menu.Item', function () {
                     });
                     
                     it("should have aria-haspopup", function() {
-                        expectAria('aria-haspopup', 'true');
+                        expect(item).toHaveAttr('aria-haspopup', 'true');
                     });
                     
                     it("should have aria-owns", function() {
-                        expectAria('aria-owns', item.menu.id);
+                        expect(item).toHaveAttr('aria-owns', item.menu.id);
                     });
                 });
                 
@@ -588,11 +580,11 @@ describe('Ext.menu.Item', function () {
                     });
                     
                     it("should have aria-haspopup", function() {
-                        expectAria('aria-haspopup', 'true');
+                        expect(item).toHaveAttr('aria-haspopup', 'true');
                     });
                     
                     it("should have aria-owns", function() {
-                        expectAria('aria-owns', item.menu.id);
+                        expect(item).toHaveAttr('aria-owns', item.menu.id);
                     });
                 });
             });
@@ -615,11 +607,11 @@ describe('Ext.menu.Item', function () {
                     });
                     
                     it("should not have aria-haspopup", function() {
-                        expectNoAria('aria-haspopup');
+                        expect(item).not.toHaveAttr('aria-haspopup');
                     });
                     
                     it("should have no aria-owns", function() {
-                        expectNoAria('aria-owns');
+                        expect(item).not.toHaveAttr('aria-owns');
                     });
                 });
                 
@@ -630,11 +622,11 @@ describe('Ext.menu.Item', function () {
                     });
                     
                     it("should not have aria-haspopup", function() {
-                        expectNoAria('aria-haspopup');
+                        expect(item).not.toHaveAttr('aria-haspopup');
                     });
                     
                     it("should not have aria-owns", function() {
-                        expectNoAria('aria-owns');
+                        expect(item).not.toHaveAttr('aria-owns');
                     });
                 });
             });

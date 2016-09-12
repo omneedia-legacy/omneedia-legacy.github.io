@@ -142,6 +142,12 @@ Ext.define('Ext.mixin.ComponentDelegation', {
                     }
                 }
             }
+        },
+        
+        destroyComponentDelegation: function() {
+            if (this.clearPropertiesOnDestroy) {
+                this.$delegatedEvents = null;
+            }
         }
     },
 

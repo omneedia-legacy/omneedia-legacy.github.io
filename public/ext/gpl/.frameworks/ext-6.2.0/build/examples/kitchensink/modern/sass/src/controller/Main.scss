@@ -3,6 +3,22 @@ $app-background-color: dynamic(if($theme-name == 'theme-material', $background-c
 $app-primary-text-color: dynamic(if($theme-name == 'theme-cupertino', #157efb, $color));
 $app-secondary-text-color: dynamic(if($theme-name == 'theme-neptune', gray, $color));
 
+.menu {
+    @if($theme-name == 'theme-material') {
+        @include icon('menu');
+    } @else if($theme-name == 'theme-ios') {
+        @include icon($ios-menu);
+    } @else {
+        @include icon($fa-var-bars);
+    }
+}
+
+.palette {
+    @if($theme-name == 'theme-material') {
+        @include icon('palette');
+    }
+}
+
 .card {
     > .x-inner, .x-body > .x-inner, .x-inner:not(.x-toolbar-inner).x-scroll-scroller {
         @include st-box;
@@ -36,84 +52,6 @@ $app-secondary-text-color: dynamic(if($theme-name == 'theme-neptune', gray, $col
 
     code {
         color: #859900;
-    }
-}
-
-#launchscreen {
-    @include st-box;
-    @include st-box-orient(vertical);
-    @include st-box-align(center);
-    @include st-box-pack(center);
-
-    .x-innerhtml {
-        width: 90%;
-
-        .x-landscape & {
-            width: 90%;
-        }
-
-        > div {
-            text-align: left;
-            background-color: if($theme-name == 'theme-material', $background-light-color, darken($app-background-color, 4));
-            color: $app-primary-text-color;
-            padding: 20px;
-            font-size: 12pt;
-            line-height: 18px;
-        }
-    }
-
-    h2, h3 {
-        font-weight: bold;
-    }
-
-    p {
-        color: $app-secondary-text-color;
-    }
-
-    h3 {
-        color: $app-primary-text-color;
-    }
-
-    .feature {
-        padding-left: 65px;
-        position: relative;
-        margin: 15px;
-        min-height: 60px;
-
-        > img {
-            position: absolute;
-            top: 0;
-            left: 0;
-        }
-    }
-
-    .main {
-        border-bottom: 1px solid #ccc;
-        padding-bottom: 20px;
-        margin-bottom: 20px;
-        min-height: 80px;
-    }
-
-    footer {
-        padding: 10px 0 0;
-        font-size: 10pt;
-        color: $app-secondary-text-color;
-    }
-
-    a {
-        font-weight: bold;
-        text-decoration: none;
-        color: $base-color;
-    }
-
-    h1 {
-        font-size: 18pt;
-        font-weight: bold;
-        color: $app-primary-text-color;
-    }
-
-    span {
-        color: $app-secondary-text-color;
     }
 }
 

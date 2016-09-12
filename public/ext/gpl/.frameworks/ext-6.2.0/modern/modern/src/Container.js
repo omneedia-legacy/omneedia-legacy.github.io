@@ -71,13 +71,11 @@ Ext.define('Ext.Container', {
     alternateClassName: ['Ext.lib.Container', 'Ext.container.Container'],
 
     requires: [
-        'Ext.layout.*',
-        'Ext.util.ItemCollection',
-        'Ext.Mask'
+        'Ext.util.ItemCollection'
     ],
 
     xtype: 'container',
-    
+
     mixins: [
         'Ext.mixin.Queryable',
         'Ext.mixin.Container'
@@ -175,6 +173,7 @@ Ext.define('Ext.Container', {
          *     });
          *
          * @accessor
+         * @cmd-auto-dependency { aliasPrefix : "layout."}
          */
         layout: 'default',
 
@@ -286,10 +285,10 @@ Ext.define('Ext.Container', {
          *     });
          *
          * @accessor
+         * @cmd-auto-dependency {defaultType: "Ext.Mask"}
          */
         masked: null
     },
-
 
     /**
      * @cfg {Boolean}
@@ -298,6 +297,8 @@ Ext.define('Ext.Container', {
      * items will collapse where they meet to avoid duplicated borders.
      */
     manageBorders: false,
+
+    classCls: Ext.baseCSSPrefix + 'container',
 
     constructor: function(config) {
         var me = this;
@@ -318,18 +319,28 @@ Ext.define('Ext.Container', {
     },
 
     initialize: function() {
-        this.callParent();
+        var me = this,
+            classClsList = me.classClsList,
+            i, ln;
+
+        me.callParent();
 
         // Ensure the container's layout instance is created, even if the container
         // has no items.  This ensures border management is handled correctly on empty
         // panels.
-        this.getLayout();
+        me.getLayout();
+
+        if (classClsList) {
+            for (i = 0, ln = classClsList.length; i < ln; i++) {
+                me.innerElement.addCls(classClsList[i], null, 'inner');
+            }
+        }
     },
 
     getElementConfig: function() {
         return {
             reference: 'element',
-            classList: ['x-container', 'x-unsized'],
+            cls: 'x-unsized',
             children: [{
                 reference: 'innerElement',
                 className: 'x-inner'
@@ -353,7 +364,7 @@ Ext.define('Ext.Container', {
             isVisible = false;
         }
 
-        currentMask = Ext.factory(masked, Ext.Mask, this.getMasked());
+        currentMask = Ext.factory(masked, Ext['Mask'], this.getMasked());
 
         if (currentMask) {
             this.add(currentMask);
@@ -395,6 +406,26 @@ Ext.define('Ext.Container', {
     onRemoved: function(destroying) {
         this.containerOnRemoved(destroying);
         this.callParent([destroying]);
+    },
+
+    afterItemShow: function(item) {
+        var layout;
+
+        if (item.getDocked()) {
+            layout = this.getLayout();
+            this.items.generation++;
+            layout.handleDockedItemBorders();
+        }
+    },
+
+    afterItemHide: function(item) {
+        var layout;
+
+        if (item.getDocked()) {
+            layout = this.getLayout();
+            this.items.generation++;
+            layout.handleDockedItemBorders();
+        }
     },
 
     updateBaseCls: function(newBaseCls, oldBaseCls) {
@@ -466,7 +497,7 @@ Ext.define('Ext.Container', {
      */
     onFirstItemAdd: function() {
         var me = this;
-        
+
         delete me.onItemAdd;
 
         if (me.innerHtmlElement && !me.getHtml()) {
@@ -613,7 +644,7 @@ Ext.define('Ext.Container', {
             addingArray = true,
             addedItems = [],
             i, ln, item, newActiveItem, instanced;
-        
+
         if (!Ext.isArray(newItems)) {
             newItems = [newItems];
             addingArray = false;
@@ -621,21 +652,28 @@ Ext.define('Ext.Container', {
 
         for (i = 0, ln = newItems.length; i < ln; i++) {
             item = newItems[i];
-            instanced = item.isWidget;
-            
-            if (!instanced) {
-                item.$initParent = me;
+            if (item) {
+                instanced = item.isWidget;
+
+                if (!instanced) {
+                    item.$initParent = me;
+                }
+
+                item = me.factoryItem(item);
+                me.doAdd(item, instanced);
+                delete item.$initParent;
+
+                if (!newActiveItem && !me.getActiveItem() && me.innerItems.length > 0 && item.isInnerItem()) {
+                    newActiveItem = item;
+                }
+
+                addedItems.push(item);
             }
-            
-            item = me.factoryItem(item);
-            me.doAdd(item, instanced);
-            delete item.$initParent;
-            
-            if (!newActiveItem && !me.getActiveItem() && me.innerItems.length > 0 && item.isInnerItem()) {
-                newActiveItem = item;
+            //<debug>
+            else {
+                Ext.raise('Invalid item passed to add');
             }
-            
-            addedItems.push(item);
+            //</debug>
         }
 
         if (newActiveItem) {
@@ -681,9 +719,9 @@ Ext.define('Ext.Container', {
     remove: function(component, destroy) {
         var me = this,
             index, innerItems;
-        
+
         component = me.getComponent(component);
-        
+
         index = me.indexOf(component);
         innerItems = me.getInnerItems();
 
@@ -775,7 +813,7 @@ Ext.define('Ext.Container', {
                 i--;
                 ln--;
             }
-            
+
             removed.push(item);
         }
         this.setActiveItem(null);
@@ -1055,7 +1093,7 @@ Ext.define('Ext.Container', {
         var layout = this.getLayout();
 
         if (this.isRendered() && item.setRendered(true)) {
-            item.fireAction('renderedchange', [this, item, true], 'onItemAdd', layout, { args: [item, index] });
+            item.fireAction('renderedchange', [this, item, true], 'onItemAdd', layout, {args: [item, index]});
         } else {
             layout.onItemAdd(item, index);
         }
@@ -1081,7 +1119,7 @@ Ext.define('Ext.Container', {
         var layout = this.getLayout();
 
         if (this.isRendered() && item.setRendered(false)) {
-            item.fireAction('renderedchange', [this, item, false], 'onItemRemove', layout, { args: [item, index, destroying] });
+            item.fireAction('renderedchange', [this, item, false], 'onItemRemove', layout, {args: [item, index, destroying]});
         }
         else {
             layout.onItemRemove(item, index, destroying);
@@ -1124,7 +1162,7 @@ Ext.define('Ext.Container', {
 
         layout.onItemInnerStateChange.apply(layout, arguments);
     },
-    
+
     onItemFloatedChange: function(item, floated) {
         var layout = this.getLayout();
 
@@ -1191,7 +1229,7 @@ Ext.define('Ext.Container', {
                 item = me.child(activeItem);
 
                 activeItem = {
-                    xtype : activeItem
+                    xtype: activeItem
                 };
             }
 
@@ -1269,7 +1307,7 @@ Ext.define('Ext.Container', {
             var items = this.items.items,
                 i, ln;
 
-            for (i = 0,ln = items.length; i < ln; i++) {
+            for (i = 0, ln = items.length; i < ln; i++) {
                 items[i].setRendered(rendered);
             }
 
@@ -1287,11 +1325,12 @@ Ext.define('Ext.Container', {
      * that are not contained in items. For example `dockedItems`, `menu`, etc
      */
     getRefItems: function(deep) {
-        var items = this.getItems().items.slice(),
-            ln = items.length,
+        var items = this.getItems().items,
+            ln = items && items.length,
             i, item;
 
-        if (deep) {
+        if (items && deep) {
+            items = items.slice();
             for (i = 0; i < ln; i++) {
                 item = items[i];
 
@@ -1321,7 +1360,7 @@ Ext.define('Ext.Container', {
         if (typeof component === 'number') {
             return this.getItems().getAt(component);
         }
-        
+
         if (Ext.isObject(component)) {
             component = component.getItemId();
         }
@@ -1358,19 +1397,18 @@ Ext.define('Ext.Container', {
         return false;
     },
 
-    destroy: function() {
+    doDestroy: function() {
         var me = this;
 
         me.removeAll(true, true);
+        me.items = Ext.destroy(me.items);
 
         me.callParent();
-
-        me.items = Ext.destroy(me.items);
     },
 
     privates: {
-        applyReference: function (reference) {
-          // Need to call like this because applyReference from container comes via a mixin
+        applyReference: function(reference) {
+            // Need to call like this because applyReference from container comes via a mixin
             return this.setupReference(reference);
         },
 
@@ -1380,13 +1418,52 @@ Ext.define('Ext.Container', {
          * prior to the lookup.
          * @private
          */
-        getFirstReferences: function () {
+        getFirstReferences: function() {
             var me = this;
 
             delete me.getReferences;
             me.getItems(); // create our items if we haven't yet
 
             return me.getReferences.apply(me, arguments);
+        },
+
+        syncUiCls: function() {
+            var me = this,
+                ui = me.getUi(),
+                currentInnerUiCls = me.currentInnerUiCls,
+                innerElement = me.innerElement,
+                baseCls = me.getBaseCls(),
+                classClsList = me.classClsList,
+                uiCls = [],
+                uiSuffix, i, ln, j, jln;
+
+            if (currentInnerUiCls) {
+                innerElement.removeCls(currentInnerUiCls);
+            }
+
+            if (ui) {
+                ui = ui.split(' ');
+
+                for (i = 0, ln = ui.length; i < ln; i++) {
+                    uiSuffix = '-inner-' + ui[i];
+
+                    if (baseCls && (baseCls !== me.classCls)) {
+                        uiCls.push(baseCls + uiSuffix);
+                    }
+
+                    if (classClsList) {
+                        for (j = 0, jln = classClsList.length; j < jln; j++) {
+                            uiCls.push(classClsList[j] + uiSuffix);
+                        }
+                    }
+                }
+
+                innerElement.addCls(uiCls);
+
+                me.currentInnerUiCls = uiCls;
+            }
+
+            me.callParent();
         }
     }
 

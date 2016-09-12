@@ -141,18 +141,7 @@ describe("Ext.grid.filters.filter.List", function () {
     });
 
     describe("binding the grid store listeners", function () {
-        Ext.grid.filters.filter.List.prototype.getGridStoreListeners =  function () {
-            var me = this;
-
-            return (me.gridStoreListeners = {
-                scope: me,
-                add: me.onDataChanged,
-                refresh: me.onDataChanged,
-                remove: me.onDataChanged,
-                update: me.onDataChanged,
-                'extjs-18225': Ext.emptyFn
-            });
-        };
+        var oldGridStoreListenersCfg;
 
         function getGridCfg(cfg) {
             var gridCfg = {
@@ -172,6 +161,22 @@ describe("Ext.grid.filters.filter.List", function () {
 
             return Ext.apply(gridCfg, cfg);
         }
+
+        beforeEach(function() {
+            oldGridStoreListenersCfg = Ext.grid.filters.filter.List.prototype.gridStoreListenersCfg;
+            Ext.grid.filters.filter.List.prototype.gridStoreListenersCfg = {
+                add: 'onDataChanged',
+                refresh: 'onDataChanged',
+                remove: 'onDataChanged',
+                update: 'onDataChanged',
+                'extjs-18225': Ext.emptyFn
+            };
+        });
+        
+        afterEach(function() {
+            Ext.grid.filters.filter.List.prototype.gridStoreListenersCfg = oldGridStoreListenersCfg;
+            oldGridStoreListenersCfg = null;
+        });
 
         describe("when inferring its list options from the grid store", function () {
             describe("on construction", function () {

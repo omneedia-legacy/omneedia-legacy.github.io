@@ -77,8 +77,8 @@ Ext.define('Ext.layout.container.Container', {
     },
 
     destroy: function() {
-        this.callParent();
         this.mixins.elementCt.destroy.call(this);
+        this.callParent();
     },
 
     /**
@@ -227,7 +227,7 @@ Ext.define('Ext.layout.container.Container', {
         // sets "$skipTabGuards" on the renderTpl's renderData.
         //
         if (cmp.tabGuard && !renderData.$skipTabGuards) {
-            tabGuardTpl = cmp.getTpl('tabGuardTpl');
+            tabGuardTpl = cmp.lookupTpl('tabGuardTpl');
             
             if (tabGuardTpl) {
                 renderData.tabGuard = position;
@@ -393,11 +393,18 @@ Ext.define('Ext.layout.container.Container', {
             items = me.getLayoutItems(),
             ln = items.length,
             renderedItems = [],
-            i, item;
+            i, pos, item;
 
-        for (i = 0; i < ln; i++) {
+        for (i = 0, pos = 0; i < ln; i++, pos++) {
             item = items[i];
-            if (item.rendered && me.isValidParent(item, target, i)) {
+
+            if (item.rendered) {
+                if (item.ignoreDomPosition) {
+                    --pos;
+                } else if (!this.isValidParent(item, target, pos)) {
+                    continue;
+                }
+
                 renderedItems.push(item);
             }
         }
@@ -517,11 +524,18 @@ Ext.define('Ext.layout.container.Container', {
             items = this.getLayoutItems(),
             ln = items.length,
             visibleItems = [],
-            i, item;
+            i, pos, item;
 
-        for (i = 0; i < ln; i++) {
+        for (i = 0, pos = 0; i < ln; i++, pos++) {
             item = items[i];
-            if (item.rendered && this.isValidParent(item, target, i) && item.hidden !== true && !item.floated) {
+
+            if (item.rendered && item.hidden !== true && !item.floated) {
+                if (item.ignoreDomPosition) {
+                    --pos;
+                } else if (!this.isValidParent(item, target, pos)) {
+                    continue;
+                }
+
                 visibleItems.push(item);
             }
         }

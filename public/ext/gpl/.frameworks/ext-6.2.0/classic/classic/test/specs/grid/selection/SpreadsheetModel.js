@@ -664,6 +664,29 @@ describe("Ext.grid.selection.SpreadsheetModel", function() {
                 jasmine.fireMouseEvent(checkbox, 'mousemove');
                 expect(isRowSelected(0)).toBe(false);
             });
+            it("should select all records when checkbox is clicked", function() {
+                var checkbox, count;
+                makeGrid(null, {
+                    selModel: {
+                        type: 'spreadsheet',
+                        checkboxSelect: true,
+                        checkboxColumnIndex: 1,
+                        listeners: {
+                            selectionchange: function(sm, records){
+                                count = records.length;
+                            }
+                        }
+                    }
+                });
+
+                checkbox = colRef[1].getEl().dom;
+                jasmine.fireMouseEvent(checkbox, 'click');
+                expect(grid.getSelectionModel().getCount()).toBe(grid.getStore().getCount());
+                expect(count).toBe(grid.getStore().getCount());
+                jasmine.fireMouseEvent(checkbox, 'click');
+                expect(grid.getSelectionModel().getCount()).toBe(0);
+                expect(count).toBe(0);
+            });
         });
     });
     

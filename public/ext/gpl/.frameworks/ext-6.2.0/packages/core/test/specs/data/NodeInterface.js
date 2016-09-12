@@ -707,9 +707,9 @@ describe('Ext.data.NodeInterface', function() {
 
         describe("silent destroy", function() {
             it("should purge node listeners", function() {
-                spy = spyOn(leftChild.mixins.observable, "clearListeners").andCallThrough();
+                spy = spyOn(leftChild, "clearListeners").andCallThrough();
         
-                leftChild.destroy(true);
+                leftChild.destroy();
         
                 expect(spy).toHaveBeenCalled();
             });
@@ -931,13 +931,13 @@ describe('Ext.data.NodeInterface', function() {
             });
         
             it("should call cascadeFn 4 times", function() {
-                rootNode.cascadeBy(cascadeFn);
+                rootNode.cascade(cascadeFn);
         
                 expect(cascadeFn.callCount).toEqual(4);
             });
         
             it("should call cascadeFn with node root, leftChild, spareNode, rightChild", function() {
-                rootNode.cascadeBy(cascadeFn);
+                rootNode.cascade(cascadeFn);
         
                 expect(cascadeFn.calls[0].args).toEqual([rootNode]);
                 expect(cascadeFn.calls[1].args).toEqual([leftChild]);
@@ -946,7 +946,7 @@ describe('Ext.data.NodeInterface', function() {
             });
         
             it("should call cascadeFn with a defined scope", function() {
-                rootNode.cascadeBy(cascadeFn, fakeScope);
+                rootNode.cascade(cascadeFn, fakeScope);
         
                 expect(cascadeFn.calls[0].object).toBe(fakeScope);
                 expect(cascadeFn.calls[1].object).toBe(fakeScope);
@@ -957,7 +957,7 @@ describe('Ext.data.NodeInterface', function() {
             it("should call cascadeFn with customs arguments", function() {
                 var customArgs = ['some', 'args'];
         
-                rootNode.cascadeBy(cascadeFn, rootNode, customArgs);
+                rootNode.cascade(cascadeFn, rootNode, customArgs);
         
                 expect(cascadeFn.calls[0].args).toEqual(customArgs);
                 expect(cascadeFn.calls[1].args).toEqual(customArgs);
@@ -972,7 +972,7 @@ describe('Ext.data.NodeInterface', function() {
                     }
                 });
         
-                rootNode.cascadeBy(cascadeFn);
+                rootNode.cascade(cascadeFn);
         
                 expect(cascadeFn.callCount).toEqual(3);
             });

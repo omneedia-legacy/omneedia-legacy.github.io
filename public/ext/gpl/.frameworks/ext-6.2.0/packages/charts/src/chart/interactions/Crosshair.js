@@ -175,12 +175,7 @@ Ext.define('Ext.chart.interactions.Crosshair', {
          * @cfg {String} gesture
          * Specifies which gesture should be used for starting/maintaining/ending the interaction.
          */
-        gesture: 'drag',
-
-        touchAction: {
-            panX: false,
-            panY: false
-        }
+        gesture: 'drag'
     },
 
     applyAxes: function (axesConfig, oldAxesConfig) {

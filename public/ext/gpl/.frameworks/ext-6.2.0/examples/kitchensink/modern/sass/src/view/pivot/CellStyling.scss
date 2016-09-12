@@ -1,23 +1,23 @@
 .pivotCellGroupFooter {
-  .x-grid-cell-inner {
+  .x-inner-el {
     font-weight: bold;
   }
 }
 
 .pivotCellGroupHeader {
-  .x-grid-cell-inner {
+  .x-inner-el {
     color: blue;
   }
 }
 
 .pivotCellAbove500 {
-  .x-grid-cell-inner {
+  .x-inner-el {
     color: green;
   }
 }
 
 .pivotCellUnder500 {
-  .x-grid-cell-inner {
+  .x-inner-el {
     color: red;
   }
 }

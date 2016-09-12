@@ -83,7 +83,7 @@ Ext.define('Ext.layout.Default', {
             delegate: '> component',
 
             beforecenteredchange: 'onItemCenteredChange',
-            beforepositionedchange: 'onItemPositionedChange',
+            positionedchange: 'onItemPositionedChange',
             afterdockedchange: 'onAfterItemDockedChange', // see Component#updateDocked
 
             scope: me
@@ -526,6 +526,10 @@ Ext.define('Ext.layout.Default', {
 
         for (i = 0, ln = docked.length; i < ln; i++) {
             item = docked[i];
+
+            if (item.getHidden()) {
+                continue;
+            }
 
             dock = item.getDocked();
             mask = edgesTouched = 0;

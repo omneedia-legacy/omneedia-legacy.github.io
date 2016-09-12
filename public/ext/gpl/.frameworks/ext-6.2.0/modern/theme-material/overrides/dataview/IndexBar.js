@@ -9,7 +9,7 @@ Ext.define('Ext.theme.material.dataview.IndexBar', {
     getElementConfig: function () {
         return {
             reference: 'wrapper',
-            classList: ['x-centered', 'x-indexbar-wrapper'],
+            classList: ['x-center', 'x-indexbar-wrapper'],
             children: [{
                 reference: 'indicator',
                 classList: ['x-indexbar-indicator'],

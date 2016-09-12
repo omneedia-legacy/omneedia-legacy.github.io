@@ -30,7 +30,8 @@ describe("Ext.grid.column.Widget", function() {
                 id: 'rec' + i,
                 a: i + 'a',
                 b: i + 'b',
-                c: i + 'c'
+                c: i + 'c',
+                d: i/10
             });
         }
 
@@ -515,13 +516,11 @@ describe("Ext.grid.column.Widget", function() {
                     cfg.onWidgetAttach = spy;
                     makeGrid([cfg]);
                     spy.reset();
-                    var rec = store.insert(2, {})[0],
-                        spyCall = spy.mostRecentCall;
+                    var rec = store.insert(2, {})[0];
 
-                    expect(spy.callCount).toBe(1);
-                    expect(spyCall.args[0]).toBe(colRef[0]);
-                    expect(spyCall.args[1].isButton).toBe(true);
-                    expect(spyCall.args[2]).toBe(rec);
+                    expect(spy.calls[0].args[0]).toBe(colRef[0]);
+                    expect(spy.calls[0].args[1].isButton).toBe(true);
+                    expect(spy.calls[0].args[2]).toBe(rec);
                 });
                 
                 it("should be called after rendering the widget", function() {
@@ -1320,6 +1319,50 @@ describe("Ext.grid.column.Widget", function() {
                     waitsFor(function() {
                         return grid.actionableMode === false;
                     });
+                });
+            });
+
+            describe("in a tabpanel", function() {
+                var panel;
+
+                beforeEach(function() {
+                    createGrid([{
+                        xtype: 'widgetcolumn',
+                        width: 200,
+                        dataIndex: 'd',
+                        widget: {
+                            xtype: 'progressbarwidget',
+                            textTpl: '{value:percent}'
+                        }
+                    }], null, {
+                        renderTo: null
+                    });
+
+                    panel = new Ext.tab.Panel({
+                        width: 800,
+                        height: 300,
+
+                        items: [
+                            grid, {
+                                xtype: 'panel',
+                                title: 'TAB2'
+                            }
+                        ],
+                        renderTo: document.body
+                    });    
+                });
+
+                afterEach(function() {
+                    panel.destroy();
+                    panel = null;
+                });
+
+                it("should display the widget if it's record was added while the grid was in an inactive panel", function() {
+                    panel.setActiveTab(1);
+                    store.add({ id: 'rec5', a: '5a',  b: '5b', c: '5c', d: 0.5 });
+                    panel.setActiveTab(0);
+
+                    expect(getWidget(4, 0).textEl.dom.innerHTML).toBe('50%');
                 });
             });
         });

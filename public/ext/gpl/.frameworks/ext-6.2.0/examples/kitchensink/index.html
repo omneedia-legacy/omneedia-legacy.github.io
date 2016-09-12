@@ -19,20 +19,45 @@
 
         Ext.beforeLoad = function (tags) {
             var query = location.search.substring(1),
-                paramRe = /([^&=]+)=?([^&]*)/g,
+                values = {
+                    'false': false,
+                    'true': true,
+                    'null': null
+                },
+                paramRe = /([^&=]+)(=([^&]*))?/g,
                 plusRe = /\+/g,  // Regex for replacing addition symbol with a space
                 params = {},
                 match, key, val;
 
             while (match = paramRe.exec(query)) {
                 key = decodeURIComponent(match[1].replace(plusRe, ' '));
-                val = decodeURIComponent(match[2].replace(plusRe, ' '));
+
+                if (match[2]) {
+                    val = decodeURIComponent(match[3].replace(plusRe, ' '));
+                    if (val in values) {
+                        val = values[val];
+                    } else if (!isNaN(+val)) {
+                        val = +val;
+                    }
+                } else {
+                    val = true;
+                }
 
                 params[key] = val;
             }
 
-            var profile = params.profile || (tags.phone ? 'material' : 'triton'),
+            var profile = params.profile,
                 locale = params.locale;
+
+            if (!profile) {
+                if (!params.classic && !tags.desktop && tags.ios){
+                    profile = 'ios';
+                } else if (!params.classic && (params.modern || tags.phone)) {
+                    profile = 'material';
+                } else {
+                    profile = 'triton';
+                }
+            }
 
             match = profile.match(/^(.+?)(?:-(en|he))$/);
             if (match) { // "profile=triton-en"
@@ -42,6 +67,8 @@
                 locale = locale || 'en';
             }
 
+            // TODO: EXTJS-21544 - set platformTags based upon locale's text direction.
+            Ext.platformTags.rtl = locale === 'he';
             KitchenSink.profileName = profile;
             KitchenSink.locale = locale;
 

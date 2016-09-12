@@ -2,10 +2,7 @@
  * @class Ext.MessageBox
  */
 
-.x-msgbox,
-.x-panel.x-floating,
-.x-panel.x-floated:not(.x-panel-tooltip),
-.x-form.x-floating {
+.x-msgbox {
     @include border($messagebox-border-width, $messagebox-border-style, $messagebox-border-color);
     background-color: $messagebox-background-color;
 

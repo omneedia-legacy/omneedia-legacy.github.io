@@ -35,11 +35,31 @@ Ext.define('Ext.layout.FlexBox', {
     },
 
     cls: Ext.baseCSSPrefix + 'layout-box',
+    baseItemCls: Ext.baseCSSPrefix + 'layout-box-item',
 
-    itemCls: Ext.baseCSSPrefix + 'layout-box-item',
+    orientMap: {
+        horizontal: {
+            sizeProp: 'width',
+            event: 'widthchange',
+            containerCls: [
+                Ext.baseCSSPrefix + 'layout-hbox', 
+                Ext.baseCSSPrefix + 'horizontal'
+            ],
+            itemCls: Ext.baseCSSPrefix + 'layout-hbox-item'
+        },
+        vertical: {
+            sizeProp: 'height',
+            event: 'heightchange',
+            containerCls: [
+                Ext.baseCSSPrefix + 'layout-vbox', 
+                Ext.baseCSSPrefix + 'vertical'
+            ],
+            itemCls: Ext.baseCSSPrefix + 'layout-vbox-item'
+        }
+    },
 
     setContainer: function(container) {
-        this.callParent(arguments);
+        this.callParent([container]);
 
         this.monitorSizeFlagsChange();
     },
@@ -55,26 +75,41 @@ Ext.define('Ext.layout.FlexBox', {
     },
 
     updateOrient: function(orient, oldOrient) {
-        var container = this.container,
+        var me = this,
+            container = me.container,
+            innerElement = container.innerElement,
+            innerItems = container.innerItems,
+            len = innerItems.length,
+            map = me.orientMap,
+            newMap = map[orient],
+            oldMap = map[oldOrient],
             delegation = {
                 delegate: '> component'
-            };
+            }, i, itemCls, item;
 
-        if (orient === 'horizontal') {
-            this.sizePropertyName = 'width';
-        }
-        else {
-            this.sizePropertyName = 'height';
-        }
-
-        container.innerElement.swapCls('x-' + orient, 'x-' + oldOrient);
+        me.sizePropertyName = newMap.sizeProp;
 
         if (oldOrient) {
-            container.un(oldOrient === 'horizontal' ? 'widthchange' : 'heightchange', 'onItemSizeChange', this, delegation);
-            this.redrawContainer();
+            innerElement.removeCls(oldMap.containerCls);
+            container.un(oldMap.event, 'onItemSizeChange', me, delegation);
+            for (i = 0; i < len; ++i) {
+                innerItems[i].removeCls(oldMap.itemCls);
+            }
         }
 
-        container.on(orient === 'horizontal' ? 'widthchange' : 'heightchange', 'onItemSizeChange', this, delegation);
+        innerElement.addCls(newMap.containerCls);
+
+        container.on(newMap.event, 'onItemSizeChange', me, delegation);
+        me.itemCls = itemCls = [me.baseItemCls, newMap.itemCls];
+        for (i = 0; i < len; ++i) {
+            item = innerItems[i];
+            item.addCls(itemCls);
+            me.refreshItemSizeState(item);
+        }
+
+        if (oldOrient) {
+            me.redrawContainer();
+        }
     },
 
     onItemInnerStateChange: function(item, isInner) {
@@ -188,15 +223,13 @@ Ext.define('Ext.layout.FlexBox', {
 
         element.toggleCls(Ext.baseCSSPrefix + 'flexed', !!flex);
 
-        flex = flex ? String(flex) : '';
-
-        if (Ext.browser.is.WebKit) {
-            style.setProperty('-webkit-box-flex', flex, null);
-        } else if (Ext.browser.is.IE) {
-            style.setProperty('-ms-flex', flex + ' 0 0px', null);
-        } else {
-            style.setProperty('flex', flex + ' 0 0px', null);
+        if (Ext.isWebKit) {
+            style.setProperty('-webkit-box-flex', flex ? flex : '', null);
+        } else if (Ext.isIE) {
+            style.setProperty('-ms-flex', (flex ? flex + ' ' + flex + ' 0px' : ''), null);
         }
+
+        style.setProperty('flex', (flex ? flex + ' ' + flex + ' 0px' : ''), null);
     },
 
     convertPosition: function(position) {

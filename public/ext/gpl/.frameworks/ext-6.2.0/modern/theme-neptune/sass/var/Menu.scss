@@ -10,3 +10,5 @@ $menu-bottom-border-color: dynamic($sheet-border-color null null null);
 $menu-left-border-width: dynamic(null 1px null null);
 $menu-left-border-style: dynamic(null solid null null);
 $menu-left-border-color: dynamic(null $sheet-border-color null null);
+
+$menu-padding: dynamic($sheet-padding);

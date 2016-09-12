@@ -1,143 +1,196 @@
 /**
- * @class Ext.field.Slider
- */
-
-$slider-height: dynamic($slider-thumb-size);
-$slider-disabled-opacity: dynamic(.6);
-
-$slider-thumb-size: dynamic(1.85em);
-$slider-thumb-border: dynamic(1px solid darken(#ddd, 30%));
-$slider-thumb-border-radius: dynamic(50%);
-$slider-thumb-background-color: dynamic(#ddd);
-$slider-thumb-background-gradient: dynamic('matte');
-$slider-thumb-dragging-background-color: dynamic(darken(#ddd, 5%));
-$slider-thumb-dragging-background-gradient: dynamic($slider-thumb-background-gradient);
-$slider-thumb-disabled-background-color: dynamic($slider-thumb-background-color);
-$slider-thumb-disabled-border: dynamic($slider-thumb-border);
-$slider-thumb-top: dynamic(0);
-$slider-thumb-left: dynamic(0);
-$slider-thumb-background-clip: dyamic(padding-box);
-
-$slider-track-height: dynamic(.8em);
-$slider-track-width: dynamic(auto);
-$slider-track-top: dynamic(.6em);
-$slider-track-left: dynamic(0);
-$slider-track-border: dynamic(.1em solid rgba(#000, .1));
-$slider-track-border-radius: dynamic($slider-track-height/2);
-$slider-track-background-color: dynamic(#ddd);
-$slider-track-background-gradient: dynamic('recessed');
-$slider-track-fill-background-color: dynamic(transparent);
-$slider-track-fill-background-gradient: dynamic(null);
-$slider-track-fill-disabled-background-color: dynamic(transparent);
-
-$slider-track-margin: dynamic(0 $slider-thumb-size/2);
-$slider-track-box-shadow: dynamic(rgba(#fff, .7) 0 .1em 0);
-
-/**
  * @class Ext.slider.Slider
  */
 
+/**
+ * @var {number}
+ * The height of the slider track
+ */
+$slider-track-height: dynamic(0.6925rem);
+
+/**
+ * @var {number}
+ * The height of the slider track in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$slider-track-height-big: dynamic(1.2rem);
+
+/**
+ * @var {color/list}
+ * The background-color of the slider track
+ */
+$slider-track-background-color: dynamic($neutral-light-color);
+
+/**
+ * @var {number/list}
+ * The border-width of the slider track
+ */
+$slider-track-border-width: dynamic(1px);
+
+/**
+ * @var {string/list}
+ * The border-style of the slider track
+ */
+$slider-track-border-style: dynamic(solid);
+
+/**
+ * @var {color/list}
+ * The border-color of the slider track
+ */
+$slider-track-border-color: dynamic(mix(#000, $neutral-color, 6%));
+
+/**
+ * @var {number}
+ * The border-radius of the slider track
+ */
+$slider-track-border-radius: dynamic($slider-track-height / 2);
+
+/**
+ * @var {number}
+ * The border-radius of the slider track in the {@link Global_CSS#$enable-big big} sizing scheme
+ */
+$slider-track-border-radius-big: dynamic($slider-track-height-big / 2);
+
+/**
+ * @var {color}
+ * The background-color of the fill element
+ */
+$slider-fill-background-color: dynamic(mix(#fff, $base-light-color, 25%));
+
+/**
+ * @var {color}
+ * The background-color of the fill element when disabled
+ */
+$slider-disabled-fill-background-color: dynamic(null);
+
+/**
+ * @var {color}
+ * The border-color of the fill element
+ */
+$slider-fill-border-color: dynamic($slider-track-border-color);
+
+/**
+ * @var {color}
+ * The border-color of the fill element when disabled
+ */
+$slider-disabled-fill-border-color: dynamic(null);
+
+/**
+ * @var {number}
+ * Opacity of the slider when disabled
+ */
+$slider-disabled-opacity: dynamic(.3);
+
+/**
+ * Creates a visual theme for a Slider.
+ *
+ * @param {string} $ui
+ * The name of the UI being created. Can not included spaces or special punctuation
+ * (used in CSS class names).
+ *
+ * @param {String} [$xtype=slider] (protected) The {@link Ext.Class#xtype} to use
+ * in CSS selectors.  For use by UI mixins of derived classes.
+ *
+ * @param {number} $track-height
+ * The height of the slider track
+ *
+ * @param {number} $track-height-big
+ * The height of the slider track in the {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {color/list} $track-background-color
+ * The background-color of the slider track
+ *
+ * @param {number/list} $track-border-width
+ * The border-width of the slider track
+ *
+ * @param {string/list} $track-border-style
+ * The border-style of the slider track
+ *
+ * @param {color/list} $track-border-color
+ * The border-color of the slider track
+ *
+ * @param {number} $track-border-radius
+ * The border-radius of the slider track
+ *
+ * @param {number} $track-border-radius-big
+ * The border-radius of the slider track in the {@link Global_CSS#$enable-big big} sizing scheme
+ *
+ * @param {color} $fill-background-color
+ * The background-color of the fill element
+ *
+ * @param {color} $disabled-fill-background-color
+ * The background-color of the fill element when disabled
+ *
+ * @param {color} $fill-border-color
+ * The border-color of the fill element
+ *
+ * @param {color} $disabled-fill-border-color
+ * The border-color of the fill element when disabled
+ *
+ * @param {number} $disabled-opacity
+ * Opacity of the slider when disabled
+ */
 @mixin slider-ui(
-  $ui: null,
-  $height: null,
-  $disabled-opacity: null,
-  $thumb-size: null,
-  $thumb-border: null,
-  $thumb-border-radius: null,
-  $thumb-background-color: null,
-  $thumb-background-gradient: null,
-  $thumb-disabled-background-color: null,
-  $thumb-disabled-border: null,
-  $thumb-dragging-background-color: null,
-  $thumb-dragging-background-gradient: null,
-  $thumb-use-pseudo: null,
-  $thumb-top: null,
-  $thumb-left: null,
-  $thumb-background-clip: null,
-  $track-margin: null,
-  $track-border: null,
-  $track-border-radius: null,
-  $track-background-color: null,
-  $track-background-gradient: null,
-  $track-fill-background-color: null,
-  $track-fill-background-gradient: null,
-  $track-fill-disabled-background-color: null,
-  $track-width: null,
-  $track-height: null,
-  $track-top: null,
-  $track-left: null,
-  $track-box-shadow: null
+    $ui: null,
+    $xtype: slider,
+    $track-height: null,
+    $track-height-big: null,
+    $track-background-color: null,
+    $track-border-width: null,
+    $track-border-style: null,
+    $track-border-color: null,
+    $track-border-radius: null,
+    $track-border-radius-big: null,
+
+    $fill-background-color: null,
+    $disabled-fill-background-color: null,
+    $fill-border-color: null,
+    $disabled-fill-border-color: null,
+
+    $disabled-opacity: null
 ) {
+    $ui-suffix: ui-suffix($ui);
 
-  $ui-suffix: ui-suffix($ui);
+    .#{$prefix}#{$xtype}#{$ui-suffix} {
+        .#{$prefix}track-el {
+            height: $track-height;
+            background-color: $track-background-color;
 
-  .#{$prefix}slider#{$ui-suffix} {
-    height: $height;
+            @include border($track-border-width, $track-border-style, $track-border-color);
+            border-radius: $track-border-radius;
 
-    .#{$prefix}item-disabled {
-      opacity: $disabled-opacity;
-
-      &.#{$prefix}thumb:after {
-        background-color: $thumb-disabled-background-color;
-        border: $thumb-disabled-border;
-      }
-    }
-
-    .#{$prefix}thumb {
-      height: $thumb-size;
-      width: $thumb-size;
-      background-color: transparent;
-      border: 0;
-
-      // Thumb Handle
-      &:after {
-        border: $thumb-border;
-        @include insertion($thumb-size, $thumb-size, $thumb-top, $thumb-left);
-        @include background-gradient($thumb-background-color, $thumb-background-gradient);
-        @include background-clip($thumb-background-clip);
-        @if $enable-border-radius {
-          @include border-radius($thumb-size/2);
+            @if $enable-big {
+                .#{$prefix}big & {
+                    height: $track-height-big;
+                    @include border-radius($track-border-radius-big);
+                }
+            }
         }
-      }
 
-      &.#{$prefix}dragging:after {
-        @include background-gradient($thumb-dragging-background-color, $thumb-dragging-background-gradient);
-      }
+        .#{$prefix}fill-el {
+            height: $track-height;
+            background-color: $fill-background-color;
+            @include border($track-border-width, $track-border-style, $fill-border-color);
+            border-radius: $track-border-radius;
 
-      // Track Fill Color
-      &:before {
-        transform: none;
-        @include insertion(5000px, $track-height, $track-top, null);
-        right: $thumb-size/2;
-        @include background-gradient($track-fill-background-color, $track-fill-background-gradient);
-      }
+            @if $track-border-width != null {
+                margin: #{-(top($track-border-width))} 0 0 #{-(left($track-border-width))};
+            }
 
-      &.#{$prefix}item-disabled:before {
-        background-color: $track-fill-disabled-background-color;
-        width: 0;
-      }
+            @if $enable-big {
+                .#{$prefix}big & {
+                    height: $track-height-big;
+                    border-radius: $track-border-radius-big;
+                }
+            }
+        }
+
+        &.#{$prefix}disabled {
+            opacity: $disabled-opacity;
+
+            .#{$prefix}fill-el {
+                background-color: $disabled-fill-background-color;
+                @include border($track-border-width, $track-border-style, $disabled-fill-border-color);
+            }
+        }
     }
-
-    // Track
-    &:before {
-      margin: $track-margin;
-      border: $track-border;
-      border-bottom: 0;
-      @include background-gradient($track-background-color, $track-background-gradient);
-      @include insertion($track-width, $track-height, $track-top, $track-left);
-      @include box-shadow($track-box-shadow);
-
-      @if $enable-border-radius {
-        @include border-radius($track-border-radius);
-      }
-    }
-
-    // Sliders inside of multiple sliders should not use fill colors
-    .#{$prefix}slider-multiple & {
-      .#{$prefix}thumb:before {
-        background-color: $track-fill-disabled-background-color;
-        width: 0;
-      }
-    }
-  }
 }

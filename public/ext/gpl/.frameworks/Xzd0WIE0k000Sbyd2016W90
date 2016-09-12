@@ -1,0 +1,13 @@
+<html>
+<head>
+<meta charset='UTF-8'>
+<script language='javascript'>
+  var redirecturl = 'http://cdn.sencha.com/ext/gpl/ext-6.2.0-gpl.zip?mkt_tok=eyJpIjoiT1dJNE9Ea3pNV00xTlRBeSIsInQiOiJUUGZWM2FaWEQwWGhia0lUUXJMVWFkeWk4RDVteHRacFp6R3NBSlNxNUdpeDNNbUlXWXR2VHNZUG5FWEhZSVR3WEZMVGZKNVNwSGRqTGV5aTNqcVc4VmJLdWFwK0laSkVLYmVGUGlVajg1dz0ifQ%3D%3D';
+  function redirect() {
+    var anchor = window.location.hash;
+    window.self.location = redirecturl + anchor;
+  }
+</script>
+</head>
+<body onload=redirect()></body>
+</html>

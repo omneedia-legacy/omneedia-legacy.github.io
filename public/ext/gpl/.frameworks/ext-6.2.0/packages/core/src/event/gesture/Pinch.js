@@ -93,7 +93,7 @@ Ext.define('Ext.event.gesture.Pinch', {
     },
 
     onCancel: function(e) {
-        this.fire('pinchcancel', e);
+        this.fire('pinchcancel', e, null, true);
     },
 
     reset: function() {

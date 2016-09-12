@@ -234,14 +234,7 @@ Ext.define('Ext.chart.interactions.PanZoom', {
             }]
         },
 
-        hideLabelInGesture: false, // Ext.os.is.Android
-
-        touchAction: {
-            panX: false,
-            panY: false,
-            pinchZoom: false,
-            doubleTapZoom: false
-        }
+        hideLabelInGesture: false // Ext.os.is.Android
     },
 
     stopAnimationBeforeSync: true,

@@ -2,9 +2,16 @@
  * Controls the configurator example.
  */
 Ext.define('KitchenSink.view.pivot.ConfiguratorController', {
-    extend: 'Ext.app.ViewController',
+    extend: 'KitchenSink.view.pivot.PivotController',
 
     alias: 'controller.pivotconfig',
+
+    events: [
+        'beforeshowconfigfieldmenu',
+        'beforemoveconfigfield', 'beforeshowconfigfieldsettings', 'showconfigfieldsettings',
+        'beforeapplyconfigfieldsettings', 'applyconfigfieldsettings', 'beforeconfigchange',
+        'configchange', 'showconfigpanel', 'hideconfigpanel'
+    ],
 
     changeDock: function(button, checked){
         if(checked) {
@@ -19,14 +26,6 @@ Ext.define('KitchenSink.view.pivot.ConfiguratorController', {
                 Ext.Msg.alert('Custom menu item', Ext.String.format('Do something for "{0}"', options.field.getHeader()));
             }
         });
-    },
-
-    monthLabelRenderer: function(v){
-        return Ext.Date.monthNames[v];
-    },
-
-    yearLabelRenderer: function(v){
-        return v ? 'Year ' + v : v;
     },
 
     coloredRenderer: function(v, meta){

@@ -333,13 +333,13 @@ describe("Ext.chart.legend.SpriteLegend", function () {
                 // The sprite should be reused.
                 expect(newSecondItem).toEqual(oldSecondItem);
                 expect(newSecondItem.getLabel().attr.text).toEqual('Chrome');
-                expect(legend.getSprites().length).toBe(3);
+                expect(legend.getSprites().length).toBe(4);
                 newSecondItemX = newSecondItem.getBBox().x;
                 // The second sprite now displays the third title ('Chrome'),
                 // but because the whole legend is centered, it should actually
                 // move to the right, as there is now one less item.
                 expect(newSecondItemX > oldSecondItemX).toBe(true);
-                expect(lastItem.isDestroyed).toBe(true);
+                expect(legend.getSprites()[3].getLabel().attr.text).toBe('data4');
 
                 legend.performLayout = originalMethod;
             });

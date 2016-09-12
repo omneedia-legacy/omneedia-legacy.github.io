@@ -175,6 +175,10 @@ Ext.define('Ext.grid.plugin.Editable', {
 
     init: function(grid) {
         this.setGrid(grid);
+
+        grid.setTouchAction({
+            doubleTapZoom: false
+        });
     },
 
     updateGrid: function(grid, oldGrid) {
@@ -204,7 +208,7 @@ Ext.define('Ext.grid.plugin.Editable', {
     },
 
     getRecordByTriggerEvent: function(e) {
-        var rowEl = e.getTarget('.' + Ext.baseCSSPrefix + 'grid-row'),
+        var rowEl = e.getTarget('.' + Ext.baseCSSPrefix + 'gridrow'),
             row;
 
         if (rowEl) {

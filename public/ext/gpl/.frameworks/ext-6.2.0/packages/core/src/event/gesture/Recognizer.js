@@ -65,8 +65,8 @@ Ext.define('Ext.event.gesture.Recognizer', {
         return this.cancel(e);
     },
 
-    fire: function() {
-        this.getOnRecognized().apply(this.getCallbackScope(), arguments);
+    fire: function(eventName, e, info, isCancel) {
+        this.getOnRecognized().call(this.getCallbackScope(), this, eventName, e, info, isCancel);
     },
 
     cancel: function(e) {

@@ -20,8 +20,7 @@ Ext.define('KitchenSink.view.binding.AlgebraUnary', {
 
     viewModel: {
         data: {
-            x: 1,
-            package: 'Ext JS'
+            x: 1
         }
     },
 
@@ -36,7 +35,7 @@ Ext.define('KitchenSink.view.binding.AlgebraUnary', {
         bind: '{-x}'
     },{
         fieldLabel: 'Globals',
-        bind: '{package} version: {@Ext.versions.ext.version}'
+        bind: 'Ext JS version: {@Ext.versions.ext.version}'
     }],
 
     defaultType: 'displayfield',

@@ -96,9 +96,9 @@ Ext.define('Ext.Toast', {
         hideOnMaskTap: true,
 
         /**
-         * @private
+         * @hide
          */
-        modal: true,
+        modal: false,
 
         /**
          * @cfg
@@ -108,6 +108,15 @@ Ext.define('Ext.Toast', {
             type: 'vbox',
             pack: 'center'
         }
+    },
+
+    initialize: function() {
+        this.callParent(arguments);
+        Ext.getDoc().on({
+            scope: this,
+            tap: 'onDocumentTap',
+            capture: true
+        });
     },
 
     /**
@@ -208,6 +217,10 @@ Ext.define('Ext.Toast', {
             me.startTimer();
             me.callParent(arguments);
         }
+    },
+
+    onDocumentTap: function() {
+        this.hide();
     },
 
     /**

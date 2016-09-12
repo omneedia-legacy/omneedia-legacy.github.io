@@ -3,11 +3,11 @@
  */
 
 // Label
-.x-field-label {
+.x-field .x-label-el {
     color: $foreground-color;
     padding: 0 10px 10px 0;
 
-    span {
+    .x-label-text-el {
         font-size: $font-size-normal;
         font-weight: normal;
     }
@@ -15,7 +15,7 @@
 
 // Clear icon
 .x-input {
-    .x-clear-icon {
+    .x-cleartrigger .x-icon-el {
         top: 0;
         right: 0;
         bottom: 0;
@@ -43,11 +43,5 @@
                 color: #fff;
             }
         }
-    }
-}
-
-.x-field-clearable {
-    .x-input {
-        padding-right: 0;
     }
 }

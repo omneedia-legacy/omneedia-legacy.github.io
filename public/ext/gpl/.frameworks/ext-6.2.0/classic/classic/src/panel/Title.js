@@ -223,7 +223,7 @@ Ext.define('Ext.panel.Title', {
     },
 
     getIconMarkup: function() {
-        return this.getTpl('iconTpl').apply(this.getIconRenderData());
+        return this.lookupTpl('iconTpl').apply(this.getIconRenderData());
     },
 
     getIconRenderData: function() {

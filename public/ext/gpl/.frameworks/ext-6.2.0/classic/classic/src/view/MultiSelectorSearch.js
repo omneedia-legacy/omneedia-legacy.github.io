@@ -67,13 +67,28 @@ Ext.define('Ext.view.MultiSelectorSearch', {
 
     floating: true,
     alignOnScroll: false,
-    resizable: true,
     minWidth: 200,
     minHeight: 200,
     border: true,
     keyMap: {
         scope: 'this',
         ESC: 'hide'
+    },
+
+    platformConfig: {
+        desktop: {
+            resizable: true
+        },
+        'tablet && rtl': {
+            resizable: {
+                handles: 'sw'
+            }
+        },
+        'tablet && !rtl': {
+            resizable: {
+                handles: 'se'
+            }
+        }
     },
 
     defaultListenerScope: true,

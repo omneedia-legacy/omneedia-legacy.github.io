@@ -1,7 +1,0 @@
-/* line 1, ../../../sass/src/scroll/Scroller.scss */
-.x-scroller > .x-inner {
-  position: relative !important;
-  width: auto;
-  height: auto;
-  min-height: 1px;
-}

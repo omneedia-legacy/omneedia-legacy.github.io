@@ -375,16 +375,19 @@ Ext.define('Ext.layout.Layout', {
         var me = this,
             ln = items.length,
             i = 0,
+            pos = 0,
             item;
 
         if (ln) {
             Ext.suspendLayouts();
-            for (; i < ln; i++) {
+            for (; i < ln; i++, pos++) {
                 item = items[i];
                 if (item && !item.rendered) {
-                    me.renderItem(item, target, i);
-                } else if (!me.isValidParent(item, target, i)) {
-                    me.moveItem(item, target, i);
+                    me.renderItem(item, target, pos);
+                } else if (item.ignoreDomPosition) {
+                    --pos;
+                } else if (!me.isValidParent(item, target, pos)) {
+                    me.moveItem(item, target, pos);
                 } else {
                     // still need to configure the item, it may have moved in the container.
                     me.configureItem(item);
@@ -615,7 +618,10 @@ Ext.define('Ext.layout.Layout', {
             }
         }
 
-        me.onDestroy();
+        if (!me.onDestroy.$emptyFn) {
+            me.onDestroy();
+        }
+        
         me.callParent();
     },
 

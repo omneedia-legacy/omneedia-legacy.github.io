@@ -3,6 +3,12 @@ Ext.define('KitchenSink.view.pivot.ConfiguratorController', {
 
     alias: 'controller.pivotconfig',
 
+    events: [
+        'beforemoveconfigfield', 'beforeshowconfigfieldsettings', 'showconfigfieldsettings',
+        'beforeapplyconfigfieldsettings', 'applyconfigfieldsettings', 'beforeconfigchange',
+        'configchange', 'showconfigpanel', 'hideconfigpanel'
+    ],
+
     showConfigurator: function(){
         this.getView().showConfigurator();
     },

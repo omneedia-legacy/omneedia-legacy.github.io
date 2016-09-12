@@ -50,17 +50,11 @@ Ext.define('Ext.direct.PollingProvider', {
      */
     
     /**
-     * @cfg {Object} [headers]
-     * An object containing default headers for every Ajax request made by this Provider.
-     * This config is ignored when {@link #url} is a function.
-     */
-    
-    /**
      * @cfg {String/Function} url
      * The url which the PollingProvider should contact with each request. This can also be
      * an imported Ext Direct method which will be passed baseParams as named arguments.
      *
-     * *Note* that using string `url` is deprecated, use {@link #pollFn} instead.
+     * *Note* that using Function `url` is deprecated, use {@link #pollFn} instead.
      * @deprecated 5.1.0
      */
     
@@ -73,6 +67,12 @@ Ext.define('Ext.direct.PollingProvider', {
      *
      * The method should accept named arguments and will be passed {@link #baseParams}
      * if set.
+     */
+    
+    /**
+     * @cfg {Number} [timeout]
+     *
+     * The timeout to use for each request.
      */
     
     /**
@@ -148,11 +148,13 @@ Ext.define('Ext.direct.PollingProvider', {
     },
 
     doDisconnect: function() {
-        this.pollTask.stop();
+        if (this.pollTask) {
+            this.pollTask.stop();
+        }
     },
     
     getInterval: function() {
-        return this.pollTask.interval;
+        return this.pollTask && this.pollTask.interval;
     },
     
     setInterval: function(interval) {
@@ -182,7 +184,7 @@ Ext.define('Ext.direct.PollingProvider', {
             url = me.url,
             pollFn = me.pollFn,
             baseParams = me.baseParams,
-            args;
+            args, request;
         
         if (me.fireEvent('beforepoll', me) !== false) {
             if (pollFn) {
@@ -195,13 +197,19 @@ Ext.define('Ext.direct.PollingProvider', {
                 pollFn.apply(window, args);
             }
             else {
-                Ext.Ajax.request({
+                request = {
                     url: url,
                     callback: me.onData,
                     scope: me,
                     params: baseParams,
-                    headers: me.headers
-                });
+                    headers: me.getHeaders()
+                };
+                
+                if (me.timeout != null) {
+                    request.timeout = me.timeout;
+                }
+                
+                me.sendAjaxRequest(request);
             }
             
             me.fireEvent('poll', me);
@@ -239,6 +247,8 @@ Ext.define('Ext.direct.PollingProvider', {
             me.fireEvent('data', me, event);
             me.fireEvent('exception', me, event);
         }
+        
+        me.callParent([opt, success, response]);
     },
     
     /**

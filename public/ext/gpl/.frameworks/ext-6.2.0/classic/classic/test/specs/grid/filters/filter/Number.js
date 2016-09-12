@@ -357,7 +357,7 @@ describe("Ext.grid.filters.filter.Number", function () {
 
                     expect(fields.gt.inputEl.getValue()).toBe('10');
                     expect(fields.lt.inputEl.getValue()).toBe('20');
-                    expect(fields.eq.inputEl.getValue()).toBe(Ext.supports.Placeholder ? '' : 'Enter Number...');
+                    expect(fields.eq.inputEl.getValue()).toBe('');
                 });
 
                 describe("when a store filter is created", function () {

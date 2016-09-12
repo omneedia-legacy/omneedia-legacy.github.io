@@ -6,8 +6,8 @@ $tab-font-weight: dynamic($font-weight-normal);
 $tab-color: dynamic($highlight-color);
 $tab-active-color: dynamic($base-color);
 
-$tab-font-size: dynamic(0.846em);
-$tab-font-size-big: dynamic(0.6875em);
+$tab-font-size: dynamic(0.7em);
+$tab-font-size-big: dynamic(.7em);
 
 $tab-line-height: dynamic(1.23em);
 $tab-line-height-big: dynamic(1.25em);
@@ -22,20 +22,15 @@ $tab-icon-font-size-big: dynamic($tab-icon-size-big);
 
 $tab-badge-font-size: dynamic(0.923rem);
 $tab-badge-font-size-big: dynamic(0.875rem);
+$tab-badge-min-width: dynamic(null);
+$tab-badge-max-width: dynamic(75%);
+$tab-badge-background-color: dynamic(#fe0000);
+$tab-badge-background-gradient: dynamic(null);
+$tab-badge-top: dynamic(-1em);
+$tab-badge-left: dynamic(53%);
+$tab-badge-right: dynamic(null);
+
+$tab-badge-padding: dynamic(.1em .4em);
+$tab-badge-padding-big: dynamic(.1em .5em);
 
 $tab-badge-border-radius: dynamic(10em);
-
-@mixin tab-icon-stroke($stroke-color) {
-    &:before {
-        color: transparent;
-        -webkit-text-stroke-width: 1px;
-        -webkit-text-stroke-color: $stroke-color;
-    }
-}
-
-@mixin tab-icon-no-stroke($color) {
-    &:before {
-        color: $color;
-        -webkit-text-stroke-width: 0;
-    }
-}

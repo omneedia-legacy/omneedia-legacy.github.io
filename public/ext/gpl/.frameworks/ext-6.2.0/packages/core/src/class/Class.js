@@ -530,7 +530,7 @@
      * evaluates to `true` will have its configs applied to the class. In this case, only
      * the "title" property, but the object can contain any number of config properties.
      * In this case, the `platformConfig` is evaluated as part of the class and there is
-     * not cost for each instance created.
+     * no cost for each instance created.
      *
      * The rules are evaluated expressions in the context of the platform tags contained
      * in `{@link Ext#platformTags Ext.platformTags}`. Any properties of that object are

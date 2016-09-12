@@ -2,7 +2,7 @@
  * Controls the remote calculations example.
  */
 Ext.define('KitchenSink.view.pivot.RemoteCalculationsController', {
-    extend: 'Ext.app.ViewController',
+    extend: 'KitchenSink.view.pivot.PivotController',
 
     alias: 'controller.remotecalculations',
 

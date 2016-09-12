@@ -255,10 +255,25 @@ describe("Ext.form.field.Checkbox", function() {
                 expect(component.getValue()).toBe(true);
             });
             
-            describe("after rendering", function() {
+            describe("before rendering", function() {
                 beforeEach(function() {
                     component.setValue(true);
                     component.render(Ext.getBody());
+                });
+                
+                it("should set checked property in the DOM after rendering", function() {
+                    expect(component.inputEl.dom.checked).toBe(true);
+                });
+                
+                it("should set checked attribute in the DOM", function() {
+                    expect(component.inputEl).toHaveAttr('checked');
+                });
+            });
+
+            describe("after rendering", function() {
+                beforeEach(function() {
+                    component.render(Ext.getBody());
+                    component.setValue(true);
                 });
                 
                 it("should set checked property in the DOM after rendering", function() {

@@ -11,8 +11,21 @@ Ext.define('KitchenSink.view.chart.ColumnWithRenderer', {
         'Ext.chart.axis.Time', 
         'Ext.chart.interactions.ItemHighlight'
     ],
+    controller: 'renderer',
 
+    // <example>
+    otherContent: [{
+        type: 'Controller',
+        path: 'modern/src/view/chart/RendererController.js'
+    }, {
+        type: 'Store',
+        path: 'modern/src/store/Pie.js' 
+    }],
+    // </example>
+    
     layout: 'fit',
+    shadow: true,
+
     items: [{
         xtype: 'toolbar',
         docked: 'top',
@@ -26,6 +39,7 @@ Ext.define('KitchenSink.view.chart.ColumnWithRenderer', {
         }]
     }, {
         xtype: 'cartesian',
+        reference: 'chart',
         store: {
             type: 'pie',
             numRecords: 10

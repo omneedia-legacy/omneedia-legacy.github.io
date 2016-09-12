@@ -151,6 +151,24 @@ describe("Ext.drag.Source", function() {
         });
     }
 
+    function doCancel(x, y, target) {
+        runs(function() {
+            ++touchId;
+            x = x || cursorTrack[0];
+            y = y || cursorTrack[1];
+
+            cancel({
+                id: touchId,
+                x: x,
+                y: y
+            }, target);
+        });
+        waitsForAnimation();
+        runs(function() {
+            ++touchId;
+        }); 
+    }
+
     function dragBy(x, y, target) {
         startDrag(null, null, target);
         moveBy(x, y, target);
@@ -445,7 +463,7 @@ describe("Ext.drag.Source", function() {
         });
 
 
-        describe("beforedragstart", function() {
+        describe("beforeDragStart", function() {
             it("should fired before a drag is initiated", function() {
                 spy = spyOn(source, 'beforeDragStart');
                 startDrag();
@@ -577,7 +595,55 @@ describe("Ext.drag.Source", function() {
                     expect(args[0] instanceof Ext.drag.Info).toBe(true);
                 });
             });
+
+            it("should not call onDragCancel", function() {
+                var otherSpy = spyOn(source, 'onDragCancel');
+                startDrag();
+                moveBy(10, 0);
+                endDrag();
+                runsExpectCallCount(otherSpy, 0);
+            });
         });
+
+        if (Ext.supports.Touch) {
+            describe("onDragCancel", function() {
+                beforeEach(function() {
+                    spy = spyOn(source, 'onDragCancel');
+                });
+
+                it("should fire once a drag is cancelled", function() {
+                    startDrag();
+                    // Not moved past threshhold yet
+                    runsExpectCallCount(spy, 0);
+                    moveBy(10, 0);
+                    runsExpectCallCount(spy, 0);
+                    moveBy(100, 0);
+                    runsExpectCallCount(spy, 0);
+                    moveBy(100, 0);
+                    runsExpectCallCount(spy, 0);
+                    doCancel(0, 0);
+                    runsExpectCallCount(spy, 1);
+                });
+
+                it("should pass the source, info and the event object", function() {
+                    startDrag();
+                    moveBy(10, 0);
+                    doCancel(0, 0);
+                    runs(function() {
+                        var args = spy.mostRecentCall.args;
+                        expect(args[0] instanceof Ext.drag.Info).toBe(true);
+                    });
+                });
+
+                it("should not call onDragEnd", function() {
+                    var otherSpy = spyOn(source, 'onDragEnd');
+                    startDrag();
+                    moveBy(10, 0);
+                    doCancel(0, 0);
+                    runsExpectCallCount(otherSpy, 0);
+                });
+            });
+        }
     });
 
     describe("events", function() {
@@ -726,7 +792,62 @@ describe("Ext.drag.Source", function() {
                     expect(args[2] instanceof Ext.event.Event).toBe(true);
                 });
             });
+
+            it("should not fire dragcancel", function() {
+                source.on('dragcancel', spy);
+                startDrag();
+                // Not moved past threshhold yet
+                runsExpectCallCount(spy, 0);
+                moveBy(10, 0);
+                runsExpectCallCount(spy, 0);
+                moveBy(100, 0);
+                runsExpectCallCount(spy, 0);
+                moveBy(100, 0);
+                runsExpectCallCount(spy, 0);
+                endDrag();
+                runsExpectCallCount(spy, 0);
+            });
         });
+
+        if (Ext.supports.Touch) {
+            describe("dragcancel", function() {
+                it("should fire once a drag is cancelled", function() {
+                    source.on('dragcancel', spy);
+                    startDrag();
+                    // Not moved past threshhold yet
+                    runsExpectCallCount(spy, 0);
+                    moveBy(10, 0);
+                    runsExpectCallCount(spy, 0);
+                    moveBy(100, 0);
+                    runsExpectCallCount(spy, 0);
+                    moveBy(100, 0);
+                    runsExpectCallCount(spy, 0);
+                    doCancel(0, 0);
+                    runsExpectCallCount(spy, 1);
+                });
+
+                it("should pass the source, info and the event object", function() {
+                    source.on('dragcancel', spy);
+                    startDrag();
+                    moveBy(10, 0);
+                    doCancel(0, 0);
+                    runs(function() {
+                        var args = spy.mostRecentCall.args;
+                        expect(args[0]).toBe(source);
+                        expect(args[1] instanceof Ext.drag.Info).toBe(true);
+                        expect(args[2] instanceof Ext.event.Event).toBe(true);
+                    });
+                });
+
+                it("should not fire dragend", function() {
+                    source.on('dragend', spy);
+                    startDrag();
+                    moveBy(10, 0);
+                    doCancel(0, 0);
+                    runsExpectCallCount(spy, 0);
+                });
+            });
+        }
     });
 
     describe("proxy", function() {
@@ -2773,7 +2894,7 @@ describe("Ext.drag.Source", function() {
                                 constrain: {
                                     snap: {
                                         x: function(info, x) {
-                                            return x < 80 ? 10 : 200
+                                            return x < 80 ? 10 : 200;
                                         },
                                         y: 40
                                     }
@@ -2799,7 +2920,7 @@ describe("Ext.drag.Source", function() {
                                 constrain: {
                                     snap: {
                                         x: function(info, x) {
-                                            return x < 80 ? 10 : 200
+                                            return x < 80 ? 10 : 200;
                                         },
                                         y: function(info, y) {
                                             return y < 100 ? 50 : 150;

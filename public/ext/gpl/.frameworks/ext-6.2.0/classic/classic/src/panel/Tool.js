@@ -333,7 +333,7 @@ Ext.define('Ext.panel.Tool', {
         if (me.type) {
             result += me.baseCls + '-img ' + me.baseCls + '-' + me.type;
         } else if (me.iconCls) {
-            result += me.iconCls;
+            result += me.iconCls; // do not add x-tool-img to allow iconCls full sway
         }
         return result;
     },
@@ -472,7 +472,7 @@ Ext.define('Ext.panel.Tool', {
         return me;
     },
 
-    onDestroy: function(){
+    doDestroy: function() {
         var me = this;
 
         me.setTooltip(null);
@@ -550,6 +550,12 @@ Ext.define('Ext.panel.Tool', {
             } else if (me.callback) {
                 Ext.callback(me.callback, me.scope, [me.toolOwner || me.ownerCt, me, e], 0, me);
             }
+            
+            // The handler could have destroyed the owner, and the Tool instance as well.
+            // This is what happens with Close tools in Panels.
+            if (me.destroyed) {
+                return;
+            }
 
             /**
              * @event click
@@ -559,6 +565,8 @@ Ext.define('Ext.panel.Tool', {
              * @param {Ext.Component} owner The logical owner of the tool. In a typical
              * `Ext.panel.Panel`, this is set to the owning panel. This value comes from the
              * `toolOwner` config.
+             * Note that if the tool handler destroys the tool and/or its owner, the event
+             * will not fire.
              * @since 5.0.0
              */
             me.fireEvent('click', me, e, me.toolOwner || me.ownerCt);

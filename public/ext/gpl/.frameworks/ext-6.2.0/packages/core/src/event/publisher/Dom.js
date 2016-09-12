@@ -658,11 +658,20 @@ Ext.define('Ext.event.publisher.Dom', {
     },
 
     destroy: function() {
-        var eventName;
+        var GC = Ext.dom['GarbageCollector'],
+            eventName;
 
         for (eventName in this.delegatedListeners) {
             this.removeDelegatedListener(eventName);
         }
+
+        // We are wired to the unload event, so we ensure cleanup of low-level stuff
+        // like the Reaper and the GarbageCollector.
+        Ext.Reaper.flush();
+        if (GC) {
+            GC.collect();
+        }
+
         this.callParent();
     },
 

@@ -123,14 +123,14 @@ $font-family: dynamic(helvetica, arial, sans-serif);
  * @var {number} $font-size
  * The base font-size to be used throughout the theme.
  */
-$font-size: dynamic(81.25%);
+$font-size: dynamic(pxToRootPct(13px));
 
 /**
  * @var {number}
  * The base font-size to be used throughout the theme in the
  * {@link Global_CSS#$enable-big big} sizing scheme
  */
-$font-size-big: dynamic(93.75%);
+$font-size-big: dynamic(pxToRootPct(15px));
 
 /**
  * @var {number} $line-height
@@ -142,7 +142,7 @@ $line-height: dynamic(1.25);
  * @var {color} $alert-color
  * Color used for elements like badges, errors, and "decline" UIs (eg. on buttons).
  */
-$alert-color: dynamic(red);
+$alert-color: dynamic(#c30);
 
 /**
  * @var {color} $confirm-color
@@ -213,6 +213,7 @@ $css-variable-selector: dynamic(':root');
 /**
  * @var {number} default-calc-value
  * Number that is used to replace null values in calc formulas
+ * @private
  */
 $default-calc-value: dynamic(0%);
 

@@ -25,15 +25,26 @@ Ext.define('KitchenSink.Application', {
         144: 'resources/icons/icon@144.png'
     },
 
+    quickTips: {
+        tooltip: {
+            showOnTap: true
+        }
+    },
+
     //loads app/store/Demos.js, which contains the tree data for our main navigation NestedList
-    stores: ['Demos', 'USD2EUR', 'OrderItems', 'StockPrice', 'List', 'Pie', 'Speakers'],
+    stores: ['Navigation', 'USD2EUR', 'OrderItems', 'StockPrice', 'List', 'Pie', 'Speakers'],
 
     //the Kitchen Sink has Phone and Tablet modes, which rearrange the screen based on the type
     //of device detected
     profiles: [
+        'KitchenSink.profile.Desktop',
         'KitchenSink.profile.Tablet',
         'KitchenSink.profile.Phone'
     ],
+
+    init: function() {
+        this.setDefaultToken('all');
+    },
 
     launch: function() {
         Ext.create('KitchenSink.store.Speakers', { id: 'Speakers' });

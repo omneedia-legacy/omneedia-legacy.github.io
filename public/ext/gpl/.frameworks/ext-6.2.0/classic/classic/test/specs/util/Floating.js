@@ -11,13 +11,13 @@ describe("Ext.util.Floating", function() {
         }, cfg));
     }
 
-    function spyOnEvent(object, eventName, fn) {
+    function spyOnEvent(object, eventName, fn, options) {
         var obj = {
             fn: fn || Ext.emptyFn
         },
         spy = spyOn(obj, 'fn');
 
-        object.addListener(eventName, obj.fn);
+        object.addListener(eventName, obj.fn, null, options);
         return spy;
     }
 
@@ -355,7 +355,7 @@ describe("Ext.util.Floating", function() {
     });
 
     describe("scroll alignment when rendered to body", function() {
-        var spy, c, scroller, floater, count;
+        var spy, c, scroller, floater, count, oldOnError = window.onerror;
 
         function makeTestComponent(alignToComponent) {
             spy = jasmine.createSpy();
@@ -420,6 +420,7 @@ describe("Ext.util.Floating", function() {
         afterEach(function() {
             Ext.un('scroll', spy);
             count = c = floater = spy = Ext.destroy(floater, c);
+            window.onerror = oldOnError;
         });
 
         describe('aligning to element', function() {
@@ -481,6 +482,40 @@ describe("Ext.util.Floating", function() {
 
                 runs(function() {
                     expect(floater.getEl().getTop()).toBe(200);
+                });
+            });
+            
+            it('should unbind the resize listener when alignTo element is destroyed', function() {
+                var alignEl = c.getEl().down('.align'),
+                    spy = spyOnEvent(Ext.GlobalEvents, 'resize', null, {
+                        buffer: 200
+                    }),
+                    onErrorSpy = jasmine.createSpy();
+
+                floater.alignTo(alignEl, 'tl-bl');
+
+                expect(floater.getEl().getTop()).toBe(200);
+
+                alignEl.dom.parentNode.removeChild(alignEl.dom);
+                
+                window.onerror = onErrorSpy.andCallFake(function() {
+                    if (oldOnError) {
+                        oldOnError();
+                    }
+                });
+
+                Ext.GlobalEvents.fireEvent('resize', 500, 500);
+                waitsFor(function() {
+                    return spy.callCount === 1;
+                });
+                runs(function() {
+                    Ext.GlobalEvents.fireEvent('resize', 1000, 1000);
+                });
+                waitsFor(function() {
+                    return spy.callCount === 2;
+                });
+                runs(function() {
+                    expect(onErrorSpy).not.toHaveBeenCalled();
                 });
             });
         });

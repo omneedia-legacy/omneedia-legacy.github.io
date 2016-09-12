@@ -112,6 +112,10 @@ Ext.define('Ext.field.Slider', {
     */
 
     config: {
+        component: {
+            xtype: 'slider'
+        },
+
         /**
          * @cfg {Boolean} liveUpdate
          * `true` to fire change events while the slider is dragging. `false` will
@@ -120,7 +124,7 @@ Ext.define('Ext.field.Slider', {
         liveUpdate: false,
 
         /**
-         * @cfg
+         * @cfg tabIndex
          * @inheritdoc
          */
         tabIndex: -1,
@@ -166,7 +170,7 @@ Ext.define('Ext.field.Slider', {
         maxValue: 100
     },
 
-    defaultBindProperty: 'values',
+    defaultBindProperty: 'value',
     twoWayBindable: {
         values: 1,
         value: 1
@@ -202,13 +206,6 @@ Ext.define('Ext.field.Slider', {
             drag: 'onSliderDrag',
             dragend: 'onSliderDragEnd'
         });
-    },
-
-    /**
-     * @private
-     */
-    applyComponent: function(config) {
-        return Ext.factory(config, Ext.slider.Slider);
     },
 
     /**
@@ -298,12 +295,6 @@ Ext.define('Ext.field.Slider', {
             initialValue = (this.config.hasOwnProperty('values')) ? config.values : config.value;
 
         this.setValue(initialValue);
-    },
-
-    updateDisabled: function(disabled) {
-        this.callParent(arguments);
-
-        this.getComponent().setDisabled(disabled);
     },
 
     updateReadOnly: function(newValue) {

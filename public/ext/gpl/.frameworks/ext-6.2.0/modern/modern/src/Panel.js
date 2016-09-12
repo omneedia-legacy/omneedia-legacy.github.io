@@ -1,44 +1,23 @@
 /**
- * Panels are most useful as Overlays - containers that float over your application.
- * if configured with `{@link #cfg-anchor: true}`, when you {@link #showBy} another
- * component, there will be an anchor arror pointing to a reference component.
+ * Panels add extra functionality by providing various options for configuring a header
+ * that is docked inside the panel.
+ * See:
+ * - {@link #title}
+ * - {@link #iconCls}
+ * - {@link #tools}
+ * - {@link #closable}
  *
- * If you don't need this extra functionality, you should use {@link Ext.Container} instead.
- *
- *      @example miniphone preview
- *
- *      var button = Ext.create('Ext.Button', {
- *           text: 'Button',
- *           id: 'rightButton'
- *      });
- *
- *      Ext.create('Ext.Container', {
- *          fullscreen: true,
- *          items: [
- *              {
- *                   docked: 'top',
- *                   xtype: 'titlebar',
- *                   items: [
- *                       button
- *                   ]
- *               }
- *          ]
- *      });
- *
- *      Ext.create('Ext.Panel', {
- *          html: 'Positioned Panel',
- *          left: 0,
- *          padding: 10
- *      }).showBy(button);
+ * It is also possible to configure the header directly using the {@link #header}
+ * configuration. See {@link Ext.panel.Header} for more information.
+ * 
+ * Panels are also useful as Overlays - containers that float over your application.
+ * If configured with `{@link #cfg-anchor: true}`, when you {@link #showBy} another
+ * component, there will be an anchor arrow pointing to the reference component.
  *
  */
 Ext.define('Ext.Panel', {
     extend: 'Ext.Container',
     xtype: 'panel',
-
-    requires: [
-        'Ext.util.LineSegment'
-    ],
 
     alternateClassName: 'Ext.panel.Panel',
 
@@ -47,8 +26,6 @@ Ext.define('Ext.Panel', {
     isPanel: true,
 
     config: {
-        baseCls: Ext.baseCSSPrefix + 'panel',
-
         /**
          * @cfg border
          * @inheritdoc
@@ -119,6 +96,14 @@ Ext.define('Ext.Panel', {
         anchor: null,
 
         /**
+         * @cfg {String} [anchorPosition]
+         * Set the anchor position.
+         *
+         * @private
+         */
+        anchorPosition: null,
+
+        /**
          * @cfg {Boolean} closable
          * True to display the 'close' tool button and allow the user to close the panel, false to hide the button and
          * disallow closing the window.
@@ -161,6 +146,8 @@ Ext.define('Ext.Panel', {
         closeToolText: 'Close panel'
         //</locale>
     },
+
+    classCls: Ext.baseCSSPrefix + 'panel',
 
     manageBorders: true,
 
@@ -233,6 +220,7 @@ Ext.define('Ext.Panel', {
     },
 
     applyHeader: function (newHeader, oldHeader) {
+        // This method should never call any getters here doing so will cause re-entry into this method. Extra Headers will be created
         var me = this,
             header = oldHeader;
 
@@ -249,9 +237,11 @@ Ext.define('Ext.Panel', {
                     header.setConfig(newHeader);
                 }
             } else {
-                // add() will ensure we sort the header to the front by its "weight"
-
-                header = me.add(me.createHeader(newHeader));
+                // Unlike classic, modern doesn't have (yet) the "weight" concept to control the
+                // docking order. To make sure that the header is the first docked item, let's
+                // use insert() instead of add() since this last, through getItems(), creates
+                // and adds config items BEFORE our header, which is not what we want.
+                header = me.insert(0, me.createHeader(newHeader));
             }
         }
 
@@ -294,6 +284,8 @@ Ext.define('Ext.Panel', {
             },
             icon, title;
 
+        me._isCreatingHeader = true;
+
         if (config && config !== true) {
             Ext.merge(ret, config);
         }
@@ -327,7 +319,29 @@ Ext.define('Ext.Panel', {
             }
         }
 
+        me._isCreatingHeader = false;
         return ret;
+    },
+
+    updateAnchor: function(anchor) {
+        this.tipElement.setVisible(!!anchor);
+    },
+
+    updateAnchorPosition: function(anchorPosition, oldAnchorPosition) {
+        var tipElement = this.tipElement,
+            prefix = this.anchorPrefix;
+
+        if (oldAnchorPosition) {
+            tipElement.removeCls(prefix + oldAnchorPosition.side);
+        }
+
+        if (anchorPosition) {
+            tipElement.addCls(prefix + anchorPosition.side);
+            tipElement.translate(anchorPosition.x, anchorPosition.y);
+            tipElement.show();
+        } else {
+            tipElement.hide();
+        }
     },
 
     updateBorder: function(border, oldBorder) {
@@ -390,19 +404,10 @@ Ext.define('Ext.Panel', {
 
     updateUi: function(ui, oldUi) {
         var me = this,
-            suffix = 'x-panel-inner-',
             innerElement = me.innerElement,
             // Let the header initter get the ui since ui is a cached config and
             // should not pull in non-cached cfgs at this early stage
             header = !me.isConfiguring && me.ensureHeader();
-
-        if (oldUi) {
-            innerElement.removeCls(suffix + oldUi);
-        }
-
-        if (ui) {
-            innerElement.addCls(suffix + ui);
-        }
 
         if (header) {
             me.getTitle();
@@ -415,31 +420,38 @@ Ext.define('Ext.Panel', {
     alignTo: function(component, alignment, options) {
         var me = this,
             tipElement = me.tipElement,
-            resultRegion,
             alignmentInfo = me.getAlignmentInfo(component, alignment),
             config = me.initialConfig,
-            oldHeight,
             positioned = me.isPositioned(),
             setX = positioned ? me.setLeft : me.setX,
-            setY = positioned ? me.setTop : me.setY;
+            setY = positioned ? me.setTop : me.setY,
+            x = 0,
+            y = 0,
+            resultRegion, oldHeight, cls;
 
         if (alignmentInfo.isAligned) {
             return;
         }
 
+        if (!me.isFloated() && !me.getParent()) {
+            me.setFloated(true);
+        }
+
         // Superclass does pure alignment.
         // We only need extra if we're showing an anchor.
         if (!me.getAnchor()) {
+            me.setAnchorPosition(null);
             return me.callParent([component, alignment, options]);
         }
 
         // Show anchor el so we can measure it
         if (!me.anchorSize) {
-            tipElement.addCls('x-anchor-top');
+            cls = me.anchorMeasureCls;
+            tipElement.addCls(cls);
             tipElement.show();
 
             me.anchorSize = new Ext.util.Offset(tipElement.getWidth(), tipElement.getHeight());
-            tipElement.removeCls('x-anchor-top');
+            tipElement.removeCls(cls);
             tipElement.hide();
         }
 
@@ -456,7 +468,6 @@ Ext.define('Ext.Panel', {
 
         // If already aligned, will return undefined
         if (resultRegion) {
-            tipElement.removeCls('x-anchor-' + me.currentTipPosition);
             setX.call(me, resultRegion.x);
             setY.call(me, resultRegion.y);
             if (resultRegion.constrainWidth) {
@@ -477,38 +488,49 @@ Ext.define('Ext.Panel', {
                 me.setHeight(alignmentInfo.stats.height = resultRegion.getHeight());
             }
             if (resultRegion.anchor) {
-                tipElement.show();
-                me.currentTipPosition = resultRegion.anchor.position;
-                tipElement.addCls('x-anchor-' + me.currentTipPosition);
+                x = 0;
+                y = 0;
 
                 // The result is to the left or right of the target
                 if (resultRegion.anchor.align & 1) {
-                    tipElement.translate(0, resultRegion.anchor.y - resultRegion.y - resultRegion.getHeight());
+                   y = resultRegion.anchor.y - resultRegion.y - resultRegion.getHeight();
                 } else {
-                    tipElement.translate(resultRegion.anchor.x - resultRegion.x);
+                    x = resultRegion.anchor.x - resultRegion.x;
                 }
+
+                me.setAnchorPosition({
+                    side: resultRegion.anchor.position,
+                    x: x,
+                    y: y
+                });
+            } else {
+                me.setAnchorPosition(null);
             }
             me.setCurrentAlignmentInfo(alignmentInfo);
-        }
-        // Already aligned.
-        else {
+        } else {
+            // Already aligned
             tipElement.show();
         }
     },
 
     privates: {
+        anchorMeasureCls: Ext.baseCSSPrefix + 'anchor-top',
+        anchorPrefix: Ext.baseCSSPrefix + 'anchor-',
+
         ensureHeader: function () {
             var me = this,
                 header;
 
-            me.getViewModel();
-            me.getItems();
+            if (!me._isCreatingHeader) {
+                me.getViewModel();
+                me.getItems();
 
-            header = me.getHeader();
-
-            if (!header && me.allowHeader) {
-                me.setHeader(true);
                 header = me.getHeader();
+
+                if (!header && me.allowHeader) {
+                    me.setHeader(true);
+                    header = me.getHeader();
+                }
             }
 
             return header;

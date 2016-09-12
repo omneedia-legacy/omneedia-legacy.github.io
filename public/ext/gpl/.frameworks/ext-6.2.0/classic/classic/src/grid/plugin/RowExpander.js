@@ -62,6 +62,14 @@ Ext.define('Ext.grid.plugin.RowExpander', {
     selectRowOnExpand: false,
 
     /**
+     * @cfg {Boolean} scrollIntoViewOnExpand
+     * @since 6.2.0
+     * `true` to ensure that the full row expander body is visible when clicking on the expander icon
+     * (defaults to `true`)
+     */
+     scrollIntoViewOnExpand: true,
+
+    /**
      * @cfg {Number}
      * The width of the Row Expander column header
      */
@@ -275,13 +283,18 @@ Ext.define('Ext.grid.plugin.RowExpander', {
      * If we are expanding the normal side of a lockable grid, poke the column into the locked side if the locked side has columns
      */
     addExpander: function(expanderGrid) {
-        var me = this;
+        var me = this,
+            selModel = expanderGrid.getSelectionModel(),
+            checkBoxPosition = selModel.injectCheckbox;
 
         me.expanderColumn = expanderGrid.headerCt.insert(0, me.getHeaderConfig());
 
-        // If a CheckboxModel, it must now put its checkbox in at position one because this
+        // If a CheckboxModel, and it's position is 0, it must now go at position one because this
         // cell always gets in at position zero, and spans 2 columns.
-        expanderGrid.getSelectionModel().injectCheckbox = 1;
+        if (checkBoxPosition === 0 || checkBoxPosition === 'first') {
+            checkBoxPosition = 1;
+        }
+        selModel.injectCheckbox = checkBoxPosition;
     },
 
     getRowBodyFeatureData: function(record, idx, rowValues) {
@@ -342,14 +355,18 @@ Ext.define('Ext.grid.plugin.RowExpander', {
             nextBd = normalRow.down(me.rowBodyTrSelector, true),
             wasCollapsed = normalRow.hasCls(me.rowCollapsedCls),
             addOrRemoveCls = wasCollapsed ? 'removeCls' : 'addCls',
-            ownerLockable = me.grid.lockable && me.grid;
+            ownerLockable = me.grid.lockable && me.grid,
+            componentLayoutCounter;
 
         normalRow[addOrRemoveCls](me.rowCollapsedCls);
         Ext.fly(nextBd)[addOrRemoveCls](me.rowBodyHiddenCls);
         me.recordsExpanded[record.internalId] = wasCollapsed;
 
+        Ext.suspendLayouts();
+
         // Sync the collapsed/hidden classes on the locked side
         if (ownerLockable) {
+            componentLayoutCounter = ownerLockable.componentLayoutCounter;
 
             // It's the top level grid's LockingView that does the firing when there's a lockable assembly involved.
             fireView = ownerLockable.getView();
@@ -358,6 +375,12 @@ Ext.define('Ext.grid.plugin.RowExpander', {
             if (me.lockedGrid.isVisible()) {
 
                 view = me.lockedView;
+
+                // The other side must be thrown into the layout matrix so that
+                // row height syncing can be done. If it is collapsed but floated,
+                // it will not automatically be added to the layout when the top 
+                // level grid layout calculates its layout children.
+                view.lockingPartner.updateLayout();
 
                 // Process the locked side.
                 lockedRow = Ext.fly(view.getNode(rowIdx));
@@ -376,6 +399,18 @@ Ext.define('Ext.grid.plugin.RowExpander', {
 
         fireView.fireEvent(wasCollapsed ? 'expandbody' : 'collapsebody', rowNode, record, nextBd);
         view.refreshSize(true);
+
+        Ext.resumeLayouts(true);
+
+        if (me.scrollIntoViewOnExpand && wasCollapsed) {
+            me.grid.ensureVisible(rowIdx);
+        }
+
+        // The two sides are layout roots. The top grid will not have layed out.
+        // We must postprocess it now.
+        if (ownerLockable && ownerLockable.componentLayoutCounter === componentLayoutCounter) {
+            ownerLockable.syncLockableLayout();
+        }
     },
 
     // Called from TableLayout.finishedLayout
@@ -425,8 +460,7 @@ Ext.define('Ext.grid.plugin.RowExpander', {
 
     onColumnLock: function(lockable, column) {
         var me = this,
-            lockedColumns,
-            lockedGrid;
+            lockedColumns;
 
         lockable = lockable || me.grid;
         lockedColumns = me.lockedGrid.visibleColumnManager.getColumns();
@@ -460,9 +494,21 @@ Ext.define('Ext.grid.plugin.RowExpander', {
                 return '<div class="' + Ext.baseCSSPrefix + 'grid-row-expander" role="presentation" tabIndex="0"></div>';
             },
             processEvent: function(type, view, cell, rowIndex, cellIndex, e, record) {
-                if ((type === "click" && e.getTarget('.' + Ext.baseCSSPrefix + 'grid-row-expander')) || (type === 'keydown' && e.getKey() === e.SPACE)) {
-                    me.toggleRow(rowIndex, record);
+                var isTouch = e.pointerType === 'touch',
+                    isExpanderClick = !!e.getTarget('.' + Ext.baseCSSPrefix + 'grid-row-expander');
+
+                if ((type === "click" && isExpanderClick) || (type === 'keydown' && e.getKey() === e.SPACE)) {
+
+                    // Focus the cell on real touch tap.
+                    // This is because the toggleRow saves and restores focus
+                    // which may be elsewhere than clicked on causing a scroll jump.
+                    if (isTouch) {
+                        cell.focus();
+                    }
+                    me.toggleRow(rowIndex, record, e);
                     e.stopSelection = !me.selectRowOnExpand;
+                } else if (e.type === 'mousedown' && !isTouch && isExpanderClick) {
+                    e.preventDefault();
                 }
             },
 

@@ -1,5 +1,5 @@
 var Ext = Ext || {};
-Ext.manifest = Ext.manifest || "ios-he.json";
+Ext.manifest = Ext.manifest || "ios-en.json";
 // @tag core
 // @define Ext.Boot
 
@@ -543,7 +543,7 @@ Ext.Boot = Ext.Boot || (function (emptyFn) {
                 Boot.isIE8 = Boot.hasReadyState && !Boot.hasAsync && Boot.hasDefer && !Boot.hasOnLoad;
                 Boot.isIE9 = Boot.hasReadyState && !Boot.hasAsync && Boot.hasDefer && Boot.hasOnLoad;
                 Boot.isIE10p = Boot.hasReadyState && Boot.hasAsync && Boot.hasDefer && Boot.hasOnLoad;
-                
+
                 Boot.isIE10 = (new Function('/*@cc_on return @_jscript_version @*/')()) === 10;
                 Boot.isIE10m = Boot.isIE10 || Boot.isIE9 || Boot.isIE8;
                 
@@ -2084,18 +2084,16 @@ Ext.Microloader = Ext.Microloader || (function () {
 
                     // Manifest is not in local storage. Fetch it from the server
                     } else {
-                        Boot.fetch(Microloader.applyCacheBuster(url), function (result) {
-                            manifest = new Manifest({
-                                url: url,
-                                content: result.content
-                            });
 
-                            manifest.cache();
-                            if (postProcessor) {
-                                postProcessor(manifest);
-                            }
-                            Microloader.load(manifest);
-                        });
+                        if (location.href.indexOf('file:/') === 0) {
+                            Manifest.url = Microloader.applyCacheBuster(url + 'p');
+                            Boot.load(Manifest.url);
+                        }
+                        else {
+                            Boot.fetch(Microloader.applyCacheBuster(url), function(result) {
+                                Microloader.setManifest(result.content);
+                            });
+                        }
                     }
 
                 // Embedded Manifest into JS file
@@ -2105,6 +2103,22 @@ Ext.Microloader = Ext.Microloader || (function () {
                     });
                     Microloader.load(manifest);
                 }
+            },
+
+            /**
+             *
+             * @param cfg
+             */
+            setManifest: function(cfg) {
+                var manifest = new Manifest({
+                    url: Manifest.url,
+                    content: cfg
+                });
+                manifest.cache();
+                if (postProcessor) {
+                    postProcessor(manifest);
+                }
+                Microloader.load(manifest);
             },
 
             /**
@@ -2534,7 +2548,7 @@ Ext.Microloader = Ext.Microloader || (function () {
                     // as we are still very early in the lifecycle
                     Ext.defer(function() {
                         Ext.GlobalEvents.fireEvent('appupdate', Microloader.appUpdate);
-                    }, 100);
+                    }, 1000);
                 }
             },
 

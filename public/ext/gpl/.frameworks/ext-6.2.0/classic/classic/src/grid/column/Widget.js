@@ -160,6 +160,8 @@ Ext.define('Ext.grid.column.Widget', {
     extend: 'Ext.grid.column.Column',
     alias: 'widget.widgetcolumn',
 
+    mixins: ['Ext.mixin.StyleCacher'],
+
     config: {
         /**
          * @cfg defaultWidgetUI
@@ -323,14 +325,12 @@ Ext.define('Ext.grid.column.Widget', {
             return me.resolveListenerScope(defaultScope);
         };
 
-        me.cachedStyles = {};
-
         // Need an instantiated example to retrieve the tdCls that it needs
         widget = Ext.widget(me.widget);
 
         // If the widget is not using binding, but we have a dataIndex, and there's
         // a defaultBindProperty to push it into, set flag to indicate to do that.
-        me.bindDataIndex = me.dataIndex && widget.defaultBindProperty && !widget.bind
+        me.bindDataIndex = me.dataIndex && widget.defaultBindProperty && !widget.bind;
 
         tdCls = tdCls ? tdCls + ' ' : '';
         me.tdCls = tdCls + widget.getTdCls();
@@ -344,6 +344,7 @@ Ext.define('Ext.grid.column.Widget', {
         var view = this.getView();
 
         this.callParent();
+
         // View already ready, means we were added later so go and set up our widgets, but if the grid
         // is reconfiguring, then the column will be rendered & the view will be ready, so wait until
         // the reconfigure forces a refresh
@@ -413,17 +414,12 @@ Ext.define('Ext.grid.column.Widget', {
         this.callParent(arguments);
     },
 
-    onDestroy: function() {
+    doDestroy: function() {
         this.ownerGrid.destroyManagedWidgets(this.getId());
         this.callParent();
     },
 
     privates: {
-        getCachedStyle: function(el, style) {
-            var cachedStyles = this.cachedStyles;
-            return cachedStyles[style] || (cachedStyles[style] = Ext.fly(el).getStyle(style));
-        },
-
         getWidget: function(record) {
             var me = this,
                 result = null;
@@ -467,11 +463,11 @@ Ext.define('Ext.grid.column.Widget', {
                         continue;
                     }
 
-                    cell = view.getCell(record, me).dom;
+                    cell = view.getCell(record, me);
 
                     // May be a placeholder with no data row
                     if (cell) {
-                        cell = cell.firstChild;
+                        cell = cell.dom.firstChild;
                         if (!isFixedSize && !width && me.lastBox) {
                             width = me.lastBox.width - parseInt(me.getCachedStyle(cell, 'padding-left'), 10) - parseInt(me.getCachedStyle(cell, 'padding-right'), 10);
                         }
@@ -513,7 +509,7 @@ Ext.define('Ext.grid.column.Widget', {
                         // If the widget has a focusEl, ensure that its tabbability status is synched
                         // with the view's navigable/actionable state.
                         focusEl = widget.getFocusEl();
-                        
+
                         if (focusEl) {
                             if (view.actionableMode) {
                                 if (!focusEl.isTabbable()) {
@@ -528,6 +524,8 @@ Ext.define('Ext.grid.column.Widget', {
                         }
                     }
                 }
+            } else {
+                view.refreshNeeded = true;
             }
         },
 

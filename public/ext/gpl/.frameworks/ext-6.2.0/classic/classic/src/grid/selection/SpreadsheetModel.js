@@ -745,10 +745,10 @@ Ext.define('Ext.grid.selection.SpreadsheetModel', {
 
         if (doSelect) {
             me.updateHeaderState();
+            sel.selectAll(); //this populates the selection with the records
             if (!suppressEvent) {
                 me.fireSelectionChange();
             }
-            sel.selectAll();
         }
     },
 
@@ -1780,7 +1780,8 @@ Ext.define('Ext.grid.selection.SpreadsheetModel', {
             if (sel.isRows) {
                 records = sel.getRecords();
                 count = store.getTotalCount() || store.getCount();
-                me.selected.allSelected = !!(count && records.length && (count === records.length));
+                // When there is a BufferedStore the allSelected flag cannot be set in a manual selection
+                me.selected.allSelected = !!(store.isBufferedStore ? me.selected.allSelected : count && records.length && (count === records.length));
                 me.fireEvent('selectionchange', me, records);
             } else if (sel.isCells) {
                 me.selected.allSelected = false;

@@ -83,7 +83,48 @@ var noArgs = [],
     oneMember = {},
     aliasOneMember = {},
     Base = function(){},
-    BasePrototype = Base.prototype;
+    BasePrototype = Base.prototype,
+    Reaper;
+
+    Ext.Reaper = Reaper = {
+        delay: 100,
+        queue: [],
+        timer: null,
+
+        add: function (obj) {
+            if (!Reaper.timer) {
+                Reaper.timer = Ext.defer(Reaper.tick, Reaper.delay);
+            }
+
+            Reaper.queue.push(obj);
+        },
+
+        flush: function () {
+            if (Reaper.timer) {
+                clearTimeout(Reaper.timer);
+                Reaper.timer = null;
+            }
+
+            var queue = Reaper.queue,
+                n = queue.length,
+                i, obj;
+
+            Reaper.queue = [];
+
+            for (i = 0; i < n; ++i) {
+                obj = queue[i];
+
+                if (obj && obj.$reap) {
+                    obj.$reap();
+                }
+            }
+        },
+
+        tick: function () {
+            Reaper.timer = null;
+            Reaper.flush();
+        }
+    };
 
     // These static properties will be copied to every newly created class with {@link Ext#define}
     Ext.apply(Base, {
@@ -352,7 +393,7 @@ var noArgs = [],
         extend: function(parent) {
             var me = this,
                 parentPrototype = parent.prototype,
-                prototype, i, ln, name, statics;
+                prototype, name, statics;
 
             prototype = me.prototype = Ext.Object.chain(parentPrototype);
             prototype.self = me;
@@ -360,9 +401,9 @@ var noArgs = [],
             me.superclass = prototype.superclass = parentPrototype;
 
             if (!parent.$isClass) {
-                for (i in BasePrototype) {
-                    if (i in prototype) {
-                        prototype[i] = BasePrototype[i];
+                for (name in BasePrototype) {
+                    if (name in prototype) {
+                        prototype[name] = BasePrototype[name];
                     }
                 }
             }
@@ -372,9 +413,7 @@ var noArgs = [],
             statics = parentPrototype.$inheritableStatics;
 
             if (statics) {
-                for (i = 0,ln = statics.length; i < ln; i++) {
-                    name = statics[i];
-
+                for (name in statics) {
                     if (!me.hasOwnProperty(name)) {
                         me[name] = parent[name];
                     }
@@ -465,17 +504,13 @@ var noArgs = [],
          */
         addInheritableStatics: function(members) {
             var me = this,
-                prototype = me.prototype,
-                inheritableStatics,
-                hasInheritableStatics,
+                proto = me.prototype,
+                inheritableStatics = me.$inheritableStatics,
                 name, member, current;
 
-            inheritableStatics = prototype.$inheritableStatics;
-            hasInheritableStatics = prototype.$hasInheritableStatics;
-
             if (!inheritableStatics) {
-                inheritableStatics = prototype.$inheritableStatics = [];
-                hasInheritableStatics = prototype.$hasInheritableStatics = {};
+                inheritableStatics = Ext.apply({}, proto.$inheritableStatics);
+                me.$inheritableStatics = proto.$inheritableStatics = inheritableStatics;
             }
 
             //<debug>
@@ -494,13 +529,8 @@ var noArgs = [],
                     if (typeof current === 'function' && !current.$isClass && !current.$nullFn) {
                         member.$previous = current;
                     }
-
                     me[name] = member;
-
-                    if (!hasInheritableStatics[name]) {
-                        hasInheritableStatics[name] = true;
-                        inheritableStatics.push(name);
-                    }
+                    inheritableStatics[name] = true;
                 }
             }
 
@@ -921,7 +951,7 @@ var noArgs = [],
         mixin: function(name, mixinClass) {
             var me = this,
                 mixin, prototype, key, statics, i, ln, 
-                mixinName, staticName, mixinValue, mixins,
+                mixinName, name, mixinValue, mixins,
                 mixinStatics;
 
             if (typeof name !== 'string') {
@@ -985,11 +1015,9 @@ var noArgs = [],
 
             if (statics) {
                 mixinStatics = {};
-                for (i = 0, ln = statics.length; i < ln; i++) {
-                    staticName = statics[i];
-
-                    if (!me.hasOwnProperty(staticName)) {
-                        mixinStatics[staticName] = mixinClass[staticName];
+                for (name in statics) {
+                    if (!me.hasOwnProperty(name)) {
+                        mixinStatics[name] = mixinClass[name];
                     }
                 }
                 me.addInheritableStatics(mixinStatics);
@@ -1183,6 +1211,32 @@ var noArgs = [],
          * @protected
          */
         destroyed: false,
+        
+        /**
+         * @property {Boolean/"async"} [clearPropertiesOnDestroy=true]
+         * Setting this property to `false` will prevent nulling object references
+         * on a Class instance after destruction. Setting this to `"async"` will delay
+         * the clearing for approx 50ms.
+         * @protected
+         * @since 6.2.0
+         */
+        clearPropertiesOnDestroy: true,
+        
+        /**
+         * @property {Boolean} [clearPrototypeOnDestroy=false]
+         * Setting this property to `true` will result in setting the object's
+         * prototype to `null` after the destruction sequence is fully completed.
+         * After that, most attempts at calling methods on the object instance
+         * will result in "method not defined" exception. This can be very helpful
+         * with tracking down otherwise hard to find bugs like runaway Ajax requests,
+         * timed functions not cleared on destruction, etc.
+         *
+         * Note that this option can only work in browsers that support `Object.setPrototypeOf`
+         * method, and is only available in debugging mode.
+         * @private
+         * @since 6.2.0
+         */
+        clearPrototypeOnDestroy: false,
 
         /**
          * Get the reference to the class from which this object was instantiated. Note that unlike {@link Ext.Base#self},
@@ -1501,10 +1555,6 @@ var noArgs = [],
         },
 
         //<feature classSystem.config>
-        getConfigurator: function () {
-            return this.$config || this.self.getConfigurator();
-        },
-
         /**
          * Initialize configuration for this class. a typical example:
          *
@@ -1532,7 +1582,7 @@ var noArgs = [],
          */
         initConfig: function(instanceConfig) {
             var me = this,
-                cfg = me.getConfigurator();
+                cfg = me.self.getConfigurator();
 
             me.initConfig = Ext.emptyFn; // ignore subsequent calls to initConfig
             me.initialConfig = instanceConfig || {};
@@ -1577,7 +1627,7 @@ var noArgs = [],
                     config = name;
                 }
 
-                me.getConfigurator().reconfigure(me, config, options);
+                me.self.getConfigurator().reconfigure(me, config, options);
             }
 
             return me;
@@ -1587,7 +1637,7 @@ var noArgs = [],
          * @private
          */
         getCurrentConfig: function() {
-            var cfg = this.getConfigurator();
+            var cfg = this.self.getConfigurator();
 
             return cfg.getCurrentConfig(this);
         },
@@ -1700,23 +1750,73 @@ var noArgs = [],
             return me;
         },
 
+        $reap: function () {
+            var me = this,
+                protectedProps = me.$noClearOnDestroy,
+                prop, value, type;
+
+            for (prop in me) {
+                if ((!protectedProps || !protectedProps[prop]) && me.hasOwnProperty(prop)) {
+                    value = me[prop];
+                    type = typeof value;
+
+                    // Object may retain references to other objects. Functions can do too
+                    // if they are closures, and most of the *own* function properties
+                    // are closures indeed. We skip Ext.emptyFn and the like though,
+                    // they're mostly harmless.
+                    if (type === 'object' || (type === 'function' && !value.$noClearOnDestroy)) {
+                        me[prop] = null;
+                    }
+                }
+            }
+
+            //<debug>
+            // We also want to make sure no methods are called on the destroyed object,
+            // because that may lead to accessing nulled properties and resulting exceptions.
+            if (me.clearPrototypeOnDestroy && !me.$vetoClearingPrototypeOnDestroy &&
+                Object.setPrototypeOf) {
+                Object.setPrototypeOf(me, null);
+            }
+            //</debug>
+        },
+
         /**
          * This method is called to cleanup an object and its resources. After calling
-         * this method, the object should not be used any further.
+         * this method, the object should not be used any further in any way, including
+         * access to its methods and properties.
+         *
+         * To prevent potential memory leaks, all object references will be nulled
+         * at the end of destruction sequence, unless {@link #clearPropertiesOnDestroy}
+         * is set to `false`.
          */
         destroy: function() {
             var me = this,
-                links = me.$links;
-
-            me.initialConfig = me.config = null;
-
-            me.destroy = Ext.emptyFn;
-            // isDestroyed added for compat reasons
-            me.isDestroyed = me.destroyed = true;
+                links = me.$links,
+                clearPropertiesOnDestroy = me.clearPropertiesOnDestroy;
 
             if (links) {
                 me.$links = null;
                 me.unlink(Ext.Object.getKeys(links));
+            }
+            
+            me.destroy = Ext.emptyFn;
+            
+            // isDestroyed added for compat reasons
+            me.isDestroyed = me.destroyed = true;
+
+            // By this time the destruction is complete. Now we can make sure
+            // no objects are retained by the husk of this ex-Instance.
+            if (clearPropertiesOnDestroy === true) {
+                me.$reap();
+            }
+            else if (clearPropertiesOnDestroy) {
+                //<debug>
+                if (clearPropertiesOnDestroy !== 'async') {
+                    Ext.raise('Invalid value for clearPropertiesOnDestroy');
+                }
+                //</debug>
+
+                Reaper.add(me);
             }
         }
     });

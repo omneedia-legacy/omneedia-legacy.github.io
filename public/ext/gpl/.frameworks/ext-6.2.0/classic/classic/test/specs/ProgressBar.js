@@ -141,6 +141,56 @@ describe("Ext.ProgressBar", function() {
             });
         });
     });
+
+    describe("wait", function() {
+        beforeEach(function() {
+            makeProgress();
+        });
+        it("should be able to set a text", function() {
+            c.wait({
+                interval: 100,
+                duration: 1000,
+                text: 'Foo...',
+                scope: c,
+                fn: function() {
+                    this.updateText('Bar');
+                }
+            });
+
+            waitsFor(function() {
+                return c.text.length;
+            });
+
+            runs(function() {
+                expect(c.text).toBe('Foo...');
+            });
+
+            waitsFor(function() {
+                return c.text !== 'Foo...';
+            }, 'callback text');
+
+            runs(function (){
+                expect(c.text).toBe('Bar');
+            });
+        });
+
+        it("should display %age if no text has been specified", function() {
+            var innerHtml; 
+            c.wait({
+                interval: 100,
+                duration: 1000
+            });
+
+            waitsFor(function() {
+                innerHtml = c && c.textEl && c.textEl.elements[1].innerHTML;
+                return innerHtml.length;
+            });
+
+            runs(function() {
+                expect(innerHtml).toBe('10%');
+            });
+        });
+    });
     
     describe("Accessibility", function() {
         describe("general", function() {

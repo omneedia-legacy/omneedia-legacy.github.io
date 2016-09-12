@@ -7,6 +7,9 @@ Ext.define('KitchenSink.view.binding.AlgebraFormatters', {
 
     bodyPadding: 10,
 
+    shadow: true,
+    cls: 'demo-solid-background',
+
     viewModel: {
         type: 'default',
         data: {
@@ -40,6 +43,6 @@ Ext.define('KitchenSink.view.binding.AlgebraFormatters', {
         bind: '{ (x*y*100):fileSize:lowercase }'
     }, {
         label: 'Nested',
-        bind: '{ (x*y):currency( "USD":lowercase, (x/y):round(0) ) }'
+        bind: '{ (x*y):currency( "USD":lowercase, (x/y):round(0):lessThanElse(20, 2, 5) ) }'
     }]
 });

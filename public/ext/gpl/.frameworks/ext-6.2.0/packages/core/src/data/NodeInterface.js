@@ -365,6 +365,22 @@ Ext.define('Ext.data.NodeInterface', {
      * An array of this nodes children.  Array will be empty if this node has no children.
      */
 
+    /**
+     * @method onRegisterTreeNode
+     * Implement this method in a tree record subclass if it needs to track whenever it is registered
+     * with a {@link Ext.data.TreeStore TreeStore}.
+     * @param {Ext.data.TreeStore} treeStore The TreeStore to which the node is being registered.
+     * @template
+     */
+
+    /**
+     * @method onUnregisterTreeNode
+     * Implement this method in a tree record subclass if it needs to track whenever it is unregistered
+     * from a {@link Ext.data.TreeStore TreeStore}.
+     * @param {Ext.data.TreeStore} treeStore The TreeStore from which the node is being unregistered.
+     * @template
+     */
+
     statics: {
         /**
          * This method allows you to decorate a Model's class to implement the NodeInterface.
@@ -866,7 +882,7 @@ Ext.define('Ext.data.NodeInterface', {
 
                         // Ensure connectors are correct by updating the UI on all intervening nodes (descendants) between last sibling and new node.
                         if (index && me.childNodes[index - 1].isExpanded() && !bulkUpdate) {
-                            me.childNodes[index - 1].cascadeBy(me.triggerUIUpdate);
+                            me.childNodes[index - 1].cascade(me.triggerUIUpdate);
                         }
 
                         // We register the subtree before we proceed so relayed events
@@ -1016,7 +1032,7 @@ Ext.define('Ext.data.NodeInterface', {
                         // Ensure connectors are correct by updating the UI on all intervening nodes (descendants) between previous sibling and new node.
                         if (!bulkUpdate) {
                             if (previousSibling.isExpanded()) {
-                                previousSibling.cascadeBy(me.triggerUIUpdate);
+                                previousSibling.cascade(me.triggerUIUpdate);
                             }
                             // No intervening descendant nodes, just update the previous sibling
                             else {
@@ -1603,15 +1619,6 @@ Ext.define('Ext.data.NodeInterface', {
                     }
                 },
 
-                //<deprecated since=0.99>
-                cascade: function() {
-                    if (Ext.isDefined(Ext.global.console)) {
-                        Ext.global.console.warn('Ext.data.Node: cascade has been deprecated. Please use cascadeBy instead.');
-                    }
-                    return this.cascadeBy.apply(this, arguments);
-                },
-                //</deprecated>
-
                 /**
                  * Cascades down the tree from this node, calling the specified functions with each node. The arguments to the function
                  * will be the args provided or the current node. If the `before` function returns false at any point,
@@ -1627,7 +1634,7 @@ Ext.define('Ext.data.NodeInterface', {
                  * @param {Object} [spec.scope] The scope (this reference) in which the functions are executed. Defaults to the current Node.
                  * @param {Array} [spec.args] The args to call the function with. Defaults to passing the current Node.
                  */
-                cascadeBy: function(before, scope, args, after) {
+                cascade: function(before, scope, args, after) {
                     var me = this;
 
                     if (arguments.length === 1 && !Ext.isFunction(before)) {
@@ -1642,13 +1649,17 @@ Ext.define('Ext.data.NodeInterface', {
                             i;
 
                         for (i = 0; i < length; i++) {
-                            childNodes[i].cascadeBy.call(childNodes[i], before, scope, args, after);
+                            childNodes[i].cascade.call(childNodes[i], before, scope, args, after);
                         }
 
                         if (after) {
                             after.apply(scope || me, args || [me]);
                         }
                     }
+                },
+
+                cascadeBy: function() {
+                    return this.cascade.apply(this, arguments);
                 },
 
                 /**
@@ -1819,7 +1830,7 @@ Ext.define('Ext.data.NodeInterface', {
                     var isBranchLoaded = !this.isLeaf() && this.isLoaded();
 
                     if (isBranchLoaded) {
-                        this.cascadeBy(function(node) {
+                        this.cascade(function(node) {
                             if (!node.isLeaf()) {
                                 isBranchLoaded = isBranchLoaded || node.isBranchLoaded();
                             }
@@ -1911,7 +1922,7 @@ Ext.define('Ext.data.NodeInterface', {
                                             treeStore = me.getTreeStore();
                                             if (treeStore.getProxy().isSynchronous || me.isBranchLoaded()) {
                                                 me.isSynchronousRecursiveExpand = true;
-                                                treeStore.suspendEvent('add');
+                                                treeStore.suspendEvent('add', 'datachanged');
                                                 resumeAddEvent = true;
                                             }
                                         }
@@ -1924,7 +1935,10 @@ Ext.define('Ext.data.NodeInterface', {
                                     // If we suspended the add event so that all additions of descendant nodes
                                     // did not update the UI, then resume the event here, and refresh the data
                                     if (resumeAddEvent) {
-                                        treeStore.resumeEvent('add');
+                                        treeStore.resumeEvent('add', 'datachanged');
+
+                                        // Fire the generic datachanged event in addition to the refresh event
+                                        treeStore.fireEvent('datachanged', treeStore);
                                         treeStore.fireEvent('refresh', treeStore);
                                     }
                                     me.isSynchronousRecursiveExpand = false;

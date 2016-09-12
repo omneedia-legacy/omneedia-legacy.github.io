@@ -63,15 +63,19 @@ Ext.define('Ext.grid.column.Column', {
     extend: 'Ext.Component',
     alternateClassName: 'Ext.grid.column.Template',
 
-    xtype: ['column', 'templatecolumn'],
+    xtype: ['gridcolumn', 'column', 'templatecolumn'],
+
+    // This mixin is used to cache the padding size for cells in this column,
+    // to be shared by all cells in the column.
+    mixins: ['Ext.mixin.StyleCacher'],
 
     config: {
         /**
-         * @cfg {String} align
+         * @cfg {String} [align='left']
          * Sets the alignment of the header and rendered columns.
          * Possible values are: `'left'`, `'center'`, and `'right'`.
          */
-        align: 'left',
+        align: null,
 
         /**
          * @cfg {Object} cell
@@ -315,6 +319,15 @@ Ext.define('Ext.grid.column.Column', {
         exportStyle: null,
 
         /**
+         * @cfg {Object} cell
+         * The config object used to create {@link Ext.grid.cell.Base cells} in
+         * {@link Ext.grid.plugin.Summary Summary Rows} for this column.
+         */
+        summaryCell: {
+            xtype: 'summarycell'
+        },
+
+        /**
          * @cfg {String/Function} summaryType
          * This configuration specifies the type of summary. There are several built in
          * summary types. These call underlying methods on the store:
@@ -360,8 +373,6 @@ Ext.define('Ext.grid.column.Column', {
         summaryFormatter: null,
 
         minWidth: 40,
-        baseCls: Ext.baseCSSPrefix + 'grid-column',
-        sortedCls: Ext.baseCSSPrefix + 'column-sorted',
         sortDirection: null,
 
         /**
@@ -416,24 +427,60 @@ Ext.define('Ext.grid.column.Column', {
         computedWidth: null
     },
 
-    getElementConfig: function () {
-        return {
-            reference: 'element',
+    classCls: Ext.baseCSSPrefix + 'gridcolumn',
+    sortedCls: Ext.baseCSSPrefix + 'sorted',
+    resizableCls: Ext.baseCSSPrefix + 'resizable',
+
+    getTemplate: function () {
+        var me = this,
+            template = [],
+            beforeTitleTemplate = me.beforeTitleTemplate,
+            afterTitleTemplate = me.afterTitleTemplate;
+
+        // Hook for subclasses to insert extra elements
+        if (beforeTitleTemplate) {
+            template.push.apply(template, beforeTitleTemplate);
+        }
+
+        template.push({
+            reference: 'titleElement',
+            className: Ext.baseCSSPrefix + 'title-el',
             children: [{
-                reference: 'trigger',
-                className: 'x-grid-column-trigger'
+                reference: 'textElement',
+                className: Ext.baseCSSPrefix + 'text-el'
             }, {
-                reference: 'resizer',
-                className: 'x-grid-column-resizer'
-            }, {
-                reference: 'titleEl',
-                className: Ext.baseCSSPrefix + 'innerhtml',
-                children: [{
-                    reference: 'innerHtmlElement',
-                    className: Ext.baseCSSPrefix + 'column-title' 
-               }]
+                reference: 'sortIconElement',
+                classList: [
+                    Ext.baseCSSPrefix + 'sort-icon-el',
+                    Ext.baseCSSPrefix + 'font-icon'
+                ]
             }]
-        };
+        });
+
+        // Hook for subclasses to insert extra elements
+        if (afterTitleTemplate) {
+            template.push.apply(template, afterTitleTemplate);
+        }
+
+        template.push({
+            reference: 'resizerElement',
+            className: Ext.baseCSSPrefix + 'resizer-el'
+        });
+
+        return template
+    },
+
+    getCells: function() {
+        var cells = [],
+            rows = this.grid.getListItems(),
+            len = rows.length,
+            i;
+
+        for (i = 0; i < len; ++i) {
+            cells.push(rows[i].getCellByColumn(this));
+        }
+
+        return cells;
     },
 
     onAdded: function(parent, instanced) {
@@ -452,7 +499,8 @@ Ext.define('Ext.grid.column.Column', {
     },
 
     updateAlign: function (align, oldAlign) {
-        var prefix = Ext.baseCSSPrefix + 'grid-column-align-';
+        var prefix = Ext.baseCSSPrefix + 'align-';
+
         if (oldAlign) {
             this.removeCls(prefix + align);
         }
@@ -486,7 +534,7 @@ Ext.define('Ext.grid.column.Column', {
     },
 
     updateResizable: function(resizable) {
-        this.resizer.toggleCls(Ext.baseCSSPrefix + 'grid-column-resizable', resizable);
+        this.element.toggleCls(this.resizableCls, resizable);
     },
 
     updateText: function (text) {
@@ -547,21 +595,23 @@ Ext.define('Ext.grid.column.Column', {
     },
 
     updateSortDirection: function (direction, oldDirection) {
-        if (!this.getSortable()) {
-            return;
+        var me = this,
+            sortedCls, element;
+
+        if (me.getSortable()) {
+            sortedCls = me.sortedCls;
+            element = me.element;
+
+            if (oldDirection) {
+                element.removeCls([sortedCls, sortedCls + '-' + oldDirection.toLowerCase()]);
+            }
+
+            if (direction) {
+                element.addCls([sortedCls, sortedCls + '-' + direction.toLowerCase()]);
+            }
+
+            me.fireEvent('sort', this, direction, oldDirection);
         }
-
-        var sortedCls = this.getSortedCls();
-
-        if (oldDirection) {
-            this.element.removeCls(sortedCls + '-' + oldDirection.toLowerCase());
-        }
-
-        if (direction) {
-            this.element.addCls(sortedCls + '-' + direction.toLowerCase());
-        }
-
-        this.fireEvent('sort', this, direction, oldDirection);
     },
 
     applyFormatter: function(format){
@@ -575,7 +625,7 @@ Ext.define('Ext.grid.column.Column', {
             parser.release();
             return function(v){
                 return fmt(v, me.getScope() || me.resolveListenerScope());
-            }
+            };
         }
 
         return fmt;
@@ -592,15 +642,19 @@ Ext.define('Ext.grid.column.Column', {
             parser.release();
             return function(v){
                 return fmt(v, me.getScope() || me.resolveListenerScope());
-            }
+            };
         }
 
         return fmt;
     },
 
-    destroy: function () {
+    doDestroy: function () {
         this.resizeListener = Ext.destroy(this.resizeListener);
         this.callParent();
+    },
+
+    getInnerHtmlElement: function() {
+        return this.textElement;
     }
 
     /**

@@ -5,6 +5,7 @@
 @import 'mixins/border';
 @import 'mixins/font';
 @import 'mixins/font-icon';
+@import 'mixins/icon';
 @import 'mixins/transform';
 @import 'mixins/animation';
 
@@ -113,15 +114,6 @@ $image-10: false) {
     left: $left;
 }
 
-/**
- * Makes the element text overflow to use ellipsis.
- */
-@mixin ellipsis {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
 @mixin absolute-position($top: 0, $right: 0, $bottom: 0, $left: 0) {
     position: absolute;
     top: $top;
@@ -137,15 +129,15 @@ $image-10: false) {
 }
 
 @mixin st-box() {
-    display: flex;
     display: -webkit-box;
     display: -ms-flexbox;
+    display: flex;
 }
 
 @mixin st-inline-box() {
-    display: inline-flex;
     display: -webkit-inline-box;
     display: -ms-inline-flexbox;
+    display: inline-flex;
 }
 
 @mixin st-box-align($align: stretch) {
@@ -224,12 +216,10 @@ $image-10: false) {
 @mixin st-box-flex($flex: 1, $preferredSize: auto, $important: no) {
     @if $important == important {
         -webkit-box-flex: $flex !important;
-        -ms-flex: $flex 0 $preferredSize !important;
-        flex: $flex 0 $preferredSize !important;
+        flex: $flex $flex $preferredSize !important;
     } @else {
         -webkit-box-flex: $flex;
-        -ms-flex: $flex 0 $preferredSize;
-        flex: $flex 0 $preferredSize;
+        flex: $flex $flex $preferredSize;
     }
 }
 

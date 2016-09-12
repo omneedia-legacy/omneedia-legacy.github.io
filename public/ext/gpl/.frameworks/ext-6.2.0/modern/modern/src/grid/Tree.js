@@ -6,11 +6,9 @@ Ext.define('Ext.grid.Tree', {
     xtype: 'tree',
     alternateClassName: 'Ext.tree.Tree',
 
-    cls: Ext.baseCSSPrefix + 'treelist',
+    classCls: Ext.baseCSSPrefix + 'treelist',
     expanderFirstCls: Ext.baseCSSPrefix + 'treelist-expander-first',
     expanderOnlyCls: Ext.baseCSSPrefix + 'treelist-expander-only',
-
-    uiPrefix: Ext.baseCSSPrefix + 'treelist-',
 
     /**
      * @event beforenodeexpand
@@ -75,6 +73,8 @@ Ext.define('Ext.grid.Tree', {
         displayField: 'text',
 
         columns: false, // Non-null to force running the applier.
+
+        rowLines: false,
         
         /**
          * @cfg {Boolean} [folderSort=false]
@@ -237,16 +237,8 @@ Ext.define('Ext.grid.Tree', {
         }
     },
 
-    updateUi: function (ui, oldValue) {
-        var el = this.element,
-            uiPrefix = this.uiPrefix;
-
-        if (oldValue) {
-            el.removeCls(uiPrefix + oldValue);
-        }
-        if (ui) {
-            el.addCls(uiPrefix + ui);
-        }
+    updateUi: function (ui, oldUi) {
+        this.callParent([ui, oldUi]);
 
         // Ensure that the cached iconSize is read from the style.
         delete this.iconSize;

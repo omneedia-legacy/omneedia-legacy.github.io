@@ -43,8 +43,8 @@ describe("Ext.grid.column.Check", function() {
         col = grid.getColumns()[0];
     }
     
-    function triggerCellClickEvent(rowIdx, cellIdx, button, x, y) {
-        var target = getCellEventEl(rowIdx, cellIdx);
+    function clickCheckbox(rowIdx, cellIdx, button, x, y) {
+        var target = getCellCheckbox(rowIdx, cellIdx);
 
         if (Ext.supports.TouchEvents) {
             Ext.testHelper.tap(target);
@@ -52,26 +52,25 @@ describe("Ext.grid.column.Check", function() {
             jasmine.fireMouseEvent(target, 'click', x, y, button);
         }
     }
-       
+
     function getCell(rowIdx, cellIdx) {
         return grid.query('gridrow')[rowIdx].query('gridcell')[cellIdx || 0].el;
     }
 
-    function getCellEventEl(rowIdx, cellIdx) {
-        var cell = getCell(rowIdx, cellIdx);
-        return Ext.fly(cell).el;
+    function getCellComponent(rowIdx, cellIdx) {
+        return grid.query('gridrow')[rowIdx].query('gridcell')[cellIdx || 0];
     }
 
     function getCellCheckbox(rowIdx, cellIdx) {
         var cell = grid.query('gridrow')[rowIdx].query('gridcell')[cellIdx || 0];
-        return Ext.fly(cell).checkboxEl;
+        return cell.checkboxElement;
     }
-    
+
     function clickHeader() {
         if (Ext.supports.TouchEvents) {
-            Ext.testHelper.tap(col.checkboxEl);
+            Ext.testHelper.tap(col.checkboxElement);
         } else {
-            jasmine.fireMouseEvent(col.checkboxEl, 'click');
+            jasmine.fireMouseEvent(col.checkboxElement, 'click');
         }
     }
 
@@ -94,11 +93,11 @@ describe("Ext.grid.column.Check", function() {
     });
     
     describe("check rendering", function() {
-        it("should set the x-checkcell-checked class on checked items", function() {
+        it("should set the x-checked class on checked items", function() {
             makeGrid();
 
-            expect(getCell(0).hasCls(Ext.grid.cell.Check.prototype.cellCheckedCls)).toBe(true);
-            expect(getCell(2).hasCls(Ext.grid.cell.Check.prototype.cellCheckedCls)).toBe(false);
+            expect(getCell(0).hasCls('x-checked')).toBe(true);
+            expect(getCell(2).hasCls('x-checked')).toBe(false);
         });
     });
     
@@ -154,7 +153,7 @@ describe("Ext.grid.column.Check", function() {
                         dataIndex: 'val',
                         tpl: '{val}'
                     }]);
-                    triggerCellClickEvent(0);
+                    clickCheckbox(0);
                     expect(grid.isSelected(store.getAt(0))).toBe(true);
                 });
 
@@ -165,7 +164,7 @@ describe("Ext.grid.column.Check", function() {
                     makeGrid([cfg, {
                         dataIndex: 'val'
                     }]);
-                    triggerCellClickEvent(0);
+                    clickCheckbox(0);
                     expect(grid.isSelected(store.getAt(0))).toBe(true);
                 });
             });
@@ -180,7 +179,7 @@ describe("Ext.grid.column.Check", function() {
                         dataIndex: 'val',
                         tpl: '{val}'
                     }]);
-                    triggerCellClickEvent(0);
+                    clickCheckbox(0);
                     expect(grid.isSelected(store.getAt(0))).toBe(false);
                 });
 
@@ -191,14 +190,14 @@ describe("Ext.grid.column.Check", function() {
                     makeGrid([cfg, {
                         dataIndex: 'val'
                     }]);
-                    triggerCellClickEvent(0);
+                    clickCheckbox(0);
                     expect(grid.isSelected(store.getAt(0))).toBe(false);
                 });
             });
         });
 
         describe("events", function() {
-            it("should pass the column, record index, new checked state & record for beforecheckchange", function() {
+            it("should pass the cell, record index, new checked state & record for beforecheckchange", function() {
                 var arg1, arg2, arg3, arg4;
                 makeGrid();
                 col.on('beforecheckchange', function(a, b, c, d) {
@@ -207,14 +206,14 @@ describe("Ext.grid.column.Check", function() {
                     arg3 = c;
                     arg4 = d;
                 });
-                triggerCellClickEvent(0);
-                expect(arg1).toBe(col);
+                clickCheckbox(0);
+                expect(arg1).toBe(getCellComponent(0, 0));
                 expect(arg2).toBe(0);
                 expect(arg3).toBe(false);
                 expect(arg4).toBe(store.getAt(0));
             });
             
-            it("should pass the column, record index, new checked state & record for checkchange", function() {
+            it("should pass the cell, record index, new checked state & record for checkchange", function() {
                 var arg1, arg2, arg3, arg4;
                 makeGrid();
                 col.on('checkchange', function(a, b, c, d) {
@@ -223,8 +222,8 @@ describe("Ext.grid.column.Check", function() {
                     arg3 = c;
                     arg4 = d;
                 });
-                triggerCellClickEvent(2);
-                expect(arg1).toBe(col);
+                clickCheckbox(2);
+                expect(arg1).toBe(getCellComponent(2, 0));
                 expect(arg2).toBe(2);
                 expect(arg3).toBe(true);
                 expect(arg4).toBe(store.getAt(2));
@@ -239,16 +238,16 @@ describe("Ext.grid.column.Check", function() {
                 col.on('beforecheckchange', function() {
                     return false;
                 });
-                triggerCellClickEvent(2);
+                clickCheckbox(2);
                 expect(called).toBe(false);
             });
         });
         
         it("should invert the record value", function() {
             makeGrid();
-            triggerCellClickEvent(0);
+            clickCheckbox(0);
             expect(store.getAt(0).get('val')).toBe(false);
-            triggerCellClickEvent(2);
+            clickCheckbox(2);
             expect(store.getAt(2).get('val')).toBe(true);
         });
         
@@ -256,9 +255,9 @@ describe("Ext.grid.column.Check", function() {
             var cfg = getColCfg();
             cfg.disabled = true;
             makeGrid([cfg]);
-            triggerCellClickEvent(0);
+            clickCheckbox(0);
             expect(store.getAt(0).get('val')).toBe(true);
-            triggerCellClickEvent(2);
+            clickCheckbox(2);
             expect(store.getAt(2).get('val')).toBe(false);
         });
     });
@@ -302,7 +301,7 @@ describe("Ext.grid.column.Check", function() {
             // Header checkbox is updated on a timer for efficiency, so must wait
             waitsFor(function() {
                 expect(headercheckchangeCount).toBe(1);
-                return col.el.hasCls(col.allCheckedCls) === true;
+                return col.el.hasCls(col.checkedCls) === true;
             });
             
             runs(function() {
@@ -316,7 +315,7 @@ describe("Ext.grid.column.Check", function() {
             // Header checkbox is updated on a timer for efficiency, so must wait
             waitsFor(function() {
                 expect(headercheckchangeCount).toBe(2);
-                return col.el.hasCls(col.allCheckedCls) === false;
+                return col.el.hasCls(col.checkedCls) === false;
             });
         });
         it('should not toggle all on header checkbox click if the beforeheadercheckchange event is vetoed', function() {
@@ -344,7 +343,7 @@ describe("Ext.grid.column.Check", function() {
             // The header must not have been updated to true because of the veto
             runs(function() {
                 expect(headercheckchangeCalled).toBe(false);
-                expect(col.el.hasCls(col.allCheckedCls)).toBe(false);
+                expect(col.el.hasCls(col.checkedCls)).toBe(false);
             });
         });
 
@@ -358,9 +357,9 @@ describe("Ext.grid.column.Check", function() {
             });
 
             // Rows 2 and 4 are unchecked. Header should start unchecked.
-            expect(col.el.hasCls(col.allCheckedCls)).toBe(false);
+            expect(col.el.hasCls(col.checkedCls)).toBe(false);
 
-            triggerCellClickEvent(2);
+            clickCheckbox(2);
 
             // Nothing should happen.
             // We are expecting the header checkbox state to remain false
@@ -369,13 +368,13 @@ describe("Ext.grid.column.Check", function() {
             // The header must not have been updated to true because of the veto
             runs(function() {
                 expect(headercheckchangeCount).toBe(0);
-                expect(col.el.hasCls(col.allCheckedCls)).toBe(false);
-                triggerCellClickEvent(4);
+                expect(col.el.hasCls(col.checkedCls)).toBe(false);
+                clickCheckbox(4);
             });
 
             // Header checkbox is updated on a timer for efficiency, so must wait
             waitsFor(function() {
-                return col.el.hasCls(col.allCheckedCls) === true;
+                return col.el.hasCls(col.checkedCls) === true;
             });
         });
 
@@ -383,14 +382,14 @@ describe("Ext.grid.column.Check", function() {
             var rowCount = grid.query('gridrow').length;
 
             // Rows 2 and 4 are unchecked. Header should start unchecked.
-            expect(col.el.hasCls(col.allCheckedCls)).toBe(false);
+            expect(col.el.hasCls(col.checkedCls)).toBe(false);
 
             // Now all are selected
             clickHeader();
 
             // Header checkbox is updated on a timer for efficiency, so must wait
             waitsFor(function() {
-                return col.el.hasCls(col.allCheckedCls) === true;
+                return col.el.hasCls(col.checkedCls) === true;
             });
 
             // Add a record. This should cause the header checkbox to clear
@@ -401,13 +400,13 @@ describe("Ext.grid.column.Check", function() {
             // Header checkbox is updated on a timer for efficiency, so must wait
             waitsFor(function() {
                 return grid.query('gridrow').length === rowCount + 1 &&
-                       col.el.hasCls(col.allCheckedCls) === false;
+                       col.el.hasCls(col.checkedCls) === false;
             });
         });
 
         it('should set the header checkbox when all records have the dataIndex field set', function() {
             // Rows 2 and 4 are unchecked. Header should start unchecked.
-            expect(col.el.hasCls(col.allCheckedCls)).toBe(false);
+            expect(col.el.hasCls(col.checkedCls)).toBe(false);
 
             store.getAt(2).set('val', true);
 
@@ -416,13 +415,13 @@ describe("Ext.grid.column.Check", function() {
             waits(100);
             
             runs(function() {
-                expect(col.el.hasCls(col.allCheckedCls)).toBe(false);
+                expect(col.el.hasCls(col.checkedCls)).toBe(false);
                 store.getAt(4).set('val', true);
             });
 
             // Header checkbox is updated on a timer for efficiency, so must wait
             waitsFor(function() {
-                return col.el.hasCls(col.allCheckedCls) === true;
+                return col.el.hasCls(col.checkedCls) === true;
             });
         });
     });

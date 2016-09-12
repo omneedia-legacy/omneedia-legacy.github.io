@@ -21,13 +21,6 @@ Ext.define('Ext.grid.cell.Base', {
         cls: null,
 
         /**
-         * @cfg {Boolean} hidden
-         * The hidden state of this cell (propagated from the column's hidden state).
-         * @private
-         */
-        hidden: false,
-
-        /**
          * @cfg {String} innerCls
          * An arbitrary CSS class to add to the cell's inner element (the element that
          * typically contains the cell's text).
@@ -77,6 +70,13 @@ Ext.define('Ext.grid.cell.Base', {
         column: null,
 
         /**
+         * @cfg {Boolean} hidden
+         * The hidden state of this cell (propagated from the column's hidden state).
+         * @private
+         */
+        hidden: false,
+
+        /**
          * @cfg {Ext.data.Model} record
          * The currently associated record.
          * @readonly
@@ -91,28 +91,37 @@ Ext.define('Ext.grid.cell.Base', {
         value: null
     },
 
-    element: {
-        reference: 'element',
-        cls: Ext.baseCSSPrefix + 'grid-cell',
-        children: [{
+    classCls: Ext.baseCSSPrefix + 'gridcell',
+
+    getTemplate: function() {
+        return [{
             reference: 'innerElement',
-            cls: Ext.baseCSSPrefix + 'grid-cell-inner'
+            cls: Ext.baseCSSPrefix + 'inner-el',
+            // hook for subclasses to add elements inside the inner element
+            // e.g. checkcell, expandercell
+            children: this.innerTemplate
         }]
     },
 
     defaultBindProperty: 'value',
 
-    cellSelector: '.' + Ext.baseCSSPrefix + 'grid-cell',
-    hiddenCls: Ext.baseCSSPrefix + 'grid-cell-hidden',
+    cellSelector: '.' + Ext.baseCSSPrefix + 'gridcell',
 
     getComputedWidth: function() {
         return this.getHidden() ? 0 : this.getWidth();
     },
 
     updateAlign: function(align, oldAlign) {
-        var prefix  = Ext.baseCSSPrefix + 'grid-cell-align-';
+        var prefix  = Ext.baseCSSPrefix + 'align',
+            element = this.element;
 
-        this.element.replaceCls(prefix + oldAlign, prefix + align);
+        if (oldAlign) {
+            element.removeCls(oldAlign, prefix);
+        }
+
+        if (align) {
+            element.addCls(align, prefix);
+        }
     },
 
     updateCls: function(cls, oldCls) {
@@ -137,14 +146,6 @@ Ext.define('Ext.grid.cell.Base', {
         this.dataIndex = column ? column.getDataIndex() : null;
     },
 
-    applyHidden: function(hidden) {
-        return Boolean(hidden);
-    },
-
-    updateHidden: function(hidden) {
-        this.element.toggleCls(this.hiddenCls, hidden);
-    },
-
     updateRecord: function(record) {
         var dataIndex = this.dataIndex;
 
@@ -157,7 +158,7 @@ Ext.define('Ext.grid.cell.Base', {
         }
     },
 
-    destroy: function() {
+    doDestroy: function() {
         this.setColumn(null);
         this.setRecord(null);
         this.callParent();

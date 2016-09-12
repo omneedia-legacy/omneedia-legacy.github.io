@@ -14,10 +14,33 @@ Ext.define('KitchenSink.view.grid.BigData', {
         'KitchenSink.model.Employee'
     ],
 
+    cls: 'demo-solid-background',
+
+    shadow: true, 
+
     controller: 'grid-bigdata',
 
     grouped: true,
 
+    rowLines: true,
+
+    // <example>
+    // Content between example tags is omitted from code preview.
+    otherContent: [
+        {
+            type: 'Controller',
+            path: 'modern/src/view/grid/BigDataController.js'
+        },
+        {
+            type: 'RowModel',
+            path: 'modern/src/view/grid/BigDataRowModel.js'
+        },
+        {
+            type: 'Model',
+            path: 'modern/src/model/Employee.js'
+        }
+    ],
+    // </example>
     store: {
         model: 'Employee',
         autoLoad: true,
@@ -34,13 +57,13 @@ Ext.define('KitchenSink.view.grid.BigData', {
     }, {
         type: 'gridviewoptions'
     }, {
-        type: 'gridpagingtoolbar'
+        type: 'pagingtoolbar'
     }, {
-        type: 'gridsummaryrow'
+        type: 'summaryrow'
     }, {
-        type: 'gridcolumnresizing'
+        type: 'columnresizing'
     }, {
-        type: 'gridrowexpander'
+        type: 'rowexpander'
     },{
         type: 'gridexporter'
     }],
@@ -53,6 +76,7 @@ Ext.define('KitchenSink.view.grid.BigData', {
     items: [{
         docked: 'top',
         xtype: 'toolbar',
+        shadow: false,
         items: [{
             xtype: 'button',
             text: 'Export to ...',
@@ -98,16 +122,31 @@ Ext.define('KitchenSink.view.grid.BigData', {
             text: 'Verified'
         },
         {
-            text: 'Rating',
-            xtype: 'numbercolumn',
-            dataIndex: 'averageRating',
-            width: 75,
-            cell: {
-                cls: 'big-data-ratings-cell',
-                bind: {
-                    innerCls: '{ratingGroup:pick("under4","under5","under6","over6")}'
+            xtype: 'gridheadergroup',
+            text: 'Ratings',
+            columns: [{
+                text: 'Avg',
+                xtype: 'numbercolumn',
+                dataIndex: 'averageRating',
+                width: 75,
+                cell: {
+                    cls: 'big-data-ratings-cell',
+                    bind: {
+                        innerCls: '{ratingGroup:pick("under4","under5","under6","over6")}'
+                    }
                 }
-            }
+            }, {
+                text: 'All',
+                dataIndex: 'rating',
+                ignoreExport: true,
+                cell: {
+                    xtype: 'widgetcell',
+                    forceWidth: true,
+                    widget: {
+                        xtype: 'sparklineline'
+                    }
+                }
+            }]
         },
         {
             text: 'Date of Birth',
@@ -174,7 +213,7 @@ Ext.define('KitchenSink.view.grid.BigData', {
         },
         {
             text: 'Absences',
-            xtype: 'gridheadergroup',
+            xtype: 'headergroup',
             columns: [{
                 text: 'Illness',
                 dataIndex: 'sickDays',

@@ -4,13 +4,13 @@
  *
  *  googleApis: { 'calendar': { version: 'v3' } }
  */
-Ext.define('Ext.ux.google.Client', {
+Ext.define('Ext.google.ux.Client', {
     extend: 'Ext.Mixin',
     mixins: [
         'Ext.mixin.Mashup'
     ],
     requiredScripts: [
-        '//apis.google.com/js/client.js?onload=_ext_ux_google_client_initialize_'
+        '//apis.google.com/js/client.js?onload=_ext_google_ux_client_initialize_'
     ],
     statics: {
         getApiVersion: function(api) {
@@ -113,19 +113,19 @@ Ext.define('Ext.ux.google.Client', {
     }
 });
 // See https://developers.google.com/api-client-library/javascript/features/authentication
-_ext_ux_google_client_initialize_ = function() {
+_ext_google_ux_client_initialize_ = function() {
     gapi.auth.init(function() {
-        Ext.ux.google.Client.initialize();
+        Ext.google.ux.Client.initialize();
     });
 };
 
 /**
  * Base proxy for accessing **[Google API](https://developers.google.com/apis-explorer/#p/)** resources.
  */
-Ext.define('Ext.data.google.AbstractProxy', {
+Ext.define('Ext.google.data.AbstractProxy', {
     extend: 'Ext.data.proxy.Server',
     mixins: [
-        'Ext.ux.google.Client'
+        'Ext.google.ux.Client'
     ],
     // TODO: Batch actions
     // https://developers.google.com/api-client-library/javascript/features/batch
@@ -172,7 +172,8 @@ Ext.define('Ext.data.google.AbstractProxy', {
             // BUG: when using the gapi batch feature and trying to modify the same event
             // more than one time, the request partially fails and returns a 502 error.
             // See https://code.google.com/a/google.com/p/apps-api-issues/issues/detail?id=4528
-            // TODO: use the following code once fixed!
+            // TODO: use the following code once fixed! also check that it doesn't break
+            // maxResults limit for event list requests.
             //var batch = gapi.client.newBatch();
             //Ext.Array.each(requests, function(r, i) { batch.add(r, { id: i }); });
             //return batch.execute();
@@ -226,8 +227,8 @@ Ext.define('Ext.data.google.AbstractProxy', {
 /**
  * Proxy to access Google **[event resources](https://developers.google.com/google-apps/calendar/v3/reference/events)**.
  */
-Ext.define('Ext.data.google.EventsProxy', {
-    extend: 'Ext.data.google.AbstractProxy',
+Ext.define('Ext.google.data.EventsProxy', {
+    extend: 'Ext.google.data.AbstractProxy',
     alias: 'proxy.google-events',
     googleApis: {
         'calendar': {
@@ -356,13 +357,30 @@ Ext.define('Ext.data.google.EventsProxy', {
         },
         // See https://developers.google.com/google-apps/calendar/v3/reference/events/list
         buildReadApiRequests: function(request) {
-            var rparams = request.getParams();
-            return gapi.client.calendar.events.list({
-                calendarId: rparams.calendar,
-                timeMin: rparams.startDate,
-                timeMax: rparams.endDate,
-                singleEvents: true
-            });
+            // by default, the API returns max 250 events per request, up to 2500. Since we
+            // don't have control on the min & max requested times, and don't know how many
+            // events will be returned, let's split requests per 3 months and set maxResults
+            // to 2500 (~26 events per day - should be enough!?).
+            var rparams = request.getParams(),
+                start = new Date(rparams.startDate),
+                end = new Date(rparams.endDate),
+                requests = [],
+                next;
+            while (start < end) {
+                next = Ext.Date.add(start, Ext.Date.MONTH, 3);
+                if (next > end) {
+                    next = end;
+                }
+                requests.push(gapi.client.calendar.events.list({
+                    calendarId: rparams.calendar,
+                    timeMin: Ext.Date.format(start, 'C'),
+                    timeMax: Ext.Date.format(next, 'C'),
+                    singleEvents: true,
+                    maxResults: 2500
+                }));
+                start = next;
+            }
+            return requests;
         },
         // https://developers.google.com/google-apps/calendar/v3/reference/events/insert
         buildCreateApiRequests: function(request) {
@@ -417,11 +435,11 @@ Ext.define('Ext.data.google.EventsProxy', {
 /**
  * Proxy to access Google **[calendar resources](https://developers.google.com/google-apps/calendar/v3/reference/calendarList)**.
  */
-Ext.define('Ext.data.google.CalendarsProxy', {
-    extend: 'Ext.data.google.AbstractProxy',
+Ext.define('Ext.google.data.CalendarsProxy', {
+    extend: 'Ext.google.data.AbstractProxy',
     alias: 'proxy.google-calendars',
     requires: [
-        'Ext.data.google.EventsProxy'
+        'Ext.google.data.EventsProxy'
     ],
     googleApis: {
         'calendar': {
@@ -791,7 +809,7 @@ Ext.define('Ext.ux.dashboard.GoogleRssView', {
         var me = this,
             data = me.data,
             current = (currentEntry === undefined) ? data.currentEntry : currentEntry;
-        me.tpl = me.getTpl(mode + 'Tpl');
+        me.tpl = me.lookupTpl(mode + 'Tpl');
         me.tpl.date = me.formatDate;
         me.mode = mode;
         data.currentEntry = current;
@@ -817,7 +835,7 @@ Ext.define('Ext.ux.dashboard.GoogleRssView', {
     /**
      * @private
      */
-    beforeDestroy: function() {
+    doDestroy: function() {
         Ext.destroy(this.tip);
         this.callParent();
     }

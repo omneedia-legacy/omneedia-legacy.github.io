@@ -129,7 +129,7 @@ Ext.define('Ext.field.Checkbox', {
     },
 
     classCls: Ext.baseCSSPrefix + 'checkboxfield',
-    checkedCls: Ext.baseCSSPrefix + 'checkboxfield-checked',
+    checkedCls: Ext.baseCSSPrefix + 'checked',
 
     /**
      * @private
@@ -148,7 +148,7 @@ Ext.define('Ext.field.Checkbox', {
 
         component.doMaskTap = Ext.emptyFn;
 
-        me.label.on({
+        me.labelElement.on({
             scope: me,
             tap: 'onMaskTap'
         });
@@ -228,7 +228,7 @@ Ext.define('Ext.field.Checkbox', {
      */
     onMaskTap: function(component, e) {
         var me = this,
-            dom = me.getComponent().input.dom;
+            dom = me.getComponent().inputElement.dom;
 
         if (me.getDisabled()) {
             return false;

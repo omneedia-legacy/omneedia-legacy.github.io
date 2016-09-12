@@ -38,7 +38,6 @@ Ext.define('KitchenSink.view.grid.GroupedGrid', {
     collapseFirst: false,
     frame: true,
     minHeight: 200,
-    resizable: true,
 
     tools: [{
         type: 'plus',

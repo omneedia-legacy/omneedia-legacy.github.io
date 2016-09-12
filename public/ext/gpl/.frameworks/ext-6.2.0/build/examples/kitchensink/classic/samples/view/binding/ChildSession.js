@@ -53,8 +53,8 @@ Ext.define('KitchenSink.view.binding.ChildSession', {
     items: [{
         flex: 1,
         xtype: 'grid',
-        reference: 'customerGrid',
-        bind: '{customers}',
+        reference: 'companyGrid',
+        bind: '{companies}',
         columns: [{
             dataIndex: 'name',
             flex: 1,
@@ -69,19 +69,19 @@ Ext.define('KitchenSink.view.binding.ChildSession', {
             widget: {
                 xtype: 'button',
                 text: 'Edit',
-                handler: 'onEditCustomerClick'
+                handler: 'onEditCompanyClick'
             }
         }]
     }],
 
     tbar: [{
         text: 'Add Company',
-        handler: 'onAddCustomerClick'
+        handler: 'onAddCompanyClick'
     }, {
         text: 'Remove Company',
-        handler: 'onRemoveCustomerClick',
+        handler: 'onRemoveCompanyClick',
         bind: {
-            disabled: '{!customerGrid.selection}'
+            disabled: '{!companyGrid.selection}'
         }
     }],
 

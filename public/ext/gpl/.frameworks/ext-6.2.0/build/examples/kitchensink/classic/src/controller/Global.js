@@ -80,7 +80,7 @@ Ext.define('KitchenSink.controller.Global', {
             thumbnails = me.getThumbnails(),
             codePreview = me.getCodePreview(),
             hasTree = navigationTree && navigationTree.isVisible(),
-            className, cmp, ViewClass, thumbnailsStore;
+            className, cmp, ViewClass, thumbnailsStore, tier;
 
         Ext.suspendLayouts();
 
@@ -126,6 +126,12 @@ Ext.define('KitchenSink.controller.Global', {
             this.updateTitle(node);
         }
 
+        codePreview.removeCls(['in-tier-pro', 'in-tier-premium']);
+        tier = node.get('tier');
+        if (tier === 'pro' || tier === 'premium') {
+            codePreview.addCls('in-tier-' + tier);
+        }
+
         // Keep focus available and selections synchronized.
         // If navigation was through thumbnails, the view will have hidden and focus will go to document
         if (hasTree) {
@@ -134,6 +140,9 @@ Ext.define('KitchenSink.controller.Global', {
                     focus: true
                 });
             } else {
+                if (node.parentNode && !node.parentNode.isExpanded()) {
+                    node.parentNode.expand();
+                }
                 navigationTree.ensureVisible(node, {
                     focus: true,
                     select: true
@@ -158,7 +167,7 @@ Ext.define('KitchenSink.controller.Global', {
         document.title = document.title.split(' - ')[0] + ' - ' + text;
     },
 
-    setupPreview: function(clsProto) {
+    setupPreview: function (clsProto) {
         var me = this,
             preview = me.getCodePreview(),
             otherContent = clsProto.otherContent,
@@ -218,8 +227,8 @@ Ext.define('KitchenSink.controller.Global', {
     emptyLineRe: /^\s*$/,
     exampleRe: /^\s*\/\/\s*(\<\/?example\>)\s*$/,
     profileInfoRe: /this\.profileInfo\.(\w+)/g,
-    profilePropRe: /'[$][{](\w+)[}]'/g,
-    profilePropsRe: /[$][{](\w+)[}]/g,
+    profilePropRe: /'\$\{(\w+)\}'/g,
+    profilePropsRe: /\$\{(\w+)\}/g,
 
     renderCodeMarkup: function(loader, response) {
         var code = this.processText(response.responseText, loader.profileInfo);

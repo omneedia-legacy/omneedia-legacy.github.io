@@ -68,6 +68,7 @@ Ext.define('Ext.data.schema.Role', {
 
         Ext.apply(me, config);
         if (extra) {
+            extra = Ext.apply({}, extra);
             delete extra.type;
             Ext.apply(me, extra);
             delete me.extra;
@@ -467,6 +468,7 @@ Ext.define('Ext.data.schema.Role', {
                 // Without a FK value by which to request the User record, we cannot do
                 // anything. Declare victory and get out.
                 done = true;
+                rightRecord = null;
             }
         } else if (rightRecord) {
             // If we're still loading, call load again which will handle the extra callbacks.

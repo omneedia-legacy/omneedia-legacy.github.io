@@ -122,6 +122,15 @@ Ext.define('Ext.menu.Menu', {
     ignoreParentClicks: false,
 
     /**
+     * @cfg {Number} [mouseLeaveDelay]
+     * The delay in ms as to how long the framework should wait before firing a mouseleave event.
+     * This allows submenus not to be collapsed while hovering other menu items.
+     *
+     * Defaults to 100
+     */
+     mouseLeaveDelay: 100,
+
+    /**
      * @property {Boolean} isMenu
      * `true` in this class to identify an object as an instantiated Menu, or subclass thereof.
      */
@@ -174,15 +183,19 @@ Ext.define('Ext.menu.Menu', {
     
     bringParentToFront: false,
     alignOnScroll: false,
+    
+    // Menus are focusable
+    focusable: true,
+    tabIndex: -1,
 
-    defaultFocus: ':focusable',
     // When a Menu is used as a carrier to float some focusable Component such as a DatePicker or ColorPicker
     // This will be used to delegate focus to its focusable child.
     // In normal usage, a Menu is a FocusableContainer, and this will not be consulted.
+    defaultFocus: ':focusable',
     
-    allowFocusingDisabledChildren: true,
     // We need to focus disabled menu items when arrowing as per WAI-ARIA:
     // http://www.w3.org/TR/wai-aria-practices/#menu
+    allowFocusingDisabledChildren: true,
 
     /**
      * @private
@@ -277,6 +290,8 @@ Ext.define('Ext.menu.Menu', {
         Ext.override(me.getLayout(), {
             configureItem: me.configureItem
         });
+
+        me.itemOverTask = new Ext.util.DelayedTask(me.handleItemOver, me);
     },
 
     // Private implementation for Menus. They are a special case, in that in the vast majority
@@ -383,7 +398,7 @@ Ext.define('Ext.menu.Menu', {
             });
         }
 
-        me.mouseMonitor = me.el.monitorMouseLeave(100, me.onMouseLeave, me);
+        me.mouseMonitor = me.el.monitorMouseLeave(me.mouseLeaveDelay, me.onMouseLeave, me);
     },
 
     onFocusEnter: function(e) {
@@ -429,6 +444,16 @@ Ext.define('Ext.menu.Menu', {
         
         if (me.floating) {
             me.hide();
+        }
+    },
+
+    handleItemOver: function(e, item) {
+        // Only focus non-menuitem on real mouseover events.
+        if (!item.containsFocus && (e.pointerType === 'mouse' || item.isMenuItem)) {
+            item.focus();
+        }
+        if (item.expandMenu) {
+            item.expandMenu(e);
         }
     },
 
@@ -588,8 +613,14 @@ Ext.define('Ext.menu.Menu', {
         if (item && item.isMenuItem) {
             if (!item.menu || !me.ignoreParentClicks) {
                 clickResult = item.onClick(e);
-            } else {
+            }
+            else {
                 e.stopEvent();
+            }
+            
+            // Click handler on the item could have destroyed the menu
+            if (me.destroyed) {
+                return;
             }
 
             // SPACE and ENTER invokes the menu
@@ -601,10 +632,11 @@ Ext.define('Ext.menu.Menu', {
         if (!item || item.disabled) {
             item = undefined;
         }
+        
         me.fireEvent('click', me, item, e);
     },
 
-    onDestroy: function() {
+    doDestroy: function() {
         var me = this;
         
         if (me.escapeKeyNav) {
@@ -622,14 +654,21 @@ Ext.define('Ext.menu.Menu', {
         // we should notify the Manager
         Ext.menu.Manager.onHide(me);
         
-        me.callParent(arguments);
+        me.callParent();
     },
 
     onMouseLeave: function(e) {
-        if (this.disabled) {
+        var me = this;
+        
+        if (me.itemOverTask) {
+            me.itemOverTask.cancel();
+        }
+        
+        if (me.disabled) {
             return;
         }
-        this.fireEvent('mouseleave', this, e);
+        
+        me.fireEvent('mouseleave', me, e);
     },
 
     onMouseOver: function(e) {
@@ -644,6 +683,7 @@ Ext.define('Ext.menu.Menu', {
             parentMenu.setActiveItem(ownerCmp);
             ownerCmp.cancelDeferHide();
             parentMenu.mouseMonitor.mouseenter();
+            parentMenu.itemOverTask.cancel();
         }
 
         if (me.disabled) {
@@ -652,13 +692,9 @@ Ext.define('Ext.menu.Menu', {
 
         // Do not activate the item if the mouseover was within the item, and it's already active
         if (item) {
-            // Only focus non-menuitem on real mouseover events.
-            if (!item.containsFocus && (e.pointerType === 'mouse' || item.isMenuItem)) {
-                item.focus();
-            }
-            if (item.expandMenu) {
-                item.expandMenu(e);
-            }
+            // Activate the item in time specified by mouseLeaveDelay.
+            // If we mouseout, or move to another item this invocation will be canceled.
+            me.itemOverTask.delay(me.mouseLeaveDelay, null, null, [e, item]);
         }
         if (mouseEnter) {
             me.fireEvent('mouseenter', me, e);
@@ -792,6 +828,21 @@ Ext.define('Ext.menu.Menu', {
                 config = this.callParent(arguments);
             }
             return config;
+        },
+        
+        initFocusableElement: function() {
+            var me = this,
+                tabIndex = me.tabIndex,
+                el = me.el;
+            
+            // Floating menus always need to have focusable main el
+            // so that mouse clicks within the menu would not close it.
+            // We're not checking focusable property here, Component
+            // will do that before we can reach this method.
+            if (me.floating && tabIndex != null && el && el.dom) {
+                el.dom.setAttribute('tabIndex', tabIndex);
+                el.dom.setAttribute('data-componentid', me.id);
+            }
         },
         
         // Tabbing in a floating menu must hide, but not move focus.

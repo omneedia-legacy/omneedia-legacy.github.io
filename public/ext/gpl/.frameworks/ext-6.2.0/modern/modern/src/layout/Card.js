@@ -145,8 +145,8 @@ Ext.define('Ext.layout.Card', {
         }
     },
 
-    destroy:  function () {
-        this.callParent();
+    destroy: function() {
         Ext.destroy(this.getAnimation());
+        this.callParent();
     }
 });

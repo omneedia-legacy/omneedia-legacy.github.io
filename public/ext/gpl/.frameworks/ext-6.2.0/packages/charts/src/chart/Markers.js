@@ -72,7 +72,7 @@ Ext.define('Ext.chart.Markers', {
             me.setAttributesFor(categoryInstances[index], attr, bypassNormalization);
         } else {
             categoryInstances[index] = me.getCount(); // get the index of the instance created on next line
-            me.createInstance(attr, bypassNormalization);
+            me.add(attr, bypassNormalization);
         }
         instance = me.get(categoryInstances[index]);
         if (instance) {

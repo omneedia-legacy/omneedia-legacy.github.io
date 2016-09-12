@@ -158,6 +158,19 @@ Ext.define('Ext.app.bind.Template', {
         return this.tokens;
     },
 
+    /**
+     * Returns true if the expression is static, meaning it has no
+     * tokens or slots that need to be evaluated.
+     *
+     * @private
+     */
+    isStatic: function(){
+        var tokens = this.getTokens(),
+            slots = this.slots;
+
+        return (tokens.length === 0 && slots.length === 0);
+    },
+
     privates: {
         /**
          * Parses the template text into `buffer`, `slots` and `tokens`. This method is called

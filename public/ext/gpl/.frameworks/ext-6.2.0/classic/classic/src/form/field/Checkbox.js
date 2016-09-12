@@ -668,9 +668,10 @@ Ext.define('Ext.form.field.Checkbox', {
         me.callParent();
     },
 
-    beforeDestroy: function() {
-        this.callParent();
+    doDestroy: function() {
         this.getManager().removeAtKey(this.id);
+        
+        this.callParent();
     },
 
     getManager: function() {

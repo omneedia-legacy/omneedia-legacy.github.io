@@ -94,7 +94,7 @@ Ext.define('Ext.Component', {
         'Ext.state.Stateful',
         'Ext.util.Focusable',
         'Ext.mixin.Accessible',
-        'Ext.util.KeyboardInteractive'
+        'Ext.mixin.Keyboard'
     ],
 
     uses: [
@@ -281,6 +281,8 @@ Ext.define('Ext.Component', {
     $configPrefixed: false,
     // We also want non-config system properties to go to the instance.
     $configStrict: false,
+
+    clearPropertiesOnDestroy: 'async',
 
     manageLayoutScroll: true,
 
@@ -1663,11 +1665,6 @@ Ext.define('Ext.Component', {
     maskOnDisable: true,
 
     /**
-     * @private
-     */
-    offsetsCls: Ext.baseCSSPrefix + 'hidden-offsets',
-
-    /**
      * @property {Ext.Container} ownerCt
      * This Component's owner {@link Ext.container.Container Container} (is set automatically
      * when this Component is added to a Container).
@@ -2460,14 +2457,18 @@ Ext.define('Ext.Component', {
             me.updateLayout({ isRoot: false });
         }
 
-        Ext.callback(callback, scope || me);
+        if (container) {
+            container.onFocusableChildHide(me);
+        }
 
         me.fireHierarchyEvent('hide');
         me.fireEvent('hide', me);
 
-        if (container) {
-            container.onFocusableChildHide(me);
-        }
+        // Have to fire callback the last, because it may destroy the Component
+        // and firing subsequent events will become impossible. Strictly speaking,
+        // hide event handler above could have destroyed the Component too, but
+        // in such case it is the responsibility of the callback to accommodate.
+        Ext.callback(callback, scope || me);
     },
 
     /**
@@ -2526,7 +2527,12 @@ Ext.define('Ext.Component', {
                 width: animateTarget.dom.offsetWidth,
                 height: animateTarget.dom.offsetHeight
             };
-            myEl.addCls(me.offsetsCls);
+
+            // Will move to front with underlying mask, and focus if necessary.
+            me.fireHierarchyEvent('show');
+
+            // Ghost will brifly be topmost, but it is focusable: false
+            // And ghosting does not disturb focus.
             ghostPanel = me.ghost();
             ghostPanel.el.stopAnimation();
 
@@ -2539,19 +2545,20 @@ Ext.define('Ext.Component', {
                 to: toBox,
                 listeners: {
                     afteranimate: function() {
-                        delete ghostPanel.componentLayout.lastComponentSize;
-                        me.unghost();
-                        delete me.ghostBox;
-                        myEl.removeCls(me.offsetsCls);
-                        me.onShowComplete(callback, scope);
+                        if (!me.destroying) {
+                            ghostPanel.componentLayout.lastComponentSize = null;
+                            me.unghost();
+                            me.ghostBox = null;
+                            me.onShowComplete(callback, scope);
+                        }
                     }
                 }
             });
         }
         else {
             me.onShowComplete(callback, scope);
+            me.fireHierarchyEvent('show');
         }
-        me.fireHierarchyEvent('show');
     },
 
     animate: function(animObj) {
@@ -2695,7 +2702,7 @@ Ext.define('Ext.Component', {
                     scrollable.element = me.getOverflowEl();
                 }
 
-                scrollable = new Ext.scroll.Scroller(scrollable);
+                scrollable = Ext.scroll.Scroller.create(scrollable, me.scrollableType);
                 scrollable.component = me;
             }
         }
@@ -2730,12 +2737,14 @@ Ext.define('Ext.Component', {
 
     /**
      * Invoked before the Component is destroyed.
+     * This method is deprecated, override {@link #onDestroy} instead.
      *
      * @method
      * @template
      * @protected
+     * @deprecated 6.2.0
      */
-    beforeDestroy : Ext.emptyFn,
+    beforeDestroy: Ext.emptyFn,
 
     /**
      * Occurs before componentLayout is run. In previous releases, this method could
@@ -2869,102 +2878,176 @@ Ext.define('Ext.Component', {
     },
 
     /**
-     * Destroys the Component. This method must not be overridden.
-     * To add extra functionality to destruction time in a subclass, implement the
-     * template method {@link #beforeDestroy} or {@link #onDestroy}. And do not forget to
-     * `callParent()` in your implementation.
+     * Destroys the Component. This method **must not** be overridden because Component
+     * destruction sequence is conditional; if a `beforedestroy` handler returns `false`
+     * we must abort destruction.
+     *
+     * To add extra functionality to destruction time in a subclass, override the
+     * {@link #doDestroy} method.
+     *
      * @since 1.1.0
      */
     destroy: function() {
-        var me = this,
-            selectors = me.renderSelectors,
-            viewModel = me.getConfig('viewModel', true),
-            session = me.getConfig('session', true),
-            selector, ownerCt, el;
+        var me = this;
 
         if (!me.hasListeners.beforedestroy || me.fireEvent('beforedestroy', me) !== false) {
             // isDestroying added for compat reasons
             me.isDestroying = me.destroying = true;
+            
+            me.doDestroy();
 
-            ownerCt = me.floatParent || me.ownerCt;
-            if (me.floating) {
-                delete me.floatParent;
-                // A zIndexManager is stamped into a *floating* Component when it is added to a Container.
-                // If it has no zIndexManager at render time, it is assigned to the global Ext.WindowManager instance.
-                if (me.zIndexManager) {
-                    me.zIndexManager.unregister(me);
-                    me.zIndexManager = null;
-                }
-            }
-
-            me.removeBindings();
-
-            // beforeDestroy destroys children, ensure they go before the viewModel/session/controller
-            me.beforeDestroy();
-
-            me.destroyBindable();
-
-            if (ownerCt && ownerCt.remove) {
-                ownerCt.remove(me, false);
-            }
-
-            me.stopAnimation();
-            me.onDestroy();
-
-            // Attempt to destroy all plugins
-            Ext.destroy(me.plugins);
-
-            if (me.rendered) {
-                Ext.Component.cancelLayout(me, true);
-            }
-
-            me.componentLayout = null;
-            if (me.hasListeners.destroy) {
-                me.fireEvent('destroy', me);
-            }
-            if (!me.preventRegister) {
-                Ext.ComponentManager.unregister(me);
-            }
-
-            me.mixins.state.destroy.call(me);
-
-            if (me.floating) {
-                me.onFloatDestroy();
-            }
-
+            // We need to defer clearing listeners until after doDestroy() completes,
+            // to let the interested parties fire events until the very end.
             me.clearListeners();
-
-            // make sure we clean up the element references after removing all events
-            if (me.rendered) {
-                if (me.showListenerIE) {
-                    me.showListenerIE.destroy();
-                    me.showListenerIE = null;
-                }
-                if (!me.preserveElOnDestroy) {
-                    me.el.destroy();
-                }
-                me.el.component = null;
-                me.mixins.elementCt.destroy.call(me); // removes childEls
-                if (selectors) {
-                    for (selector in selectors) {
-                        if (selectors.hasOwnProperty(selector)) {
-                            el = me[selector];
-                            if (el) { // in case any other code may have already removed it
-                                delete me[selector];
-                                el.destroy();
-                            }
-                        }
-                    }
-                }
-
-                me.data = me.el = me.frameBody = me.rendered = me.afterRenderEvents = null;
-                me.tpl = me.renderTpl = me.renderData = null;
-                me.focusableContainer = me.container = me.scrollable = null;
-            }
 
             // isDestroying added for compat reasons
             me.isDestroying = me.destroying = false;
-            me.callParent();
+
+            me.callParent(); // Ext.Base
+            
+            // ComponentDelegation mixin does not install "after" interceptor on the
+            // base class destructor; Observable mixin does install the interceptor
+            // but cannot destroy itself automatically because Components are
+            // conditionally destructible.
+            me.mixins.componentDelegation.destroyComponentDelegation.call(me);
+            me.mixins.observable.destroyObservable.call(me, true);
+        }
+    },
+    
+    /**
+     * Perform the actual destruction sequence.
+     *
+     * As a rule of thumb, subclasses should destroy their child Components and/or other objects
+     * before calling parent method. Any object references will be nulled after this method
+     * has finished, to prevent the possibility of memory leaks.
+     *
+     * @private
+     * @since 6.2.0
+     */
+    doDestroy: function() {
+        var me = this,
+            container = me.focusableContainer,
+            selectors = me.renderSelectors,
+            selector, ownerCt, el;
+
+        ownerCt = me.floatParent || me.ownerCt;
+        
+        if (me.floating) {
+            delete me.floatParent;
+            
+            // A zIndexManager is stamped into a *floating* Component when it is added
+            // to a Container. If it has no zIndexManager at render time, it is assigned
+            // to the global Ext.WindowManager instance.
+            // It can also happen that Container's zIndexManager is destroyed before this.
+            if (me.zIndexManager && !me.zIndexManager.destroyed) {
+                me.zIndexManager.unregister(me);
+            }
+            
+            // Some components may set floating as config object, which will be nulled
+            // in the base destructor. We need this property in Containers, so set it
+            // to Boolean instead.
+            me.floating = true;
+        }
+
+        me.removeBindings();
+        
+        if (!me.beforeDestroy.$emptyFn) {
+            me.beforeDestroy();
+        }
+
+        me.destroyBindable();
+
+        if (ownerCt && ownerCt.remove) {
+            ownerCt.remove(me, false);
+        }
+
+        me.stopAnimation();
+        
+        // Ensure that any ancillary components are destroyed.
+        if (me.rendered) {
+            Ext.destroy(
+                me.loadMask,
+                me.dd,
+                me.resizer,
+                me.proxy,
+                me.proxyWrap,
+                me.resizerComponent,
+                me.scrollable,
+                me.contentEl
+            );
+        }
+
+        if (container) {
+            container.onFocusableChildDestroy(me);
+        }
+
+        if (me.focusable) {
+            me.destroyFocusable();
+        }
+
+        // Destroying the floatingItems ZIndexManager will also destroy descendant floating Components
+        Ext.destroy(
+            me.componentLayout,
+            me.loadMask,
+            me.floatingDescendants
+        );
+        
+        if (!me.onDestroy.$emptyFn) {
+            me.onDestroy();
+        }
+
+        // Attempt to destroy all plugins
+        Ext.destroy(me.plugins);
+
+        if (me.rendered) {
+            Ext.Component.cancelLayout(me, true);
+        }
+
+        me.componentLayout = null;
+        
+        if (me.hasListeners.destroy) {
+            me.fireEvent('destroy', me);
+        }
+        
+        if (!me.preventRegister) {
+            Ext.ComponentManager.unregister(me);
+        }
+
+        me.mixins.state.destroy.call(me);
+
+        if (me.floating) {
+            me.onFloatDestroy();
+        }
+
+        // make sure we clean up the element references after removing all events
+        if (me.rendered) {
+            if (me.showListenerIE) {
+                me.showListenerIE.destroy();
+                me.showListenerIE = null;
+            }
+            
+            if (!me.preserveElOnDestroy) {
+                me.el.destroy();
+            }
+            
+            me.el.component = null;
+            me.mixins.elementCt.destroy.call(me); // removes childEls
+            
+            if (selectors) {
+                for (selector in selectors) {
+                    if (selectors.hasOwnProperty(selector)) {
+                        el = me[selector];
+                        
+                        if (el) { // in case any other code may have already removed it
+                            delete me[selector];
+                            el.destroy();
+                        }
+                    }
+                }
+            }
+
+            // This is a very special boolean that warrants explicit clearing
+            me.rendered = false;
         }
     },
 
@@ -3017,9 +3100,13 @@ Ext.define('Ext.Component', {
 
     doFireEvent: function(eventName, args, bubbles) {
         var me = this,
-            ret = me.mixins.observable.doFireEvent.call(me, eventName, args, bubbles);
-
-        if (ret !== false) {
+            ret;
+        
+        ret = me.mixins.observable.doFireEvent.call(me, eventName, args, bubbles);
+        
+        // The Component instance can be destroyed in the handler, in which case
+        // we can't fire delegated events on it anymore.
+        if (ret !== false && !me.destroyed) {
             ret = me.mixins.componentDelegation.doFireDelegatedEvent.call(me, eventName, args);
         }
 
@@ -3105,7 +3192,7 @@ Ext.define('Ext.Component', {
     findParentByType: function(xtype) {
         return Ext.isFunction(xtype) ?
             this.findParentBy(function(p) {
-                return p.constructor === xtype;
+                return p.self === xtype || p.constructor === xtype;
             })
         :
             this.up(xtype);
@@ -3334,9 +3421,10 @@ Ext.define('Ext.Component', {
      *
      *     grid.getPlugin('myplugin');  // the cellediting plugin
      *
-     * **Note:** See also {@link #findPlugin}. Also, prior to 6.2.0 the plugin had to
-     * have a `pluginId` property but this can now be just `id`. Both are supported (so
-     * plugins with a matching `pluginId` are still found) but `id` is preferred.
+     * **Note:** See also {@link #findPlugin}. Prior to 6.2.0 the plugin had to have a
+     * `{@link Ext.plugin.Abstract#pluginId pluginId}` property but this can now be just
+     * `{@link Ext.plugin.Abstract#id id}`. Both are supported (so plugins with a
+     * matching `pluginId` are still found) but `id` is preferred.
      *
      * @param {String} id The `id` set on the plugin config object.
      * @return {Ext.plugin.Abstract} plugin instance or `null` if not found
@@ -3808,9 +3896,10 @@ Ext.define('Ext.Component', {
         if (me.focusable) {
             me.initFocusableEvents();
         }
+
         // FocusableContainers are not themselves focusable, but they must process
-        // their keyMap config, so initKeyMap at Component level.
-        me.initKeyMap(me.el);
+        // their keyMap config
+        me.initKeyMap();
     },
 
     /**
@@ -4073,6 +4162,17 @@ Ext.define('Ext.Component', {
     },
 
     /**
+     * Gets a named template instance for this class. See {@link Ext.XTemplate#getTpl}.
+     * @param {String} name The name of the property that holds the template.
+     * @return {Ext.XTemplate} The template, `null` if not found.
+     *
+     * @since 6.2.0
+     */
+    lookupTpl: function(name) {
+        return Ext.XTemplate.getTpl(this, name);
+    },
+
+    /**
      * Set masked state for this Component.
      *
      * @param {Boolean} isMasked True if masked, false otherwise.
@@ -4252,7 +4352,18 @@ Ext.define('Ext.Component', {
      */
     onRemoved: function(destroying) {
         var me = this,
-            refHolder;
+            refHolder,
+            focusTarget;
+
+        // Revert focus to closest sibling or ancestor unless we are being moved
+        // In which case Ext.container.Container's move methods will handle
+        // focus restoration.
+        if (!me.isLayoutMoving && me.el && me.el.contains(Ext.Element.getActiveElement())) {
+            focusTarget = me.findFocusTarget();
+            if (focusTarget) {
+                focusTarget.focus();
+            }
+        }
 
         if (Ext.GlobalEvents.hasListeners.removed) {
             me.fireHierarchyEvent('removed');
@@ -4334,43 +4445,11 @@ Ext.define('Ext.Component', {
 
     /**
      * Allows addition of behavior to the destroy operation.
-     * After calling the superclass's onDestroy, the Component will be destroyed.
      *
      * @template
      * @protected
      */
-    onDestroy: function() {
-        var me = this,
-            container = me.focusableContainer;
-
-        // Ensure that any ancillary components are destroyed.
-        if (me.rendered) {
-            Ext.destroy(
-                me.dd,
-                me.resizer,
-                me.proxy,
-                me.proxyWrap,
-                me.resizerComponent,
-                me.scrollable,
-                me.contentEl
-            );
-        }
-
-        if (container) {
-            container.onFocusableChildDestroy(me);
-        }
-
-        if (me.focusable) {
-            me.destroyFocusable();
-        }
-
-        // Destroying the floatingItems ZIndexManager will also destroy descendant floating Components
-        Ext.destroy(
-            me.componentLayout,
-            me.loadMask,
-            me.floatingDescendants
-        );
-    },
+    onDestroy: Ext.emptyFn,
 
     /**
      * Allows addition of behavior to the disable operation.
@@ -4462,7 +4541,7 @@ Ext.define('Ext.Component', {
         var me = this,
             ghostPanel, fromSize, toBox;
 
-        if (!me.ariaStaticRoles[me.ariaRole]) {
+        if (!me.ariaStaticRoles[me.ariaRole] && !me.destroying && !me.destroyed) {
             me.ariaEl.dom.setAttribute('aria-hidden', true);
         }
 
@@ -4492,16 +4571,20 @@ Ext.define('Ext.Component', {
                 to: toBox,
                 listeners: {
                     afteranimate: function() {
-                        delete ghostPanel.componentLayout.lastComponentSize;
-                        ghostPanel.el.hide();
-                        ghostPanel.setHiddenState(true);
-                        ghostPanel.el.setSize(fromSize);
-                        me.afterHide(cb, scope);
+                        if (!me.destroying) {
+                            ghostPanel.componentLayout.lastComponentSize = null;
+                            me.unghost(false);
+                            ghostPanel.el.setSize(fromSize);
+                            me.afterHide(cb, scope);
+                        }
                     }
                 }
             });
+        } else {
+            me.el.hide();
         }
-        me.el.hide();
+        
+        
         if (!animateTarget) {
             me.afterHide(cb, scope);
         }
@@ -5551,6 +5634,23 @@ Ext.define('Ext.Component', {
         }
     },
 
+    /**
+     * Toggles the specified CSS class on this component (removes it if it already exists,
+     * otherwise adds it).
+     * @param {String} className The CSS class to toggle.
+     * @param {Boolean} [state] If specified as `true`, causes the class to be added. If
+     * specified as `false`, causes the class to be removed.
+     * @return {Ext.Component} Returns the Component to allow method chaining.
+     * @chainable
+     */
+    toggleCls: function (className, state) {
+        if (state === undefined) {
+            state = !this.hasCls(className);
+        }
+
+        return this[state ? 'addCls' : 'removeCls'](className);
+    },
+
     unitizeBox: function(box) {
         return Ext.Element.unitizeBox(box);
     },
@@ -5597,7 +5697,7 @@ Ext.define('Ext.Component', {
             steps = 0;
 
         if (selector) {
-            for (; result; result = result.getRefOwner()) {
+            for (; result && !result.destroyed; result = result.getRefOwner()) {
                 steps++;
                 if (selector.isComponent) {
                     if (result === selector) {
@@ -6182,7 +6282,10 @@ Ext.define('Ext.Component', {
          * @private
          */
         getTpl: function(name) {
-            return Ext.XTemplate.getTpl(this, name);
+            //<debug>
+            Ext.log.warn('getTpl is deprecated, use lookupTpl.');
+            //</debug>
+            return this.lookupTpl(name);
         },
 
         initCls: function() {

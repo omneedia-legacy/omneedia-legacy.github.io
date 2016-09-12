@@ -2,10 +2,8 @@ Ext.define('KitchenSink.view.chart.ChartController', {
     extend: 'Ext.app.ViewController',
     alias: 'controller.chart',
 
-    config: {
-        defaultVisibleRange: null,
-        rangeAxis: ['top', 'bottom']
-    },
+    defaultVisibleRange: null,
+    rangeAxis: ['top', 'bottom'],
 
     requires: [
         'Ext.chart.theme.Blue',
@@ -46,32 +44,6 @@ Ext.define('KitchenSink.view.chart.ChartController', {
     onRefresh: function() {
         var store = this.getChart().getStore();
         store.generateData(store.getNumRecords());
-    },
-
-    onReset: function() {
-        var range = this.getDefaultVisibleRange(),
-            chart = this.getChart(),
-            legend = chart.getLegend(),
-            axes;
-
-        if (range) {
-            axes = chart.getAxes();
-            axes.forEach(function(axis) {
-                var pos = axis.getPosition();
-                if (range[pos]) {
-                    axis.setVisibleRange(range[pos]);
-                }
-            });
-        }
-
-        if (chart.isPolar) {
-            chart.getSeries()[0].setRotation(0);
-        }
-
-        if (legend) {
-            chart.resetLegendStore();
-        } else {
-            chart.redraw();
-        }
     }
+
 });

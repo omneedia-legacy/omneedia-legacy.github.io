@@ -54,7 +54,7 @@ Ext.define('KitchenSink.view.grid.ExpanderLockable', {
     plugins: [{
         ptype: 'rowexpander',
         rowBodyTpl : new Ext.XTemplate(
-            '<p><b>Company:</b> {company}</p>',
+            '<p><b>Company:</b> {name}</p>',
             '<p><b>Change:</b> {change:this.formatChange}</p><br>',
             '<p><b>Summary:</b> {desc}</p>',
         {

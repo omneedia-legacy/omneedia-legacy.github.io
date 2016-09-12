@@ -91,6 +91,10 @@ var Ext = Ext || {}; // jshint ignore:line
     emptyFn.$nullFn = identityFn.$nullFn = emptyFn.$emptyFn = identityFn.$identityFn =
         privateFn.$nullFn = true;
     privateFn.$privacy = 'framework';
+    
+    // We also want to prevent these functions from being cleaned up on destroy
+    emptyFn.$noClearOnDestroy = identityFn.$noClearOnDestroy = true;
+    privateFn.$noClearOnDestroy = true;
 
     // These are emptyFn's in core and are redefined only in Ext JS (we use this syntax
     // so Cmd does not detect them):

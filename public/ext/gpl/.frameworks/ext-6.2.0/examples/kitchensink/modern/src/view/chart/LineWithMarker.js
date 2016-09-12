@@ -20,7 +20,19 @@ Ext.define('KitchenSink.view.chart.LineWithMarker', {
         }
     },
 
+    // <example>
+    otherContent: [{
+        type: 'Controller',
+        path: 'modern/src/view/chart/ChartController.js'
+    }, {
+        type: 'Store',
+        path: 'modern/src/store/Pie.js' 
+    }],
+    // </example>
+    
     layout: 'fit',
+    shadow: true,
+
     items: [{
         xtype: 'toolbar',
         docked: 'top',
@@ -35,9 +47,6 @@ Ext.define('KitchenSink.view.chart.LineWithMarker', {
             iconCls: 'x-fa fa-refresh',
             text: 'Refresh',
             handler: 'onRefresh'
-        }, {
-            text: 'Reset',
-            handler: 'onReset'
         }]
     }, {
         xtype: 'cartesian',
@@ -45,7 +54,6 @@ Ext.define('KitchenSink.view.chart.LineWithMarker', {
             type: 'pie',
             numRecords: 10
         },
-        background: 'white',
         interactions: [{
                 type: 'panzoom',
                 zoomOnPanGesture: false

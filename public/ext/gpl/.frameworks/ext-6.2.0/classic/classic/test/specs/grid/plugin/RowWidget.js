@@ -851,6 +851,15 @@ describe('Ext.grid.plugin.RowWidget', function () {
         scroller = view.isLockingView ? view.normalView.getScrollable() : view.getScrollable(),
         bufferedRenderer = view.bufferedRenderer;
     }
+
+    function getElementBottom(el) {
+        return el.dom.getBoundingClientRect().bottom;
+    }
+
+    function getRowBodyTr(index, locked) {
+        view = locked ? expander.lockedView : expander.view;
+        return view.all.item(index).down('.' + Ext.baseCSSPrefix + 'grid-rowbody-tr');
+    }
     
     beforeEach(function() {
         componentCount = Ext.ComponentQuery.query('*').length;
@@ -873,7 +882,7 @@ describe('Ext.grid.plugin.RowWidget', function () {
 
             jasmine.fireMouseEvent(grid.view.el.query('.x-grid-row-expander')[0], 'mousedown');
 
-            expect(grid.view.all.item(0).down('.' + Ext.baseCSSPrefix + 'grid-rowbody-tr').isVisible()).toBe(false);
+            expect(getRowBodyTr(0).isVisible()).toBe(false);
         });
 
         it("should expand on click", function() {
@@ -883,7 +892,7 @@ describe('Ext.grid.plugin.RowWidget', function () {
 
             jasmine.fireMouseEvent(grid.view.el.query('.x-grid-row-expander')[0], 'click');
 
-            expect(grid.view.all.item(0).down('.' + Ext.baseCSSPrefix + 'grid-rowbody-tr').isVisible()).toBe(true);
+            expect(getRowBodyTr(0).isVisible()).toBe(true);
 
             // Scroller's scroll range must have increased as a result of row expansion
             expect(scroller.getSize().y).toBeGreaterThan(yRange);
@@ -910,7 +919,7 @@ describe('Ext.grid.plugin.RowWidget', function () {
 
             jasmine.fireMouseEvent(grid.view.el.query('.x-grid-row-expander')[0], 'click');
 
-            expect(grid.view.all.item(0).down('.' + Ext.baseCSSPrefix + 'grid-rowbody-tr').isVisible()).toBe(false);
+            expect(getRowBodyTr(0).isVisible()).toBe(false);
 
             // Collapsing ust lay out in case it triggers underflow
             expect(grid.view.componentLayoutCounter).toBe(layoutCounter + 1);
@@ -946,6 +955,83 @@ describe('Ext.grid.plugin.RowWidget', function () {
             });
         });
 
+        describe("with scrollIntoViewOnExpand", function() {
+            it("should scroll the full row body into view", function() {
+                var viewBottom, rowBottom;
+
+                makeGrid(null, {
+                    scrollIntoViewOnExpand: true
+                });
+
+                expander.toggleRow(12, store.getAt(12));
+                // measure position of row vs. height of view
+                viewBottom = getElementBottom(view.el);
+                rowBottom = getElementBottom(getRowBodyTr(12));
+                // row body should be scrolled into view
+                expect(rowBottom).not.toBeGreaterThan(viewBottom);
+            });
+
+            describe("with locked columns", function() {
+                function makeLockedGrid (tall) {
+                    var smallWidget = {
+                            xtype: 'button',
+                            bind: '{record.company}'
+                        },
+                        tallWidget = {
+                            xtype: 'button',
+                            bind: '{record.company}',
+                            height: 100
+                        };
+
+                    makeGrid({
+                        columns: [
+                            {text: "Company", width: 200, dataIndex: 'company', locked: true},
+                            {text: "Price", renderer: Ext.util.Format.usMoney, dataIndex: 'price'},
+                            {text: "Change", dataIndex: 'change'}
+                        ]
+                    }, {
+                        scrollIntoViewOnExpand: true,
+                        widget : tall ? tallWidget : smallWidget,
+                        lockedWidget : tall ? smallWidget : tallWidget
+                    });
+                }
+
+                it("should use the lockedWidget content (when it is taller) to determine scroll distance", function() {
+                    var viewBottom, rowBottom;
+
+                    makeLockedGrid(false);
+
+                    expander.toggleRow(12, store.getAt(12));
+
+                    waits(200);
+                    runs(function() {
+                        // measure position of row vs. height of view
+                        viewBottom = getElementBottom(expander.lockedView.el);
+                        rowBottom = getElementBottom(getRowBodyTr(12, true));
+                        // row body should be scrolled into view
+                        expect(rowBottom).not.toBeGreaterThan(viewBottom);
+                    });            
+                });
+                
+                it("should use the widget content (when it is taller) to determine scroll distance", function() {
+                    var viewBottom, rowBottom;
+
+                    makeLockedGrid(true);
+
+                    expander.toggleRow(12, store.getAt(12));
+
+                    waits(200);
+                    runs(function() {
+                        // measure position of row vs. height of view
+                        viewBottom = getElementBottom(expander.normalView.el);
+                        rowBottom = getElementBottom(getRowBodyTr(12, false));
+                        // row body should be scrolled into view
+                        expect(rowBottom).not.toBeGreaterThan(viewBottom);
+                    });            
+                });
+            });
+        });
+
         describe("with a lockedWidget", function() {
             beforeEach(function() {
                 makeGrid({
@@ -978,13 +1064,13 @@ describe('Ext.grid.plugin.RowWidget', function () {
             it("should not expand in response to mousedown", function() {
                 jasmine.fireMouseEvent(grid.lockedGrid.view.el.query('.x-grid-row-expander')[0], 'mousedown');
 
-                expect(grid.lockedGrid.view.all.item(0).down('.' + Ext.baseCSSPrefix + 'grid-rowbody-tr').isVisible()).toBe(false);
+                expect(getRowBodyTr(0, true).isVisible()).toBe(false);
             });
 
             it("should expand on click", function() {
                 jasmine.fireMouseEvent(grid.lockedGrid.view.el.query('.x-grid-row-expander')[0], 'click');
 
-                expect(grid.lockedGrid.view.all.item(0).down('.' + Ext.baseCSSPrefix + 'grid-rowbody-tr').isVisible()).toBe(true);
+                expect(getRowBodyTr(0, true).isVisible()).toBe(true);
                 
                 expect(grid.lockedGrid.view.body.getHeight()).toBe(grid.normalGrid.view.body.getHeight());
             });
@@ -997,7 +1083,7 @@ describe('Ext.grid.plugin.RowWidget', function () {
                 jasmine.fireMouseEvent(grid.lockedGrid.view.el.query('.x-grid-row-expander')[0], 'click');
 
                 // The rowbody row of item 0 should not be visible
-                expect(grid.lockedGrid.view.all.item(0).down('.' + Ext.baseCSSPrefix + 'grid-rowbody-tr').isVisible()).toBe(false);
+                expect(getRowBodyTr(0, true).isVisible()).toBe(false);
 
                 // Check the content of the rowbody in the locked side.
                 // The lockedWidget specifies that it be a component with the textual content being the industry field.
@@ -1328,6 +1414,31 @@ describe('Ext.grid.plugin.RowWidget', function () {
             // No more loads.
             runs(function() {
                 expect(loadSpy.callCount).toBe(2);
+            });
+        });
+
+        it('should correctly resize rendered block when last row expands', function() {
+            var lastRow;
+
+            waitsFor(function() {
+                scroller.scrollBy(0, 25);
+                return scroller.getPosition().y === scroller.getMaxUserPosition().y &&
+                    view.all.endIndex === store.getCount() - 1;
+            }, 'scroll to end', 20000, 50);
+
+            runs(function() {
+                lastRow = view.all.last(true);
+                jasmine.fireMouseEvent(Ext.fly(lastRow).down('.x-grid-row-expander'), 'click');
+            });
+            waitsFor(function() {
+                scroller.scrollBy(0, 25);
+                return scroller.getPosition().y === scroller.getMaxUserPosition().y &&
+                    view.all.endIndex === store.getCount() - 1;
+            }, 'scroll to end', 20000, 50);
+
+            // Last row should still be the same
+            runs(function() {
+                expect(view.all.last(true)).toBe(lastRow);
             });
         });
     });

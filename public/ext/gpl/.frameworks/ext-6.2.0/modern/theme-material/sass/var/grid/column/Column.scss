@@ -1,19 +1,17 @@
-$grid-column-color: dynamic($color);
-$grid-column-background-color: dynamic(transparent);
-$grid-column-sorted-background-color: dynamic($grid-column-background-color);
-$grid-column-border-color: dynamic($divider-color);
-$grid-column-font-weight: dynamic($font-weight-normal);
-$grid-column-font-size: dynamic($material-subhead-font-size);
-$grid-column-font-size-big: dynamic(null);
-$grid-column-line-height: dynamic(null);
-$grid-column-line-height-big: dynamic($grid-column-line-height);
-$grid-column-padding: dynamic($content-padding/2 $content-padding);
-$grid-column-padding-big: dynamic(null);
-$grid-column-sort-icon-spacing: dynamic($content-padding/4);
-$grid-column-sort-icon-font-size: dynamic(18px);
-$grid-column-sort-asc-icon: dynamic('arrow_upward' $grid-column-sort-icon-font-size $font-icon-font-family);
-$grid-column-sort-desc-icon: dynamic('arrow_downward' $grid-column-sort-icon-font-size $font-icon-font-family);
+$gridcolumn-color: dynamic($color);
+$gridcolumn-background-color: dynamic(transparent);
+$gridcolumn-sorted-background-color: dynamic($gridcolumn-background-color);
+$gridcolumn-border-color: dynamic($divider-color);
+$gridcolumn-font-size: dynamic(px-to-rem(14px, 12px));
+$gridcolumn-font-size-big: dynamic(px-to-rem(16px, 14px));
+$gridcolumn-font-weight: dynamic(400);
+$gridcolumn-line-height: dynamic(px-to-em(14px, 14px));
+$gridcolumn-line-height-big: dynamic(px-to-em(16px, 16px));
+$gridcolumn-padding: dynamic(px-to-em($content-padding/2, 14px) px-to-em($content-padding, 14px));
+$gridcolumn-padding-big: dynamic(px-to-em($content-padding/2, 16px) px-to-em($content-padding, 16px));
+$gridcolumn-sort-icon-spacing: dynamic($content-padding/4);
+$gridcolumn-sort-icon-font-size: dynamic(18px);
+$gridcolumn-sort-asc-icon: dynamic('arrow_downward');
+$gridcolumn-sort-desc-icon: dynamic('arrow_upward');
 
-$grid-column-border-color: dynamic(null $divider-color null null);
-$grid-column-border-width: dynamic(null 1px null null);
-$grid-column-border-style: dynamic(null solid null null)
+$gridcolumn-border-color: dynamic($divider-color);

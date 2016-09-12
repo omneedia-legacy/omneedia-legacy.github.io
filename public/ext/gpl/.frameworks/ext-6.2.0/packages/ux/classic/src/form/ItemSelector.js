@@ -411,7 +411,7 @@ Ext.define('Ext.ux.form.ItemSelector', {
         });
     },
 
-    onDestroy: function(){
+    doDestroy: function(){
         this.bindStore(null);
         this.callParent();
     }

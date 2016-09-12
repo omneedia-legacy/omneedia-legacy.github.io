@@ -1,3 +1,7 @@
+/**
+ * This example shows how to zoom in on the selected node with an animation
+ * in the 'd3-sunburst' component.
+ */
 Ext.define('KitchenSink.view.d3.SunburstZoom', {
     extend: 'Ext.panel.Panel',
     xtype: 'd3-view-sunburst-zoom',
@@ -40,14 +44,10 @@ Ext.define('KitchenSink.view.d3.SunburstZoom', {
     },
 
     session: true,
-    resizable: {
-        constrain: true
-    },
 
     items: [
         {
             xtype: 'breadcrumb',
-
             region: 'north',
 
             bind: {

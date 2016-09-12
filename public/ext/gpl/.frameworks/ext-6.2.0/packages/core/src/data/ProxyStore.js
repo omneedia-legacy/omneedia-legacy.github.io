@@ -909,11 +909,9 @@ Ext.define('Ext.data.ProxyStore', {
     /**
      * @private
      */
-    onDestroy: function() {
+    doDestroy: function() {
         var me = this,
             proxy = me.getProxy();
-
-        me.destroying = true;
 
         me.clearLoadTask();
         me.getData().destroy();
@@ -925,11 +923,10 @@ Ext.define('Ext.data.ProxyStore', {
         }
         
         me.setModel(null);
-
-        me.destroying = false;
+        
+        me.callParent();
     },
 
-    
     /**
      * Returns true if the store has a pending load task.
      * @return {Boolean} `true` if the store has a pending load task.
@@ -1016,7 +1013,10 @@ Ext.define('Ext.data.ProxyStore', {
         },
 
         clearLoadTask: function() {
-            Ext.asapCancel(this.loadTimer);
+            if (this.loadTimer) {
+                Ext.asapCancel(this.loadTimer);
+            }
+            
             this.pendingLoadOptions = this.loadTimer = null;
         },
 

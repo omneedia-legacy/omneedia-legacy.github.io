@@ -763,4 +763,33 @@ describe('Ext.grid.plugin.RowEditing', function () {
             });
         });
     });
+    
+    describe("button position", function() {
+        describe("not enough space to fit the editor", function() {
+            beforeEach(function() {
+                makeGrid({
+                    clicksToEdit: 1
+                }, {
+                    height: undefined
+                }, {
+                    data: [
+                        {'name': 'Lisa', 'email': 'lisa@simpsons.com', 'phone': '555-111-1224'},
+                        {'name': 'Bart', 'email': 'bart@simpsons.com', 'phone': '555-222-1234'}
+                    ]
+                });
+            });
+            
+            it("should position buttons at the bottom when editing first row", function() {
+                plugin.startEdit(store.getAt(0), grid.columns[0]);
+                
+                expect(plugin.editor.floatingButtons.el.hasCls('x-grid-row-editor-buttons-bottom')).toBe(true);
+            });
+            
+            it("should position buttons at the top when editing last row", function() {
+                plugin.startEdit(store.getAt(1), grid.columns[0]);
+                
+                expect(plugin.editor.floatingButtons.el.hasCls('x-grid-row-editor-buttons-top')).toBe(true);
+            });
+        });
+    });
 });

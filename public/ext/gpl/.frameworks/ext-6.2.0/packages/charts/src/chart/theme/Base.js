@@ -42,7 +42,7 @@ Ext.define('Ext.chart.theme.Base', {
 
     config: {
         /**
-         * @cfg {String/Ext.draw.Color} baseColor
+         * @cfg {String/Ext.util.Color} baseColor
          * The base color used to generate the {@link Ext.chart.AbstractChart#colors} of the theme.
          */
         baseColor: null,
@@ -367,7 +367,7 @@ Ext.define('Ext.chart.theme.Base', {
     applyBaseColor: function (baseColor) {
         var midColor, midL;
         if (baseColor) {
-            midColor = baseColor.isColor ? baseColor : Ext.draw.Color.fromString(baseColor);
+            midColor = baseColor.isColor ? baseColor : Ext.util.Color.fromString(baseColor);
             midL = midColor.getHSL()[2];
             if (midL < 0.15) {
                 midColor = midColor.createLighter(0.3);
@@ -419,7 +419,7 @@ Ext.define('Ext.chart.theme.Base', {
 
         if (Ext.isObject(gradients)) {
             for (i = 0, ln = colors && colors.length || 0; i < ln; i++) {
-                midColor = Ext.draw.Color.fromString(colors[i]);
+                midColor = Ext.util.Color.fromString(colors[i]);
                 if (midColor) {
                     color = midColor.createLighter(0.15).toString();
                     gradient = Ext.apply(Ext.Object.chain(gradients), {
@@ -454,7 +454,7 @@ Ext.define('Ext.chart.theme.Base', {
             newSeriesThemes = {
                 fillStyle: Ext.Array.clone(colors),
                 strokeStyle: Ext.Array.map(colors, function (value) {
-                    var color = Ext.draw.Color.fromString(value.stops ? value.stops[0].color : value);
+                    var color = Ext.util.Color.fromString(value.stops ? value.stops[0].color : value);
                     return color.createDarker(0.15).toString();
                 })
             };

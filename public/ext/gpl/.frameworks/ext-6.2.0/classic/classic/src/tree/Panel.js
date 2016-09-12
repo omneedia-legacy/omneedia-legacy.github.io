@@ -361,11 +361,6 @@ Ext.define('Ext.tree.Panel', {
     isTree: true,
 
     /**
-     * @cfg {Boolean} hideHeaders
-     * True to hide the headers.
-     */
-
-    /**
      * @cfg {Boolean} folderSort
      * True to automatically prepend a leaf sorter to the store.
      */
@@ -428,19 +423,15 @@ Ext.define('Ext.tree.Panel', {
             animate: me.enableAnimations,
             singleExpand: me.singleExpand,
             node: store.getRoot(),
-            hideHeaders: me.hideHeaders,
             navigationModel: 'tree',
             isAutoTree: autoTree
         }, me.viewConfig);
 
         if (autoTree) {
-            if (me.initialConfig.hideHeaders === undefined) {
-                me.hideHeaders = true;
-            }
             me.addCls(me.autoWidthCls);
             me.columns = [{
                 xtype    : 'treecolumn',
-                text     : 'Name',
+                text     : me.hideHeaders === true ? 'Name' : null,
                 flex     : 1,
                 dataIndex: me.displayField         
             }];
@@ -525,6 +516,10 @@ Ext.define('Ext.tree.Panel', {
         return store;
     },
 
+    setRoot: function (root) {
+        this.store.setRoot(root);
+    },
+
     setStore: function(store) {
         var me = this;
 
@@ -554,19 +549,10 @@ Ext.define('Ext.tree.Panel', {
      */
     bindStore: function(store, initial) {
         var me = this,
-            root = store.getRoot(),
-            bufferedRenderer = me.bufferedRenderer;
+            root = store.getRoot();
 
         // Bind to store, and autocreate the BufferedRenderer.
         me.callParent(arguments);
-
-        // If we're in a reconfigure (we already have a BufferedRenderer which is bound to our old store),
-        // rebind the BufferedRenderer
-        if (bufferedRenderer) {
-            if (bufferedRenderer.store) {
-                bufferedRenderer.bindStore(store);
-            }
-        }
 
         // The TreeStore needs to know about this TreePanel's singleExpand constraint so that
         // it can ensure the compliance of NodeInterface.expandAll.

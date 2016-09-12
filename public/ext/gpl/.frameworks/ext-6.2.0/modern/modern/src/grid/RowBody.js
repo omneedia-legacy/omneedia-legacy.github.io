@@ -1,14 +1,47 @@
+/**
+ * A body component to be used with Grid Rows. This component should not be used directly.
+ * Always use the Grid row's {@link Ext.grid.Row#body body} config to create a row body.
+ *
+ * Typically used together with a {@link Ext.grid.plugin.RowExpander Row Expander}
+ */
 Ext.define('Ext.grid.RowBody', {
     extend: 'Ext.Component',
     xtype: 'rowbody',
 
     config: {
-        baseCls: Ext.baseCSSPrefix + 'grid-rowbody',
         widget: null
+    },
+
+    classCls: Ext.baseCSSPrefix + 'rowbody',
+
+    template: [{
+        reference: 'spacerElement',
+        cls: Ext.baseCSSPrefix + 'spacer-el'
+    }, {
+        reference: 'contentElement',
+        cls: Ext.baseCSSPrefix + 'content-el'
+    }],
+
+    initialize: function() {
+        var me = this,
+            grid, rowExpander;
+
+        me.callParent();
+
+        grid = me.parent.getGrid();
+
+        if (grid && grid.hasRowExpander) {
+            rowExpander = grid.findPlugin('rowexpander');
+
+            if (rowExpander) {
+                me.spacerElement.setWidth(rowExpander.getColumn().getWidth());
+            }
+        }
     },
 
     applyWidget: function (widget) {
         var row = this.parent;
+
         if (widget) {
             widget = Ext.apply({
                 parent: row
@@ -24,7 +57,7 @@ Ext.define('Ext.grid.RowBody', {
         }
 
         if (widget) {
-            this.element.appendChild(widget.element);
+            this.contentElement.appendChild(widget.element);
         }
     },
 
@@ -36,7 +69,11 @@ Ext.define('Ext.grid.RowBody', {
         }
     },
 
-    destroy: function () {
+    getInnerHtmlElement: function() {
+        return this.contentElement;
+    },
+
+    doDestroy: function () {
         this.setWidget(null);
         this.callParent();
     }

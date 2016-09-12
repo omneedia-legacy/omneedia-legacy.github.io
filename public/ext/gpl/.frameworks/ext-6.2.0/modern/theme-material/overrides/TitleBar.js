@@ -2,6 +2,7 @@ Ext.define('Ext.theme.material.TitleBar', {
     override: 'Ext.TitleBar',
 
     config: {
-        titleAlign: 'left'
+        titleAlign: 'left',
+        defaultButtonUI: 'alt'
     }
 });

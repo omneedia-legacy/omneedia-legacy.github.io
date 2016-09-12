@@ -78,7 +78,14 @@ describe("Ext.grid.column.Action", function(){
     });
 
     describe('Actioning items from actionable mode', function() {
-        it('should refocus the action item upon focus reversion when action item focuses outwards', function() {
+        var handlerSpy, actionableSpy, navModel, cellEl, actionItemEl, msgBox;
+        
+        beforeEach(function() {
+            handlerSpy = jasmine.createSpy('action handler');
+            handlerSpy.andCallFake(function() {
+                msgBox = Ext.MessageBox.alert('Title', 'Message');
+            });
+            
             makeGrid({
                 columns: [{
                     dataIndex: 'text',
@@ -89,9 +96,7 @@ describe("Ext.grid.column.Action", function(){
                     header: 'Action',
                     renderer: Ext.emptyFn,
                     items: [{
-                        handler: function() {
-                            msgBox = Ext.MessageBox.alert('Title', 'Message');
-                        },
+                        handler: handlerSpy,
                         isDisabled: Ext.emptyFn
                     }, {
                         handler: Ext.emptyFn,
@@ -99,40 +104,76 @@ describe("Ext.grid.column.Action", function(){
                     }]
                 }]
             });
-            var msgBox,
-                navModel = grid.getNavigationModel(),
-                actionItemEl;
+            
+            actionableSpy = spyOn(grid, 'setActionableMode').andCallThrough();
 
-            // Navigate to te action column
-            navModel.setPosition(0, 1);
-
-            // Enter actionable mode
-            jasmine.fireKeyEvent(navModel.getPosition().getCell(true), 'keydown', Ext.event.Event.ENTER);
-
-            // Check that worked
-            expect(grid.actionableMode).toBe(true);
-            actionItemEl = Ext.Element.getActiveElement();
+            navModel = grid.getNavigationModel();
+            cellEl = grid.getView().getCell(0, 1);
+            
+            // This is a bit hacky but so is Action column :(
+            actionItemEl = cellEl.down('[role=button]', true);
+        });
+        
+        afterEach(function() {
+            if (msgBox) {
+                msgBox.hide();
+            }
+            
+            handlerSpy = actionableSpy = navModel = cellEl = actionItemEl = msgBox = null;
+        });
+        
+        it('should refocus the action item upon focus reversion when action item focuses outwards', function() {
+            // Navigate and enter actionable mode
+            pressKey(cellEl, 'enter');
+            
+            waitForSpy(actionableSpy);
+            
+            runs(function() {
+                // Check that worked
+                expect(grid.actionableMode).toBe(true);
+                expect(Ext.Element.getActiveElement()).toBe(actionItemEl);
+            });
 
             // Activate the item.
-            jasmine.fireKeyEvent(actionItemEl, 'keydown', Ext.event.Event.SPACE);
+            pressKey(actionItemEl, 'space');
             
-            expect(Ext.getCmp(msgBox.id)).toBe(msgBox);
+            waitForSpy(handlerSpy);
+            
+            runs(function() {
+                expect(msgBox).toBeDefined();
+            });
 
             // MsgBox window must contains focus
             waitsFor(function() {
                 return msgBox.isVisible() === true && msgBox.containsFocus;
             });
-            
-            runs(function() {
+
+            runs(function () {
+                expect(Ext.getCmp(msgBox.id)).toBe(msgBox);
 
                 // Hide the message box
                 msgBox.hide();
+            });
 
+            waitAWhile();
+
+            // Should revert focus back into grid in same mode that it left.
+            waitsFor(function() {
+                return grid.actionableMode;
+            });
+            
+            runs(function() {
                 // SHould revert focus back into grid in same mode that it left.
                 expect(grid.actionableMode).toBe(true);
+            });
 
-                // Focus should have reverted back to the action item
-                expect(Ext.Element.getActiveElement()).toBe(actionItemEl);
+            // Focus should have reverted back to the action item
+            waitsFor(function() {
+                return Ext.Element.getActiveElement() === actionItemEl;
+            });
+            
+            runs(function() {
+                expect(document.activeElement).toBe(actionItemEl);
             });
         });
     });
@@ -257,10 +298,9 @@ describe("Ext.grid.column.Action", function(){
                 }]
             });
 
-            grid.getView().focus();
             triggerAction();
             expect(grid.getSelectionModel().isSelected(store.first())).toBe(true);
-            var pos = grid.view.getNavigationModel().getPosition();
+            var pos = grid.view.actionPosition;
             expect(pos.record).toBe(store.first());
             expect(pos.column).toBe(grid.down('actioncolumn'));
         });
@@ -302,27 +342,15 @@ describe("Ext.grid.column.Action", function(){
         });
 
         it("should not throw an exception if the grid is destroyed in the handler", function() {
-             makeHandlerGrid({
-                 handler: function() {
-                     grid.destroy();
-                 }
-             });
- 
-             // We can't catch any exceptions thrown by synthetic events,
-             // so a standard toThrow() or even try/catch won't do the job
-             // here. They will hit onerror though, so use that.
-             var onError = window.onerror;
-             window.onerror = spy1.andCallFake(function() {
-                 if (onError) {
-                     onError();
-                 }
-             });
- 
-             triggerAction();
- 
-             expect(spy1.callCount).toBe(0);
- 
-             window.onerror = onError;
+            makeHandlerGrid({
+                handler: function() {
+                    grid.destroy();
+                }
+            });
+
+            expect(function() {
+                triggerAction();
+            }).not.toThrow();
          });
         
         describe("handler priority", function() {
@@ -849,6 +877,7 @@ describe("Ext.grid.column.Action", function(){
                         dataIndex: 'actionCls',
                         header: 'Action',
                         itemAriaRole: null,
+                        itemTabIndex: null,
                         items: [{}, {}]
                     }]
                 });
@@ -856,8 +885,8 @@ describe("Ext.grid.column.Action", function(){
                 var item0 = getActionItem(0, 1, 0),
                     item1 = getActionItem(0, 1, 1);
                 
-                expect(item0).not.toHaveAttr('role');
-                expect(item0).not.toHaveAttr('role');
+                expect(item0).toHaveAttr('role', 'presentation');
+                expect(item0).toHaveAttr('role', 'presentation');
             });
             
             it("should be overridable via item config", function() {
@@ -890,14 +919,15 @@ describe("Ext.grid.column.Action", function(){
                         dataIndex: 'actionCls',
                         header: 'Action',
                         items: [{
-                            ariaRole: null
+                            ariaRole: null,
+                            tabIndex: null
                         }]
                     }]
                 });
                 
                 var item = getActionItem(0, 1);
                 
-                expect(item).not.toHaveAttr('role');
+                expect(item).toHaveAttr('role', 'presentation');
             });
             
             it("should be overridable for multiple items separately", function() {
@@ -923,8 +953,8 @@ describe("Ext.grid.column.Action", function(){
                     item1 = getActionItem(0, 1, 1),
                     item2 = getActionItem(0, 1, 2);
                 
-                expect(item0).not.toHaveAttr('role');
-                expect(item1).not.toHaveAttr('role');
+                expect(item0).toHaveAttr('role', 'presentation');
+                expect(item1).toHaveAttr('role', 'presentation');
                 expect(item2).toHaveAttr('role', 'throbbe');
             });
         });

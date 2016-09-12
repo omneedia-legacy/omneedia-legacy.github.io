@@ -11,10 +11,12 @@
     Ext.define('KitchenSink.store.OrderItems', {
         alias: 'store.orderitems',
         extend: 'Ext.data.Store',
+
         config: {
-            fields: ['id', 'g0', 'g1', 'g2', 'g3', 'g4', 'g5', 'g6', 'name'],
             numRecords: 50
         },
+
+        fields: ['id', 'g0', 'g1', 'g2', 'g3', 'g4', 'g5', 'g6', 'name'],
         generateData: function (count) {
             var data = [],
                 record = {
@@ -47,8 +49,10 @@
             this.loadData(data);
         },
         constructor: function(config) {
-            this.callParent([config]);
-            this.generateData(this.getNumRecords());
+            var me = this;
+
+            me.callParent([config]);
+            me.generateData(me.getNumRecords());
         }
     });
 })();

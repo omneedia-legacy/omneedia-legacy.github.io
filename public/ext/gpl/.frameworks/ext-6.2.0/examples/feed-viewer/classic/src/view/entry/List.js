@@ -12,7 +12,7 @@ Ext.define('FeedViewer.view.entry.List', {
     viewConfig: {
         itemId: 'view',
         plugins: [{
-            pluginId: 'preview',
+            id: 'preview',
             ptype: 'preview',
             bodyField: 'contentSnippet',
             expanded: true

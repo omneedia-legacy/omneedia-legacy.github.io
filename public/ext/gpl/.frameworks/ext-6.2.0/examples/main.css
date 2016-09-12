@@ -5,7 +5,7 @@ html, body {
     background: #DADADA;
     color: #323232;
     font-family: Effra, Roboto, Helvetica, Arial, sans-serif;
-    font-size: 14px;
+    font-size: 16px;
     font-weight: 300;
     line-height: 1.6;
     margin: 0;
@@ -110,8 +110,10 @@ a:focus {
 }
 
 #header {
-    background: #f5f5f5;
-    line-height: 2;
+    background-color: #f5f5f5;
+    background-image: url("resources/images/hero-bg.jpg");
+    background-size: cover;
+    line-height: 1.6;
     padding: 24px;
     width: 100%;
 }
@@ -206,7 +208,8 @@ a:focus {
 }
 
 .example {
-    float: left;
+    display: inline-block;
+    vertical-align: top;
     position: relative;
     max-width: 315px;
     min-width: 315px;

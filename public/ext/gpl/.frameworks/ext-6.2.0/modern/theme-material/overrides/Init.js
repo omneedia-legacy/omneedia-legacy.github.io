@@ -1,3 +1,4 @@
+Ext.require('Ext.theme.Material');
 if (Ext.platformTags.android && Ext.platformTags.chrome && Ext.manifest.material && Ext.manifest.material.toolbar) {
     var color = Ext.manifest.material.toolbar.color,
         toolbarIsDynamic = Ext.manifest.material.toolbar.dynamic,
@@ -15,3 +16,6 @@ if (Ext.platformTags.android && Ext.platformTags.chrome && Ext.manifest.material
         head.appendChild(meta);
     }
 }
+
+Ext.namespace('Ext.theme.is').Material = true;
+Ext.theme.name = 'Material';

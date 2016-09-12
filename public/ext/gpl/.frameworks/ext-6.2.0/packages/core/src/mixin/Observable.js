@@ -61,12 +61,20 @@ Ext.define('Ext.mixin.Observable', function(Observable) {
                 this.managedListeners = true;
             }
             this.args = arraySlice.call(arguments, 1);
-        };
+        },
+        
+        // These properties should not be nulled during Base destroy(),
+        // we will take care of them in destroyObservable()
+        protectedProps = ['events', 'hasListeners', 'managedListeners', 'eventedBeforeEventNames'];
 
     ListenerRemover.prototype.destroy = function() {
         this.destroy = Ext.emptyFn;
         var observable = this.observable;
-        observable[this.managedListeners ? 'mun' : 'un'].apply(observable, this.args);
+        
+        // If that observable is already destroyed, all its listeners were cleared
+        if (!observable.destroyed) {
+            observable[this.managedListeners ? 'mun' : 'un'].apply(observable, this.args);
+        }
     };
 
     return {
@@ -74,7 +82,7 @@ Ext.define('Ext.mixin.Observable', function(Observable) {
         mixinConfig: {
             id: 'observable',
             after: {
-                destroy: 'clearListeners'
+                destroy: 'destroyObservable'
             }
         },
 
@@ -180,7 +188,7 @@ Ext.define('Ext.mixin.Observable', function(Observable) {
                     target = data || T.prototype,
                     targetListeners = target.listeners,
                     superListeners = mixin ? mixin.listeners : T.superclass.self.listeners,
-                    name, scope, namedScope;
+                    name, scope, namedScope, i, len;
 
                 // Process listeners that have been declared on the class body. These
                 // listeners must not override each other, but each must be added
@@ -235,6 +243,15 @@ Ext.define('Ext.mixin.Observable', function(Observable) {
                     // (which is also the class-level "hasListeners" instance).
                     HasListeners.prototype = T.hasListeners = new SuperHL();
                 }
+                
+                // Reusing a variable here
+                scope = T.prototype.$noClearOnDestroy || {};
+                
+                for (i = 0, len = protectedProps.length; i < len; i++) {
+                    scope[protectedProps[i]] = true;
+                }
+                
+                T.prototype.$noClearOnDestroy = scope;
             }
         },
 
@@ -280,6 +297,13 @@ Ext.define('Ext.mixin.Observable', function(Observable) {
         * `true` in this class to identify an object as an instantiated Observable, or subclass thereof.
         */
         isObservable: true,
+        
+        /**
+         * @private We don't want the base destructor to clear the prototype because
+         * our destroyObservable handler must be called the very last. It will take care
+         * of the prototype after completing Observable destruction sequence.
+         */
+        $vetoClearingPrototypeOnDestroy: true,
         
         /**
         * @private
@@ -540,11 +564,11 @@ Ext.define('Ext.mixin.Observable', function(Observable) {
         */
         removeManagedListener: function(item, ename, fn, scope) {
             var me = this,
-                options,
-                config,
-                managedListeners,
-                length,
-                i;
+                options, config, managedListeners, length, i;
+            
+            if (item.$observableDestroyed) {
+                return;
+            }
 
             if (typeof ename !== 'string') {
                 options = ename;
@@ -1294,7 +1318,7 @@ Ext.define('Ext.mixin.Observable', function(Observable) {
         },
 
         //<debug>
-        purgeListeners : function() {
+        purgeListeners: function() {
             if (Ext.global.console) {
                 Ext.global.console.warn('Observable: purgeListeners has been deprecated. Please use clearListeners.');
             }
@@ -1305,7 +1329,7 @@ Ext.define('Ext.mixin.Observable', function(Observable) {
         /**
         * Removes all managed listeners for this object.
         */
-        clearManagedListeners : function() {
+        clearManagedListeners: function() {
             var me = this,
                 managedListeners = me.managedListeners ? me.managedListeners.slice() : [],
                 i = 0,
@@ -1327,8 +1351,12 @@ Ext.define('Ext.mixin.Observable', function(Observable) {
         */
         removeManagedListenerItem: function(isClear, managedListener, item, ename, fn, scope){
             if (isClear || (managedListener.item === item && managedListener.ename === ename && (!fn || managedListener.fn === fn) && (!scope || managedListener.scope === scope))) {
-                // Pass along the options for mixin.Observable, for example if using delegate
-                managedListener.item.doRemoveListener(managedListener.ename, managedListener.fn, managedListener.scope, managedListener.options);
+                // Pass along the options for mixin.Observable, for example if using delegate.
+                // If the item has already been destroyed, its listeners were already cleared.
+                if (!managedListener.item.destroyed) {
+                    managedListener.item.doRemoveListener(managedListener.ename, managedListener.fn, managedListener.scope, managedListener.options);
+                }
+                
                 if (!isClear) {
                     Ext.Array.remove(this.managedListeners, managedListener);
                 }
@@ -1336,7 +1364,7 @@ Ext.define('Ext.mixin.Observable', function(Observable) {
         },
 
         //<debug>
-        purgeManagedListeners : function() {
+        purgeManagedListeners: function() {
             if (Ext.global.console) {
                 Ext.global.console.warn('Observable: purgeManagedListeners has been deprecated. Please use clearManagedListeners.');
             }
@@ -1611,10 +1639,62 @@ Ext.define('Ext.mixin.Observable', function(Observable) {
                 }
             }
         },
-
+        
+        /**
+         * @private Destructor for classes that extend Observable.
+         */
         destroy: function() {
             this.clearListeners();
             this.callParent();
+            this.destroyObservable(true);
+        },
+
+        destroyObservable: function(skipClearListeners) {
+            var me = this;
+            
+            if (me.$observableDestroyed) {
+                return;
+            }
+            
+            if (!skipClearListeners) {
+                me.clearListeners();
+            }
+            
+            // This method is called after the Base destructor, and most of the instances
+            // should be already destroyed at this point. However Classic Components are
+            // conditionally destructible and so can possibly *not* be destroyed before
+            // our mixed-in destructor is called. Component's destructor will take care
+            // of that by calling this method explicitly.
+            if (me.destroyed) {
+                if (me.clearPropertiesOnDestroy) {
+                    // At this point we can safely assume that the instance is completely
+                    // destroyed and should not be able to fire events anymore. We don't
+                    // want to do this when the prototype is going to be cleared below,
+                    // because having these emptyFns on the object instance will defy
+                    // the purpose of prototype clearing.
+                    if (!me.clearPrototypeOnDestroy) {
+                        me.fireEvent = me.fireEventArgs = me.fireAction = me.fireEventedAction =
+                            Ext.emptyFn;
+                    }
+                    
+                    // We do not null hasListeners reference since it's a) very special,
+                    // and b) can't possibly lead to significant leaks. (In theory, right).
+                    me.events = me.managedListeners = me.eventedBeforeEventNames = null;
+                    
+                    me.$observableDestroyed = true;
+                }
+                
+                //<debug>
+                // Due to the way Observable mixin installs the after handler,
+                // this can be called twice in a row. Doing that the second time
+                // will most probably blow up on some method call -- and that is
+                // totally what we are about, except in this particular case.
+                if (me.clearPrototypeOnDestroy && Object.setPrototypeOf && !me.$alreadyNulled) {
+                    Object.setPrototypeOf(me, null);
+                    me.$alreadyNulled = true;
+                }
+                //</debug>
+            }
         },
 
         privates: {

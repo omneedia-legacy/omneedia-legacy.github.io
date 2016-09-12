@@ -13,13 +13,13 @@
     @include border-radius(5px);
     @include user-select(none);
 
-    background-color: #ED7D31;
+    background-color: #FF5722;
     top: 10px;
     left: 10px;
 
     .handle {
         cursor: move;
-        background-color: #6CAE3F;
+        background-color: #43A047;
         @include border-radius(5px);
         padding: 3px;
         width: 90px;
@@ -39,7 +39,7 @@
     top: 10px;
     position: absolute;
     padding: 5px;
-    border: 5px dotted #206097;
+    border: 5px dotted #2196F3;
     @include user-select(none);
 
     .x-phone & {
@@ -50,14 +50,15 @@
 }
 
 .data-target-valid {
-    background-color: #F2E3B2;
+    background-color: #FFF59D;
 }
 
 .data-proxy {
     color: #FFF;
     text-align: center;
-    width: 60px;
-    height: 60px;
-    background-color: #6CAE3F;
+    width: 70px;
+    height: 70px;
+    background-color: #43A047;
+    padding: 5px;
     @include border-radius(5px);
 }

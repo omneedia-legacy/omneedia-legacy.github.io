@@ -2,6 +2,7 @@
 
 describe("Ext.data.TreeStore", function() {
     var store,
+        root,
         loadStore,
         dummyData,
         NodeModel = Ext.define(null, {
@@ -66,6 +67,7 @@ describe("Ext.data.TreeStore", function() {
                 children: expandify(nodes)
             }
         }, cfg));
+        root = store.getRootNode();
     }
 
     function expectOrder(parent, ids) {
@@ -867,7 +869,7 @@ describe("Ext.data.TreeStore", function() {
 
             var idNode;
 
-            store.getRoot().cascadeBy(function(node) {
+            store.getRoot().cascade(function(node) {
                 if (node.id === 'deep') {
                     idNode = node;
                 }
@@ -1453,6 +1455,51 @@ describe("Ext.data.TreeStore", function() {
             expect(args[1]).toBe(rec);
             expect(args[2]).toBe(Ext.data.Model.EDIT);
             expect(args[3]).toEqual(['someProp']);
+        });
+    });
+
+    describe("rejecting changes", function () {
+        var parent, rec;
+        beforeEach(function() {
+            store = new Ext.data.TreeStore({
+                model: NodeModel,
+                asynchronousLoad: false,
+                root: {
+                    expanded: true,
+                    text: 'Root',
+                    children: [{
+                        id: 'a',
+                        text: 'A child',
+                        expanded: true,
+                        children: [{
+                            id: 'aa',
+                            text: 'AA child',
+                            someProp: 'foo'
+                        }]
+                    }]
+                }
+            });
+
+            parent = store.getNodeById('a');
+            rec = parent.firstChild;
+        });
+
+        it("should be able to reject record changes", function() {
+            rec.set('someProp', 'bar');
+
+            store.rejectChanges();
+
+            expect(rec.get('someProp')).toBe('foo');
+        });
+
+        it("should be able to reject record changes when it's parent is collapsed", function() {
+            rec.set('someProp', 'foo');
+
+            parent.collapse();
+
+            store.rejectChanges();
+
+            expect(rec.get('someProp')).toBe('foo'); 
         });
     });
 
@@ -2110,7 +2157,7 @@ describe("Ext.data.TreeStore", function() {
                     root : {
                     }
                 });
-            }).toRaiseExtError();
+            }).toThrow();
         });
 
         it('Should use the configured defaultRootId, and parse that according to the idProperty field type', function() {
@@ -3781,6 +3828,7 @@ describe("Ext.data.TreeStore", function() {
             Ext.undefine('spec.Territory');
             Ext.undefine('spec.Country');
             Ext.undefine('spec.City');
+            Ext.undefine('spec.Root');
             schema.clear(true);
         });
 
@@ -4810,6 +4858,134 @@ describe("Ext.data.TreeStore", function() {
         
         it("should clear internal data children", function() {
             expect(root.getData().children).toBe(null);
+        });
+    });
+
+    describe("findNode", function() {
+        it("should be able to find a node by id", function() {
+            makeStore([{id: 1}, {id: 2}, {id: 3}]);
+
+            var root = store.getRoot();
+
+            expect(store.findNode('id', 1)).toBe(root.childNodes[0]);
+            expect(store.findNode('id', 2)).toBe(root.childNodes[1]);
+            expect(store.findNode('id', 3)).toBe(root.childNodes[2]);
+        });
+    });
+
+    describe('Model register/unregister methods', function() {
+        var RegisteredNode = Ext.define(null, {
+            extend: 'Ext.data.TreeModel',
+
+            onRegisterTreeNode: function() {
+                registeredNodeCount++;
+                registerCount++;
+            },
+            onUnregisterTreeNode: function() {
+                registeredNodeCount--;
+                unregisterCount++;
+            }
+        }),
+        registeredNodeCount = 0,
+        registerCount = 0,
+        unregisterCount = 0;
+
+        it('should call register/unregister methods', function() {
+            makeStore([], {
+                model: RegisteredNode
+            });
+
+            // Just the root node registered
+            expect(registeredNodeCount).toBe(1);
+            expect(registerCount).toBe(1);
+            expect(unregisterCount).toBe(0);
+
+            root.appendChild({
+                children: [{
+                    children: [{
+                        id: 'removeMe'
+                    }]
+                }]
+            });
+
+            // Now three descendants in addition to the root
+            expect(registeredNodeCount).toBe(4);
+            expect(registerCount).toBe(4);
+            expect(unregisterCount).toBe(0);
+
+            // Drop one
+            store.getNodeById('removeMe').drop();
+
+            // Only three now registered and the unregister count sohuld have gone up
+            expect(registeredNodeCount).toBe(3);
+            expect(registerCount).toBe(4);
+            expect(unregisterCount).toBe(1);
+
+            // Remove all three remaining nodes and add a new root
+            store.setRoot({
+                
+            });
+
+            // Only one node should be registered.
+            // Register count should be up by one, unregister count should be up by three
+            expect(registeredNodeCount).toBe(1);
+            expect(registerCount).toBe(5);
+            expect(unregisterCount).toBe(4);
+        });
+    });
+    
+    describe('datachanged event', function() {
+        it('should only fire once when filling a parent node with all descendants expanded', function() {
+            var dataChangeCount = 0;
+
+            store = new Ext.data.TreeStore({
+                model: NodeModel,
+                root: {
+                    expanded: true,
+                    children: [{
+                        expanded: true,
+                        children: [{
+                            expanded: true,
+                            children: [{
+                                expanded: true,
+                                children: [{
+                                    id: 'deep'
+                                }]
+                            }]
+                        }]
+                    }]
+                },
+                listeners: {
+                    datachanged: function() {
+                        dataChangeCount++;
+                    }
+                }
+            });
+            expect(dataChangeCount).toBe(1);
+        });
+    });
+
+    describe('linear data', function() {
+        it('should next correctly with depth values set', function() {
+            store = new Ext.data.TreeStore({
+                parentIdProperty: 'parent',
+                proxy: {
+                    type: 'memory',
+                    data: [
+                        {text: 'Aardvark', id: 'a'},
+                        {text: 'Bandicoot', id: 'b', parent: 'a'},
+                        {text: 'Crocodile', id: 'c', parent: 'b'}
+                    ]
+                },
+                root: {
+                    expanded: true
+                }
+            });
+            root = store.getRoot();
+            expect(root.data.depth).toBe(0);
+            expect(root.childNodes[0].data.depth).toBe(1);
+            expect(root.childNodes[0].childNodes[0].data.depth).toBe(2);
+            expect(root.childNodes[0].childNodes[0].childNodes[0].data.depth).toBe(3);
         });
     });
 });
