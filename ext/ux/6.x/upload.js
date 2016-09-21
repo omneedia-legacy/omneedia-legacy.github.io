@@ -176,11 +176,7 @@ Ext.define('Ext.ux.upload.uploader.AbstractUploader', {
     constructor : function(config) {
         this.mixins.observable.constructor.call(this);
 
-        this.addEvents({
-            uploadfailure : true,
-            uploadsuccess : true,
-            uploadprogress : true
-        });
+
 
         //this.initConfig(config);
     },
@@ -946,52 +942,7 @@ Ext.define('Ext.ux.upload.Manager', {
     constructor : function(config) {
         this.mixins.observable.constructor.call(this);
 
-        this.addEvents({
-            'beforeupload' : true,
 
-            /**
-             * @event
-             *
-             * Fired when the upload completes.
-             *
-             * @param {Ext.ux.upload.Manager} manager
-             * @param {Ext.ux.upload.Queue} queue
-             * @param {number} errorCount
-             */
-            'uploadcomplete' : true,
-
-            /**
-             * @event
-             *
-             * Fired after the upload has been aborted.
-             *
-             * @param {Ext.ux.upload.Manager} manager
-             * @param {Ext.ux.upload.Queue} queue
-             */
-            'abortupload' : true,
-
-            /**
-             * @event
-             *
-             * Fired after a single item has been uploaded successfully.
-             *
-             * @param {Ext.ux.upload.Manager} manager
-             * @param {Ext.ux.upload.Item} item
-             * @param {Object} info
-             */
-            'itemuploadsuccess' : true,
-
-            /**
-            * @event
-            *
-            * Fired after an error has occurred while uploading an item.
-            *
-            * @param {Ext.ux.upload.Manager} manager
-            * @param {Ext.ux.upload.Item} item
-            * @param {Object} info
-            */
-            'itemuploadfailure' : true
-        });
 
         //this.initConfig(config);
 
@@ -1187,10 +1138,6 @@ Ext.define('Ext.ux.upload.BrowseButton', {
 
     initComponent : function() {
 
-        this.addEvents({
-            'fileselected' : true
-        });
-
         Ext.apply(this, {
             buttonConfig : {
                 iconCls : this.iconCls,
@@ -1283,11 +1230,6 @@ Ext.define('Ext.ux.upload.Item', {
 
     constructor : function(config) {
         this.mixins.observable.constructor.call(this);
-
-        this.addEvents({
-            changestatus : true,
-            progressupdate : true
-        });
 
         //this.initConfig(config);
 
@@ -1433,14 +1375,6 @@ Ext.define('Ext.ux.upload.Queue', {
     constructor : function(config) {
 
         this.callParent(arguments);
-
-        this.addEvents({
-            multiadd : true,
-            multiremove : true,
-            queuechange : true,
-            itemchangestatus : true,
-            itemprogressupdate : true
-        });
 
         this.on('clear', function() {
             this.fireEvent('queuechange', this);
@@ -1895,21 +1829,7 @@ Ext.define('Ext.ux.upload.Panel', {
      */
     initComponent : function() {
 		this.uploader = 'Ext.ux.upload.uploader.FormDataUploader';
-        this.addEvents({
-            /**
-             * @event
-             *
-             * Fired when all files has been processed.
-             *
-             * @param {Ext.ux.upload.Panel} panel
-             * @param {Ext.ux.upload.Manager} manager
-             * @param {Ext.ux.upload.Item[]} items
-             * @param {number} errorCount
-             */
-            'uploadcomplete' : true,
-			'itemuploadsuccess': true,
-			'itemuploadfailure': true
-        });
+
 
         this.queue = this.initQueue();
 
@@ -2380,21 +2300,7 @@ Ext.define('Ext.ux.upload.Dialog', {
      */
     initComponent : function() {
 
-        this.addEvents({
-            /**
-             * @event
-             *
-             * Fired when all files has been processed.
-             *
-             * @param {Ext.ux.upload.Dialog} dialog
-             * @param {Ext.ux.upload.Manager} manager
-             * @param {Ext.ux.upload.Item[]} items
-             * @param {Number} errorCount
-             */
-            'uploadcomplete' : true,
-			'itemuploadsuccess': true,
-			'itemuploadfailure': true
-        });
+
 
         this.queue = this.initQueue();
 
@@ -2849,9 +2755,7 @@ Ext.define('Ext.ux.upload.FileManager', {
 			else _p.getDockedItems()[0].show();
 			this.readOnly=b;
 		};
-	    this.addEvents({
-            itemdblclick : true
-        });
+
 		this.callParent(arguments);
 	}
 });
