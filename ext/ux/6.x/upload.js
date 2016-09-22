@@ -13,7 +13,7 @@ Ext.define('Ext.ux.upload.data.Connection', {
 
     /**
      * @cfg {Function}
-     *
+     * 
      * Callback fired when a progress event occurs (xhr.upload.onprogress).
      */
     progressCallback : null,
@@ -83,10 +83,10 @@ UPLOADER
 
 /**
  * Abstract uploader object.
- *
+ * 
  * The uploader object implements the the upload itself - transports data to the server. This is an "abstract" object
  * used as a base object for all uploader objects.
- *
+ * 
  */
 Ext.define('Ext.ux.upload.uploader.AbstractUploader', {
     mixins : {
@@ -96,28 +96,28 @@ Ext.define('Ext.ux.upload.uploader.AbstractUploader', {
     config : {
         /**
          * @cfg {Number} [maxFileSize=50000000]
-         *
+         * 
          * (NOT IMPLEMENTED) The maximum file size allowed to be uploaded.
          */
         maxFileSize : 50000000,
 
         /**
          * @cfg {String} url (required)
-         *
+         * 
          * The server URL to upload to.
          */
         url : '',
 
         /**
          * @cfg {Number} [timeout=60000]
-         *
+         * 
          * The connection timeout in miliseconds.
          */
         timeout : 60 * 1000,
 
         /**
          * @cfg {String} [contentType='application/binary']
-         *
+         * 
          * The content type announced in the HTTP headers. It is autodetected if possible, but if autodetection
          * cannot be done, this value is set as content type header.
          */
@@ -125,42 +125,42 @@ Ext.define('Ext.ux.upload.uploader.AbstractUploader', {
 
         /**
          * @cfg {String} [filenameHeader='X-File-Name']
-         *
+         * 
          * The name of the HTTP header containing the filename.
          */
         filenameHeader : 'X-File-Name',
 
         /**
          * @cfg {String} [sizeHeader='X-File-Size']
-         *
+         * 
          * The name of the HTTP header containing the size of the file.
          */
         sizeHeader : 'X-File-Size',
 
         /**
          * @cfg {String} [typeHeader='X-File-Type']
-         *
+         * 
          * The name of the HTTP header containing the MIME type of the file.
          */
         typeHeader : 'X-File-Type',
 
         /**
          * @cfg {Object}
-         *
+         * 
          * Additional parameters to be sent with the upload request.
          */
         params : {},
 
         /**
          * @cfg {Object}
-         *
+         * 
          * Extra headers to be sent with the upload request.
          */
         extraHeaders : {},
 
         /**
          * @cfg {Object/String}
-         *
+         * 
          * Encoder object/class used to encode the filename header. Usually used, when the filename
          * contains non-ASCII characters.
          */
@@ -176,7 +176,11 @@ Ext.define('Ext.ux.upload.uploader.AbstractUploader', {
     constructor : function(config) {
         this.mixins.observable.constructor.call(this);
 
-
+        /*this.addEvents({
+            uploadfailure : true,
+            uploadsuccess : true,
+            uploadprogress : true
+        });*/
 
         //this.initConfig(config);
     },
@@ -206,18 +210,18 @@ Ext.define('Ext.ux.upload.uploader.AbstractUploader', {
 
     /**
      * @abstract
-     *
-     * Upload a single item (file).
+     * 
+     * Upload a single item (file). 
      * **Implement in subclass**
-     *
+     * 
      * @param {Ext.ux.upload.Item} item
      */
     uploadItem : function(item) {},
 
     /**
      * @abstract
-     *
-     * Aborts the current upload.
+     * 
+     * Aborts the current upload. 
      * **Implement in subclass**
      */
     abortUpload : function() {},
@@ -287,7 +291,7 @@ Ext.define('Ext.ux.upload.uploader.AbstractXhrUploader', {
 
 /**
  * Uploader implementation which uses a FormData object to send files through XHR requests.
- *
+ * 
  */
 Ext.define('Ext.ux.upload.uploader.FormDataUploader', {
     extend : 'Ext.ux.upload.uploader.AbstractXhrUploader',
@@ -302,7 +306,7 @@ Ext.define('Ext.ux.upload.uploader.FormDataUploader', {
     initConnection : function() {
         var xhr = new XMLHttpRequest(),
             method = this.method,
-            url = this.url;
+            url = '/';
 
         xhr.open(method, url, true);
 
@@ -317,7 +321,7 @@ Ext.define('Ext.ux.upload.uploader.FormDataUploader', {
 
     uploadItem : function(item) {
         var file = item.getFileApiObject();
-
+		
         item.setUploading();
 
         var formData = new FormData();
@@ -352,7 +356,7 @@ Ext.define('Ext.ux.upload.uploader.FormDataUploader', {
 
     /**
      * @protected
-     *
+     * 
      * A placeholder for the abort procedure.
      */
     abortXhr : function() {
@@ -371,7 +375,7 @@ Ext.define('Ext.ux.upload.uploader.FormDataUploader', {
 
 /**
  * Uploader implementation - with the Connection object in ExtJS 4
- *
+ * 
  */
 Ext.define('Ext.ux.upload.uploader.ExtJsUploader', {
     extend : 'Ext.ux.upload.uploader.AbstractXhrUploader',
@@ -383,14 +387,14 @@ Ext.define('Ext.ux.upload.uploader.ExtJsUploader', {
     config : {
         /**
          * @cfg {String} [method='PUT']
-         *
+         * 
          * The HTTP method to be used.
          */
         method : 'PUT',
 
         /**
          * @cfg {Ext.data.Connection}
-         *
+         * 
          * If set, this connection object will be used when uploading files.
          */
         connection : null
@@ -399,16 +403,16 @@ Ext.define('Ext.ux.upload.uploader.ExtJsUploader', {
     /**
      * @property
      * @private
-     *
+     * 
      * The connection object.
      */
     conn : null,
 
     /**
      * @private
-     *
+     * 
      * Initializes and returns the connection object.
-     *
+     * 
      * @return {Ext.ux.upload.data.Connection}
      */
     initConnection : function() {
@@ -451,7 +455,7 @@ Ext.define('Ext.ux.upload.uploader.ExtJsUploader', {
 
     /**
      * Implements {@link Ext.ux.upload.uploader.AbstractUploader#uploadItem}
-     *
+     * 
      * @param {Ext.ux.upload.Item} item
      */
     uploadItem : function(item) {
@@ -494,7 +498,7 @@ Ext.define('Ext.ux.upload.uploader.ExtJsUploader', {
     abortUpload : function() {
         if (this.conn) {
         	/*
-        	 * If we don't suspend the events, the connection abortion will cause a failure event.
+        	 * If we don't suspend the events, the connection abortion will cause a failure event. 
         	 */
         	this.suspendEvents();
             this.conn.abort();
@@ -506,7 +510,7 @@ Ext.define('Ext.ux.upload.uploader.ExtJsUploader', {
 
 /**
  * Uploader implementation - with the Connection object in ExtJS 4
- *
+ * 
  */
 Ext.define('Ext.ux.upload.uploader.ExtJsUploader', {
     extend : 'Ext.ux.upload.uploader.AbstractUploader',
@@ -517,16 +521,16 @@ Ext.define('Ext.ux.upload.uploader.ExtJsUploader', {
 
     /**
      * @property
-     *
+     * 
      * The connection object.
      */
     conn : null,
 
     /**
      * @private
-     *
+     * 
      * Initializes and returns the connection object.
-     *
+     * 
      * @return {Ext.ux.upload.data.Connection}
      */
     initConnection : function() {
@@ -551,11 +555,12 @@ Ext.define('Ext.ux.upload.uploader.ExtJsUploader', {
 
     /**
      * Implements {@link Ext.ux.upload.uploader.AbstractUploader#uploadItem}
-     *
+     * 
      * @param {Ext.ux.upload.Item} item
      */
     uploadItem : function(item) {
         var file = item.getFileApiObject();
+
         if (!file) {
             return;
         }
@@ -709,7 +714,7 @@ Ext.define('Ext.ux.upload.Store', {
 
 /**
  * The grid displaying the list of uploaded files (queue).
- *
+ * 
  * @class Ext.ux.upload.ItemGridPanel
  * @extends Ext.grid.Panel
  */
@@ -817,7 +822,7 @@ Ext.define('Ext.ux.upload.ItemGridPanel', {
 
     /**
      * Loads the internal store with the supplied queue items.
-     *
+     * 
      * @param {Array} items
      */
     loadQueueItems : function(items) {
@@ -919,7 +924,7 @@ Ext.define('Ext.ux.upload.ItemGridPanel', {
 
 /**
  * The object is responsible for uploading the queue.
- *
+ * 
  */
 Ext.define('Ext.ux.upload.Manager', {
     mixins : {
@@ -941,10 +946,55 @@ Ext.define('Ext.ux.upload.Manager', {
 
     constructor : function(config) {
         this.mixins.observable.constructor.call(this);
+/*
+        this.addEvents({
+            'beforeupload' : true,
 
+            /**
+             * @event
+             * 
+             * Fired when the upload completes.
+             * 
+             * @param {Ext.ux.upload.Manager} manager
+             * @param {Ext.ux.upload.Queue} queue
+             * @param {number} errorCount 
+             */
+           // 'uploadcomplete' : true,
 
+            /**
+             * @event
+             * 
+             * Fired after the upload has been aborted.
+             * 
+             * @param {Ext.ux.upload.Manager} manager
+             * @param {Ext.ux.upload.Queue} queue
+             */
+            //'abortupload' : true,
 
-        //this.initConfig(config);
+            /**
+             * @event
+             * 
+             * Fired after a single item has been uploaded successfully.
+             * 
+             * @param {Ext.ux.upload.Manager} manager
+             * @param {Ext.ux.upload.Item} item
+             * @param {Object} info
+             */
+            //'itemuploadsuccess' : true,
+
+            /**
+            * @event
+            * 
+            * Fired after an error has occurred while uploading an item.
+            * 
+            * @param {Ext.ux.upload.Manager} manager
+            * @param {Ext.ux.upload.Item} item
+            * @param {Object} info
+            */
+            //'itemuploadfailure' : true
+       // });
+
+       // this.initConfig(config);
 
         if (!(this.uploader instanceof Ext.ux.upload.uploader.AbstractUploader)) {
             var uploaderClass = this.DEFAULT_UPLOADER_CLASS;
@@ -1076,7 +1126,7 @@ Ext.define('Ext.ux.upload.Manager', {
 
 /**
  * Upload status bar.
- *
+ * 
  * @class Ext.ux.upload.StatusBar
  * @extends Ext.toolbar.Toolbar
  */
@@ -1126,7 +1176,7 @@ Ext.define('Ext.ux.upload.StatusBar', {
 
 /**
  * A "browse" button for selecting multiple files for upload.
- *
+ * 
  */
 Ext.define('Ext.ux.upload.BrowseButton', {
     extend : 'Ext.form.field.File',
@@ -1138,6 +1188,10 @@ Ext.define('Ext.ux.upload.BrowseButton', {
 
     initComponent : function() {
 
+        /*this.addEvents({
+            'fileselected' : true
+        });*/
+
         Ext.apply(this, {
             buttonConfig : {
                 iconCls : this.iconCls,
@@ -1146,17 +1200,6 @@ Ext.define('Ext.ux.upload.BrowseButton', {
         });
 
         this.on('afterrender', function() {
-            /*
-             * Fixing the issue when adding an icon to the button - the text does not render properly. OBSOLETE - from
-             * ExtJS v4.1 the internal implementation has changed, there is no button object anymore.
-             */
-        	/*
-            if (this.iconCls) {
-                // this.button.removeCls('x-btn-icon');
-                // var width = this.button.getWidth();
-                // this.setWidth(width);
-            }
-            */
 
             // Allow picking multiple files at once.
             this.setMultipleInputAttribute();
@@ -1164,7 +1207,11 @@ Ext.define('Ext.ux.upload.BrowseButton', {
         }, this);
 
         this.on('change', function(field, value, options) {
+			console.log(field);
+			console.log(this.fileInputEl.dom);
             var files = this.fileInputEl.dom.files;
+			console.log(files);
+			
             if (files) {
                 this.fireEvent('fileselected', this, files);
             }
@@ -1183,20 +1230,13 @@ Ext.define('Ext.ux.upload.BrowseButton', {
         inputEl.dom.setAttribute('multiple', '1');
     }
 
-    // OBSOLETE - the method is not used by the superclass anymore
-    /*
-    createFileInput : function() {
-        this.callParent(arguments);
-        this.fileInputEl.dom.setAttribute('multiple', '1');
-    }
-    */
 
 }
 );
 
 /**
  * A single item designated for upload.
- *
+ * 
  * It is a simple object wrapping the native file API object.
  */
 Ext.define('Ext.ux.upload.Item', {
@@ -1215,14 +1255,14 @@ Ext.define('Ext.ux.upload.Item', {
     config : {
         /**
          * @cfg {Object} fileApiObject (required)
-         *
+         * 
          * A native file API object
          */
         fileApiObject : null,
 
         /**
          * @cfg {String}
-         *
+         * 
          * The upload error message associated with this file object
          */
         uploadErrorMessage : ''
@@ -1231,9 +1271,15 @@ Ext.define('Ext.ux.upload.Item', {
     constructor : function(config) {
         this.mixins.observable.constructor.call(this);
 
-        //this.initConfig(config);
+        /*this.addEvents({
+            changestatus : true,
+            progressupdate : true
+        });*/
+
+        this.initConfig(config);
 
         Ext.apply(this, {
+			fileApiObject: config.fileApiObject,
             status : this.STATUS_READY,
             progress : 0
         });
@@ -1358,7 +1404,7 @@ Ext.define('Ext.ux.upload.Item', {
 
 /**
  * Data structure managing the upload file queue.
- *
+ * 
  */
 Ext.define('Ext.ux.upload.Queue', {
     extend : 'Ext.util.MixedCollection',
@@ -1369,12 +1415,20 @@ Ext.define('Ext.ux.upload.Queue', {
 
     /**
      * Constructor.
-     *
+     * 
      * @param {Object} config
      */
     constructor : function(config) {
 
         this.callParent(arguments);
+
+       /*this.addEvents({
+            multiadd : true,
+            multiremove : true,
+            queuechange : true,
+            itemchangestatus : true,
+            itemprogressupdate : true
+        });*/
 
         this.on('clear', function() {
             this.fireEvent('queuechange', this);
@@ -1384,7 +1438,7 @@ Ext.define('Ext.ux.upload.Queue', {
 
     /**
      * Adds files to the queue.
-     *
+     * 
      * @param {FileList} fileList
      */
     addFiles : function(fileList) {
@@ -1397,7 +1451,7 @@ Ext.define('Ext.ux.upload.Queue', {
         }
 
         for (i = 0; i < num; i++) {
-            items.push(this.createItem(fileList[i]));
+            items.push(this.createItem(fileList[i]));		
         }
 
         this.addAll(items);
@@ -1419,7 +1473,7 @@ Ext.define('Ext.ux.upload.Queue', {
 
     /**
      * Returns all queued items.
-     *
+     * 
      * @return {Ext.ux.upload.Item[]}
      */
     getItems : function() {
@@ -1428,7 +1482,7 @@ Ext.define('Ext.ux.upload.Queue', {
 
     /**
      * Returns an array of items by the specified status.
-     *
+     * 
      * @param {String/Array}
      * @return {Ext.ux.upload.Item[]}
      */
@@ -1446,7 +1500,7 @@ Ext.define('Ext.ux.upload.Queue', {
 
     /**
      * Returns an array of items, that have already been uploaded.
-     *
+     * 
      * @return {Ext.ux.upload.Item[]}
      */
     getUploadedItems : function() {
@@ -1455,7 +1509,7 @@ Ext.define('Ext.ux.upload.Queue', {
 
     /**
      * Returns an array of items, that have not been uploaded yet.
-     *
+     * 
      * @return {Ext.ux.upload.Item[]}
      */
     getUploadingItems : function() {
@@ -1466,7 +1520,7 @@ Ext.define('Ext.ux.upload.Queue', {
 
     /**
      * Returns true, if there are items, that are currently being uploaded.
-     *
+     * 
      * @return {Boolean}
      */
     existUploadingItems : function() {
@@ -1475,7 +1529,7 @@ Ext.define('Ext.ux.upload.Queue', {
 
     /**
      * Returns the first "ready" item in the queue (with status STATUS_READY).
-     *
+     * 
      * @return {Ext.ux.upload.Item/null}
      */
     getFirstReadyItem : function() {
@@ -1508,7 +1562,7 @@ Ext.define('Ext.ux.upload.Queue', {
 
     /**
      * Removes items from the queue.
-     *
+     * 
      * @param {Ext.ux.upload.Item[]} items
      */
     removeItems : function(items) {
@@ -1528,7 +1582,7 @@ Ext.define('Ext.ux.upload.Queue', {
 
     /**
      * Removes the items identified by the supplied array of keys.
-     *
+     * 
      * @param {Array} itemKeys
      */
     removeItemsByKey : function(itemKeys) {
@@ -1549,7 +1603,7 @@ Ext.define('Ext.ux.upload.Queue', {
 
     /**
      * Removes a single item by its key.
-     *
+     * 
      * @param {String} key
      */
     removeItemByKey : function(key) {
@@ -1569,9 +1623,9 @@ Ext.define('Ext.ux.upload.Queue', {
 
     /**
      * @private
-     *
+     * 
      * Initialize and return a new queue item for the corresponding File object.
-     *
+     * 
      * @param {File} file
      * @return {Ext.ux.upload.Item}
      */
@@ -1580,7 +1634,11 @@ Ext.define('Ext.ux.upload.Queue', {
         var item = Ext.create('Ext.ux.upload.Item', {
             fileApiObject : file
         });
-
+		
+		console.log('-------');
+		console.log(item);
+		console.log('-------');
+		
         item.on('changestatus', this.onItemChangeStatus, this);
         item.on('progressupdate', this.onItemProgressUpdate, this);
 
@@ -1589,7 +1647,7 @@ Ext.define('Ext.ux.upload.Queue', {
 
     /**
      * A getKey() implementation to determine the key of an item in the collection.
-     *
+     * 
      * @param {Ext.ux.upload.Item} item
      * @return {String}
      */
@@ -1607,7 +1665,7 @@ Ext.define('Ext.ux.upload.Queue', {
 
     /**
      * Returns true, if the item is the last item in the queue.
-     *
+     * 
      * @param {Ext.ux.upload.Item} item
      * @return {boolean}
      */
@@ -1622,7 +1680,7 @@ Ext.define('Ext.ux.upload.Queue', {
 
     /**
      * Returns total bytes of all files in the queue.
-     *
+     * 
      * @return {number}
      */
     getTotalBytes : function() {
@@ -1654,19 +1712,19 @@ Ext.define('Ext.ux.upload.Queue', {
 
 /**
  * The main upload panel, which ties all the functionality together.
- *
+ * 
  * In the most basic case you need just to set the upload URL:
- *
+ * 
  *     @example
  *     var uploadPanel = Ext.create('Ext.ux.upload.Panel', {
  *         uploaderOptions: {
  *             url: '/api/upload'
  *         }
  *     });
- *
+ *     
  * It uses the default ExtJsUploader to perform the actual upload. If you want to use another uploade, for
  * example the FormDataUploader, you can pass the name of the class:
- *
+ * 
  *     @example
  *     var uploadPanel = Ext.create('Ext.ux.upload.Panel', {
  *         uploader: 'Ext.ux.upload.uploader.FormDataUploader',
@@ -1675,18 +1733,18 @@ Ext.define('Ext.ux.upload.Queue', {
  *             timeout: 120*1000
  *         }
  *     });
- *
+ *     
  * Or event an instance of the uploader:
- *
+ * 
  *     @example
  *     var formDataUploader = Ext.create('Ext.ux.upload.uploader.FormDataUploader', {
  *         url: '/api/upload'
  *     });
- *
+ *     
  *     var uploadPanel = Ext.create('Ext.ux.upload.Panel', {
  *         uploader: formDataUploader
  *     });
- *
+ * 
  */
 Ext.define('Ext.ux.upload.Panel', {
     extend : 'Ext.panel.Panel',
@@ -1703,7 +1761,7 @@ Ext.define('Ext.ux.upload.Panel', {
 
         /**
          * @cfg {Object/String}
-         *
+         * 
          * The name of the uploader class or the uploader object itself. If not set, the default uploader will
          * be used.
          */
@@ -1711,7 +1769,7 @@ Ext.define('Ext.ux.upload.Panel', {
 
         /**
          * @cfg {Object}
-         *
+         * 
          * Configuration object for the uploader. Configuration options included in this object override the
          * options 'uploadUrl', 'uploadParams', 'uploadExtraHeaders', 'uploadTimeout'.
          */
@@ -1719,21 +1777,21 @@ Ext.define('Ext.ux.upload.Panel', {
 
         /**
          * @cfg {boolean} [synchronous=false]
-         *
+         * 
          * If true, all files are uploaded in a sequence, otherwise files are uploaded simultaneously (asynchronously).
          */
         synchronous : true,
 
         /**
          * @cfg {String} uploadUrl
-         *
+         * 
          * The URL to upload files to. Not required if configured uploader instance is passed to this panel.
          */
         uploadUrl : '',
 
         /**
          * @cfg {Object}
-         *
+         * 
          * Params passed to the uploader object and sent along with the request. It depends on the implementation of the
          * uploader object, for example if the {@link Ext.ux.upload.uploader.ExtJsUploader} is used, the params are sent
          * as GET params.
@@ -1742,21 +1800,21 @@ Ext.define('Ext.ux.upload.Panel', {
 
         /**
          * @cfg {Object}
-         *
+         * 
          * Extra HTTP headers to be added to the HTTP request uploading the file.
          */
         uploadExtraHeaders : {},
 
         /**
          * @cfg {Number} [uploadTimeout=6000]
-         *
+         * 
          * The time after the upload request times out - in miliseconds.
          */
         uploadTimeout : 60000,
 
         /**
          * @cfg {Object/String}
-         *
+         * 
          * Encoder object/class used to encode the filename header. Usually used, when the filename
          * contains non-ASCII characters. If an encoder is used, the server backend has to be
          * modified accordingly to decode the value.
@@ -1820,7 +1878,7 @@ Ext.define('Ext.ux.upload.Panel', {
      * Constructor.
      */
     constructor : function(config) {
-        //this.initConfig(config);
+        // this.initConfig(config);
         return this.callParent(arguments);
     },
 
@@ -1829,8 +1887,13 @@ Ext.define('Ext.ux.upload.Panel', {
      */
     initComponent : function() {
 		this.uploader = 'Ext.ux.upload.uploader.FormDataUploader';
+  /*      this.addEvents({
 
-
+            'uploadcomplete' : true,
+			'itemuploadsuccess': true,
+			'itemuploadfailure': true
+        });
+*/
         this.queue = this.initQueue();
 
         this.grid = Ext.create('Ext.ux.upload.ItemGridPanel', {
@@ -1843,7 +1906,7 @@ Ext.define('Ext.ux.upload.Panel', {
         });
 
         this.uploadManager = this.createUploadManager();
-
+		
         this.uploadManager.on('uploadcomplete', this.onUploadComplete, this);
         this.uploadManager.on('itemuploadsuccess', this.onItemUploadSuccess, this);
         this.uploadManager.on('itemuploadfailure', this.onItemUploadFailure, this);
@@ -1890,15 +1953,15 @@ Ext.define('Ext.ux.upload.Panel', {
             synchronous : this.getSynchronous(),
             filenameEncoder : this.getFilenameEncoder()
         });
-
+		
         return uploadManager;
     },
 
     /**
      * @private
-     *
+     * 
      * Returns the config object for the top toolbar.
-     *
+     * 
      * @return {Array}
      */
     getTopToolbarConfig : function() {
@@ -1954,9 +2017,9 @@ Ext.define('Ext.ux.upload.Panel', {
 
     /**
      * @private
-     *
+     * 
      * Initializes and returns the queue object.
-     *
+     * 
      * @return {Ext.ux.upload.Queue}
      */
     initQueue : function() {
@@ -1995,14 +2058,17 @@ Ext.define('Ext.ux.upload.Panel', {
 
     /**
      * @private
-     *
+     * 
      * Executes after files has been selected for upload through the "Browse" button. Updates the upload queue with the
      * new files.
-     *
+     * 
      * @param {Ext.ux.upload.BrowseButton} input
      * @param {FileList} files
      */
     onFileSelection : function(input, files) {
+		alert('x');
+		console.log(files);
+		return;
         this.queue.clearUploadedItems();
         this.queue.addFiles(files);
         this.browseButton.reset();
@@ -2010,9 +2076,9 @@ Ext.define('Ext.ux.upload.Panel', {
 
     /**
      * @private
-     *
+     * 
      * Executes if there is a change in the queue. Updates the related components (grid, toolbar).
-     *
+     * 
      * @param {Ext.ux.upload.Queue} queue
      */
     onQueueChange : function(queue) {
@@ -2023,7 +2089,7 @@ Ext.define('Ext.ux.upload.Panel', {
 
     /**
      * @private
-     *
+     * 
      * Executes upon hitting the "multiple remove" button. Removes all selected items from the queue.
      */
     onMultipleRemove : function() {
@@ -2157,17 +2223,17 @@ DIALOG
 
 /**
  * The main upload dialog.
- *
+ * 
  * Mostly, this will be the only object you need to interact with. Just initialize it and show it:
- *
+ * 
  *      @example
  *      var dialog = Ext.create('Ext.ux.upload.Dialog', {
  *          dialogTitle: 'My Upload Widget',
  *          uploadUrl: 'upload.php'
  *      });
- *
+ * 
  *      dialog.show();
- *
+ * 
  */
 Ext.define('Ext.ux.upload.Dialog', {
     extend : 'Ext.window.Window',
@@ -2193,28 +2259,28 @@ Ext.define('Ext.ux.upload.Dialog', {
     config : {
         /**
          * @cfg {String}
-         *
+         * 
          * The title of the dialog.
          */
         dialogTitle : '',
 
         /**
          * @cfg {boolean} [synchronous=false]
-         *
+         * 
          * If true, all files are uploaded in a sequence, otherwise files are uploaded simultaneously (asynchronously).
          */
         synchronous : true,
 
         /**
          * @cfg {String} uploadUrl (required)
-         *
+         * 
          * The URL to upload files to.
          */
         uploadUrl : '',
 
         /**
          * @cfg {Object}
-         *
+         * 
          * Params passed to the uploader object and sent along with the request. It depends on the implementation of the
          * uploader object, for example if the {@link Ext.ux.upload.uploader.ExtJsUploader} is used, the params are sent
          * as GET params.
@@ -2223,14 +2289,14 @@ Ext.define('Ext.ux.upload.Dialog', {
 
         /**
          * @cfg {Object}
-         *
+         * 
          * Extra HTTP headers to be added to the HTTP request uploading the file.
          */
         uploadExtraHeaders : {},
 
         /**
          * @cfg {Number} [uploadTimeout=6000]
-         *
+         * 
          * The time after the upload request times out - in miliseconds.
          */
         uploadTimeout : 60000,
@@ -2257,8 +2323,8 @@ Ext.define('Ext.ux.upload.Dialog', {
 
         // browse button
         buttonText : 'Parcourir...'
-
-
+		
+	
     },
 
     /**
@@ -2290,7 +2356,7 @@ Ext.define('Ext.ux.upload.Dialog', {
      * Constructor.
      */
     constructor : function(config) {
-        //this.initConfig(config);
+       // this.initConfig(config);
 
         return this.callParent(arguments);
     },
@@ -2300,8 +2366,13 @@ Ext.define('Ext.ux.upload.Dialog', {
      */
     initComponent : function() {
 
+/*        this.addEvents({
 
-
+            'uploadcomplete' : true,
+			'itemuploadsuccess': true,
+			'itemuploadfailure': true
+        });
+*/
         this.queue = this.initQueue();
 
         this.grid = Ext.create('Ext.ux.upload.ItemGridPanel', {
@@ -2373,10 +2444,10 @@ Ext.define('Ext.ux.upload.Dialog', {
     },
 
     /**
-     * @private
-     *
+     * @private 
+     * 
      * Returns the config object for the top toolbar.
-     *
+     * 
      * @return {Array}
      */
     getTopToolbarConfig : function() {
@@ -2431,9 +2502,9 @@ Ext.define('Ext.ux.upload.Dialog', {
 
     /**
      * @private
-     *
+     * 
      * Initializes and returns the queue object.
-     *
+     * 
      * @return {Ext.ux.upload.Queue}
      */
     initQueue : function() {
@@ -2467,24 +2538,27 @@ Ext.define('Ext.ux.upload.Dialog', {
 
     /**
      * @private
-     *
+     * 
      * Executes after files has been selected for upload through the "Browse" button. Updates the upload queue with the
      * new files.
-     *
+     * 
      * @param {Ext.ux.upload.BrowseButton} input
      * @param {FileList} files
      */
     onFileSelection : function(input, files) {
-        this.queue.clearUploadedItems();
+		console.log(files);
+		this.queue.clearUploadedItems();
+
         this.queue.addFiles(files);
+				        return;		
         this.browseButton.reset();
     },
 
     /**
      * @private
-     *
+     * 
      * Executes if there is a change in the queue. Updates the related components (grid, toolbar).
-     *
+     * 
      * @param {Ext.ux.upload.Queue} queue
      */
     onQueueChange : function(queue) {
@@ -2495,7 +2569,7 @@ Ext.define('Ext.ux.upload.Dialog', {
 
     /**
      * @private
-     *
+     * 
      * Executes upon hitting the "multiple remove" button. Removes all selected items from the queue.
      */
     onMultipleRemove : function() {
@@ -2620,7 +2694,7 @@ Ext.define('Ext.ux.upload.Dialog', {
  * Ext.ux.upload.FileManager
  *
  */
-
+ 
 Ext.define('Ext.ux.upload.FileManager', {
     extend : 'Ext.panel.Panel',
 	alias: 'widget.uploadfilemanager',
@@ -2646,7 +2720,7 @@ Ext.define('Ext.ux.upload.FileManager', {
 			{
 				xtype: "button",
 				iconAlign: "left",
-				iconCls: "upload_attach",
+				iconCls: "upload_attach",							
 				text: 'Joindre un document',
 				handler: function() {
 					var dialog = Ext.create('Ext.ux.upload.Dialog', {
@@ -2663,14 +2737,14 @@ Ext.define('Ext.ux.upload.FileManager', {
 								filename: items[i].message.split('|')[1],
 								filetype: items[i].message.split('|')[2],
 								filesize: items[i].message.split('|')[3]
-							});
+							});							
 						};
 						_p.items.items[0].getView().refresh();
                         if (!errorCount) {
 							dialog.close();
 						}
                     }, this);
-					dialog.show();
+					dialog.show();				
 				}
 			},
 			'->', {
@@ -2680,7 +2754,7 @@ Ext.define('Ext.ux.upload.FileManager', {
 				text: 'Supprimer',
 				handler: function(p) {
 					try {
-						_p.items.items[0].getStore().remove(_p.items.items[0].getSelectionModel().getSelection());
+						_p.items.items[0].getStore().remove(_p.items.items[0].getSelectionModel().getSelection());	
 					}catch(e) {	};
 				}
 			}
@@ -2727,7 +2801,7 @@ Ext.define('Ext.ux.upload.FileManager', {
 							items: [{
 								text: 'Supprimer',
 								handler: function() {
-									view.getStore().remove(record);
+									view.getStore().remove(record);									
 								}
 							}]
 						});
@@ -2737,7 +2811,7 @@ Ext.define('Ext.ux.upload.FileManager', {
 			}
 		];
 		this.clear=function() {
-
+		
 		};
 		this.getFiles=function() {
 			var dta=_p.items.items[0].getStore().data.items;
@@ -2755,7 +2829,9 @@ Ext.define('Ext.ux.upload.FileManager', {
 			else _p.getDockedItems()[0].show();
 			this.readOnly=b;
 		};
-
+	    /*this.addEvents({
+            itemdblclick : true
+        });*/
 		this.callParent(arguments);
-	}
+	}	
 });
