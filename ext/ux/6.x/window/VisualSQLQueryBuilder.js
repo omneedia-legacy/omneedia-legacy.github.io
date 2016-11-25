@@ -2046,7 +2046,7 @@ Ext.define('Ext.ux.window.visualsqlquerybuilder.SQLTableTree', {
             },
             proxy: {
                 type: 'ajax',
-                url: 'data/database.cfc?method=getTables'
+                url: 'data/database/getTables'
             }
         });
         
@@ -2756,7 +2756,7 @@ Ext.define('Ext.ux.window.visualsqlquerybuilder.SQLTable', {
             }],
             proxy: {
                 type: 'ajax',
-                url: 'data/database.cfc?method=getTableInfo',
+                url: 'data/database/getTableInfo',
                 extraParams: {
                     tablename: this.title
                 },
