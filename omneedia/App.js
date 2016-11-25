@@ -4256,6 +4256,7 @@ Ext.define("omneedia.App", {
 			if (obj instanceof Ext.Component) {
 				var all = getAllChildren(obj);
 				var witness = 0;
+
 				for (var i = 0; i < all.length; i++) {
 					if (all[i].bindTo) {
 						if (all[i].getValue) {
@@ -4333,6 +4334,7 @@ Ext.define("omneedia.App", {
 		, STOREMODELS: {
 			'tree': {
 				name: "treestore",
+				model: "Ext.data.TreeModel",
 				store: "Ext.data.TreeStore"
 			},
 			'events': {
@@ -4500,104 +4502,6 @@ Ext.define("omneedia.App", {
 		, override: function (name, o) {
 			return Ext.define(APP_NAMESPACE + '.overrides.' + name, o);
 		}
-		/*
-		!!!!!!!!!!!!!! OBSOLETE
-		
-		, treestore: {
-			define: function (name, o) {
-				o.extend = "Ext.data.TreeStore";
-				if (o.config) {
-					if (o.config.model) o.config.model = APP_NAMESPACE + ".model." + o.config.model;
-					if (o.requires) {
-						for (var i = 0; i < o.requires.length; i++) {
-							o.requires[i] = APP_NAMESPACE + ".model." + o.requires[i];
-							o.config.model = o.requires[i];
-						}
-					}
-				} else {
-					if (o.model) {
-						if (!o.requires) o.requires = [];
-						o.requires[0] = o.model;
-						o.model = APP_NAMESPACE + ".model." + o.model;
-					};
-					if (o.requires) {
-						for (var i = 0; i < o.requires.length; i++) {
-							o.requires[i] = APP_NAMESPACE + ".model." + o.requires[i];
-							o.model = o.requires[i];
-						}
-					}
-				}
-				return Ext.define(APP_NAMESPACE + ".store." + name, o);
-			}
-			, get: function (name) {
-				eval('var _p=' + APP_NAMESPACE + ".store." + name);
-				return _p;
-			}
-			, create: function (name, cfg) {
-				function _guid() {
-					return ("M" + (Math.random() * Math.pow(36, 4) << 0).toString(36)).slice(-4)
-				};
-				var guid = _guid();
-				if (name instanceof Object == true) {
-					var cfg = {};
-					cfg = name;
-				} else {
-					if (!cfg) var cfg = {};
-					if (name.indexOf('://') > -1) {
-						if ((Settings.TYPE == "mobile") && (Ext.getVersion().major < 5))
-							App.model.define(guid, {
-								config: {
-									api: {
-										read: "App.__QUERY__.exec"
-									}
-									, extraParams: {
-										__SQL__: name
-									}
-								}
-							});
-						else
-							App.model.define(guid, {
-								api: {
-									read: "App.__QUERY__.exec"
-								}
-								, extraParams: {
-									__SQL__: name
-								}
-							});
-
-						cfg.model = APP_NAMESPACE + ".model." + guid;
-						cfg.require = [];
-						cfg.require[0] = APP_NAMESPACE + ".model." + guid;
-					} else {
-						if (name.indexOf('.') > -1) {
-							if (Settings.TYPE == "mobile")
-								cfg.proxy = {
-									type: 'direct'
-									, directFn: name
-								};
-							else cfg.proxy = {
-								type: 'direct'
-								, directFn: name
-							};
-						} else {
-							cfg.model = APP_NAMESPACE + ".model." + name;
-							cfg.require = [];
-							cfg.require[0] = APP_NAMESPACE + ".model." + name;
-						}
-					};
-				};
-				try {
-					var myStore = Ext.create("Ext.data.TreeStore", cfg);
-					if (!myStore.getProxy().extraParams) myStore.getProxy().extraParams = {};
-					myStore.getProxy().extraParams.__SQL__ = name;
-				} catch (e) {
-					console.log(e);
-				};
-				return myStore;
-			}
-		}
-		
-		*/
 		, store: {
 			createColumns: function (grid, cb) {
 				var store = grid.getStore();
