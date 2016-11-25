@@ -1020,7 +1020,7 @@ typeof exports != "undefined" && (exports.SyntaxHighlighter = SyntaxHighlighter)
  */
 
 Ext.define('Ext.ux.window.visualsqlquerybuilder.SQLTableSprite', {
-    extend: 'Ext.draw.Sprite',
+    extend: 'Ext.draw.sprite.Sprite',
     alias: ['widget.sqltablesprite'],
     bConnections: false,
     startDrag: function(id){
@@ -2669,7 +2669,7 @@ Ext.define('Ext.ux.window.visualsqlquerybuilder.SQLTable', {
         else {
             // new connction, return new connection object
             return {
-                line: Ext.create('Ext.draw.Sprite', {
+                line: Ext.create('Ext.draw.sprite.Sprite', {
                     type: 'path',
                     path: path,
                     stroke: color,
@@ -2677,7 +2677,7 @@ Ext.define('Ext.ux.window.visualsqlquerybuilder.SQLTable', {
                     'stroke-width': 1,
                     surface: surface
                 }).show(true),
-                miniLine1: Ext.create('Ext.draw.Sprite', {
+                miniLine1: Ext.create('Ext.draw.sprite.Sprite', {
                     type: 'path',
                     path: miniLine1,
                     stroke: color,
@@ -2685,7 +2685,7 @@ Ext.define('Ext.ux.window.visualsqlquerybuilder.SQLTable', {
                     'stroke-width': 2,
                     surface: surface
                 }).show(true),
-                miniLine2: Ext.create('Ext.draw.Sprite', {
+                miniLine2: Ext.create('Ext.draw.sprite.Sprite', {
                     type: 'path',
                     path: miniLine2,
                     stroke: color,
@@ -2693,7 +2693,7 @@ Ext.define('Ext.ux.window.visualsqlquerybuilder.SQLTable', {
                     'stroke-width': 2,
                     surface: surface
                 }).show(true),
-                bgLine: Ext.create('Ext.draw.Sprite', {
+                bgLine: Ext.create('Ext.draw.sprite.Sprite', {
                     type: 'path',
                     path: path,
                     opacity: 0,

@@ -22,7 +22,7 @@
  */
 Ext.define('Ext.draw.Draw', {
     singleton: true,
-
+	
     radian: Math.PI / 180,
     pi2: Math.PI * 2,
 
