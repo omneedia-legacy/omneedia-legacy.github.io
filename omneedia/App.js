@@ -1172,6 +1172,7 @@ if (Settings.DEBUG) {
 				}
 			}
 		});
+		document.socket.emit('#STATUS', 'ONLINE');
 		App.IO = omneedia.IO;	
 	};
 	try {
