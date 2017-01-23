@@ -4660,10 +4660,10 @@ Ext.define("omneedia.App", {
 						}
 					}
 				};
+				var myStore = Ext.create(xtd.store, cfg);
 				try {
-					console.log(xtd.store);
-					console.log(cfg);
-					var myStore = Ext.create(xtd.store, cfg);
+					/*console.log(xtd.store);
+					console.log(cfg);*/
 					if (!myStore.getProxy().extraParams) myStore.getProxy().extraParams = {};
 					myStore.getProxy().extraParams.__SQL__ = name;
 				} catch (e) {
