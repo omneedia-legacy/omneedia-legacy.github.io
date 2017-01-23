@@ -4661,6 +4661,8 @@ Ext.define("omneedia.App", {
 					}
 				};
 				try {
+					console.log(xtd.store);
+					console.log(cfg);
 					var myStore = Ext.create(xtd.store, cfg);
 					if (!myStore.getProxy().extraParams) myStore.getProxy().extraParams = {};
 					myStore.getProxy().extraParams.__SQL__ = name;
