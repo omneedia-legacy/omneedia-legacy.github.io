@@ -3543,6 +3543,30 @@
 	background-color            : #178DE8;
 }
 
+.button_passport.github
+{
+	background-color            : #cce6ff;
+	color                       : black;
+	background-image            : url(webapp/github.png);
+}
+
+.button_passport.github:hover
+{
+	background-color            : lightcyan;
+}
+
+.button_passport.gitlab
+{
+	background-color            : #ffffff;
+	color                       : black;
+	background-image            : url(webapp/cerema.png);
+}
+
+.button_passport.gitlab:hover
+{
+	background-color            : beige;
+}
+
 .button_passport.facebook
 {
 	background-color            : #4963A4;

@@ -1108,6 +1108,7 @@ Math.uuid = function () {
 
 if (Settings.DEBUG) {
 	var io_start=function(io) {
+
 		document.socket = io.connect(Settings.REMOTE_API);
 		
 		document.socket.on('connect', function () {
@@ -1172,7 +1173,7 @@ if (Settings.DEBUG) {
 				}
 			}
 		});
-		document.socket.emit('#STATUS', 'ONLINE');
+		
 		App.IO = omneedia.IO;	
 	};
 	try {
@@ -4660,7 +4661,6 @@ Ext.define("omneedia.App", {
 						}
 					}
 				};
-				
 				try {
 					/*console.log(xtd.store);
 					console.log(cfg);*/

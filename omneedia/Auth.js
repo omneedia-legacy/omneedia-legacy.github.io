@@ -80,7 +80,7 @@ Ext.define("omneedia.Auth", {
 			$('.CSignOn').hide();
 			
 			if (Settings.REMOTE_AUTH)
-			var win = window.open(Settings.REMOTE_AUTH+"/auth/cas", "_blank","location=no");
+			var win = window.open(Settings.REMOTE_AUTH+"/auth/twitter", "_blank","location=no");
 			else {
 				var win = window.open("/auth/twitter", "_blank");
 				win.focus();
@@ -89,6 +89,126 @@ Ext.define("omneedia.Auth", {
 			
 			},1000);		
 		});
+		// gitlab
+		$('.button_passport.gitlab').click(function() {
+			
+			$('.CWaitSignOn').show();
+			$('.CSignOn').hide();
+			
+			if (Settings.REMOTE_AUTH)
+			var win = window.open(Settings.REMOTE_AUTH+"/auth/gitlab", "_blank","location=no");
+			else {
+				var win = window.open("/auth/gitlab", "_blank");
+				win.focus();
+			};
+			if (document.socket) {
+			   document.socket.on('#auth',function(response) {
+					Auth.User=JSON.parse(response);
+					$('.QxOverlay').remove();
+					Auth._vague.unblur();						
+					$('.QxLoginBox').addClass('bounceOutDown');
+					window.setTimeout(function(){$('.QxLoginBox').remove();},1000);					
+					if (Settings.TYPE!="mobile") {
+				Ext.getCmp('GlobalMenuUser').setText(Auth.User.mail.split('@')[0]);
+						Ext.getCmp('GlobalMenuUser').show();
+					};
+					if (fn) fn(Auth.User);
+				});				
+			} else {
+				__INTERVAL__=window.setInterval(function(){
+					if (Settings.REMOTE_AUTH) var a_auth=Settings.REMOTE_AUTH; else var a_auth="";
+					Ext.Ajax.request({
+						url: a_auth+"/account",
+						method: "POST",
+						withCredentials: true,
+						useDefaultXhrHeader: false,	
+						params: {
+							"udid" : App.udid
+						},							
+						success: function(response,opts) {				
+							Auth.User=JSON.parse(response.responseText);
+							$('.QxOverlay').remove();
+							Auth._vague.unblur();						
+							$('.QxLoginBox').addClass('bounceOutDown');														
+							window.setTimeout(function(){$('.QxLoginBox').remove();},1000);
+
+							if (Settings.TYPE!="mobile") {
+								console.log(Auth.User);
+								Ext.getCmp('GlobalMenuUser').setText(Auth.User.mail.split('@')[0]);
+								Ext.getCmp('GlobalMenuUser').show();
+							};
+							window.clearInterval(__INTERVAL__);
+							if (fn) fn(Auth.User);				
+
+						},
+						failure: function(response,opts) {
+
+						}
+					});		
+				},1000);				
+			}
+		
+		});		
+		// github
+		$('.button_passport.github').click(function() {
+			
+			$('.CWaitSignOn').show();
+			$('.CSignOn').hide();
+			
+			if (Settings.REMOTE_AUTH)
+			var win = window.open(Settings.REMOTE_AUTH+"/auth/github", "_blank","location=no");
+			else {
+				var win = window.open("/auth/github", "_blank");
+				win.focus();
+			};
+			if (document.socket) {
+			   document.socket.on('#auth',function(response) {
+					Auth.User=JSON.parse(response);
+					$('.QxOverlay').remove();
+					Auth._vague.unblur();						
+					$('.QxLoginBox').addClass('bounceOutDown');
+					window.setTimeout(function(){$('.QxLoginBox').remove();},1000);					
+					if (Settings.TYPE!="mobile") {
+				Ext.getCmp('GlobalMenuUser').setText(Auth.User.mail.split('@')[0]);
+						Ext.getCmp('GlobalMenuUser').show();
+					};
+					if (fn) fn(Auth.User);
+				});				
+			} else {
+				__INTERVAL__=window.setInterval(function(){
+					if (Settings.REMOTE_AUTH) var a_auth=Settings.REMOTE_AUTH; else var a_auth="";
+					Ext.Ajax.request({
+						url: a_auth+"/account",
+						method: "POST",
+						withCredentials: true,
+						useDefaultXhrHeader: false,	
+						params: {
+							"udid" : App.udid
+						},							
+						success: function(response,opts) {				
+							Auth.User=JSON.parse(response.responseText);
+							$('.QxOverlay').remove();
+							Auth._vague.unblur();						
+							$('.QxLoginBox').addClass('bounceOutDown');														
+							window.setTimeout(function(){$('.QxLoginBox').remove();},1000);
+
+							if (Settings.TYPE!="mobile") {
+								console.log(Auth.User);
+								Ext.getCmp('GlobalMenuUser').setText(Auth.User.mail.split('@')[0]);
+								Ext.getCmp('GlobalMenuUser').show();
+							};
+							window.clearInterval(__INTERVAL__);
+							if (fn) fn(Auth.User);				
+
+						},
+						failure: function(response,opts) {
+
+						}
+					});		
+				},1000);				
+			}
+		
+		});		
 		// facebook
 		$('.button_passport.facebook').click(function() {
 			$('.CWaitSignOn').show();
@@ -116,8 +236,11 @@ Ext.define("omneedia.Auth", {
 			};
 			
 			if (document.socket) {
+
 			   document.socket.on('#auth',function(response) {
-					Auth.User=JSON.parse(response);
+
+				   Auth.User=JSON.parse(response);
+				   
 					$('.QxOverlay').remove();
 					Auth._vague.unblur();						
 					$('.QxLoginBox').addClass('bounceOutDown');

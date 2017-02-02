@@ -49,7 +49,7 @@
 	z-index: 9999999;
 	background-repeat:no-repeat;
 	display: none;
-	background-position:center center;	
+	background-position:center center;
 }
 .omneedia-overlay
 {
@@ -134,10 +134,10 @@
 	width:400px;
 	height:600px;
 	border:2px solid #BBBBBB;
-	background: #EEEEEE; 
+	background: #EEEEEE;
 	-webkit-border-radius: 5px;
 	-moz-border-radius: 5px;
-	border-radius: 5px;	
+	border-radius: 5px;
 }
 
 .QxLoginBox.tablet
@@ -150,10 +150,10 @@
 	width:400px;
 	height:600px;
 	border:2px solid #BBBBBB;
-	background: #EEEEEE; 
+	background: #EEEEEE;
 	-webkit-border-radius: 5px;
 	-moz-border-radius: 5px;
-	border-radius: 5px;	
+	border-radius: 5px;
 }
 
 .QxLoginBox.smartphone
@@ -166,7 +166,7 @@
 	width:100%;
 	height:100%;
 	border:2px solid #BBBBBB;
-	background: #FFFFFF; 
+	background: #FFFFFF;
 }
 
 .QxLoginBoxTitle
@@ -184,7 +184,7 @@
 	border: 1px solid #CCCCCC;
 	-webkit-border-radius: 0px;
 	-moz-border-radius: 0px;
-	border-radius: 0px;	
+	border-radius: 0px;
 	border: 0px solid black;
 }
 #qxLogin
@@ -193,7 +193,7 @@
 	padding: 10px;
 	font-family: arial;
 	font-size: 18px;
-	outline: none; 
+	outline: none;
 	border: 0px solid black;
 	border-bottom: 1px solid #DDDDDD;
 	width: 100%;
@@ -204,7 +204,7 @@
 	padding: 10px;
 	font-family: arial;
 	font-size: 18px;
-	outline: none; 
+	outline: none;
 	border: 0px solid black;
 	border-bottom: 1px solid #DDDDDD;
 	width: 100%;
@@ -232,14 +232,14 @@
 {
 	background-image:url(webapp/qxlogin.png);
 	background-repeat:no-repeat;
-	background-position:center center;	
+	background-position:center center;
 	background-size: 122px 142px;
 	border-radius: 150px;
 	-webkit-border-radius: 150px;
 	-moz-border-radius: 150px;
 	box-shadow: 0 0 8px rgba(0, 0, 0, .8);
 	-webkit-box-shadow: 0 0 8px rgba(0, 0, 0, .8);
-	-moz-box-shadow: 0 0 8px rgba(0, 0, 0, .8);	
+	-moz-box-shadow: 0 0 8px rgba(0, 0, 0, .8);
 	width: 120px;
 	height: 125px;
 }
@@ -3824,6 +3824,30 @@ body .ux-notification-light {
 	background-color            : lightcyan;
 }
 
+.button_passport.github
+{
+	background-color            : #cce6ff;
+	color                       : black;
+	background-image            : url(webapp/github.png);
+}
+
+.button_passport.github:hover
+{
+	background-color            : lightcyan;
+}
+
+.button_passport.gitlab
+{
+	background-color            : #ffffff;
+	color                       : black;
+	background-image            : url(webapp/cerema.png);
+}
+
+.button_passport.gitlab:hover
+{
+	background-color            : beige;
+}
+
 .button_passport.twitter
 {
 	background-color            : #55ACEE;
@@ -3972,8 +3996,8 @@ IOS like overlay
 .overlay_error {
 	background-image: url(webapp/cross.png);
 	background-repeat:no-repeat;
-	background-position:center center;	
-	background-size: 96px 96px;	
+	background-position:center center;
+	background-size: 96px 96px;
 	width: 100%;
 	height: 100%;
 }
@@ -3981,8 +4005,8 @@ IOS like overlay
 .overlay_check {
 	background-image: url(webapp/check.png);
 	background-repeat:no-repeat;
-	background-position:center center;	
-	background-size: 96px 96px;	
+	background-position:center center;
+	background-size: 96px 96px;
 	width: 100%;
 	height: 100%;
 }
