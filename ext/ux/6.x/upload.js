@@ -2824,6 +2824,19 @@ Ext.define('Ext.ux.upload.FileManager', {
 		this.setFiles=function(data) {
 			_p.items.items[0].getStore().loadData(data);
 		};
+		this.getValue=function() {
+			var dta=_p.items.items[0].getStore().data.items;
+			var DTA=[];
+			for (var i=0;i<dta.length;i++) {
+				DTA.push(dta[i].data);
+			};
+			_p.value=DTA;
+			return DTA;
+		};
+		this.setValue=function(data) {
+			_p.items.items[0].getStore().loadData(data);
+			_p.value=data;
+		};	    
 		this.setReadOnly=function(b) {
 			if (b) _p.getDockedItems()[0].hide();
 			else _p.getDockedItems()[0].show();
