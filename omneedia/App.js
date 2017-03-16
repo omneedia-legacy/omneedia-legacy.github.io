@@ -221,7 +221,6 @@ if (!window.location.origin)
 ////////////
 
 if (!Settings.REMOTE_API) Settings.REMOTE_API = document.location.origin;
-//if (Settings.REMOTE_API.indexOf('://')==-1) Settings.REMOTE_API=window.location.protocol+'//'+Settings.REMOTE_API;
 
 var Latinise = {};
 Latinise.latin_map = {
@@ -4102,6 +4101,31 @@ Ext.define("omneedia.App", {
     return f
 }(Date, Math, Array)
 		*/
+		, shortid: function(previous) {
+			var generate = function() {
+				var ID_LENGTH = 8;
+				var ALPHABET = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+				var rtn = '';
+				for (var i = 0; i < ID_LENGTH; i++) rtn += ALPHABET.charAt(Math.floor(Math.random() * ALPHABET.length));
+				return rtn;
+			};
+			var UNIQUE_RETRIES = 9999;
+			previous = previous || [];
+			var retries = 0;
+			var id;
+
+			// Try to generate a unique ID,
+			// i.e. one that isn't in the previous.
+			while(!id && retries < UNIQUE_RETRIES) {
+				id = generate();
+				if(previous.indexOf(id) !== -1) {
+					id = null;
+					retries++;
+				}
+			};
+
+			return id;
+		}		
 		, getArray: function(obj,field) {
 				var data=[];
 				for (var i=0;i<obj.length;i++) {
@@ -5662,6 +5686,7 @@ Init
 */
 
 App = omneedia.App;
+App.UUID=App.shortid();
 App.DB = omneedia.DB;
 
 var windowWidth = window.screen.width < window.outerWidth ?
