@@ -155,92 +155,96 @@ if (!Ext.ux.Scheduler) {
 	});
 };
 
+try {
+		var cpp=Robo;
+} catch(e) {
+	Ext.define('Robo.data.Store', {
+		extend: 'Ext.Mixin'
+		, requires: ['Ext.util.Observable']
+		, undoRedoPostponed: null
+		, inUndoRedoTransaction: false
+		, undoRedoEventBus: null
+		, mixinConfig: {
+			before: {
+				constructor: 'constructor'
+				, destroy: 'destroy'
+				, fireEventArgs: 'fireEventArgs'
+				, setRoot: 'beforeSetRoot'
+				, fillNode: 'beforeFillNode'
+			}
+			, after: {
+				setRoot: 'afterSetRoot'
+				, fillNode: 'afterFillNode'
+			}
+		}
+		, constructor: function () {
+			var _0xe517x1 = this;
+			_0xe517x1['undoRedoEventBus'] = new Ext['util'].Observable()
+		}
+		, destroy: function () {
+			Ext['destroy'](this['undoRedoEventBus'])
+		}
+		, fireEventArgs: function (_0xe517x1, _0xe517x2) {
+			var _0xe517x5 = this;
+			if (!_0xe517x2['hasOwnProperty']('$undoRedoEventBusFired')) {
+				_0xe517x2['$undoRedoEventBusFired'] = {}
+			};
+			if (!_0xe517x2['$undoRedoEventBusFired'][_0xe517x1]) {
+				_0xe517x2['$undoRedoEventBusFired'][_0xe517x1] = true;
+				_0xe517x5['undoRedoEventBus']['hasListener'](_0xe517x1) && _0xe517x5['undoRedoEventBus']['fireEventArgs'](_0xe517x1, _0xe517x2)
+			}
+		}
+		, isInUndoRedoTransaction: function () {
+			return this['inUndoRedoTransaction']
+		}
+		, onUndoRedoTransactionStart: function (_0xe517x1, _0xe517x2) {
+			this['inUndoRedoTransaction'] = true
+		}
+		, onUndoRedoTransactionEnd: function (_0xe517x1, _0xe517x2) {
+			this['inUndoRedoTransaction'] = false
+		}
+		, isUndoingOrRedoing: function () {
+			return !!this['undoRedoPostponed']
+		}
+		, beforeUndoRedo: function (_0xe517x1) {
+			this['undoRedoPostponed'] = []
+		}
+		, afterUndoRedo: function (_0xe517x1) {
+			var _0xe517x2 = this;
+			Ext['Array']['forEach'](_0xe517x2['undoRedoPostponed'], function (_0xe517x5) {
+				_0xe517x5()
+			});
+			_0xe517x2['undoRedoPostponed'] = null
+		}
+		, postponeAfterUndoRedo: function (_0xe517x1) {
+			Ext['Assert'] && Ext['Assert']['isFunction'](_0xe517x1, 'Parameter must be a function');
+			this['undoRedoPostponed']['push'](_0xe517x1)
+		}
+		, beforeSetRoot: function () {
+			this['__isSettingRoot'] = true
+		}
+		, afterSetRoot: function () {
+			this['__isSettingRoot'] = false;
+			if (!this['getRoot']()) {
+				this['fireEvent']('clear', this)
+			}
+		}
+		, beforeFillNode: function (_0xe517x1) {
+			if (_0xe517x1['isRoot']()) {
+				this['beforeSetRoot']()
+			}
+		}
+		, afterFillNode: function (_0xe517x1) {
+			if (_0xe517x1['isRoot']()) {
+				this['afterSetRoot']()
+			}
+		}
+		, isRootSettingOrLoading: function () {
+			return this['isLoading']() || (this['isTreeStore'] && this['__isSettingRoot'])
+		}
+	});
+}
 
-if (typeof Robo == 'undefined') Ext.define('Robo.data.Store', {
-	extend: 'Ext.Mixin'
-	, requires: ['Ext.util.Observable']
-	, undoRedoPostponed: null
-	, inUndoRedoTransaction: false
-	, undoRedoEventBus: null
-	, mixinConfig: {
-		before: {
-			constructor: 'constructor'
-			, destroy: 'destroy'
-			, fireEventArgs: 'fireEventArgs'
-			, setRoot: 'beforeSetRoot'
-			, fillNode: 'beforeFillNode'
-		}
-		, after: {
-			setRoot: 'afterSetRoot'
-			, fillNode: 'afterFillNode'
-		}
-	}
-	, constructor: function () {
-		var _0xe517x1 = this;
-		_0xe517x1['undoRedoEventBus'] = new Ext['util'].Observable()
-	}
-	, destroy: function () {
-		Ext['destroy'](this['undoRedoEventBus'])
-	}
-	, fireEventArgs: function (_0xe517x1, _0xe517x2) {
-		var _0xe517x5 = this;
-		if (!_0xe517x2['hasOwnProperty']('$undoRedoEventBusFired')) {
-			_0xe517x2['$undoRedoEventBusFired'] = {}
-		};
-		if (!_0xe517x2['$undoRedoEventBusFired'][_0xe517x1]) {
-			_0xe517x2['$undoRedoEventBusFired'][_0xe517x1] = true;
-			_0xe517x5['undoRedoEventBus']['hasListener'](_0xe517x1) && _0xe517x5['undoRedoEventBus']['fireEventArgs'](_0xe517x1, _0xe517x2)
-		}
-	}
-	, isInUndoRedoTransaction: function () {
-		return this['inUndoRedoTransaction']
-	}
-	, onUndoRedoTransactionStart: function (_0xe517x1, _0xe517x2) {
-		this['inUndoRedoTransaction'] = true
-	}
-	, onUndoRedoTransactionEnd: function (_0xe517x1, _0xe517x2) {
-		this['inUndoRedoTransaction'] = false
-	}
-	, isUndoingOrRedoing: function () {
-		return !!this['undoRedoPostponed']
-	}
-	, beforeUndoRedo: function (_0xe517x1) {
-		this['undoRedoPostponed'] = []
-	}
-	, afterUndoRedo: function (_0xe517x1) {
-		var _0xe517x2 = this;
-		Ext['Array']['forEach'](_0xe517x2['undoRedoPostponed'], function (_0xe517x5) {
-			_0xe517x5()
-		});
-		_0xe517x2['undoRedoPostponed'] = null
-	}
-	, postponeAfterUndoRedo: function (_0xe517x1) {
-		Ext['Assert'] && Ext['Assert']['isFunction'](_0xe517x1, 'Parameter must be a function');
-		this['undoRedoPostponed']['push'](_0xe517x1)
-	}
-	, beforeSetRoot: function () {
-		this['__isSettingRoot'] = true
-	}
-	, afterSetRoot: function () {
-		this['__isSettingRoot'] = false;
-		if (!this['getRoot']()) {
-			this['fireEvent']('clear', this)
-		}
-	}
-	, beforeFillNode: function (_0xe517x1) {
-		if (_0xe517x1['isRoot']()) {
-			this['beforeSetRoot']()
-		}
-	}
-	, afterFillNode: function (_0xe517x1) {
-		if (_0xe517x1['isRoot']()) {
-			this['afterSetRoot']()
-		}
-	}
-	, isRootSettingOrLoading: function () {
-		return this['isLoading']() || (this['isTreeStore'] && this['__isSettingRoot'])
-	}
-});
 if (!Robo.data.Model) Ext.define('Robo.data.Model', {
 	extend: 'Ext.Mixin'
 	, modelName: null
