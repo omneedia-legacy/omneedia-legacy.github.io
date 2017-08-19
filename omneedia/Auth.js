@@ -89,6 +89,33 @@ Ext.define("omneedia.Auth", {
 			
 			},1000);		
 		});
+		// AUTH
+		$('.button_passport.letmein').click(function() {
+			$('.CWaitSignOn').show();
+			$('.CSignOn').hide();
+			
+			if (Settings.REMOTE_AUTH)
+			var win = window.open(Settings.REMOTE_AUTH+"/auth/letmein", "_blank","location=no");
+			else {
+				var win = window.open("/auth/letmein", "_blank");
+				win.focus();
+			};
+		    document.socket.on('#auth',function(response) {
+
+				Auth.User=JSON.parse(response);
+				$('.QxOverlay').remove();
+				Auth._vague.unblur();						
+				$('.QxLoginBox').addClass('bounceOutDown');
+				window.setTimeout(function(){$('.QxLoginBox').remove();},1000);					
+				if (Settings.TYPE!="mobile") {
+				Ext.getCmp('GlobalMenuUser').setText(Auth.User.mail.split('@')[0]);
+					Ext.getCmp('GlobalMenuUser').show();
+				};
+				if (fn) fn(Auth.User);
+				
+			});				
+		
+		});
 		// gitlab
 		$('.button_passport.gitlab').click(function() {
 			
@@ -103,6 +130,7 @@ Ext.define("omneedia.Auth", {
 			};
 			if (document.socket) {
 			   document.socket.on('#auth',function(response) {
+				   
 					Auth.User=JSON.parse(response);
 					$('.QxOverlay').remove();
 					Auth._vague.unblur();						
@@ -224,67 +252,7 @@ Ext.define("omneedia.Auth", {
 			
 			},1000);
 		});
-		// omneedia
-		$('.button_passport.omneedia').click(function() {
-			$('.CWaitSignOn').show();
-			$('.CSignOn').hide();
-			if (Settings.REMOTE_AUTH)
-			var win = window.open(Settings.REMOTE_AUTH+"/auth/omneedia", "_blank","location=no");
-			else {
-				var win = window.open("/auth/omneedia", "_blank");
-				win.focus();
-			};
-			
-			if (document.socket) {
-
-			   document.socket.on('#auth',function(response) {
-
-				   Auth.User=JSON.parse(response);
-				   
-					$('.QxOverlay').remove();
-					Auth._vague.unblur();						
-					$('.QxLoginBox').addClass('bounceOutDown');
-					window.setTimeout(function(){$('.QxLoginBox').remove();},1000);					
-					if (Settings.TYPE!="mobile") {
-				Ext.getCmp('GlobalMenuUser').setText(Auth.User.mail.split('@')[0]);
-						Ext.getCmp('GlobalMenuUser').show();
-					};
-					if (fn) fn(Auth.User);
-				});				
-			} else {
-				__INTERVAL__=window.setInterval(function(){
-					if (Settings.REMOTE_AUTH) var a_auth=Settings.REMOTE_AUTH; else var a_auth="";
-					Ext.Ajax.request({
-						url: a_auth+"/account",
-						method: "POST",
-						withCredentials: true,
-						useDefaultXhrHeader: false,	
-						params: {
-							"udid" : App.udid
-						},							
-						success: function(response,opts) {				
-							Auth.User=JSON.parse(response.responseText);
-							$('.QxOverlay').remove();
-							Auth._vague.unblur();						
-							$('.QxLoginBox').addClass('bounceOutDown');														
-							window.setTimeout(function(){$('.QxLoginBox').remove();},1000);
-
-							if (Settings.TYPE!="mobile") {
-								console.log(Auth.User);
-								Ext.getCmp('GlobalMenuUser').setText(Auth.User.mail.split('@')[0]);
-								Ext.getCmp('GlobalMenuUser').show();
-							};
-							window.clearInterval(__INTERVAL__);
-							if (fn) fn(Auth.User);				
-
-						},
-						failure: function(response,opts) {
-
-						}
-					});		
-				},1000);				
-			}
-		});
+		
 		// cas
 		$('.button_passport.cas').click(function() {
 			$('.CWaitSignOn').show();
@@ -298,6 +266,7 @@ Ext.define("omneedia.Auth", {
 			};
 			if (document.socket) {
 			   document.socket.on('#auth',function(response) {
+				   document.socket.off('#auth');
 					Auth.User=JSON.parse(response);
 					$('.QxOverlay').remove();
 					Auth._vague.unblur();						

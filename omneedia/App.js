@@ -4165,6 +4165,11 @@ Ext.define("omneedia.App", {
 				name: "resourcestore",
 				model: "Ext.ux.Scheduler.model.Resource",
 				store: "Ext.ux.Scheduler.data.ResourceStore"
+			},
+			'resourcestree': {
+				name: "resourcestore",
+				model: "Ext.ux.Scheduler.model.Resource",
+				store: "Ext.ux.Scheduler.data.ResourceTreeStore"
 			}
 		}
 		, blur: function () {
