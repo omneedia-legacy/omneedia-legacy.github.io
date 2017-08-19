@@ -156,7 +156,7 @@ if (!Ext.ux.Scheduler) {
 };
 
 
-if (!Robo) Ext.define('Robo.data.Store', {
+if (typeof Robo == 'undefined') Ext.define('Robo.data.Store', {
 	extend: 'Ext.Mixin'
 	, requires: ['Ext.util.Observable']
 	, undoRedoPostponed: null
