@@ -1107,7 +1107,10 @@ Math.uuid = function () {
 
 if (Settings.DEBUG) {
 	var io_start=function(io) {
-
+		
+		if (Settings.REMOTE_API.indexOf('https')>-1)
+		document.socket = io.connect(Settings.REMOTE_API, {secure: true,transports: ['xhr-polling']});
+		else
 		document.socket = io.connect(Settings.REMOTE_API);
 
 		document.socket.on('connect', function () {
@@ -4717,6 +4720,9 @@ Ext.define("omneedia.App", {
 						});
 						App.IO = omneedia.IO;
 
+						if (Settings.REMOTE_API.indexOf('https')>-1)
+						document.socket = io.connect(Settings.REMOTE_API, {secure: true,transports: ['xhr-polling']});
+						else
 						document.socket = io.connect(Settings.REMOTE_API);
 						document.socket.on('connect', function () {
 						});
@@ -4750,6 +4756,9 @@ Ext.define("omneedia.App", {
 						});
 						App.IO = omneedia.IO;
 
+						if (Settings.REMOTE_API.indexOf('https')>-1)
+						document.socket = io.connect(Settings.REMOTE_API, {secure: true,transports: ['xhr-polling']});
+						else
 						document.socket = io.connect(Settings.REMOTE_API);
 						document.socket.on('connect', function () {
 						});
@@ -5970,6 +5979,10 @@ if (!Settings.DEBUG) {
 	if (Settings.TYPE != "mobile") {
 		// PROD // DESKTOP
 		//require(['io'], function (io) {
+
+			if (Settings.REMOTE_API.indexOf('https')>-1)
+			document.socket = io.connect(Settings.REMOTE_API, {secure: true,transports: ['xhr-polling']});
+			else
 			document.socket = io.connect(Settings.REMOTE_API);
 			document.socket.on('connect', function () {});
 			document.socket.on('disconnect', function () {});
