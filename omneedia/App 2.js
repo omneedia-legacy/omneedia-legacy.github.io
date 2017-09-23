@@ -1,5 +1,5 @@
 /**
- * Version: 0.9.8p
+ * Version: 0.9.8pi
  * Build Date: 18-Jul-2016
  * Copyright (c) 2006-2015, Omneedia. (http://www.omneedia.com/). All rights reserved.
  * License: GPL.
@@ -8,7 +8,7 @@
  * CHANGELOG
  * ---------
  * 0.9.8p	Initial commit
- * 
+ *
  */
 
 // Change Settings REMOTE_API
@@ -221,7 +221,6 @@ if (!window.location.origin)
 ////////////
 
 if (!Settings.REMOTE_API) Settings.REMOTE_API = document.location.origin;
-//if (Settings.REMOTE_API.indexOf('://')==-1) Settings.REMOTE_API=window.location.protocol+'//'+Settings.REMOTE_API;
 
 var Latinise = {};
 Latinise.latin_map = {
@@ -1108,7 +1107,12 @@ Math.uuid = function () {
 
 if (Settings.DEBUG) {
 	var io_start=function(io) {
+		
+		if (Settings.REMOTE_API.indexOf('https')>-1)
+		document.socket = io.connect(Settings.REMOTE_API, {secure: true,transports: ['xhr-polling']});
+		else
 		document.socket = io.connect(Settings.REMOTE_API);
+
 		document.socket.on('connect', function () {
 			var sessionid = document.socket.io.engine.id;
 
@@ -1171,7 +1175,8 @@ if (Settings.DEBUG) {
 				}
 			}
 		});
-		App.IO = omneedia.IO;	
+
+		App.IO = omneedia.IO;
 	};
 	try {
 		if (Require) {
@@ -1187,8 +1192,8 @@ if (Settings.DEBUG) {
 			});
 			Require(['socketio'], function(io){
 				io_start(io);
-			});	
-		}	
+			});
+		}
 	}catch(e){
 		require.config({
 			shim: {
@@ -2034,13 +2039,13 @@ Date.CultureInfo = {
 	, twoDigitYearMax: 2029,
 
 	/**
-	 * The dateElementOrder is based on the order of the 
-	 * format specifiers in the formatPatterns.DatePattern. 
+	 * The dateElementOrder is based on the order of the
+	 * format specifiers in the formatPatterns.DatePattern.
 	 *
 	 * Example:
 	 <pre>
 	 shortDatePattern    dateElementOrder
-	 ------------------  ---------------- 
+	 ------------------  ----------------
 	 "M/d/yyyy"          "mdy"
 	 "dd/MM/yyyy"        "dmy"
 	 "yyyy-MM-dd"        "ymd"
@@ -2068,30 +2073,30 @@ Date.CultureInfo = {
 
 	/**
 	 * NOTE: If a string format is not parsing correctly, but
-	 * you would expect it parse, the problem likely lies below. 
-	 * 
+	 * you would expect it parse, the problem likely lies below.
+	 *
 	 * The following regex patterns control most of the string matching
 	 * within the parser.
-	 * 
+	 *
 	 * The Month name and Day name patterns were automatically generated
-	 * and in general should be (mostly) correct. 
+	 * and in general should be (mostly) correct.
 	 *
 	 * Beyond the month and day name patterns are natural language strings.
 	 * Example: "next", "today", "months"
 	 *
-	 * These natural language string may NOT be correct for this culture. 
+	 * These natural language string may NOT be correct for this culture.
 	 * If they are not correct, please translate and edit this file
-	 * providing the correct regular expression pattern. 
+	 * providing the correct regular expression pattern.
 	 *
 	 * If you modify this file, please post your revised CultureInfo file
 	 * to the Datejs Forum located at http://www.datejs.com/forums/.
 	 *
 	 * Please mark the subject of the post with [CultureInfo]. Example:
 	 *    Subject: [CultureInfo] Translated "da-DK" Danish(Denmark)
-	 * 
+	 *
 	 * We will add the modified patterns to the master source files.
 	 *
-	 * As well, please review the list of "Future Strings" section below. 
+	 * As well, please review the list of "Future Strings" section below.
 	 */
 	regexPatterns: {
 		jan: /^janv(.(ier)?)?/i
@@ -2177,12 +2182,12 @@ Date.CultureInfo = {
 /********************
  ** Future Strings **
  ********************
- * 
- * The following list of strings may not be currently being used, but 
- * may be incorporated into the Datejs library later. 
+ *
+ * The following list of strings may not be currently being used, but
+ * may be incorporated into the Datejs library later.
  *
  * We would appreciate any help translating the strings below.
- * 
+ *
  * If you modify this file, please post your revised CultureInfo file
  * to the Datejs Forum located at http://www.datejs.com/forums/.
  *
@@ -3721,384 +3726,202 @@ Ext.define("omneedia.App", {
 		, APP: {}
 		, libs: []
 		, namespace: ""
-		/*, Date: function(g, n, A, p) {
-    		function f() {
-        var a = this instanceof f ? this : new f,
-            c = arguments,
-            b = c.length,
-            d;
-        typeof c[b - 1] == "boolean" && (d = c[--b], c = q(c, 0, b));
-        if (b)
-            if (b == 1)
-                if (b = c[0], b instanceof g || typeof b == "number") a[0] = new g(+b);
-                else if (b instanceof f) {
-            var c = a,
-                h = new g(+b[0]);
-            if (l(b)) h.toString = v;
-            c[0] = h
-        } else {
-            if (typeof b == "string") {
-                a[0] = new g(0);
-                a: {
-                    for (var c = b, b = d || !1, h = f.parsers, w = 0, e; w < h.length; w++)
-                        if (e = h[w](c, b, a)) {
-                            a = e;
-                            break a
-                        }
-                    a[0] = new g(c)
-                }
-            }
-        } else a[0] = new g(m.apply(g, c)), d || (a[0] = r(a[0]));
-        else a[0] = new g;
-        typeof d == "boolean" && B(a, d);
-        return a
-    }
+		, md5: function(s) {
+			function add32(a, b) {
+				return (a + b) & 0xFFFFFFFF;
+			};
+			function md5cycle(x, k) {
+				var a = x[0], b = x[1], c = x[2], d = x[3];
 
-    function l(a) {
-        return a[0].toString === v
-    }
+				a = ff(a, b, c, d, k[0], 7, -680876936);
+				d = ff(d, a, b, c, k[1], 12, -389564586);
+				c = ff(c, d, a, b, k[2], 17,  606105819);
+				b = ff(b, c, d, a, k[3], 22, -1044525330);
+				a = ff(a, b, c, d, k[4], 7, -176418897);
+				d = ff(d, a, b, c, k[5], 12,  1200080426);
+				c = ff(c, d, a, b, k[6], 17, -1473231341);
+				b = ff(b, c, d, a, k[7], 22, -45705983);
+				a = ff(a, b, c, d, k[8], 7,  1770035416);
+				d = ff(d, a, b, c, k[9], 12, -1958414417);
+				c = ff(c, d, a, b, k[10], 17, -42063);
+				b = ff(b, c, d, a, k[11], 22, -1990404162);
+				a = ff(a, b, c, d, k[12], 7,  1804603682);
+				d = ff(d, a, b, c, k[13], 12, -40341101);
+				c = ff(c, d, a, b, k[14], 17, -1502002290);
+				b = ff(b, c, d, a, k[15], 22,  1236535329);
 
-    function B(a, c, b) {
-        if (c) {
-            if (!l(a)) b && (a[0] = new g(m(a[0].getFullYear(), a[0].getMonth(), a[0].getDate(), a[0].getHours(), a[0].getMinutes(), a[0].getSeconds(), a[0].getMilliseconds()))), a[0].toString = v
-        } else l(a) && (a[0] = b ? r(a[0]) : new g(+a[0]));
-        return a
-    }
+				a = gg(a, b, c, d, k[1], 5, -165796510);
+				d = gg(d, a, b, c, k[6], 9, -1069501632);
+				c = gg(c, d, a, b, k[11], 14,  643717713);
+				b = gg(b, c, d, a, k[0], 20, -373897302);
+				a = gg(a, b, c, d, k[5], 5, -701558691);
+				d = gg(d, a, b, c, k[10], 9,  38016083);
+				c = gg(c, d, a, b, k[15], 14, -660478335);
+				b = gg(b, c, d, a, k[4], 20, -405537848);
+				a = gg(a, b, c, d, k[9], 5,  568446438);
+				d = gg(d, a, b, c, k[14], 9, -1019803690);
+				c = gg(c, d, a, b, k[3], 14, -187363961);
+				b = gg(b, c, d, a, k[8], 20,  1163531501);
+				a = gg(a, b, c, d, k[13], 5, -1444681467);
+				d = gg(d, a, b, c, k[2], 9, -51403784);
+				c = gg(c, d, a, b, k[7], 14,  1735328473);
+				b = gg(b, c, d, a, k[12], 20, -1926607734);
 
-    function C(a, c, b, d, h) {
-        var e = k(j, a[0], h),
-            a = k(D, a[0], h),
-            h = !1;
-        d.length == 2 && typeof d[1] == "boolean" && (h = d[1], d = [b]);
-        b = c == 1 ? (b % 12 + 12) % 12 : e(1);
-        a(c, d);
-        h && e(1) != b && (a(1, [e(1) - 1]), a(2, [E(e(0),
-            e(1))]))
-    }
+				a = hh(a, b, c, d, k[5], 4, -378558);
+				d = hh(d, a, b, c, k[8], 11, -2022574463);
+				c = hh(c, d, a, b, k[11], 16,  1839030562);
+				b = hh(b, c, d, a, k[14], 23, -35309556);
+				a = hh(a, b, c, d, k[1], 4, -1530992060);
+				d = hh(d, a, b, c, k[4], 11,  1272893353);
+				c = hh(c, d, a, b, k[7], 16, -155497632);
+				b = hh(b, c, d, a, k[10], 23, -1094730640);
+				a = hh(a, b, c, d, k[13], 4,  681279174);
+				d = hh(d, a, b, c, k[0], 11, -358537222);
+				c = hh(c, d, a, b, k[3], 16, -722521979);
+				b = hh(b, c, d, a, k[6], 23,  76029189);
+				a = hh(a, b, c, d, k[9], 4, -640364487);
+				d = hh(d, a, b, c, k[12], 11, -421815835);
+				c = hh(c, d, a, b, k[15], 16,  530742520);
+				b = hh(b, c, d, a, k[2], 23, -995338651);
 
-    function F(a, c, b, d) {
-        var b = Number(b),
-            h = n.floor(b);
-        a["set" + o[c]](a["get" + o[c]]() + h, d || !1);
-        h != b && c < 6 && F(a, c + 1, (b - h) * G[c], d)
-    }
+				a = ii(a, b, c, d, k[0], 6, -198630844);
+				d = ii(d, a, b, c, k[7], 10,  1126891415);
+				c = ii(c, d, a, b, k[14], 15, -1416354905);
+				b = ii(b, c, d, a, k[5], 21, -57434055);
+				a = ii(a, b, c, d, k[12], 6,  1700485571);
+				d = ii(d, a, b, c, k[3], 10, -1894986606);
+				c = ii(c, d, a, b, k[10], 15, -1051523);
+				b = ii(b, c, d, a, k[1], 21, -2054922799);
+				a = ii(a, b, c, d, k[8], 6,  1873313359);
+				d = ii(d, a, b, c, k[15], 10, -30611744);
+				c = ii(c, d, a, b, k[6], 15, -1560198380);
+				b = ii(b, c, d, a, k[13], 21,  1309151649);
+				a = ii(a, b, c, d, k[4], 6, -145523070);
+				d = ii(d, a, b, c, k[11], 10, -1120210379);
+				c = ii(c, d, a, b, k[2], 15,  718787259);
+				b = ii(b, c, d, a, k[9], 21, -343485551);
 
-    function H(a, c, b) {
-        var a = a.clone().setUTCMode(!0, !0),
-            c = f(c).setUTCMode(!0, !0),
-            d = 0;
-        if (b == 0 || b == 1) {
-            for (var h = 6; h >= b; h--) d /= G[h], d += j(c, !1, h) - j(a, !1, h);
-            b == 1 && (d += (c.getFullYear() - a.getFullYear()) * 12)
-        } else b == 2 ? (b = a.toDate().setUTCHours(0, 0, 0, 0), d = c.toDate().setUTCHours(0, 0, 0, 0), d = n.round((d - b) / 864E5) + (c - d - (a - b)) / 864E5) : d = (c - a) / [36E5, 6E4, 1E3, 1][b - 3];
-        return d
-    }
+				x[0] = add32(a, x[0]);
+				x[1] = add32(b, x[1]);
+				x[2] = add32(c, x[2]);
+				x[3] = add32(d, x[3]);
 
-    function s(a) {
-        var c =
-            a(0),
-            b = a(1),
-            d = a(2),
-            a = new g(m(c, b, d)),
-            c = t(I(c, b, d));
-        return n.floor(n.round((a - c) / 864E5) / 7) + 1
-    }
+				}
 
-    function I(a, c, b) {
-        c = new g(m(a, c, b));
-        if (c < t(a)) return a - 1;
-        else if (c >= t(a + 1)) return a + 1;
-        return a
-    }
+				function cmn(q, a, b, x, s, t) {
+				a = add32(add32(a, q), add32(x, t));
+				return add32((a << s) | (a >>> (32 - s)), b);
+				}
 
-    function t(a) {
-        a = new g(m(a, 0, 4));
-        a.setUTCDate(a.getUTCDate() - (a.getUTCDay() + 6) % 7);
-        return a
-    }
+				function ff(a, b, c, d, x, s, t) {
+				return cmn((b & c) | ((~b) & d), a, b, x, s, t);
+				}
 
-    function J(a, c, b, d) {
-        var h = k(j, a, d),
-            e = k(D, a, d);
-        b === p && (b = I(h(0), h(1), h(2)));
-        b = t(b);
-        d || (b = r(b));
-        a.setTime(+b);
-        e(2, [h(2) + (c - 1) * 7])
-    }
+				function gg(a, b, c, d, x, s, t) {
+				return cmn((b & d) | (c & (~d)), a, b, x, s, t);
+				}
 
-    function K(a, c, b, d, h) {
-        var e = f.locales,
-            g = e[f.defaultLocale] || {},
-            i = k(j, a, h),
-            b = (typeof b == "string" ?
-                e[b] : b) || {};
-        return x(a, c, function(a) {
-            if (d)
-                for (var b = (a == 7 ? 2 : a) - 1; b >= 0; b--) d.push(i(b));
-            return i(a)
-        }, function(a) {
-            return b[a] || g[a]
-        }, h)
-    }
+				function hh(a, b, c, d, x, s, t) {
+				return cmn(b ^ c ^ d, a, b, x, s, t);
+				}
 
-    function x(a, c, b, d, e) {
-        for (var f, g, i = ""; f = c.match(N);) {
-            i += c.substr(0, f.index);
-            if (f[1]) {
-                g = i;
-                for (var i = a, j = f[1], l = b, m = d, n = e, k = j.length, o = void 0, q = ""; k > 0;) o = O(i, j.substr(0, k), l, m, n), o !== p ? (q += o, j = j.substr(k), k = j.length) : k--;
-                i = g + (q + j)
-            } else f[3] ? (g = x(a, f[4], b, d, e), parseInt(g.replace(/\D/g, ""), 10) && (i += g)) : i += f[7] || "'";
-            c = c.substr(f.index + f[0].length)
-        }
-        return i + c
-    }
+				function ii(a, b, c, d, x, s, t) {
+				return cmn(c ^ (b | (~d)), a, b, x, s, t);
+				}
 
-    function O(a,
-        c, b, d, e) {
-        var g = f.formatters[c];
-        if (typeof g == "string") return x(a, g, b, d, e);
-        else if (typeof g == "function") return g(a, e || !1, d);
-        switch (c) {
-            case "fff":
-                return i(b(6), 3);
-            case "s":
-                return b(5);
-            case "ss":
-                return i(b(5));
-            case "m":
-                return b(4);
-            case "mm":
-                return i(b(4));
-            case "h":
-                return b(3) % 12 || 12;
-            case "hh":
-                return i(b(3) % 12 || 12);
-            case "H":
-                return b(3);
-            case "HH":
-                return i(b(3));
-            case "d":
-                return b(2);
-            case "dd":
-                return i(b(2));
-            case "ddd":
-                return d("dayNamesShort")[b(7)] || "";
-            case "dddd":
-                return d("dayNames")[b(7)] || "";
-            case "M":
-                return b(1) +
-                    1;
-            case "MM":
-                return i(b(1) + 1);
-            case "MMM":
-                return d("monthNamesShort")[b(1)] || "";
-            case "MMMM":
-                return d("monthNames")[b(1)] || "";
-            case "yy":
-                return (b(0) + "").substring(2);
-            case "yyyy":
-                return b(0);
-            case "t":
-                return u(b, d).substr(0, 1).toLowerCase();
-            case "tt":
-                return u(b, d).toLowerCase();
-            case "T":
-                return u(b, d).substr(0, 1);
-            case "TT":
-                return u(b, d);
-            case "z":
-            case "zz":
-            case "zzz":
-                return e ? c = "Z" : (d = a.getTimezoneOffset(), a = d < 0 ? "+" : "-", b = n.floor(n.abs(d) / 60), d = n.abs(d) % 60, e = b, c == "zz" ? e = i(b) : c == "zzz" && (e = i(b) + ":" + i(d)), c =
-                    a + e), c;
-            case "w":
-                return s(b);
-            case "ww":
-                return i(s(b));
-            case "S":
-                return c = b(2), c > 10 && c < 20 ? "th" : ["st", "nd", "rd"][c % 10 - 1] || "th"
-        }
-    }
+				function md51(s) {
+				txt = '';
+				var n = s.length,
+				state = [1732584193, -271733879, -1732584194, 271733878], i;
+				for (i=64; i<=s.length; i+=64) {
+				md5cycle(state, md5blk(s.substring(i-64, i)));
+				}
+				s = s.substring(i-64);
+				var tail = [0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0];
+				for (i=0; i<s.length; i++)
+				tail[i>>2] |= s.charCodeAt(i) << ((i%4) << 3);
+				tail[i>>2] |= 0x80 << ((i%4) << 3);
+				if (i > 55) {
+				md5cycle(state, tail);
+				for (i=0; i<16; i++) tail[i] = 0;
+				}
+				tail[14] = n*8;
+				md5cycle(state, tail);
+				return state;
+				}
 
-    function u(a, c) {
-        return a(3) < 12 ? c("amDesignator") : c("pmDesignator")
-    }
+				/* there needs to be support for Unicode here,
+				 * unless we pretend that we can redefine the MD-5
+				 * algorithm for multi-byte characters (perhaps
+				 * by adding every four 16-bit characters and
+				 * shortening the sum to 32 bits). Otherwise
+				 * I suggest performing MD-5 as if every character
+				 * was two bytes--e.g., 0040 0025 = @%--but then
+				 * how will an ordinary MD-5 sum be matched?
+				 * There is no way to standardize text to something
+				 * like UTF-8 before transformation; speed cost is
+				 * utterly prohibitive. The JavaScript standard
+				 * itself needs to look at this: it should start
+				 * providing access to strings as preformed UTF-8
+				 * 8-bit unsigned value arrays.
+				 */
+				function md5blk(s) { /* I figured global was faster.   */
+				var md5blks = [], i; /* Andy King said do it this way. */
+				for (i=0; i<64; i+=4) {
+				md5blks[i>>2] = s.charCodeAt(i)
+				+ (s.charCodeAt(i+1) << 8)
+				+ (s.charCodeAt(i+2) << 16)
+				+ (s.charCodeAt(i+3) << 24);
+				}
+				return md5blks;
+				}
 
-    function y(a) {
-        return !isNaN(+a[0])
-    }
+				var hex_chr = '0123456789abcdef'.split('');
 
-    function j(a, c, b) {
-        return a["get" + (c ? "UTC" : "") + o[b]]()
-    }
+				function rhex(n)
+				{
+				var s='', j=0;
+				for(; j<4; j++)
+				s += hex_chr[(n >> (j * 8 + 4)) & 0x0F]
+				+ hex_chr[(n >> (j * 8)) & 0x0F];
+				return s;
+				}
 
-    function D(a, c, b, d) {
-        a["set" + (c ? "UTC" : "") + o[b]].apply(a, d)
-    }
+				function hex(x) {
+				for (var i=0; i<x.length; i++)
+				x[i] = rhex(x[i]);
+				return x.join('');
+				}
 
-    function r(a) {
-        return new g(a.getUTCFullYear(), a.getUTCMonth(), a.getUTCDate(), a.getUTCHours(), a.getUTCMinutes(), a.getUTCSeconds(), a.getUTCMilliseconds())
-    }
 
-    function E(a,
-        c) {
-        return 32 - (new g(m(a, c, 32))).getUTCDate()
-    }
+				return hex(md51(s));
 
-    function z(a) {
-        return function() {
-            return a.apply(p, [this].concat(q(arguments)))
-        }
-    }
+		}
+		, shortid: function(previous) {
+			var generate = function() {
+				var ID_LENGTH = 8;
+				var ALPHABET = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+				var rtn = '';
+				for (var i = 0; i < ID_LENGTH; i++) rtn += ALPHABET.charAt(Math.floor(Math.random() * ALPHABET.length));
+				return rtn;
+			};
+			var UNIQUE_RETRIES = 9999;
+			previous = previous || [];
+			var retries = 0;
+			var id;
 
-    function k(a) {
-        var c = q(arguments, 1);
-        return function() {
-            return a.apply(p, c.concat(q(arguments)))
-        }
-    }
+			// Try to generate a unique ID,
+			// i.e. one that isn't in the previous.
+			while(!id && retries < UNIQUE_RETRIES) {
+				id = generate();
+				if(previous.indexOf(id) !== -1) {
+					id = null;
+					retries++;
+				}
+			};
 
-    function q(a, c, b) {
-        return A.prototype.slice.call(a, c || 0, b === p ? a.length : b)
-    }
-
-    function L(a, c) {
-        for (var b = 0; b < a.length; b++) c(a[b], b)
-    }
-
-    function i(a, c) {
-        c = c || 2;
-        for (a += ""; a.length < c;) a = "0" + a;
-        return a
-    }
-    var o = "FullYear,Month,Date,Hours,Minutes,Seconds,Milliseconds,Day,Year".split(","),
-        M = ["Years",
-            "Months", "Days"
-        ],
-        G = [12, 31, 24, 60, 60, 1E3, 1],
-        N = /(([a-zA-Z])\2*)|(\((('.*?'|\(.*?\)|.)*?)\))|('(.*?)')/,
-        m = g.UTC,
-        v = g.prototype.toUTCString,
-        e = f.prototype;
-    e.length = 1;
-    e.splice = A.prototype.splice;
-    e.getUTCMode = z(l);
-    e.setUTCMode = z(B);
-    e.getTimezoneOffset = function() {
-        return l(this) ? 0 : this[0].getTimezoneOffset()
-    };
-    L(o, function(a, c) {
-        e["get" + a] = function() {
-            return j(this[0], l(this), c)
-        };
-        c != 8 && (e["getUTC" + a] = function() {
-            return j(this[0], !0, c)
-        });
-        c != 7 && (e["set" + a] = function(a) {
-                C(this, c, a, arguments, l(this));
-                return this
-            }, c !=
-            8 && (e["setUTC" + a] = function(a) {
-                C(this, c, a, arguments, !0);
-                return this
-            }, e["add" + (M[c] || a)] = function(a, d) {
-                F(this, c, a, d);
-                return this
-            }, e["diff" + (M[c] || a)] = function(a) {
-                return H(this, a, c)
-            }))
-    });
-    e.getWeek = function() {
-        return s(k(j, this, !1))
-    };
-    e.getUTCWeek = function() {
-        return s(k(j, this, !0))
-    };
-    e.setWeek = function(a, c) {
-        J(this, a, c, !1);
-        return this
-    };
-    e.setUTCWeek = function(a, c) {
-        J(this, a, c, !0);
-        return this
-    };
-    e.addWeeks = function(a) {
-        return this.addDays(Number(a) * 7)
-    };
-    e.diffWeeks = function(a) {
-        return H(this, a, 2) / 7
-    };
-    f.parsers = [function(a,
-        c, b) {
-        if (a = a.match(/^(\d{4})(-(\d{2})(-(\d{2})([T ](\d{2}):(\d{2})(:(\d{2})(\.(\d+))?)?(Z|(([-+])(\d{2})(:?(\d{2}))?))?)?)?)?$/)) {
-            var d = new g(m(a[1], a[3] ? a[3] - 1 : 0, a[5] || 1, a[7] || 0, a[8] || 0, a[10] || 0, a[12] ? Number("0." + a[12]) * 1E3 : 0));
-            a[13] ? a[14] && d.setUTCMinutes(d.getUTCMinutes() + (a[15] == "-" ? 1 : -1) * (Number(a[16]) * 60 + (a[18] ? Number(a[18]) : 0))) : c || (d = r(d));
-            return b.setTime(+d)
-        }
-    }];
-    f.parse = function(a) {
-        return +f("" + a)
-    };
-    e.toString = function(a, c, b) {
-        return a === p || !y(this) ? this[0].toString() : K(this, a, c, b, l(this))
-    };
-    e.toUTCString = e.toGMTString = function(a, c, b) {
-        return a === p || !y(this) ? this[0].toUTCString() : K(this, a, c, b, !0)
-    };
-    e.toISOString = function() {
-        return this.toUTCString("yyyy-MM-dd'T'HH:mm:ss(.fff)zzz")
-    };
-    f.defaultLocale = "";
-    f.locales = {
-        "": {
-            monthNames: "January,February,March,April,May,June,July,August,September,October,November,December".split(","),
-            monthNamesShort: "Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec".split(","),
-            dayNames: "Sunday,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday".split(","),
-            dayNamesShort: "Sun,Mon,Tue,Wed,Thu,Fri,Sat".split(","),
-            amDesignator: "AM",
-            pmDesignator: "PM"
-        }
-    };
-    f.formatters = {
-        i: "yyyy-MM-dd'T'HH:mm:ss(.fff)",
-        u: "yyyy-MM-dd'T'HH:mm:ss(.fff)zzz"
-    };
-    L("getTime,valueOf,toDateString,toTimeString,toLocaleString,toLocaleDateString,toLocaleTimeString,toJSON".split(","), function(a) {
-        e[a] = function() {
-            return this[0][a]()
-        }
-    });
-    e.setTime = function(a) {
-        this[0].setTime(a);
-        return this
-    };
-    e.valid = z(y);
-    e.clone = function() {
-        return new f(this)
-    };
-    e.clearTime = function() {
-        return this.setHours(0, 0, 0, 0)
-    };
-    e.toDate = function() {
-        return new g(+this[0])
-    };
-    f.now = function() {
-        return +new g
-    };
-    f.today = function() {
-        return (new f).clearTime()
-    };
-    f.UTC = m;
-    f.getDaysInMonth = E;
-    if (typeof module !== "undefined" && module.exports) module.exports = f;
-    typeof define === "function" && define.amd && define([], function() {
-        return f
-    });
-    return f
-}(Date, Math, Array)
-		*/
+			return id;
+		}
 		, getArray: function(obj,field) {
 				var data=[];
 				for (var i=0;i<obj.length;i++) {
@@ -4207,7 +4030,7 @@ Ext.define("omneedia.App", {
 							if (y != all[i]) all[i].setValue("");
 						} else all[i].setValue("");
 					}
-					//};					
+					//};
 				};
 			}
 		}
@@ -4255,8 +4078,9 @@ Ext.define("omneedia.App", {
 			if (obj instanceof Ext.Component) {
 				var all = getAllChildren(obj);
 				var witness = 0;
+
 				for (var i = 0; i < all.length; i++) {
-					if (all[i].bind) {
+					if (all[i].bindTo) {
 						if (all[i].getValue) {
 							/*if (!all[i].allowBlank) {
 								if ((all[i].getValue()=="") || (!all[i].getValue())) {
@@ -4264,7 +4088,7 @@ Ext.define("omneedia.App", {
 									if (all[i].fieldLabel) missingfields.push(all[i].fieldLabel); else missingfields.push(all[i].bind);
 								}
 							};*/
-							data[all[i].bind] = all[i].getValue();
+							data[all[i].bindTo] = all[i].getValue();
 						}
 					} else {
 						if (all[i].getValue) {
@@ -4285,8 +4109,8 @@ Ext.define("omneedia.App", {
 							message: "MISSING_FIELDS",
 							success: false,
 							data: missingfields
-						}					
-					};					
+						}
+					};
 					return response;
 				};*/
 			} else return {
@@ -4329,6 +4153,28 @@ Ext.define("omneedia.App", {
 		, create: function () {
 
 		}
+		, STOREMODELS: {
+			'tree': {
+				name: "treestore",
+				model: "Ext.data.TreeModel",
+				store: "Ext.data.TreeStore"
+			},
+			'events': {
+				name: "eventstore",
+				model: "Ext.ux.Scheduler.model.Event",
+				store: "Ext.ux.Scheduler.data.EventStore"
+			},
+			'resources': {
+				name: "resourcestore",
+				model: "Ext.ux.Scheduler.model.Resource",
+				store: "Ext.ux.Scheduler.data.ResourceStore"
+			},
+			'resourcestree': {
+				name: "resourcestore",
+				model: "Ext.ux.Scheduler.model.Resource",
+				store: "Ext.ux.Scheduler.data.ResourceTreeStore"
+			}
+		}
 		, blur: function () {
 			$('.omneedia-overlay').show();
 			if (!App._vague) {
@@ -4361,6 +4207,8 @@ Ext.define("omneedia.App", {
 			, define: function (name, o, z) {
 				if (!z) o.extend = "Ext.data.Model";
 				else o.extend = z;
+				//console.log('=='+z);
+				//alert(o.extend);
 				if (o.config) {
 					if (o.config.api) {
 						if (o.config.api instanceof Object) {
@@ -4481,319 +4329,6 @@ Ext.define("omneedia.App", {
 		, override: function (name, o) {
 			return Ext.define(APP_NAMESPACE + '.overrides.' + name, o);
 		}
-		, treestore: {
-			define: function (name, o) {
-				o.extend = "Ext.data.TreeStore";
-				if (o.config) {
-					if (o.config.model) o.config.model = APP_NAMESPACE + ".model." + o.config.model;
-					if (o.requires) {
-						for (var i = 0; i < o.requires.length; i++) {
-							o.requires[i] = APP_NAMESPACE + ".model." + o.requires[i];
-							o.config.model = o.requires[i];
-						}
-					}
-				} else {
-					if (o.model) {
-						if (!o.requires) o.requires = [];
-						o.requires[0] = o.model;
-						o.model = APP_NAMESPACE + ".model." + o.model;
-					};
-					if (o.requires) {
-						for (var i = 0; i < o.requires.length; i++) {
-							o.requires[i] = APP_NAMESPACE + ".model." + o.requires[i];
-							o.model = o.requires[i];
-						}
-					}
-				}
-				return Ext.define(APP_NAMESPACE + ".store." + name, o);
-			}
-			, get: function (name) {
-				eval('var _p=' + APP_NAMESPACE + ".store." + name);
-				return _p;
-			}
-			, create: function (name, cfg) {
-				function _guid() {
-					return ("M" + (Math.random() * Math.pow(36, 4) << 0).toString(36)).slice(-4)
-				};
-				var guid = _guid();
-				if (name instanceof Object == true) {
-					var cfg = {};
-					cfg = name;
-				} else {
-					if (!cfg) var cfg = {};
-					if (name.indexOf('://') > -1) {
-						if ((Settings.TYPE == "mobile") && (Ext.getVersion().major < 5))
-							App.model.define(guid, {
-								config: {
-									api: {
-										read: "App.__QUERY__.exec"
-									}
-									, extraParams: {
-										__SQL__: name
-									}
-								}
-							});
-						else
-							App.model.define(guid, {
-								api: {
-									read: "App.__QUERY__.exec"
-								}
-								, extraParams: {
-									__SQL__: name
-								}
-							});
-
-						cfg.model = APP_NAMESPACE + ".model." + guid;
-						cfg.require = [];
-						cfg.require[0] = APP_NAMESPACE + ".model." + guid;
-					} else {
-						if (name.indexOf('.') > -1) {
-							if (Settings.TYPE == "mobile")
-								cfg.proxy = {
-									type: 'direct'
-									, directFn: name
-								};
-							else cfg.proxy = {
-								type: 'direct'
-								, directFn: name
-							};
-						} else {
-							cfg.model = APP_NAMESPACE + ".model." + name;
-							cfg.require = [];
-							cfg.require[0] = APP_NAMESPACE + ".model." + name;
-						}
-					};
-				};
-				try {
-					var myStore = Ext.create("Ext.data.TreeStore", cfg);
-					if (!myStore.getProxy().extraParams) myStore.getProxy().extraParams = {};
-					myStore.getProxy().extraParams.__SQL__ = name;
-				} catch (e) {
-					console.log(e);
-				};
-				return myStore;
-			}
-		}
-		, resourcestore: {
-			define: function (name, o) {
-				if (Ext.ux.Scheduler) o.extend = "Ext.ux.Scheduler.data.ResourceStore";
-				if (Ext.ux.Scheduler2) o.extend = "Ext.ux.Scheduler2.data.ResourceStore";
-				if ((Settings.TYPE == "mobile") && (Ext.getVersion().major < 5)) {
-					if (o.config.model) o.config.model = APP_NAMESPACE + ".model." + o.config.model;
-					if (o.requires) {
-						for (var i = 0; i < o.requires.length; i++) {
-							o.requires[i] = APP_NAMESPACE + ".model." + o.requires[i];
-							o.config.model = o.requires[i];
-						}
-					}
-				} else {
-					if (o.model) {
-						if (!o.requires) o.requires = [];
-						o.requires[0] = o.model;
-						o.model = APP_NAMESPACE + ".model." + o.model;
-					};
-					if (o.requires) {
-						for (var i = 0; i < o.requires.length; i++) {
-							o.requires[i] = APP_NAMESPACE + ".model." + o.requires[i];
-							o.model = o.requires[i];
-						}
-					}
-				}
-				return Ext.define(APP_NAMESPACE + ".store." + name, o);
-			}
-			, get: function (name) {
-				eval('var _p=' + APP_NAMESPACE + ".store." + name);
-				return _p;
-			}
-			, create: function (name, cfg) {
-				if (Ext.ux.Scheduler) var sch = "Ext.ux.Scheduler";
-				if (Ext.ux.Scheduler2) var sch = "Ext.ux.Scheduler2";
-				
-				function _guid() {
-					return ("M" + (Math.random() * Math.pow(36, 4) << 0).toString(36)).slice(-4)
-				};
-				var guid = _guid();
-				if (name instanceof Object == true) {
-					var cfg = {};
-					cfg = name;
-				} else {
-					if (!cfg) var cfg = {};
-					if (name.indexOf('://') > -1) {
-						if (Settings.TYPE == "mobile")
-							App.model.define(guid, {
-								config: {
-									api: {
-										read: "App.__QUERY__.exec"
-									}
-									, extraParams: {
-										__SQL__: name
-									}
-								}
-							}, sch+".model.Resource");
-						else
-							App.model.define(guid, {
-								api: {
-									read: "App.__QUERY__.exec"
-								}
-								, extraParams: {
-									__SQL__: name
-								}
-							}, sch+".model.Resource");
-
-						cfg.model = APP_NAMESPACE + ".model." + guid;
-						cfg.require = [];
-						cfg.require[0] = APP_NAMESPACE + ".model." + guid;
-					} else {
-						if (name.indexOf('.') > -1) {
-							if ((Settings.TYPE == "mobile") && (Ext.getVersion().major < 5))
-								cfg.proxy = {
-									type: 'direct'
-									, directFn: name
-								};
-							else cfg.proxy = {
-								type: 'direct'
-								, directFn: name
-							};
-						} else {
-							cfg.model = APP_NAMESPACE + ".model." + name;
-							cfg.require = [];
-							cfg.require[0] = APP_NAMESPACE + ".model." + name;
-						}
-					};
-				};
-				if (Ext.ux.Scheduler) var sch = "Ext.ux.Scheduler";
-				if (Ext.ux.Scheduler2) var sch = "Ext.ux.Scheduler2";				
-				try {
-					var myStore = Ext.create(sch+".data.ResourceStore", cfg);
-					if (!myStore.getProxy().extraParams) myStore.getProxy().extraParams = {};
-					myStore.getProxy().extraParams.__SQL__ = name;
-				} catch (e) {
-					console.log(e);
-				};
-				return myStore;
-			}
-		}
-		, eventstore: {
-			define: function (name, o) {
-				if (Ext.ux.Scheduler) o.extend = "Ext.ux.Scheduler.data.EventStore";
-				if (Ext.ux.Scheduler2) o.extend = "Ext.ux.Scheduler2.model.Event";
-
-				if (Settings.TYPE == "mobile") {
-					if (o.config.model) o.config.model = APP_NAMESPACE + ".model." + o.config.model;
-					if (o.requires) {
-						for (var i = 0; i < o.requires.length; i++) {
-							o.requires[i] = APP_NAMESPACE + ".model." + o.requires[i];
-							o.config.model = o.requires[i];
-						}
-					}
-				} else {
-					if (o.model) {
-						if (!o.requires) o.requires = [];
-						o.requires[0] = o.model;
-						o.model = APP_NAMESPACE + ".model." + o.model;
-					};
-					if (o.requires) {
-						for (var i = 0; i < o.requires.length; i++) {
-							o.requires[i] = APP_NAMESPACE + ".model." + o.requires[i];
-							o.model = o.requires[i];
-						}
-					}
-				}
-				return Ext.define(APP_NAMESPACE + ".store." + name, o);
-			}
-			, get: function (name) {
-				eval('var _p=' + APP_NAMESPACE + ".store." + name);
-				return _p;
-			}
-			, create: function (name, cfg) {
-				function _guid() {
-					return ("M" + (Math.random() * Math.pow(36, 4) << 0).toString(36)).slice(-4)
-				};
-				var guid = _guid();
-				if (name instanceof Object == true) {
-					var cfg = {};
-					cfg = name;
-				} else {
-					if (!cfg) var cfg = {};
-					if (name.indexOf('.') > -1) {
-						if ((Settings.TYPE == "mobile") && (Ext.getVersion().major < 5))
-							cfg.proxy = {
-								type: 'direct'
-								, directFn: name
-							};
-						else cfg.proxy = {
-							type: 'direct'
-							, directFn: name
-						};
-					} else {
-						cfg.model = APP_NAMESPACE + ".model." + name;
-						cfg.require = [];
-						cfg.require[0] = APP_NAMESPACE + ".model." + name;
-					}
-				};
-
-				if (name instanceof Object == true) {
-					var cfg = {};
-					cfg = name;
-				} else {
-					if (!cfg) var cfg = {};
-					if (Ext.ux.Scheduler) var sch = "Ext.ux.Scheduler.data.ResourceStore";
-					if (Ext.ux.Scheduler2) var sch = "Ext.ux.Scheduler2.data.ResourceStore";					
-					if (name.indexOf('://') > -1) {
-						if ((Settings.TYPE == "mobile") && (Ext.getVersion().major < 5))
-							App.model.define(guid, {
-								config: {
-									api: {
-										read: "App.__QUERY__.exec"
-									}
-									, extraParams: {
-										__SQL__: name
-									}
-								}
-							}, sch);
-						else
-							App.model.define(guid, {
-								api: {
-									read: "App.__QUERY__.exec"
-								}
-								, extraParams: {
-									__SQL__: name
-								}
-							}, sch);
-
-						cfg.model = APP_NAMESPACE + ".model." + guid;
-						cfg.require = [];
-						cfg.require[0] = APP_NAMESPACE + ".model." + guid;
-					} else {
-						if (name.indexOf('.') > -1) {
-							if ((Settings.TYPE == "mobile") && (Ext.getVersion().major < 5))
-								cfg.proxy = {
-									type: 'direct'
-									, directFn: name
-								};
-							else cfg.proxy = {
-								type: 'direct'
-								, directFn: name
-							};
-						} else {
-							cfg.model = APP_NAMESPACE + ".model." + name;
-							cfg.require = [];
-							cfg.require[0] = APP_NAMESPACE + ".model." + name;
-						}
-					};
-				};
-				if (Ext.ux.Scheduler) var sch = "Ext.ux.Scheduler.data.EventStore";
-				if (Ext.ux.Scheduler2) var sch = "Ext.ux.Scheduler2.data.EventStore";
-				try {
-					var myStore = Ext.create(sch, cfg);
-					if (!myStore.getProxy().extraParams) myStore.getProxy().extraParams = {};
-					myStore.getProxy().extraParams.__SQL__ = name;
-				} catch (e) {
-					console.log(e);
-				};
-				return myStore;
-			}
-		}
 		, store: {
 			createColumns: function (grid, cb) {
 				var store = grid.getStore();
@@ -4880,15 +4415,24 @@ Ext.define("omneedia.App", {
 				return _p;
 			}
 			, create: function (name, cfg) {
+				// generate uniqueid for temp model class
 				function _guid() {
 					return ("M" + (Math.random() * Math.pow(36, 4) << 0).toString(36)).slice(-4)
 				};
 				var guid = _guid();
+
 				if (name instanceof Object == true) {
-					var cfg = {};
 					cfg = name;
+					if (cfg.type) var xtd=App.STOREMODELS[cfg.type]; else var xtd={name:"store",model:"Ext.data.Model",store:"Ext.data.Store"};
 				} else {
-					if (!cfg) var cfg = {};
+					if (cfg) {
+						if (cfg.type) var xtd=App.STOREMODELS[cfg.type]; else var xtd={name:"store",model:"Ext.data.Model",store:"Ext.data.Store"};
+					} else {
+						var xtd={name:"store",model:"Ext.data.Model",store:"Ext.data.Store"};
+						var cfg={};
+					};
+
+                    // *** UQL string
 					if (name.indexOf('://') > -1) {
 						if ((Settings.TYPE == "mobile") && (Ext.getVersion().major < 5))
 							App.model.define(guid, {
@@ -4900,7 +4444,7 @@ Ext.define("omneedia.App", {
 										__SQL__: name
 									}
 								}
-							});
+							},xtd.model);
 						else
 							App.model.define(guid, {
 								api: {
@@ -4909,31 +4453,33 @@ Ext.define("omneedia.App", {
 								, extraParams: {
 									__SQL__: name
 								}
-							});
-
+							},xtd.model);
+						if (typeof cfg=='string') cfg={};
 						cfg.model = APP_NAMESPACE + ".model." + guid;
 						cfg.require = [];
 						cfg.require[0] = APP_NAMESPACE + ".model." + guid;
 					} else {
+                        // *** WebService
 						if (name.indexOf('.') > -1) {
-							if (Settings.TYPE == "mobile")
-								App.model.define(guid, {
-									config: {
-										api: {
-											read: name
-										}
-									}
-								});
+
+							if ((Settings.TYPE == "mobile") && (Ext.getVersion().major < 5))
+							App.model.define(guid,{config: {
+								api: {
+									read: name
+								}
+							}},xtd.model);
 							else
-								App.model.define(guid, {
-									api: {
-										read: name
-									}
-								});
+							App.model.define(guid,{
+								api: {
+									read: name
+								}
+							},xtd.model);
+
 							cfg.model = APP_NAMESPACE + ".model." + guid;
 							cfg.require = [];
-							cfg.require[0] = APP_NAMESPACE + ".model." + guid;
+							cfg.require.push(APP_NAMESPACE + ".model." + guid);
 						} else {
+							if (typeof cfg=='string') cfg={};
 							cfg.model = APP_NAMESPACE + ".model." + name;
 							cfg.require = [];
 							cfg.require[0] = APP_NAMESPACE + ".model." + name;
@@ -4941,7 +4487,9 @@ Ext.define("omneedia.App", {
 					}
 				};
 				try {
-					var myStore = Ext.create("Ext.data.Store", cfg);
+					/*console.log(xtd.store);
+					console.log(cfg);*/
+					var myStore = Ext.create(xtd.store, cfg);
 					if (!myStore.getProxy().extraParams) myStore.getProxy().extraParams = {};
 					myStore.getProxy().extraParams.__SQL__ = name;
 				} catch (e) {
@@ -5043,24 +4591,12 @@ Ext.define("omneedia.App", {
 		}
 		, _kickstart: function (o, fn) {
 			var _p = this;
-			document.getElementsByTagName('body')[0].style.background = "#FFFFFF";
+			//document.getElementsByTagName('body')[0].style.background = "#FFFFFF";
 
 			$('#appLoadingIcon').removeClass('slideInDown').addClass('slideOutUp');
+
 			$('#bootstrap').fadeOut('slow', function () {
 				if (Settings.TYPE == "mobile") {
-					/*App.view.define('Viewport', 
-					{						
-						extend: 'Ext.Container.Viewport',					
-						config: {						
-							fullscreen: true,
-							layout: {
-								type: "card"
-							},
-							items: [
-
-							]							
-						}						
-					});*/
 					_p.FORMS = Ext.Viewport;
 				} else {
 					_p.FORMS = Ext.create('Ext.container.Viewport', {
@@ -5071,11 +4607,16 @@ Ext.define("omneedia.App", {
 					});
 
 				};
-				var kickstarter = Ext.create(APP_NAMESPACE + '.view.' + o);
-				kickstarter.on('render', function (me) {
-					if (fn) fn(me);
+				Ext.require(APP_NAMESPACE + '.view.' + o);
+				Ext.onReady(function() {
+
+					var kickstarter = Ext.create(APP_NAMESPACE + '.view.' + o);
+
+					kickstarter.on('render', function (me) {
+						if (fn) fn(me);
+					});
+					_p.FORMS.add(kickstarter);
 				});
-				_p.FORMS.add(kickstarter);
 			});
 
 		}
@@ -5178,11 +4719,14 @@ Ext.define("omneedia.App", {
 							}
 						});
 						App.IO = omneedia.IO;
-						
+
+						if (Settings.REMOTE_API.indexOf('https')>-1)
+						document.socket = io.connect(Settings.REMOTE_API, {secure: true,transports: ['xhr-polling']});
+						else
 						document.socket = io.connect(Settings.REMOTE_API);
 						document.socket.on('connect', function () {
 						});
-						document.socket.on('disconnect', function () {});					
+						document.socket.on('disconnect', function () {});
 					};
 					App.__LOAD__(fn);
 				} else {
@@ -5211,12 +4755,15 @@ Ext.define("omneedia.App", {
 							}
 						});
 						App.IO = omneedia.IO;
-						
+
+						if (Settings.REMOTE_API.indexOf('https')>-1)
+						document.socket = io.connect(Settings.REMOTE_API, {secure: true,transports: ['xhr-polling']});
+						else
 						document.socket = io.connect(Settings.REMOTE_API);
 						document.socket.on('connect', function () {
 						});
 						document.socket.on('disconnect', function () {});
-						
+
 					};
 
 					if (parseFloat(window.device.version) >= 7) {
@@ -5257,11 +4804,11 @@ Ext.define("omneedia.App", {
 });
 
 /**
- * Convert an image 
+ * Convert an image
  * to a base64 url
- * @param  {String}   url         
- * @param  {Function} callback    
- * @param  {String}   [outputFormat=image/png]           
+ * @param  {String}   url
+ * @param  {Function} callback
+ * @param  {String}   [outputFormat=image/png]
  */
 function convertImgToBase64URL(url, callback, outputFormat) {
 	var img = new Image();
@@ -5543,10 +5090,11 @@ Ext.define("omneedia.DB", {
 					if (o.data.length >= 1) o = o.data[0];
 					var all = getAllChildren(cb);
 					for (var i = 0; i < all.length; i++) {
-						if (all[i].bind) {
-							if ((all[i].setValue) && (o[all[i].bind])) {
-								if (all[i].xtype.indexOf('date') > -1) o[all[i].bind] = o[all[i].bind].toDate();
-								all[i].setValue(o[all[i].bind]);
+						if (all[i].bindTo) {
+
+							if ((all[i].setValue) && (o[all[i].bindTo])) {
+								if (all[i].xtype.indexOf('date') > -1) o[all[i].bindTo] = o[all[i].bindTo].toDate();
+								all[i].setValue(o[all[i].bindTo]);
 							}
 						};
 					};
@@ -5598,7 +5146,7 @@ Ext.define("omneedia.DB", {
 				console.log(all);
 				var witness = 0;
 				for (var i = 0; i < all.length; i++) {
-					if (all[i].bind) {
+					if (all[i].bindTo) {
 						if (all[i].getValue) {
 							/*if (!all[i].allowBlank) {
 								if ((all[i].getValue()=="") || (!all[i].getValue())) {
@@ -5606,7 +5154,7 @@ Ext.define("omneedia.DB", {
 									if (all[i].fieldLabel) missingfields.push(all[i].fieldLabel); else missingfields.push(all[i].bind);
 								}
 							};*/
-							data[all[i].bind] = all[i].getValue();
+							data[all[i].bindTo] = all[i].getValue();
 						}
 					};
 				};
@@ -5945,6 +5493,8 @@ Init
 */
 
 App = omneedia.App;
+App.UUID=App.shortid();
+App.IOKey=App.md5(new Date().toMySQL().split(' ')[0]);
 App.DB = omneedia.DB;
 
 var windowWidth = window.screen.width < window.outerWidth ?
@@ -6061,10 +5611,10 @@ var sort_by;
 /*
  * @class Ext.ux.Router
  * @extend Ext.app.Controller
- * 
- * Enables routing engine for Ext JS 4 MVC architecture. Responsible for parsing URI Token and fire a dispatch action 
+ *
+ * Enables routing engine for Ext JS 4 MVC architecture. Responsible for parsing URI Token and fire a dispatch action
  * process. Uses Ext.History internally to detect URI Token changes, providing browser history navigation capabilities.
- * 
+ *
  *      Ext.application({
  *          name: 'MyApp',
  *          ...
@@ -6077,9 +5627,9 @@ var sort_by;
  *              'users/:id/edit': 'users#edit'
  *          }
  *      });
- * 
+ *
  * Given the routing example above, we would develop controllers specifying their correspondents actions.
- * 
+ *
  *      Ext.define('AM.controller.Users', {
  *          extend: 'Ext.app.Controller',
  *          views: ['user.List', 'user.Edit'],
@@ -6120,7 +5670,7 @@ if ((Ext.getVersion().major < 5) && (Ext.getVersion().major > 2)) {
 			}
 			, requires: [
 			'Ext.util.History'
-			
+
 				, 'Ext.app.Application'
 		],
 
@@ -6207,7 +5757,7 @@ if ((Ext.getVersion().major < 5) && (Ext.getVersion().major > 2)) {
 			},
 
 			/**
-			 * Creates a matcher for a route config, based on 
+			 * Creates a matcher for a route config, based on
 			 * {@link https://github.com/cowboy/javascript-route-matcher javascript-route-matcher}
 			 * @private
 			 */
@@ -6355,7 +5905,7 @@ if ((Ext.getVersion().major < 5) && (Ext.getVersion().major > 2)) {
 			},
 
 			/**
-			 * Tries to dispatch a route to the controller action. Fires the 'beforedispatch' and 
+			 * Tries to dispatch a route to the controller action. Fires the 'beforedispatch' and
 			 * 'dispatch' events.
 			 * @private
 			 */
@@ -6428,7 +5978,11 @@ if ((Ext.getVersion().major < 5) && (Ext.getVersion().major > 2)) {
 if (!Settings.DEBUG) {
 	if (Settings.TYPE != "mobile") {
 		// PROD // DESKTOP
-		//require(['io'], function (io) { 
+		//require(['io'], function (io) {
+
+			if (Settings.REMOTE_API.indexOf('https')>-1)
+			document.socket = io.connect(Settings.REMOTE_API, {secure: true,transports: ['xhr-polling']});
+			else
 			document.socket = io.connect(Settings.REMOTE_API);
 			document.socket.on('connect', function () {});
 			document.socket.on('disconnect', function () {});

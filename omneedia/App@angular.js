@@ -4059,11 +4059,11 @@ if (Settings.DEBUG) {
 		link.href = Settings.RESOURCES[i];
 		document.getElementsByTagName('head')[0].appendChild(link);
 	};
-	var link = document.createElement('link');
+	/*var link = document.createElement('link');
 	link.rel = "stylesheet";
 	link.type = "text/css";
 	link.href = "/theme.css";
-	document.getElementsByTagName('head')[0].appendChild(link);
+	document.getElementsByTagName('head')[0].appendChild(link);*/
 };
 
 var windowWidth = window.screen.width < window.outerWidth ?
@@ -4074,10 +4074,13 @@ App.isPhone = mobile;
 App.isTablet = !mobile;
 
 App.onReady=function(){
-	$('#appLoadingIcon').removeClass('slideInDown').addClass('slideOutUp');
-	$('#bootstrap').fadeOut('slow', function () {
-		document.getElementById('bootstrap').style.display="none";
-	});
+	window.setTimeout(function () {
+		$('#appLoadingIcon').removeClass('slideInDown').addClass('slideOutUp');
+		$('#bootstrap').fadeOut('slow', function () {
+			document.getElementById('bootstrap').style.display="none";
+		});
+	}, 1000);
+	
 };
 
 App.blur = function () {
@@ -4102,5 +4105,3 @@ App.unblur = function (fx) {
 		delete App._vague;
 	}
 }
-
-//window.ionic.Platform.ready(App.onReady);

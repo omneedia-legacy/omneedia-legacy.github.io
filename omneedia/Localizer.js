@@ -56,7 +56,7 @@ Ext.define("omneedia.Localizer", {
 		else {
 			if (Culture.LANG) {
 				var url=["Contents/Culture/"+Culture.LANG+".js"];
-				if (!Settings.CDN) var CDN="http://omneedia.github.io/cdn"; else var CDN=Settings.CDN;
+				if (!Settings.CDN) var CDN="http://cdn.omneedia.com"; else var CDN=Settings.CDN;
 				var url2=[CDN+"/framework.lang/"+Settings.TYPE+"/ext-lang-"+Culture.LANG+".js"];
 				if (Settings.DEBUG) {
 					Require(url2,function(){

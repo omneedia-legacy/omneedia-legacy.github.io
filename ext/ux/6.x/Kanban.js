@@ -8,6 +8,7 @@ https://bryntum.com/license
 */
 
 if (!Ext.ux.Scheduler) {
+	alert('z');
 	Ext.define('Ext.ux.Scheduler.util.Patch', {
 		target: null
 		, minVersion: null
@@ -281,6 +282,7 @@ if (!Robo.data.Model) Ext.define('Robo.data.Model', {
 });
 
 if (!Ext.ux.Scheduler.model) {
+
 	Ext.define('Ext.ux.Scheduler.model.Customizable', function (_0xe517x1) {
 		return {
 			extend: 'Ext.data.Model'
