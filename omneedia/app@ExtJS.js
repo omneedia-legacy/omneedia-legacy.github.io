@@ -5080,7 +5080,6 @@ Ext.define("omneedia.DB", {
 					var all = getAllChildren(cb);
 					for (var i = 0; i < all.length; i++) {
 						if (all[i].bindTo) {
-
 							if ((all[i].setValue) && (o[all[i].bindTo])) {
 								if (all[i].xtype.indexOf('date') > -1) o[all[i].bindTo] = o[all[i].bindTo].toDate();
 								all[i].setValue(o[all[i].bindTo]);
@@ -5483,10 +5482,13 @@ Ext.define("omneedia.DB", {
 Init
 */
 
+omneedia['app@ExtJS']={};
+
 App = omneedia.App;
 App.UUID=App.shortid();
 App.IOKey=App.md5(new Date().toMySQL().split(' ')[0]);
-App.DB = omneedia.DB;
+App.DB = omneedia.DB; // deprecated
+DB = omneedia.DB;
 
 var windowWidth = window.screen.width < window.outerWidth ?
 	window.screen.width : window.outerWidth;
