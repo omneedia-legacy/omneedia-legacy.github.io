@@ -1,0 +1,25 @@
+{
+	"namespace": "Ext.ux.CloudEditor",
+	"version": "1.2.9",
+	"description": "Wrapper module to ACE Editor.",
+	"license": "MIT",
+	"repositories": {
+		"@cloudflare": "https://cdnjs.cloudflare.com"
+	},
+	"package": {
+		"js": [
+			"@cloudflare/ajax/libs/ace/{version}/ace.js",
+			"@cloudflare/ajax/libs/ace/{version}/mode-javascript.js",
+			"CloudEditor.js"
+		],
+		"css": [
+
+		],
+		"html": [
+
+		],
+		"i18n": [
+
+		]		
+	}
+}

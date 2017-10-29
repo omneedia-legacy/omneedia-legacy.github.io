@@ -1,0 +1,22 @@
+{
+	"namespace": "Ext.ux.FilterBox",
+	"version": "1.0.0",
+	"description": "FilterBox module.",
+	"license": "MIT",
+	"repositories": {
+	},
+	"package": {
+		"js": [
+			"FilterBox.js"
+		],
+		"css": [
+
+		],
+		"html": [
+
+		],
+		"i18n": [
+
+		]		
+	}
+}

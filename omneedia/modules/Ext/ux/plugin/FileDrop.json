@@ -1,0 +1,22 @@
+{
+	"namespace": "Ext.ux.FileDrop",
+	"version": "1.0.0",
+	"description": "FileDrop module.",
+	"license": "MIT",
+	"repositories": {
+	},
+	"package": {
+		"js": [
+			"FileDrop.js"
+		],
+		"css": [
+
+		],
+		"html": [
+
+		],
+		"i18n": [
+
+		]		
+	}
+}

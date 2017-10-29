@@ -1,0 +1,22 @@
+{
+	"namespace": "Ext.ux.upload",
+	"version": "1.0.0",
+	"description": "Upload widget",
+	"license": "MIT",
+	"repositories": {
+	},
+	"package": {
+		"js": [
+			"upload.js"
+		],
+		"css": [
+			"res/upload.css"
+		],
+		"html": [
+
+		],
+		"i18n": [
+
+		]		
+	}
+}

@@ -1,0 +1,9 @@
+[
+	"libs/IO.js",
+	"libs/Localizer.js",
+	"libs/Ext/Lib.js",
+	"libs/Ext/GlobalMenu.js",
+	"libs/Ext/Loader.js",
+	"libs/Auth.js",
+	"libs/DB.js"
+]
