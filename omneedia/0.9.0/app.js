@@ -235,7 +235,7 @@ App.apply(App,{
 				};
 			};			
 			for (var el in Settings.PATHS) {
-				if (module.indexOf(el)>-1) script=Settings.PATHS[el]+module.split(el+'/')[1]; 	
+				if (module.indexOf(el)>-1) script=Settings.PATHS[el]+module; 	
 			};
 			if (script=="") script=module;
 			//script=script.replace(/\./g,'/');
