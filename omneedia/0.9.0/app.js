@@ -192,6 +192,7 @@ App.apply(App,{
 	},
 	require: function (module, cb) {		
 		if (Settings.DEBUG) {
+			module=module.replace('/\./g','/');
 			var script="";
 			var config={};
 			var zobj=[];			
@@ -234,11 +235,12 @@ App.apply(App,{
 				};
 			};			
 			for (var el in Settings.PATHS) {
-				if (module.indexOf(el)>-1) script=Settings.PATHS[el]+module.split(el+'.')[1]; 	
+				if (module.indexOf(el)>-1) script=Settings.PATHS[el]+module.split(el+'/')[1]; 	
 			};
 			if (script=="") script=module;
-			script=script.replace(/\./g,'/');
+			//script=script.replace(/\./g,'/');
 			if (script.indexOf('.json')==-1) script+=".json";
+			alert(script);
 			App.request(script,function(e,b) {
 				config=JSON.parse(b);
 				var scripts=config.package.js;
