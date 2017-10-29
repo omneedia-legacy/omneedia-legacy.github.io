@@ -193,7 +193,6 @@ App.apply(App,{
 	require: function (module, cb) {		
 		if (Settings.DEBUG) {
 			module=module.replace(/\./g,'/');
-			alert(module);
 			var script="";
 			var config={};
 			var zobj=[];			
@@ -204,8 +203,9 @@ App.apply(App,{
 					if (scripts[i].indexOf(el)>-1) scripts[i]=config.repositories[el]+scripts[i].split(el)[1];	
 				};			
 				if (scripts[i].indexOf('http')==-1) {
-					scripts[i]=App.origin()+script.replace('.json','/')+scripts[i];
+					scripts[i]=script.replace('.json','/')+scripts[i];
 				};				
+				scripts[i]=scripts[i].cleanURL();
 				App.request(scripts[i],function(e,b) {
 					window.eval(b);
 					req(scripts,i+1,cb);
@@ -217,9 +217,10 @@ App.apply(App,{
 				for (var el in config.repositories) {
 					if (scripts[i].indexOf(el)>-1) scripts[i]=config.repositories[el]+scripts[i].split(el)[1];	
 					if (scripts[i].indexOf('http')==-1) {
-						scripts[i]=App.origin()+script.replace('.json','/')+scripts[i];
+						scripts[i]=script.replace('.json','/')+scripts[i];
 					}
-				};				
+				};		
+				scripts[i]=scripts[i].cleanURL();
 				App.request(scripts[i],function(e,b) {
 					arr.push(b);
 					reqns(scripts,i+1,cb,arr);
@@ -236,14 +237,11 @@ App.apply(App,{
 				};
 			};			
 			for (var el in Settings.PATHS) {
-				if (module.indexOf(el)>-1) {
-					/*if (Settings.PATHS[el].indexOf('/')==Settings.PATHS[el].length) script=Settings.PATHS[el]+module.split(el)[1]; else */script=Settings.PATHS[el]+'/'+module.split(el)[1]; 	
-				}
+				if (module.indexOf(el)>-1) script=Settings.PATHS[el]+'/'+module.split(el)[1];
 			};
 			if (script=="") script=module;
-			//script=script.replace(/\./g,'/');
 			if (script.indexOf('.json')==-1) script+=".json";
-			//alert(script);
+			script=script.cleanURL();
 			App.request(script,function(e,b) {
 				config=JSON.parse(b);
 				var scripts=config.package.js;
@@ -312,7 +310,8 @@ App.apply(App,{
 		xhr.addEventListener( "load" , reqListener,false );
 		xhr.addEventListener( "progress" , updateProgress, false);
 		xhr.addEventListener( "error" , transferFailed, false);
-		xhr.addEventListener( "abort" , transferCanceled, false);	
+		xhr.addEventListener( "abort" , transferCanceled, false);
+		//console.log('-->'+url);
 		xhr.open( method , url );
 		if (method=="GET") xhr.send();
 		if (method=="POST") {

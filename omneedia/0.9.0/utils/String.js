@@ -851,6 +851,10 @@ String.prototype.toDate = function () {
 		return new Date(0, 0, 0, 0, 0, 0);
 	}
 };
+String.prototype.cleanURL = function() {
+	return this.replace(/([^:])(\/\/+)/g, '$1/');
+};
+
 
 function isNumeric(n) {
 	return !isNaN(parseFloat(n)) && isFinite(n);
