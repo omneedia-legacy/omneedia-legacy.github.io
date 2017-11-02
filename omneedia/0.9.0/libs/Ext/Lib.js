@@ -268,7 +268,7 @@ App.apply(App,{
 		this.FORMS.layout.setActiveItem(ndx);
 	},
 	override: function (name, o) {
-		return Ext.define(APP_NAMESPACE + '.overrides.' + name, o);
+		return Ext.define(Settings.NAMESPACE + '.overrides.' + name, o);
 	}
 });
 
@@ -282,7 +282,7 @@ App.apply(App,{
 App.define('App.model',{
 	statics: {
 		get: function (name) {
-			eval('var _p=' + APP_NAMESPACE + ".model." + name);
+			eval('var _p=' + Settings.NAMESPACE + ".model." + name);
 			return _p;
 		}
 		, create: function (cfg) {
@@ -335,10 +335,10 @@ App.define('App.model',{
 			};
 			if (o.requires) {
 				for (var i = 0; i < o.requires.length; i++) {
-					o.requires[i] = APP_NAMESPACE + ".model." + o.requires[i];
+					o.requires[i] = Settings.NAMESPACE + ".model." + o.requires[i];
 				}
 			};
-			return Ext.define(APP_NAMESPACE + ".model." + name, o);
+			return Ext.define(Settings.NAMESPACE + ".model." + name, o);
 		}		
 	}
 });

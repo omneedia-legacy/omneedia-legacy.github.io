@@ -21,18 +21,19 @@ App.apply(App,{
 	},
 	loadLang: function(lang,cb) {
 		var _LANG=[];
-		function loadLang(urls,i,cb) {
+		function ll(urls,i,cb) {
 			if (!urls[i]) return cb();
 			var url=urls[i];
 			var lang=App.DEFAULT_LANG.split('|')[1].split(',');
 			var url0=url.replace(/{lang}/g,lang[0]);
 			if (lang[1]) var url1=url.replace(/{lang}/g,lang[1]); else url1=-1;
 			function addLang () {
-				_LANG.push(this.response);
-				return loadLang(urls,i+1,cb);
+				if (url1.indexOf('.json')>-1) {							_LANG.push('i18n["'+App.DEFAULT_LANG.split('|')[0]+'"]=Object.assign(i18n["'+App.DEFAULT_LANG.split('|')[0]+'"],'+this.response+');');
+				} else _LANG.push(this.response);
+				return ll(urls,i+1,cb);
 			};	
 			function failed() {
-				return loadLang(urls,i+1,cb);
+				return ll(urls,i+1,cb);
 			};
 			var XHR = new XMLHttpRequest();
 			var params = "url0="+url0+"&url1="+url1;
@@ -66,9 +67,9 @@ App.apply(App,{
 		if (Settings.DEBUG) {
 			// in DEBUG, we load it dynamically
 			Settings['i18n'].push(Settings.REMOTE_API+'/Contents/Culture/'+App.DEFAULT_LANG.split('|')[0]+'.js');
-			loadLang(Settings['i18n'],0,function() {
+			ll(Settings['i18n'],0,function() {
 				App.DEFAULT_LANG=App.DEFAULT_LANG.split('|')[0];
-				window.eval( 'i18n_framework["'+App.DEFAULT_LANG+'"]=function(){'+_LANG.join(' ')+'};' );
+				window.eval( 'if (!i18n["'+App.DEFAULT_LANG+'"]) i18n["'+App.DEFAULT_LANG+'"]={};i18n_framework["'+App.DEFAULT_LANG+'"]=function(){'+_LANG.join(' ')+'};' );
 				i18n_framework[App.DEFAULT_LANG]();		
 				cb();
 			});		
