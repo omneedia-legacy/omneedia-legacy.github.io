@@ -74,7 +74,7 @@ App.apply(App,{
 				cb();
 			});		
 		} else {
-			alert(App.DEFAULT_LANG);
+			App.DEFAULT_LANG=App.DEFAULT_LANG.split('|')[0];
 			console.log(i18n_framework);
 			// in PROD, It's always binded to source code
 			i18n_framework[App.DEFAULT_LANG]();
