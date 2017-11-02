@@ -468,25 +468,6 @@ App.apply(App,{
 		};
 
 		return id;
-	},
-	IO: {
-		subscribe: function (uri) {
-			uri = uri.split(' ');
-			for (var i = 0; i < uri.length; i++) {
-				if (uri[i].indexOf("#") > -1) document.socket.emit('#create', uri[i]);
-			}
-		}, 
-		on: function (uri, cb) {
-			document.socket.on(uri, cb);
-		}, 
-		send: function (uri, data, users) {
-			var o = {
-				uri: uri
-				, data: data
-				, users: users
-			};
-			if (uri.indexOf("#") > -1) document.socket.emit('#send', JSON.stringify(o));
-		}
 	}
 });
 
