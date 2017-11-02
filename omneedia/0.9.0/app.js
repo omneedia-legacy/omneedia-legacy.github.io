@@ -268,7 +268,7 @@ App.apply(App,{
 					reqObj(zobj,0,cb);
 				});
 			});			
-		};
+		} else cb();
 	},	
 	request: function(o,cb) {
 		function param(object) {
