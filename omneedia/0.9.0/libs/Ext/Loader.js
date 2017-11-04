@@ -38,11 +38,12 @@ App.apply(App, {
 
     },
     load: function(fn) {
-        /*App.getAcceptedLangs(function(lang) {
-        	App.loadLang(lang,function() {
-        		if (!App.libs) Manifest(); else require(App.libs,Manifest);
-        	});
-        });*/
-        Manifest();
+        App.getAcceptedLangs(function(lang) {
+            App.loadLang(lang, function() {
+                //if (!App.libs) 
+                Manifest();
+                //else require(App.libs, Manifest);
+            });
+        });
     }
 });
