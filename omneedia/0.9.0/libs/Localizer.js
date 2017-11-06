@@ -2,7 +2,7 @@ i18n_framework = {};
 i18n = {};
 
 _ = function(x) {
-    if (!App.DEFAULT_LANG) App.DEFAULT_LANG = window.localStorage['LANG'];
+    App.DEFAULT_LANG = window.localStorage['LANG'];
     try {
         return i18n[App.DEFAULT_LANG][x];
     } catch (ex) {
@@ -50,7 +50,7 @@ App.apply(App, {
             XHR.send(params);
         };
         var current = "";
-        if (window.localStorage['LANG']) App._lang = window.localStorage['LANG'];
+        if (window.localStorage['LANG']) App._lang.setItem('LANG',window.localStorage['LANG']);
         if (!App._lang) {
             for (var i = 0; i < Settings.LANGS.length; i++) {
                 if (lang.indexOf(Settings.LANGS[i].toLowerCase()) > -1) current = Settings.LANGS[i] + '|' + lang;
@@ -70,19 +70,19 @@ App.apply(App, {
                 App.DEFAULT_LANG = Settings.LANGS[0] + '|' + Settings.LANGS[0] + ',' + Settings.LANGS[0] + '-' + Settings.LANGS[0].toUpperCase();
             };
         } else App.DEFAULT_LANG = current;
-        window.localStorage['LANG'] = App.DEFAULT_LANG;
         if (Settings.DEBUG) {
             // in DEBUG, we load it dynamically
             Settings['i18n'].push(Settings.REMOTE_API + '/Contents/Culture/' + App.DEFAULT_LANG.split('|')[0] + '.js');
             ll(Settings['i18n'], 0, function() {
                 App.DEFAULT_LANG = App.DEFAULT_LANG.split('|')[0];
+				window.localStorage.setItem('LANG',App.DEFAULT_LANG);
                 window.eval('if (!i18n["' + App.DEFAULT_LANG + '"]) i18n["' + App.DEFAULT_LANG + '"]={};i18n_framework["' + App.DEFAULT_LANG + '"]=function(){' + _LANG.join(' ') + '};');
                 i18n_framework[App.DEFAULT_LANG]();
                 cb();
             });
         } else {
             App.DEFAULT_LANG = App.DEFAULT_LANG.split('|')[0];
-            console.log(i18n_framework);
+			window.localStorage.setItem('LANG',App.DEFAULT_LANG);
             // in PROD, It's always binded to source code
             i18n_framework[App.DEFAULT_LANG]();
             cb();
