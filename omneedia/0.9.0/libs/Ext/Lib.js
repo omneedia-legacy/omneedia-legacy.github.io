@@ -9,7 +9,6 @@ function getAllChildren(panel) {
 	})
 	return children;
 };
-
 /**
  * @method getAllChildrenIds
  * return (Array) All children id of a panel 
@@ -21,104 +20,98 @@ function getAllChildrenIds(panel) {
 	}
 	return children;
 };
-
 Ext.define('Ext.overrides.layout.container.Container', {
-  override: 'Ext.layout.container.Container',
-  notifyOwner: function() {
-	this.owner.afterLayout(this);
-  }
+	override: 'Ext.layout.container.Container'
+	, notifyOwner: function () {
+		this.owner.afterLayout(this);
+	}
 });
-
 /**
  * Layout patcher
  * override Ext.layout.container.Container 
  */
 Ext.define('Ext.overrides.layout.container.Container', {
-  override: 'Ext.layout.container.Container',
-  notifyOwner: function() {
-	this.owner.afterLayout(this);
-  }
+	override: 'Ext.layout.container.Container'
+	, notifyOwner: function () {
+		this.owner.afterLayout(this);
+	}
 });
-
 App.apply(App, {
-
-	remote: "",
-	APP: {},
-	libs: [],
-	namespace: Settings.NAMESPACE,
-	/**
- 	 * @method getArray
+	remote: ""
+	, APP: {}
+	, libs: []
+	, namespace: Settings.NAMESPACE
+	, /**
+	 * @method getArray
 	 * @param {Array} obj Array of objects
 	 * @param {String} field
 	 * 
 	 * var o = [{field: "test"},{field: "test2"}];
 	 * var arr=getArray(o,'field');
 	 * result in ["test","test2"];
- 	 * @return (Array) - flat array from an array of objects 
- 	 */	
-	getArray: function(obj,field) {
-		var data=[];
-		for (var i=0;i<obj.length;i++) {
+	 * @return (Array) - flat array from an array of objects 
+	 */
+	getArray: function (obj, field) {
+		var data = [];
+		for (var i = 0; i < obj.length; i++) {
 			data.push(obj[i][field]);
 		};
 		return data;
 	}
 });
-
 /**
  * @namespace App
  * @class info
  * 
  */
-App.define('App.info',{
+App.define('App.info', {
 	statics: {
 		loading: function (alpha) {
-				if (!alpha) alpha = "";
-				var opts = {
-							lines: 13
-							, length: 11
-							, width: 5
-							, radius: 17
-							, corners: 1
-							, rotate: 0
-							, color: '#FFF'
-							, speed: 1
-							, trail: 60
-							, shadow: false
-							, hwaccel: false
-							, className: 'spinner'
-							, zIndex: 2e9
-							, top: 'auto'
-							, left: 'auto'
-				};
-				var target = document.createElement("div");
-				document.body.appendChild(target);
-				var spinner = new Spinner(opts).spin(target);
-				App._loading = _Overlay({
-					text: alpha, 
-					spinner: spinner
-				});
-		}, 
-		success: function (alpha) {
+			if (!alpha) alpha = "";
+			var opts = {
+				lines: 13
+				, length: 11
+				, width: 5
+				, radius: 17
+				, corners: 1
+				, rotate: 0
+				, color: '#FFF'
+				, speed: 1
+				, trail: 60
+				, shadow: false
+				, hwaccel: false
+				, className: 'spinner'
+				, zIndex: 2e9
+				, top: 'auto'
+				, left: 'auto'
+			};
+			var target = document.createElement("div");
+			document.body.appendChild(target);
+			var spinner = new Spinner(opts).spin(target);
+			App._loading = _Overlay({
+				text: alpha
+				, spinner: spinner
+			});
+		}
+		, success: function (alpha) {
 			if (!alpha) alpha = "";
 			App._loading = _Overlay({
-				icon: "overlay_check",
-				text: alpha
+				icon: "overlay_check"
+				, text: alpha
 			});
-		}, 
-		error: function (alpha) {
+		}
+		, error: function (alpha) {
 			if (!alpha) alpha = "";
 			App._loading = _Overlay({
-				icon: "overlay_error",
-				text: alpha
+				icon: "overlay_error"
+				, text: alpha
 			});
-		}, 
-		hide: function () {
+		}
+		, hide: function () {
 			if (App._loading) App._loading.hide();
 		}
 	}
 });
-
 /**
  * @class App
  * @method stores
@@ -129,56 +122,58 @@ App.define('App.info',{
  */
 App.apply(App, {
 	stores: function (x) {
-			var cc = 0;
+		var cc = 0;
 
-			function getAllChildren(panel) {
-				var children = panel.items ? panel.items.items : [];
-				Ext.each(children, function (child) {
-					children = children.concat(getAllChildren(child));
-				})
-				return children;
-			};
+		function getAllChildren(panel) {
+			var children = panel.items ? panel.items.items : [];
+			Ext.each(children, function (child) {
+				children = children.concat(getAllChildren(child));
+			})
+			return children;
+		};
 
-			function counter(l, cb) {
-				if (cc == l) cb();
-				cc++;
+		function counter(l, cb) {
+			if (cc == l) cb();
+			cc++;
+		};
+		var tab = [];
+		if (x instanceof Ext.Component) {
+			var all = getAllChildren(x);
+			for (var i = 0; i < all.length; i++) {
+				if (all[i].store) {
+					tab.push(all[i].getStore());
+				};
 			};
-			var tab = [];
-			if (x instanceof Ext.Component) {
-				var all = getAllChildren(x);
-				for (var i = 0; i < all.length; i++) {
-					if (all[i].store) {
-						tab.push(all[i].getStore());
+			return {
+				get: function () {
+					return tab;
+				}
+				, on: function (event, cb) {
+					for (var i = 0; i < tab.length; i++) {
+						tab[i].on(event, function (x) {
+							counter(tab.length - 1, cb);
+						});
 					};
-				};
-				return {
-					get: function () {
-						return tab;
-					}
-					, on: function (event, cb) {
-						for (var i = 0; i < tab.length; i++) {
-							tab[i].on(event, function (x) {
-								counter(tab.length - 1, cb);
-							});
-						};
-					}
-				};
-			} else return false;
+				}
+			};
 		}
+		else return false;
+	}
 });
-
-App.apply(App,{
+App.apply(App, {
 	get: function (x, z) {
 		if (!z) {
 			if (Ext.ComponentQuery.query(x).length > 0) return Ext.ComponentQuery.query(x)[0];
 			else return null;
-		} else {
+		}
+		else {
 			if (typeof x === 'object') {
 				if (x.query(z).length > 0) return x.query(z)[0];
-			} else return null;
+			}
+			else return null;
 		}
-	}, 
-	getData: function (obj) {
+	}
+	, getData: function (obj) {
 		function getAllChildren(panel) {
 			var children = panel.items ? panel.items.items : [];
 			Ext.each(children, function (child) {
@@ -196,28 +191,29 @@ App.apply(App,{
 					if (all[i].getValue) {
 						data[all[i].bindTo] = all[i].getValue();
 					}
-				} else {
+				}
+				else {
 					if (all[i].getValue) {
 						if (all[i].itemId) data[all[i].xtype + '#' + all[i].itemId] = all[i].getValue();
 					}
 				}
 			};
 			return data;
-		} else return {
+		}
+		else return {
 			result: {
-				message: "MISMATCHED_TYPE", 
-				success: false
+				message: "MISMATCHED_TYPE"
+				, success: false
 			}
 		};
-	},
-	getAll: function (x, z) {
-		if (!z)
-			return Ext.ComponentQuery.query(x);
+	}
+	, getAll: function (x, z) {
+		if (!z) return Ext.ComponentQuery.query(x);
 		else {
 			if (typeof x === 'object') return x.query(z);
 		}
-	},
-	notify: function (label, conf) {
+	}
+	, notify: function (label, conf) {
 		Ext.create('widget.uxNotification', {
 			position: 'tr'
 			, cls: 'ux-notification-light'
@@ -228,58 +224,55 @@ App.apply(App,{
 			, iconCls: 'ux-notification-icon-information'
 			, html: label
 		}).show();
-	}, 
-	using: function (namespace) {
+	}
+	, using: function (namespace) {
 		var _p = this;
-
 		this.namespace = Settings.NAMESPACE;
 		var url = Settings.REMOTE_API + "/api/" + namespace + "?javascript";
 		if (Settings.DEBUG) {
 			App.libs.push(url);
 		}
-	},	
-	STOREMODELS: {
+	}
+	, STOREMODELS: {
 		'tree': {
-			name: "treestore",
-			model: "Ext.data.TreeModel",
-			store: "Ext.data.TreeStore"
-		},
-		'events': {
-			name: "eventstore",
-			model: "Ext.ux.Scheduler.model.Event",
-			store: "Ext.ux.Scheduler.data.EventStore"
-		},
-		'resources': {
-			name: "resourcestore",
-			model: "Ext.ux.Scheduler.model.Resource",
-			store: "Ext.ux.Scheduler.data.ResourceStore"
-		},
-		'resourcestree': {
-			name: "resourcestore",
-			model: "Ext.ux.Scheduler.model.Resource",
-			store: "Ext.ux.Scheduler.data.ResourceTreeStore"
+			name: "treestore"
+			, model: "Ext.data.TreeModel"
+			, store: "Ext.data.TreeStore"
 		}
-	},
-	items: function () {
+		, 'events': {
+			name: "eventstore"
+			, model: "Ext.ux.Scheduler.model.Event"
+			, store: "Ext.ux.Scheduler.data.EventStore"
+		}
+		, 'resources': {
+			name: "resourcestore"
+			, model: "Ext.ux.Scheduler.model.Resource"
+			, store: "Ext.ux.Scheduler.data.ResourceStore"
+		}
+		, 'resourcestree': {
+			name: "resourcestore"
+			, model: "Ext.ux.Scheduler.model.Resource"
+			, store: "Ext.ux.Scheduler.data.ResourceTreeStore"
+		}
+	}
+	, items: function () {
 		return this.FORMS.items.items;
-	}, 
-	FORMS: {},
-	show: function (ndx) {
+	}
+	, FORMS: {}
+	, show: function (ndx) {
 		this.FORMS.layout.setActiveItem(ndx);
-	},
-	override: function (name, o) {
+	}
+	, override: function (name, o) {
 		return Ext.define(Settings.NAMESPACE + '.overrides.' + name, o);
 	}
 });
-
 /**
  * @namespace App
  * @class model
  * Implement the Model Abstraction class (MVC)
  * 
  */
-
-App.define('App.model',{
+App.define('App.model', {
 	statics: {
 		get: function (name) {
 			eval('var _p=' + Settings.NAMESPACE + ".model." + name);
@@ -307,7 +300,8 @@ App.define('App.model',{
 						}
 						, api: api
 					};
-				} else {
+				}
+				else {
 					var proxy = {
 						type: "direct"
 						, extraParams: {
@@ -339,18 +333,16 @@ App.define('App.model',{
 				}
 			};
 			return Ext.define(Settings.NAMESPACE + ".model." + name, o);
-		}		
+		}
 	}
 });
-
 /**
  * @namespace App
  * @class view
  * Implement the View Abstraction class (MVC)
  * 
  */
-
-App.define('App.view',{
+App.define('App.view', {
 	statics: {
 		define: function (name, o) {
 			if (o.requires) {
@@ -359,33 +351,29 @@ App.define('App.view',{
 				}
 			};
 			return Ext.define(Settings.NAMESPACE + ".view." + name, o);
-		}, 
-		create: function (name, o) {
-			if (o)
-				return Ext.create(Settings.NAMESPACE + ".view." + name, o);
-			else
-				return Ext.create(Settings.NAMESPACE + ".view." + name);
-		}, 
-		show: function (name, o) {
+		}
+		, create: function (name, o) {
+			if (o) return Ext.create(Settings.NAMESPACE + ".view." + name, o);
+			else return Ext.create(Settings.NAMESPACE + ".view." + name);
+		}
+		, show: function (name, o) {
 			alert('not yet implemented');
-		}, 
-		hide: function (name, o) {
+		}
+		, hide: function (name, o) {
 			alert('not yet implemented');
-		}, 
-		back: function (type, direction) {
+		}
+		, back: function (type, direction) {
 			alert('not yet implemented');
-		}		
+		}
 	}
 });
-
 /**
  * @namespace App
  * @class store
  * Implement the Store Abstraction class (MVC)
  * 
  */
-
-App.define("App.store",{
+App.define("App.store", {
 	statics: {
 		createColumns: function (grid, cb) {
 			var store = grid.getStore();
@@ -467,45 +455,61 @@ App.define("App.store",{
 				return ("M" + (Math.random() * Math.pow(36, 4) << 0).toString(36)).slice(-4)
 			};
 			var guid = _guid();
-
 			if (name instanceof Object == true) {
 				cfg = name;
-				if (cfg.type) var xtd=App.STOREMODELS[cfg.type]; else var xtd={name:"store",model:"Ext.data.Model",store:"Ext.data.Store"};
-			} else {
-				if (cfg) {
-					if (cfg.type) var xtd=App.STOREMODELS[cfg.type]; else var xtd={name:"store",model:"Ext.data.Model",store:"Ext.data.Store"};
-				} else {
-					var xtd={name:"store",model:"Ext.data.Model",store:"Ext.data.Store"};
-					var cfg={};
+				if (cfg.type) var xtd = App.STOREMODELS[cfg.type];
+				else var xtd = {
+					name: "store"
+					, model: "Ext.data.Model"
+					, store: "Ext.data.Store"
 				};
-
+			}
+			else {
+				if (cfg) {
+					if (cfg.type) var xtd = App.STOREMODELS[cfg.type];
+					else var xtd = {
+						name: "store"
+						, model: "Ext.data.Model"
+						, store: "Ext.data.Store"
+					};
+				}
+				else {
+					var xtd = {
+						name: "store"
+						, model: "Ext.data.Model"
+						, store: "Ext.data.Store"
+					};
+					var cfg = {};
+				};
 				// *** UQL string
 				if (name.indexOf('://') > -1) {
 					App.model.define(guid, {
-							api: {
-								read: "App.__QUERY__.exec"
-							}
-							, extraParams: {
-								__SQL__: name
-							}
-					},xtd.model);
-					if (typeof cfg=='string') cfg={};
+						api: {
+							read: "App.__QUERY__.exec"
+						}
+						, extraParams: {
+							__SQL__: name
+						}
+					}, xtd.model);
+					if (typeof cfg == 'string') cfg = {};
 					cfg.model = Settings.NAMESPACE + ".model." + guid;
 					cfg.require = [];
 					cfg.require[0] = Settings.NAMESPACE + ".model." + guid;
-				} else {
+				}
+				else {
 					// *** WebService
 					if (name.indexOf('.') > -1) {
-						App.model.define(guid,{
+						App.model.define(guid, {
 							api: {
 								read: name
 							}
-						},xtd.model);
+						}, xtd.model);
 						cfg.model = Settings.NAMESPACE + ".model." + guid;
 						cfg.require = [];
 						cfg.require.push(Settings.NAMESPACE + ".model." + guid);
-					} else {
-						if (typeof cfg=='string') cfg={};
+					}
+					else {
+						if (typeof cfg == 'string') cfg = {};
 						cfg.model = Settings.NAMESPACE + ".model." + name;
 						cfg.require = [];
 						cfg.require[0] = Settings.NAMESPACE + ".model." + name;
@@ -516,22 +520,21 @@ App.define("App.store",{
 				var myStore = Ext.create(xtd.store, cfg);
 				if (!myStore.getProxy().extraParams) myStore.getProxy().extraParams = {};
 				myStore.getProxy().extraParams.__SQL__ = name;
-			} catch (e) {
+			}
+			catch (e) {
 				console.log(e);
 			};
 			return myStore;
-		}	
+		}
 	}
 });
-
 /**
  * @namespace App
  * @class controller
  * Implement the Controller Abstraction class (MVC)
  * 
  */
-
-App.define('App.controller',{
+App.define('App.controller', {
 	statics: {
 		define: function (name, o) {
 			o.extend = "Ext.app.Controller";
@@ -541,9 +544,9 @@ App.define('App.controller',{
 				}
 			};
 			return Ext.define(Settings.NAMESPACE + ".controller." + name, o);
-		}, 
-		create: function (name) {
+		}
+		, create: function (name) {
 			return Ext.create(Settings.NAMESPACE + ".controller." + name);
-		}		
+		}
 	}
 });
