@@ -28,17 +28,17 @@ App.apply(App, {
                     else var doc = document;
                     if (App.isElement(obj)) var elem = obj;
                     else {
-                        if (obj.indexOf('#') > -1) var elem = doc.getElementById(obj.split('#')[1]);
-                        else {
-                            try {
+                        try {
+                            if (obj.indexOf('#') > -1) var elem = doc.getElementById(obj.split('#')[1]);
+                            else {
                                 var elem = doc.querySelectorAll(obj);
                                 if (App.isNodeList(elem)) elem = Array.prototype.slice.call(elem);
-                            } catch (e) {
-                                var elem = [];
-                                var span = document.createElement('span');
-                                span.innerHTML = obj;
-                                elem.push(span);
                             }
+                        } catch (e) {
+                            var elem = [];
+                            var span = document.createElement('span');
+                            span.innerHTML = obj;
+                            elem.push(span);
                         }
                     };
                 };
@@ -50,7 +50,6 @@ App.apply(App, {
             elem = tab;
         };
         return {
-            id: elem[0].id,
             on: function(property, fn) {
                 for (var i = 0; i < elem.length; i++) {
                     if (elem[i]) {
