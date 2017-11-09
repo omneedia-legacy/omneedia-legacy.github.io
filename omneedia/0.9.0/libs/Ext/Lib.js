@@ -213,7 +213,7 @@ App.apply(App, {
 			if (typeof x === 'object') return x.query(z);
 		}
 	}
-	, notify: function (label, conf) {
+	/*, notify: function (label, conf) {
 		Ext.create('widget.uxNotification', {
 			position: 'tr'
 			, cls: 'ux-notification-light'
@@ -224,7 +224,7 @@ App.apply(App, {
 			, iconCls: 'ux-notification-icon-information'
 			, html: label
 		}).show();
-	}
+	}*/
 	, using: function (namespace) {
 		var _p = this;
 		this.namespace = Settings.NAMESPACE;

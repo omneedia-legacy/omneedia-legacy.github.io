@@ -4,5 +4,5 @@
 	"utils/Persist.js",
 	"utils/Hashes.js",
 	"utils/Overlay.js",
-	"utils/Notification.js"
+	"utils/JSON.js"
 ]

@@ -369,74 +369,28 @@ App.apply(App, {
 // Generate App Unique ID
 App.uid = App.uuid();
 App.apply(App, {
-	$: function (obj) {
-		try {
-			var elem = document.querySelectorAll(obj);
-		}
-		catch (e) {
-			var elem = [];
-			var span = document.createElement('span');
-			span.innerHTML = obj;
-			elem.push(span);
+	getObjectProperty: function(obj, desc) {
+  		var arr = desc.split('.');
+  		while (arr.length && (obj = obj[arr.shift()]));
+  		return obj;
+	},
+	getObjectProperties: function(obj) {
+		var o=JSON.flatten(obj);
+		var arr = [];
+		for (var el in o) arr.push(el);
+		return arr;
+	},
+	setObjectProperty: function(obj,property,value) {
+		Object.prop = function(obj, prop, val){
+    		var props = prop.split('.'), 
+				final = props.pop(), p 
+    		while(p = props.shift()){
+        		if (typeof obj[p] === 'undefined') return undefined;
+        		obj = obj[p]
+    		}
+    		return val ? (obj[final] = val) : obj[final]
 		};
-		return {
-			css: function (key, value) {
-				for (var i = 0; i < elem.length; i++) {
-					if (elem[i]) {
-						if (!value) return elem[i].style[key];
-						else {
-							elem[i].style[key] = value;
-						}
-					}
-				}
-			}
-			, html: function (xhtml) {
-				for (var i = 0; i < elem.length; i++) {
-					if (elem[i]) {
-						if (!xhtml) return elem[i].innerHTML;
-						else elem[i].innerHTML = xhtml;
-					}
-				};
-			}
-			, remove: function () {
-				for (var i = 0; i < elem.length; i++) {
-					if (elem[i]) elem[i].parentNode.removeChild(elem[i]);
-				};
-			}
-			, click: function (fn) {
-				for (var i = 0; i < elem.length; i++) {
-					elem[i].addEventListener('click', fn, true);
-				}
-			}
-			, appendTo: function (div) {
-				for (var i = 0; i < elem.length; i++) {
-					if (elem[i]) {
-						if (App.isString(div)) div = document.querySelector(div);
-						if (div) div.appendChild(elem[i]);
-					};
-				}
-			}
-			, addClass: function (cl) {
-				for (var i = 0; i < elem.length; i++) {
-					if (elem[i]) elem[i].classList.add(cl);
-				}
-			}
-			, removeClass: function (cl) {
-				for (var i = 0; i < elem.length; i++) {
-					if (elem[i]) elem[i].classList.remove(cl);
-				}
-			}
-			, show: function () {
-				for (var i = 0; i < elem.length; i++) {
-					if (elem[i]) elem[i].style.display = "";
-				}
-			}
-			, hide: function () {
-				for (var i = 0; i < elem.length; i++) {
-					if (elem[i]) elem[i].style.display = "none";
-				}
-			}
-		}
+		Object.prop(obj, property, value);
 	}
 });
 App.import = function (scripts, cb) {
@@ -491,6 +445,16 @@ App.apply(App, {
 App.apply(App, {
 	isEmpty: function (value, allowEmptyString) {
 		return (value === null) || (value === undefined) || (!allowEmptyString ? value === '' : false) || (App.isArray(value) && value.length === 0);
+	}
+	/**
+	 * Returns true if the passed value is a NodeList, false otherwise.
+	 *
+	 * @param {Object} target The target to test
+	 * @return {Boolean}
+	 * @method
+	 */
+	, isNodeList: function(nodes) {
+		return NodeList.prototype.isPrototypeOf(nodes)
 	}
 	, /**
 	 * Returns true if the passed value is a JavaScript Array, false otherwise.
