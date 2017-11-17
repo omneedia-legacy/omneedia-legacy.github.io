@@ -181,6 +181,7 @@ App.apply(App, {
     },
     require: function(module, cb) {
         if (Settings.DEBUG) {
+
             if (App.isArray(module)) {
                 App.requires(module, 0, cb);
                 return;
@@ -246,6 +247,7 @@ App.apply(App, {
             if (script.indexOf('.json') == -1) script += ".json";
             script = script.cleanURL();
             App.request(script, function(e, b) {
+
                 config = JSON.parse(b);
                 var scripts = config.package.js;
                 var scr = [];
@@ -254,14 +256,17 @@ App.apply(App, {
                         zobj.push(scripts[i]);
                     } else scr.push(scripts[i]);
                 };
+
                 for (var i = 0; i < config.package.css.length; i++) {
                     var url = config.package.css[i];
                     url = url.replace(/{version}/g, config.version);
                     for (var el in config.repositories) {
                         if (url.indexOf(el) > -1) url = config.repositories[el] + url.split(el)[1];
                     };
-                    if (url.indexOf('http') == -1) url = App.origin() + script.replace('.json', '/') + url;
+
+                    if (script.replace('.json', '/').indexOf('http') == -1) url = App.origin() + script.replace('.json', '/') + url;
                     else url = script.replace('.json', '/') + url;
+
                     var link = document.createElement('link');
                     link.rel = "stylesheet";
                     link.type = "text/css";
