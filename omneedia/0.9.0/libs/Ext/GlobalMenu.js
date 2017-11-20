@@ -228,6 +228,7 @@ Ext.define('omneedia.webapp.GlobalMenu', {
 		Ext.getCmp('GlobalMenuUser').hide();
 		if (Settings.TYPE != "mobile") {
 			Auth.user(function (o) {
+				console.log(o);
 				if (o.mail) {
 					Ext.getCmp('GlobalMenuUser').setText(o.mail.split('@')[0]);
 					Ext.getCmp('GlobalMenuUser').show();

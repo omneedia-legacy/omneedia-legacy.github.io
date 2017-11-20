@@ -82,6 +82,7 @@ Auth = {
                 win.focus();
             };
             document.socket.on('#auth', function(response) {
+				console.log(response);
                 Auth.User = JSON.parse(response);
                 App.$('.QxOverlay').remove();
                 App.unblur('.x-panel');
