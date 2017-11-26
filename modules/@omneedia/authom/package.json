@@ -1,0 +1,34 @@
+{
+  "author": {
+    "email": "tr@nslator.jp",
+    "name": "Jed Schmidt"
+  },
+  "bugs": {
+    "url": "https://github.com/Omneedia/authom/issues"
+  },
+  "contributors": [],
+  "dependencies": {
+    "xcas": "0.1.0"
+  },
+  "description": "Authom Fork for omneedia framework",
+  "devDependencies": {},
+  "dist": {},
+  "engines": {
+    "node": ">=0.6.15"
+  },
+  "gitHead": "671cbc5d4ed27ded1c7a96b0e19b378fca02f1e2",
+  "homepage": "https://github.com/omneedia/authom",
+  "keywords": [],
+  "license": "MIT",
+  "main": "./lib/authom.js",
+  "name": "@omneedia/authom",
+  "optionalDependencies": {},		
+  "readme": "authom\n=======\n\nauthom is an authentication library for node.js. \nThis is a fork for omneedia Framework",
+  "readmeFilename": "README.md",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/omneedia/authom.git"
+  },
+  "scripts": {},
+  "version": "1.0.1"
+}

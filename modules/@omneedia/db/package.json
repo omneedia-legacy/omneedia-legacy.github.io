@@ -1,0 +1,63 @@
+{
+  "_from": "@omneedia/db",
+  "_id": "@omneedia/db@1.0.5",
+  "_inBundle": false,
+  "_integrity": "sha1-9DIigoFl2Ky9JFY+jxjHciFsXuY=",
+  "_location": "/@omneedia/db",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "tag",
+    "registry": true,
+    "raw": "@omneedia/db",
+    "name": "@omneedia/db",
+    "escapedName": "@omneedia%2fdb",
+    "scope": "@omneedia",
+    "rawSpec": "",
+    "saveSpec": null,
+    "fetchSpec": "latest"
+  },
+  "_requiredBy": [
+    "#USER",
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/@omneedia/db/-/db-1.0.3.tgz",
+  "_shasum": "f43222828165d8acbd24563e8f18c772216c5ee6",
+  "_spec": "@omneedia/db",
+  "_where": "/Users/zucatti/Desktop/db",
+  "author": {
+    "name": "Stephane Zucatti",
+    "email": "stephane.zucatti@me.com",
+    "url": "http://omneedia.com"
+  },
+  "bugs": {
+    "url": "https://github.com/omneedia/db/issues"
+  },
+  "bundleDependencies": false,
+  "contributors": [],
+  "dependencies": {
+    "callsite": "^1.0.0",
+    "mysql": "*",
+    "request": "^2.83.0",
+    "shortid": "^2.2.8"
+  },
+  "deprecated": false,
+  "description": "DB Wrapper for omneedia framework",
+  "devDependencies": {},
+  "dist": {},
+  "engines": {
+    "node": ">=0.6.15"
+  },
+  "gitHead": "40deae750bb76c7835cf9f78be85875d22b62dd6",
+  "homepage": "https://github.com/omneedia/db",
+  "keywords": [],
+  "license": "MIT",
+  "main": "./lib/index.js",
+  "name": "@omneedia/db",
+  "optionalDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/omneedia/db.git"
+  },
+  "scripts": {},
+  "version": "1.0.5"
+}
