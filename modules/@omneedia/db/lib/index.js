@@ -2,7 +2,7 @@
  *
  * Omneedia DB Library
  * version 1.0.1
- * Copyright (c) 2014-2015 CEREMA
+ * Copyright (c) 2014-2018 Omneedia
  *
  */
 
@@ -276,6 +276,8 @@ function query(name, sql, fn) {
 };
 
 function model(name, sql, fn) {
+    //console.log('-->' + this.auth);
+
     function isFunction(functionToCheck) {
         var getType = {};
         return functionToCheck && getType.toString.call(functionToCheck) === '[object Function]';

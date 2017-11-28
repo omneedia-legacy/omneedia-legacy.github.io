@@ -4,19 +4,26 @@ else
     document.socket = io.connect(Settings.REMOTE_API);
 
 document.socket.on('connect', function() {
-    var sessionid = document.socket.io.engine.id;
-    try {
-        App.unblur();
-    } catch (e) {};
-    //console.log(document.querySelector('.omneedia-overlay'));
+    App.unblur();
     document.querySelector('.omneedia-overlay').style.display = "none";
 });
 
 document.socket.on('disconnect', function() {
-    try {
-        App.blur();
-        location.reload();
-    } catch (e) {};
+    App.blur();
+});
+
+document.socket.on('session', function(data) {
+    var data = JSON.parse(data);
+    if (!localStorage.getItem("session")) localStorage.setItem('session', data.pid);
+    else {
+        if (localStorage.getItem("session") != data.pid) {
+            localStorage.setItem('session', data.pid);
+            try {
+                App.blur();
+            } catch (e) {};
+            location.reload();
+        }
+    };
 });
 
 if (Settings.DEBUG) {

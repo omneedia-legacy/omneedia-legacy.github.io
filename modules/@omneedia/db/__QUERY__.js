@@ -18,6 +18,8 @@ __QUERY__ = {
         db.del(_db, tb, obj, cb);
     },
     exec: function(o, cb) {
+
+
         var err = null;
         var response = null;
         var SQL = [];
@@ -474,7 +476,15 @@ __QUERY__ = {
                         cc[cp.split('=')[0]] = cp.split('=')[1];
                     } else listargs.push(cp);
                 };
-                for (var el in cc) listargs.push(el + '=' + cc[el]);
+                for (var el in cc) {
+                    var arg = cc[el];
+                    if (arg.indexOf('#') > -1) {
+                        var kargs = arg.split('.');
+                        if (kargs[0] == "#user") arg = __QUERY__.auth[kargs[1]];
+                        if (kargs[0] == "#auth") arg = __QUERY__.auth[kargs[1]];
+                    };
+                    listargs.push(el + '=' + arg);
+                };
 
                 if (QUEST) {
                     console.log('--- QUEST -----------------------------------------');
@@ -500,7 +510,7 @@ __QUERY__ = {
                 err = {
                     msg: "NO_DATABASE_SELECTED"
                 };
-                cb(msg);
+                cb(err);
             } else querycommander(QUERY, o, cb);
         };
     }
