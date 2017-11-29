@@ -139,7 +139,6 @@ __QUERY__ = {
                             // détecte une fonction
 
                             if ((item.indexOf('(') > -1) && (item.indexOf(')') > -1)) {
-                                console.log('xxxxxxxxxxxxx' + item);
                                 var method = item.substr(0, item.indexOf('(')).toUpperCase();
                                 var args = item.substr(item.indexOf('(') + 1, item.indexOf(')') - item.indexOf('(') - 1);
                                 // On détecte le champ Order + ou - sur value

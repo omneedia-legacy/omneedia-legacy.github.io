@@ -127,7 +127,10 @@ module.exports = {
                                 model.total = total;
                                 for (var i = 0; i < fields.length; i++) {
                                     var field = fields[i];
-                                    var typ = getMySQLType(field.type).toLowerCase();
+                                    console.log('--------');
+                                    console.log(field);
+                                    console.log('--------');
+                                    var typ = getMySQLType(field.columnType).toLowerCase();
                                     if (typ == "var_string") typ = "string";
                                     if (typ == "long") typ = "int";
                                     if (typ == "newdecimal") typ = "float";

@@ -1,28 +1,29 @@
 {
-    "_from": "@omneedia/db@",
-    "_id": "@omneedia/db@1.0.8",
+    "_from": "@omneedia/db@1.0.10",
+    "_id": "@omneedia/db@1.0.10",
     "_inBundle": false,
-    "_integrity": "sha512-AOdk2CNP6IW7cuAiqTfsS5275YtVNu1vSsSjcqiBr6dyEtXXz7mk0WyZ3q97W1rgWBLKYWXjecjCgE9u2RvPNA==",
+    "_integrity": "sha512-6yS+csxndI/F7QCUdG03KS58JYq+FNZtEbXHuEyHSIvoQ9y7yO/YKucPMHbh8toPFcuaGx94egR/eEOq9NL4yw==",
     "_location": "/@omneedia/db",
     "_phantomChildren": {},
     "_requested": {
-        "type": "tag",
+        "type": "version",
         "registry": true,
-        "raw": "@omneedia/db@",
+        "raw": "@omneedia/db@1.0.10",
         "name": "@omneedia/db",
         "escapedName": "@omneedia%2fdb",
         "scope": "@omneedia",
-        "rawSpec": "",
+        "rawSpec": "1.0.10",
         "saveSpec": null,
-        "fetchSpec": "latest"
+        "fetchSpec": "1.0.10"
     },
     "_requiredBy": [
+        "#USER",
         "/"
     ],
-    "_resolved": "https://registry.npmjs.org/@omneedia/db/-/db-1.0.8.tgz",
-    "_shasum": "3cc69604b722c2dec2c87a21d5df082031f29601",
-    "_spec": "@omneedia/db@",
-    "_where": "/Users/zucatti/Desktop/db",
+    "_resolved": "https://registry.npmjs.org/@omneedia/db/-/db-1.0.10.tgz",
+    "_shasum": "da50649686e5dd539aca332782b94686bbd56fec",
+    "_spec": "@omneedia/db@1.0.10",
+    "_where": "/Users/zucatti/omneedia.app/Contents/MacOS/bin",
     "author": {
         "name": "Stephane Zucatti",
         "email": "stephane.zucatti@me.com",
@@ -58,5 +59,5 @@
         "url": "git://github.com/omneedia/db.git"
     },
     "scripts": {},
-    "version": "1.0.10"
+    "version": "1.0.11"
 }
