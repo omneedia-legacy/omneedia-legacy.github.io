@@ -22,102 +22,89 @@ __QUERY__ = {
 
         var err = null;
         var response = null;
-        var SQL = [];
-        var ORDERBY = [];
-        var GROUPBY = [];
-        var LIMIT = [];
-        var FIELDS = [];
-        var JOINS = [];
-        var RELATION = {};
-        var TABLES = [];
 
-        var OUTPUT = "-1";
+        async function querycommander(o, PARAMS, cb) {
 
+            var SQL = [];
+            var ORDERBY = [];
+            var GROUPBY = [];
+            var LIMIT = [];
+            var FIELDS = [];
+            var JOINS = [];
+            var RELATION = {};
+            var TABLES = [];
 
-        /*
-         * Private functions
-         * Queries
-         */
-        function cleanArray(array) {
-            var i, j, len = array.length,
-                out = [],
-                obj = {};
-            for (i = 0; i < len; i++) {
-                obj[array[i]] = 0;
-            }
-            for (j in obj) {
-                out.push(j);
-            }
-            return out;
-        };
+            var OUTPUT = "-1";
 
-        function compute_item(item, table) {
-            var ITEM = "";
+            var cmd = o[1];
 
-            if (item.split('.').length > 2) {
-                ITEM = item.split('.')[1] + '.' + item.split('.')[2];
-                RELATION[item.split('.')[1]] = "*" + item.split('.')[0].trim();
-                TABLES.push(item.split('.')[1]);
-            } else {
-                if (item.split('.')[1]) {
-                    ITEM = item.split('.')[0] + '.' + item.split('.')[1];
-                    TABLES.push(item.split('.')[0]);
-                } else ITEM = table + '.' + item;
-            }
+            /*
+             * Private functions
+             * Queries
+             */
+            function cleanArray(array) {
+                var i, j, len = array.length,
+                    out = [],
+                    obj = {};
+                for (i = 0; i < len; i++) {
+                    obj[array[i]] = 0;
+                }
+                for (j in obj) {
+                    out.push(j);
+                }
+                return out;
+            };
 
-            return ITEM;
-        };
+            function compute_item(item, table) {
+                var ITEM = "";
 
-        function getFields(r, table) {
-            for (var i = 0; i < r.length; i++) {
-                var item = r[i];
-
-                // detect =
-                if (item.indexOf('=') == -1) {
-                    // Pas un champ calculé
-                    // Si le champ n'a pas de table de référence, on écrit celle courante
-                    if (item.indexOf('.') == -1) item = table + '.' + item;
-                    else {
-                        // On ajoute la table aux TABLES
-                        // détecte s'il y a une liaison explicite
-                        item = compute_item(item, table);
-                    };
-                    // On détecte le champ Order + ou -
-                    if (item.indexOf('+') == item.length - 1) {
-                        item = item.split('+')[0];
-                        ORDERBY.push(item);
-                    };
-                    if (item.indexOf('-') == item.length - 1) {
-                        item = item.split('-')[0];
-                        ORDERBY.push(item + ' DESC');
-                    };
-                    FIELDS.push(item);
+                if (item.split('.').length > 2) {
+                    ITEM = item.split('.')[1] + '.' + item.split('.')[2];
+                    RELATION[item.split('.')[1]] = "*" + item.split('.')[0].trim();
+                    TABLES.push(item.split('.')[1]);
                 } else {
-                    // C'est un champ calculé
-                    var lasteq = item.lastIndexOf('=');
-                    var value = item.substr(lasteq + 1, item.length);
-                    // On détecte le champ Order + ou -
-                    if (value.indexOf('+') == value.length - 1) {
-                        value = value.split('+')[0];
-                        ORDERBY.push(value);
-                    };
-                    if (value.indexOf('-') == value.length - 1) {
-                        value = value.split('-')[0];
-                        ORDERBY.push(value + ' DESC');
-                    };
-                    var item = item.substr(0, lasteq);
-                    item = compute_item(item, table);
-                    // Concaténation ?
-                    if (item.indexOf('+') > -1) {
-                        var items = item.split('+');
-                        var CONCAT = [];
-                        for (var j = 0; j < items.length; j++) {
-                            if ((items[j].indexOf("'") == -1) && (items[j].indexOf('"') == -1))
-                                CONCAT.push(compute_item(items[j], table));
-                            else
-                                CONCAT.push(items[j]);
+                    if (item.split('.')[1]) {
+                        ITEM = item.split('.')[0] + '.' + item.split('.')[1];
+                        TABLES.push(item.split('.')[0]);
+                    } else {
+                        if (item.indexOf('(') == -1) ITEM = table + '.' + item;
+                        else ITEM = item;
+                    }
+                }
+
+                return ITEM;
+            };
+
+            function getFields(r, table) {
+                for (var i = 0; i < r.length; i++) {
+                    var item = r[i];
+
+                    // detect =
+                    if (item.indexOf('=') == -1) {
+                        // Pas un champ calculé
+                        // Si le champ n'a pas de table de référence, on écrit celle courante
+                        if (item.indexOf('.') == -1) {
+                            if (item.indexOf('(') == -1) item = table + '.' + item;
+                        } else {
+                            // On ajoute la table aux TABLES
+                            // détecte s'il y a une liaison explicite
+                            item = compute_item(item, table);
                         };
-                        // On détecte le champ Order + ou - sur value
+                        // On détecte le champ Order + ou -
+                        if (item.indexOf('+') == item.length - 1) {
+                            item = item.split('+')[0];
+                            ORDERBY.push(item);
+                        };
+                        if (item.indexOf('-') == item.length - 1) {
+                            item = item.split('-')[0];
+                            ORDERBY.push(item + ' DESC');
+                        };
+                        FIELDS.push(item);
+                    } else {
+                        // C'est un champ calculé
+                        var lasteq = item.lastIndexOf('=');
+                        var value = item.substr(lasteq + 1, item.length);
+                        // On détecte le champ Order + ou -
                         if (value.indexOf('+') == value.length - 1) {
                             value = value.split('+')[0];
                             ORDERBY.push(value);
@@ -126,12 +113,18 @@ __QUERY__ = {
                             value = value.split('-')[0];
                             ORDERBY.push(value + ' DESC');
                         };
-                        FIELDS.push("CONCAT(" + CONCAT.join(',') + ") " + value);
-                    } else {
-                        // détecte une fonction
-                        if ((item.indexOf('(') > -1) && (item.indexOf(')') > -1)) {
-                            var method = item.substr(0, item.indexOf('(')).toUpperCase();
-                            var args = item.substr(item.indexOf('(') + 1, item.indexOf(')') - item.indexOf('(') - 1);
+                        var item = item.substr(0, lasteq);
+                        item = compute_item(item, table);
+                        // Concaténation ?
+                        if (item.indexOf('+') > -1) {
+                            var items = item.split('+');
+                            var CONCAT = [];
+                            for (var j = 0; j < items.length; j++) {
+                                if ((items[j].indexOf("'") == -1) && (items[j].indexOf('"') == -1))
+                                    CONCAT.push(compute_item(items[j], table));
+                                else
+                                    CONCAT.push(items[j]);
+                            };
                             // On détecte le champ Order + ou - sur value
                             if (value.indexOf('+') == value.length - 1) {
                                 value = value.split('+')[0];
@@ -141,85 +134,122 @@ __QUERY__ = {
                                 value = value.split('-')[0];
                                 ORDERBY.push(value + ' DESC');
                             };
-                            FIELDS.push(method + '(' + args.replace(/;/g, ',') + ') ' + value);
-                        } else FIELDS.push(item.replace(/;/g, ',') + ' `' + value + '`');
+                            FIELDS.push("CONCAT(" + CONCAT.join(',') + ") " + value);
+                        } else {
+                            // détecte une fonction
+
+                            if ((item.indexOf('(') > -1) && (item.indexOf(')') > -1)) {
+                                console.log('xxxxxxxxxxxxx' + item);
+                                var method = item.substr(0, item.indexOf('(')).toUpperCase();
+                                var args = item.substr(item.indexOf('(') + 1, item.indexOf(')') - item.indexOf('(') - 1);
+                                // On détecte le champ Order + ou - sur value
+                                if (value.indexOf('+') == value.length - 1) {
+                                    value = value.split('+')[0];
+                                    ORDERBY.push(value);
+                                };
+                                if (value.indexOf('-') == value.length - 1) {
+                                    value = value.split('-')[0];
+                                    ORDERBY.push(value + ' DESC');
+                                };
+                                FIELDS.push(method + '(' + args.replace(/;/g, ',') + ') ' + value);
+                            } else FIELDS.push(item.replace(/;/g, ',') + ' `' + value + '`');
+                        }
                     }
                 }
-            }
-        };
-
-        function qstr(str) {
-            //if (typeof str === 'object') return "";
-            if (str == "null") return "NULL";
-            try {
-                var obj = '\'' + str.replace(/[\0\x08\x09\x1a\n\r"'\\\%]/g, function(char) {
-                    switch (char) {
-                        case "\0":
-                            return "\\0";
-                        case "\x08":
-                            return "\\b";
-                        case "\x09":
-                            return "\\t";
-                        case "\x1a":
-                            return "\\z";
-                        case "\n":
-                            return "\\n";
-                        case "\r":
-                            return "\\r";
-                        case "%":
-                            return "%";
-                        case "\"":
-                        case "'":
-                        case "\\":
-                            return "\\" + char; // prepends a backslash to backslash, percent,
-                            // and double/single quotes
-                    }
-                }) + '\'';
-            } catch (e) {
-                return '\'' + str + '\'';
             };
-            return obj;
-        };
 
-        function query_fields(q) {
+            function qstr(str) {
+                //if (typeof str === 'object') return "";
+                if (str == "null") return "NULL";
+                try {
+                    var obj = '\'' + str.replace(/[\0\x08\x09\x1a\n\r"'\\\%]/g, function(char) {
+                        switch (char) {
+                            case "\0":
+                                return "\\0";
+                            case "\x08":
+                                return "\\b";
+                            case "\x09":
+                                return "\\t";
+                            case "\x1a":
+                                return "\\z";
+                            case "\n":
+                                return "\\n";
+                            case "\r":
+                                return "\\r";
+                            case "%":
+                                return "%";
+                            case "\"":
+                            case "'":
+                            case "\\":
+                                return "\\" + char; // prepends a backslash to backslash, percent,
+                                // and double/single quotes
+                        }
+                    }) + '\'';
+                } catch (e) {
+                    return '\'' + str + '\'';
+                };
+                return obj;
+            };
 
-            if (q.indexOf('=') > -1) {
+            async function query_fields(q) {
+
+                var qvalue = q.substr(q.indexOf('=') + 1, q.length);
+                if (qvalue.indexOf('{') == -1) {
+                    if (qvalue.indexOf('=') > -1) qvalue = qvalue.substr(qvalue.indexOf('=') + 1, qvalue.length);
+                };
+                var qkey = q.substr(0, q.indexOf('='));
+                if (qkey.indexOf('!') > -1) { qkey = qkey.split('!')[0]; var operator = '!='; } else var operator = '==';
                 // =
-                if (q.split('=')[1].indexOf('*') > -1) {
+                if (qvalue.indexOf('*') > -1) {
                     // like
-                    if (q.indexOf('!=') > -1) {
-                        return q.split('!=')[0] + ' not like "' + q.split('=')[1].replace(/\*/g, '%') + '"';
+                    if (operator == '!=') {
+                        return qkey + ' not like "' + qvalue.replace(/\*/g, '%') + '"';
                     } else {
-                        return q.split('=')[0] + ' like "' + q.split('=')[1].replace(/\*/g, '%') + '"';
+                        return qkey + ' like "' + qvalue.replace(/\*/g, '%') + '"';
                     };
-                    if (q.indexOf('!=') > -1) var _like = 'not like';
+                    if (operator == '!=') var _like = 'not like';
                     else _like = 'like';
 
                 } else {
-                    if (q.split('=')[1].indexOf('[') > -1) {
+                    if (qvalue.indexOf('[') > -1) {
                         //in
-                        if (q.indexOf('!=') > -1) {
-                            return q.split('!=')[0] + ' not in (' + q.split('=')[1].split('[')[1].split(']')[0] + ')';
+                        if (qvalue.indexOf('{') > -1) {
+                            // in another table
+                            var zo = [
+                                o[0],
+                                qvalue.substr(qvalue.indexOf('[') + 1, qvalue.lastIndexOf(']') - qvalue.indexOf('[') - 1) + ':sql'
+                            ];
+                            var result = await qcommander(zo, {});
+                            qvalue = "[" + result + "]";
+                        }
+                        if (operator == '!=') {
+                            return qkey + ' not in (' + qvalue.split('[')[1].split(']')[0] + ')';
                         } else {
-                            return q.split('=')[0] + ' in (' + q.split('=')[1].split('[')[1].split(']')[0] + ')';
+                            return qkey + ' in (' + qvalue.split('[')[1].split(']')[0] + ')';
                         };
                     } else {
                         // cas d'une fonction
                         if (q.indexOf('(') > -1)
-                            return q.split('=')[0] + '=' + q.split('=')[1] + '';
+                            return qkey + '=' + qvalue + '';
                         else {
-                            // cas simple
-                            return q.split('=')[0] + '=' + qstr(q.split('=')[1])
+                            if (qvalue.indexOf('{') > -1) {
+                                // in another table
+                                var zo = [
+                                    o[0],
+                                    qvalue.substr(qvalue.indexOf('=') + 1, qvalue.length) + ':sql'
+                                ];
+                                var result = await qcommander(zo, {});
+                                qvalue = '(' + result + ')';
+                                return qkey + '=' + qvalue;
+                            } else {
+                                // cas simple
+                                return qkey + '=' + qstr(qvalue);
+                            };
                         }
                     }
                 }
-            }
-        };
 
-        function querycommander(o, PARAMS, cb) {
-
-            var SQL = [];
-            var cmd = o[1];
+            };
 
             if (cmd.lastIndexOf(':') > -1) {
                 var zpos = cmd.lastIndexOf(':');
@@ -282,159 +312,168 @@ __QUERY__ = {
             /*
             On commence à construire la requête
             */
-            SQL.push('SELECT');
+            SQL.push('SELECT DISTINCT');
             SQL.push(FIELDS.join(','));
 
             SQL.push('FROM');
             SQL.push(table);
 
             var sql = "select CONSTRAINT_NAME, TABLE_NAME,COLUMN_NAME, REFERENCED_TABLE_NAME,REFERENCED_COLUMN_NAME from INFORMATION_SCHEMA.KEY_COLUMN_USAGE where CONSTRAINT_SCHEMA='" + _db + "' order by TABLE_NAME";
+            var r = await db.q(o[0], sql);
 
-            db.query(o[0], sql, function(e, r) {
-                var joins = {};
-                var primary = {};
-                for (var i = 0; i < r.length; i++) {
-                    if (r[i].CONSTRAINT_NAME == "PRIMARY") primary[r[i].TABLE_NAME] = r[i].TABLE_NAME + '.' + r[i].COLUMN_NAME;
-                    if ((r[i].REFERENCED_TABLE_NAME) && (table != r[i].REFERENCED_TABLE_NAME)) {
-                        if (!joins[r[i].REFERENCED_TABLE_NAME])
-                            joins[r[i].REFERENCED_TABLE_NAME] = "LEFT JOIN " + r[i].REFERENCED_TABLE_NAME + " ON " + r[i].TABLE_NAME + '.' + r[i].COLUMN_NAME + '=' + r[i].REFERENCED_TABLE_NAME + '.' + r[i].REFERENCED_COLUMN_NAME;
-                        else {
-                            if (Array.isArray(joins[r[i].REFERENCED_TABLE_NAME])) {
-                                joins[r[i].REFERENCED_TABLE_NAME].push("LEFT JOIN " + r[i].REFERENCED_TABLE_NAME + " ON " + r[i].TABLE_NAME + '.' + r[i].COLUMN_NAME + '=' + r[i].REFERENCED_TABLE_NAME + '.' + r[i].REFERENCED_COLUMN_NAME);
-                            } else {
-                                var obj = [];
-                                obj.push(joins[r[i].REFERENCED_TABLE_NAME]);
-                                joins[r[i].REFERENCED_TABLE_NAME] = obj;
-                                joins[r[i].REFERENCED_TABLE_NAME].push("LEFT JOIN " + r[i].REFERENCED_TABLE_NAME + " ON " + r[i].TABLE_NAME + '.' + r[i].COLUMN_NAME + '=' + r[i].REFERENCED_TABLE_NAME + '.' + r[i].REFERENCED_COLUMN_NAME);
-                            }
-                        }
-                    };
-                };
-
-                TABLES = cleanArray(TABLES);
-
-                for (var i = 0; i < TABLES.length; i++) {
-
-                    if (joins[TABLES[i]]) {
-                        // jointure implicite (innoDB)
-                        if (Array.isArray(joins[TABLES[i]])) {
-                            var arr = joins[TABLES[i]];
-                            for (var z = 0; z < arr.length; z++) {
-                                var tb = arr[z].split('ON ')[1].split('.')[0];
-                                if (MYTABLES.indexOf(tb) > -1) JOINS.push(arr[z]);
-                            };
+            var joins = {};
+            var primary = {};
+            for (var i = 0; i < r.length; i++) {
+                if (r[i].CONSTRAINT_NAME == "PRIMARY") primary[r[i].TABLE_NAME] = r[i].TABLE_NAME + '.' + r[i].COLUMN_NAME;
+                if ((r[i].REFERENCED_TABLE_NAME) && (table != r[i].REFERENCED_TABLE_NAME)) {
+                    if (!joins[r[i].REFERENCED_TABLE_NAME])
+                        joins[r[i].REFERENCED_TABLE_NAME] = "LEFT JOIN " + r[i].REFERENCED_TABLE_NAME + " ON " + r[i].TABLE_NAME + '.' + r[i].COLUMN_NAME + '=' + r[i].REFERENCED_TABLE_NAME + '.' + r[i].REFERENCED_COLUMN_NAME;
+                    else {
+                        if (Array.isArray(joins[r[i].REFERENCED_TABLE_NAME])) {
+                            joins[r[i].REFERENCED_TABLE_NAME].push("LEFT JOIN " + r[i].REFERENCED_TABLE_NAME + " ON " + r[i].TABLE_NAME + '.' + r[i].COLUMN_NAME + '=' + r[i].REFERENCED_TABLE_NAME + '.' + r[i].REFERENCED_COLUMN_NAME);
                         } else {
-                            JOINS.push(joins[TABLES[i]]);
+                            var obj = [];
+                            obj.push(joins[r[i].REFERENCED_TABLE_NAME]);
+                            joins[r[i].REFERENCED_TABLE_NAME] = obj;
+                            joins[r[i].REFERENCED_TABLE_NAME].push("LEFT JOIN " + r[i].REFERENCED_TABLE_NAME + " ON " + r[i].TABLE_NAME + '.' + r[i].COLUMN_NAME + '=' + r[i].REFERENCED_TABLE_NAME + '.' + r[i].REFERENCED_COLUMN_NAME);
+                        }
+                    }
+                };
+            };
+
+            TABLES = cleanArray(TABLES);
+
+            for (var i = 0; i < TABLES.length; i++) {
+
+                if (joins[TABLES[i]]) {
+                    // jointure implicite (innoDB)
+                    if (Array.isArray(joins[TABLES[i]])) {
+                        var arr = joins[TABLES[i]];
+                        for (var z = 0; z < arr.length; z++) {
+                            var tb = arr[z].split('ON ')[1].split('.')[0];
+                            if (MYTABLES.indexOf(tb) > -1) JOINS.push(arr[z]);
+                        };
+                    } else {
+                        JOINS.push(joins[TABLES[i]]);
+                    }
+                } else {
+                    // on n'a pas pu trouver de jointure implicite (myISAM par exemple), on en cherche une explicite
+                    if (RELATION[TABLES[i]]) {
+                        if (RELATION[TABLES[i]].indexOf("*") > -1) {
+                            // S'il y a une jointure multiple
+                            var ttt = RELATION[TABLES[i]].split('*')[1];
+                            if (TABLES[i] != table) JOINS.push("LEFT JOIN " + TABLES[i] + " ON " + primary[TABLES[i]] + '=' + primary[ttt]);
+                        } else {
+                            if (TABLES[i] != table) JOINS.push("LEFT JOIN " + TABLES[i] + " ON " + primary[TABLES[i]] + '=' + RELATION[TABLES[i]]);
                         }
                     } else {
-                        // on n'a pas pu trouver de jointure implicite (myISAM par exemple), on en cherche une explicite
-                        if (RELATION[TABLES[i]]) {
-                            if (RELATION[TABLES[i]].indexOf("*") > -1) {
-                                // S'il y a une jointure multiple
-                                var ttt = RELATION[TABLES[i]].split('*')[1];
-                                if (TABLES[i] != table) JOINS.push("LEFT JOIN " + TABLES[i] + " ON " + primary[TABLES[i]] + '=' + primary[ttt]);
-                            } else {
-                                if (TABLES[i] != table) JOINS.push("LEFT JOIN " + TABLES[i] + " ON " + primary[TABLES[i]] + '=' + RELATION[TABLES[i]]);
-                            }
-                        } else {
-                            // Pas de jointure explicite, on déclare une jointure par clé liée (table1.kage=table2.kage)
-                            try {
-                                if (TABLES[i] != table) JOINS.push("LEFT JOIN " + TABLES[i] + " ON " + primary[TABLES[i]] + '=' + table + '.' + primary[TABLES[i]].split('.')[1]);
-                            } catch (e) {}
-                        }
+                        // Pas de jointure explicite, on déclare une jointure par clé liée (table1.kage=table2.kage)
+                        try {
+                            if (TABLES[i] != table) JOINS.push("LEFT JOIN " + TABLES[i] + " ON " + primary[TABLES[i]] + '=' + table + '.' + primary[TABLES[i]].split('.')[1]);
+                        } catch (e) {}
                     }
-                };
+                }
+            };
 
-                if (JOINS.length > 0) SQL.push(JOINS.join(' '));
+            if (JOINS.length > 0) SQL.push(JOINS.join(' '));
 
-                // Traitement du query
+            // Traitement du query
 
-                SQL.push('WHERE');
+            SQL.push('WHERE');
 
-                if (cmd.indexOf('?') == -1) SQL.push('-1');
-                else {
-                    // WHERE
-                    var _cmd = cmd.split('?')[1].split('/')[0];
-                    var query = cleanArray(_cmd.split('&'));
+            if (cmd.indexOf('?') == -1) SQL.push('-1');
+            else {
+                // WHERE
+                var _cmd = cmd.substr(cmd.indexOf('?') + 1, cmd.length).split('/')[0];
+                var query = cleanArray(_cmd.split('&'));
 
-                    for (var i = 0; i < query.length; i++) {
-                        if (query[i].indexOf('(') == -1) {
-                            // AND
-                            if (i > 0) SQL.push('AND');
-                            if (query[i].indexOf('.') == -1) query[i] = table + '.' + query[i];
-                            var item = query_fields(query[i]);
+                for (var i = 0; i < query.length; i++) {
+                    if (query[i].indexOf('(') == -1) {
+                        // AND
+                        if (i > 0) SQL.push('AND');
+                        if (query[i].indexOf('.') == -1) query[i] = table + '.' + query[i];
+                        var item = await query_fields(query[i]);
+                        SQL.push(item);
+                    } else {
+                        // OR
+                        var kery = cmd.split('(')[1].split(')')[0].split('||');
+                        if (kery.length == 1) {
+                            // fonction
+                            console.log('FONCTION');
+                            var item = await query_fields(query[i]);
                             SQL.push(item);
                         } else {
-                            // OR
-                            var kery = cmd.split('(')[1].split(')')[0].split('||');
-                            if (kery.length == 1) {
-                                // fonction
-                                console.log('FONCTION');
-                                var item = query_fields(query[i]);
+
+                            SQL.push('(');
+                            for (var i = 0; i < kery.length; i++) {
+                                if (i > 0) SQL.push('OR');
+                                if (kery[i].indexOf('.') == -1) kery[i] = table + '.' + kery[i];
+                                var item = await query_fields(kery[i]);
                                 SQL.push(item);
-                            } else {
-
-                                SQL.push('(');
-                                for (var i = 0; i < kery.length; i++) {
-                                    if (i > 0) SQL.push('OR');
-                                    if (kery[i].indexOf('.') == -1) kery[i] = table + '.' + kery[i];
-                                    var item = query_fields(kery[i]);
-                                    SQL.push(item);
-                                };
-                                SQL.push(')');
-                            }
-                        };
-                    }
-                }
-
-
-                // group by
-                if (cmd.indexOf('?') > -1) GROUPBY = cmd.split('?')[1].split('/');
-                else GROUPBY = cmd.substr(cmd.lastIndexOf('}') + 2, cmd.length).split('/');
-                if (GROUPBY.length > 1) {
-                    GROUPBY.shift();
-                    SQL.push('GROUP BY ' + GROUPBY.join(', '));
-                };
-
-                // order by
-                if (ORDERBY.length > 0) {
-                    SQL.push('ORDER BY');
-                    var order_by = [];
-                    for (var i = 0; i < ORDERBY.length; i++) {
-                        if (ORDERBY[i].indexOf('-') > -1) order_by.push(ORDERBY[i].split('-')[0].split('=')[0] + ' DESC');
-                        else order_by.push(ORDERBY[i].split('+')[0].split('=')[0]);
-                    };
-                    SQL.push(order_by.join(', '));
-                };
-
-                // limit
-                if (LIMIT.length > 0) {
-                    SQL.push('LIMIT ' + LIMIT[0]);
-                } else {
-                    if (PARAMS.start) {
-                        if (PARAMS.limit) {
-                            SQL.push('LIMIT ' + PARAMS.start + ', ' + PARAMS.limit);
+                            };
+                            SQL.push(')');
                         }
+                    };
+                }
+            }
+
+            // group by
+            if (cmd.indexOf('?') > -1) GROUPBY = cmd.split('?')[1].split('/');
+            else GROUPBY = cmd.substr(cmd.lastIndexOf('}') + 2, cmd.length).split('/');
+            if (GROUPBY.length > 1) {
+                GROUPBY.shift();
+                SQL.push('GROUP BY ' + GROUPBY.join(', '));
+            };
+
+            // order by
+            if (ORDERBY.length > 0) {
+                SQL.push('ORDER BY');
+                var order_by = [];
+                for (var i = 0; i < ORDERBY.length; i++) {
+                    if (ORDERBY[i].indexOf('-') > -1) order_by.push(ORDERBY[i].split('-')[0].split('=')[0] + ' DESC');
+                    else order_by.push(ORDERBY[i].split('+')[0].split('=')[0]);
+                };
+                SQL.push(order_by.join(', '));
+            };
+
+            // limit
+            if (LIMIT.length > 0) {
+                SQL.push('LIMIT ' + LIMIT[0]);
+            } else {
+                if (PARAMS.start) {
+                    if (PARAMS.limit) {
+                        SQL.push('LIMIT ' + PARAMS.start + ', ' + PARAMS.limit);
                     }
                 }
-
+            }
+            if (OUTPUT != "sql") {
                 console.log('------------------------------');
                 console.log(o.join('://'));
                 SQL = SQL.join(' ');
                 console.log(SQL);
                 console.log("output=" + OUTPUT);
                 console.log('------------------------------');
-
-                if (OUTPUT == '-1') db.model(o[0], SQL, cb);
-                if (OUTPUT == 'json') db.query(o[0], SQL, function(e, r) {
-                    cb(JSON.stringify(r, null, 4));
-                });
-                if (OUTPUT == "raw") db.query(o[0], SQL, cb);
-                if (OUTPUT == "store") db.store(o[0], SQL, cb);
-
+            } else SQL = SQL.join(' ');
+            if (OUTPUT == '-1') db.model(o[0], SQL, cb);
+            if (OUTPUT == 'json') db.query(o[0], SQL, function(e, r) {
+                cb(JSON.stringify(r, null, 4));
             });
+            if (OUTPUT == "raw") db.query(o[0], SQL, cb);
+            if (OUTPUT == "store") db.store(o[0], SQL, cb);
 
+            if (OUTPUT == "sql") cb(null, SQL);
 
+        };
+
+        function qcommander(o, PARAMS) {
+            return new Promise((resolve, reject) => {
+                querycommander(o, PARAMS, function(err, result) {
+                    if (err) {
+                        return reject(err)
+                    }
+                    resolve(result);
+                });
+            });
         };
 
         if (!o.__SQL__) {
@@ -467,13 +506,13 @@ __QUERY__ = {
             };
 
             if (o.__SQL__.indexOf('?') > -1) {
-                var tt = o.__SQL__.split('?')[1].split('&');
+                var tt = o.__SQL__.substr(o.__SQL__.indexOf('?') + 1, o.__SQL__.length).split('&');
                 var cc = {};
                 var listargs = [];
                 for (var i = 0; i < tt.length; i++) {
                     var cp = tt[i];
                     if (cp.indexOf('=') > -1) {
-                        cc[cp.split('=')[0]] = cp.split('=')[1];
+                        cc[cp.split('=')[0]] = cp.substr(cp.indexOf('='), cp.length);
                     } else listargs.push(cp);
                 };
                 for (var el in cc) {
@@ -504,6 +543,7 @@ __QUERY__ = {
             };
 
             var QUERY = o.__SQL__.split('://');
+
 
             // no database selected
             if (QUERY.length < 2) {

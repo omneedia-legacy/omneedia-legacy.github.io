@@ -412,6 +412,16 @@ function getIndex(name, tb, cb) {
     db.lib.getIndex(db.uri, tb, cb);
 };
 
+function q(db, sql) {
+    var me = this;
+    return new Promise((resolve, reject) => {
+        me.query(db, sql, function(err, result) {
+            if (err) return reject(err);
+            resolve(result);
+        })
+    });
+};
+
 exports.query = query;
 exports.model = model;
 exports.store = store;
@@ -424,3 +434,4 @@ exports.sql = sql;
 exports.qstr = qstr;
 exports.showColumns = showColumns;
 exports.getIndex = getIndex;
+exports.q = q;

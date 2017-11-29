@@ -38,7 +38,7 @@ function qstr(str) {
 
 module.exports = {
     connect: function(name, fn) {
-        var db = require('mysql');
+        var db = require('mysql2');
 
         function replaceClientOnDisconnect(client) {
             client.on("error", function(err) {
@@ -91,7 +91,7 @@ module.exports = {
     },
     model: function(name, sql, fn) {
         function getMySQLType(typ) {
-            var types = require('mysql').Types;
+            var types = require('mysql2').Types;
             for (var el in types) {
                 if (types[el] == typ) return el;
             };
