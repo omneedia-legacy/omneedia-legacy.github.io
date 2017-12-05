@@ -687,6 +687,7 @@ App.apply(App, {
         OBJ.style['filter'] = '';
     }
 });
+
 window.addEventListener('error', function(e) {
     console.log('%c GURU MEDITATION ', 'background: #222; color: #bada55');
     console.log({
@@ -697,6 +698,7 @@ window.addEventListener('error', function(e) {
         stack: e.error.stack
     })
 });
+
 if (!Settings.DEBUG) {
     if (!window.console) window.console = {};
     var methods = ["log", "debug", "warn", "info"];

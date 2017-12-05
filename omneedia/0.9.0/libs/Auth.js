@@ -24,7 +24,8 @@ Auth = {
                     withCredentials: true,
                     useDefaultXhrHeader: false,
                     success: function(response, opts) {
-
+                        window.clearInterval(__INTERVAL__);
+                        location.reload(true);
                     },
                     failure: function(response, opts) {
                         window.clearInterval(__INTERVAL__);
@@ -82,7 +83,6 @@ Auth = {
                 win.focus();
             };
             document.socket.on('#auth', function(response) {
-				console.log(response);
                 Auth.User = JSON.parse(response);
                 App.$('.QxOverlay').remove();
                 App.unblur('.x-panel');
@@ -93,6 +93,11 @@ Auth = {
                     Ext.getCmp('GlobalMenuUser').show();
                 };
                 if (fn) fn(Auth.User);
+            });
+            document.socket.on('#failedauth', function(response) {
+                App.$('.QxLoginBox').addClass('bounceOutDown');
+                window.setTimeout(function() { App.$('.QxLoginBox').remove(); }, 1000);
+                App.notify('Auth', "Vous avez bien été identifié mais vous n'avez pas accès a cette application.");
             });
         });
     },

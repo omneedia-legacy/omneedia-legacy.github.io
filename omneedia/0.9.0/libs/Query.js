@@ -120,7 +120,15 @@ App.apply(App, {
                 for (var i = 0; i < elem.length; i++) {
                     if (elem[i]) {
                         if (div.dom) div = div.dom();
-                        if (App.isString(div)) div = document.querySelector(div);
+                        if (App.isString(div)) {
+                            try {
+                                div = document.querySelector(div);
+                            } catch (e) {
+                                var d = document.createElement('div');
+                                d.innerHTML = div;
+                                div = d;
+                            }
+                        };
                         if (div) div.appendChild(elem[i]);
                     };
                 };
