@@ -74,7 +74,10 @@ App.apply(App, {
                 o.launch();
             };
             var maincontroller = o.controllers[0];
-            if (App.controller[maincontroller].init) App.controller[maincontroller].init();
+            if (App.controller[maincontroller].init) {
+                App.controller[maincontroller].init();
+                App.controller[maincontroller].isLoaded = true;
+            };
             document.addEventListener('init', function(event) {
                 var page = event.target;
                 var langs = page.getElementsByTagName('lang');
