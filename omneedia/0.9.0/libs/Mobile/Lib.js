@@ -14,18 +14,8 @@ App.apply(App, {
      */
     application: function(o) {
 
-        function loadControllers(ctrl, ndx, cb) {
-            if (!ctrl[ndx]) return cb();
-            if (App.stacks.controllers[ctrl[ndx]]) return loadControllers(ctrl, ndx + 1, cb);
-            var url = Settings.PATHS['Contents'] + '/controller/' + ctrl[ndx] + '.js';
-            App.request(url, function(e, b) {
-                App.stacks.controllers[ctrl[ndx]] = b;
-                window.eval(b);
-                loadControllers(ctrl, ndx + 1, cb);
-            });
-        };
-
         function loadRequire(req, ndx, cb) {
+            if (!req) req = [];
             if (!req[ndx]) return cb();
             if (App.stacks.requires[req[ndx]]) return loadRequire(req, ndx + 1, cb);
             if (req[ndx].indexOf('api') > -1) {
@@ -36,6 +26,20 @@ App.apply(App, {
                 App.stacks.requires[req[ndx]] = b;
                 window.eval(b);
                 loadRequire(req, ndx + 1, cb);
+            });
+        };
+
+        function loadControllers(ctrl, ndx, cb) {
+            if (!ctrl[ndx]) return cb();
+            if (App.stacks.controllers[ctrl[ndx]]) return loadControllers(ctrl, ndx + 1, cb);
+            var url = Settings.PATHS['Contents'] + '/controller/' + ctrl[ndx] + '.js';
+            App.request(url, function(e, b) {
+                App.stacks.controllers[ctrl[ndx]] = b;
+                window.eval(b);
+                var Require = App.controller[ctrl[ndx]].require;
+                loadRequire(Require, 0, function() {
+                    loadControllers(ctrl, ndx + 1, cb);
+                });
             });
         };
 
@@ -78,6 +82,122 @@ App.apply(App, {
                 App.controller[maincontroller].init();
                 App.controller[maincontroller].isLoaded = true;
             };
+            document.addEventListener('show', function(event) {
+                var page = event.target;
+                if (Settings.DEBUG) {
+                    var link = document.createElement('link');
+                    link.rel = "stylesheet";
+                    link.type = "text/css";
+                    link.href = Settings.PATHS['Contents'] + '/view/' + page.id + '/' + page.id + '.css';
+                    document.getElementsByTagName('head')[0].appendChild(link);
+                };
+                for (var i = 0; i < o.viewControllers.length; i++) {
+                    if (o.viewControllers[i] == event.target.id) {
+                        var ctrl = App.viewController[o.viewControllers[i]];
+                        if (ctrl.controls) {
+                            if (ctrl.controls.view) {
+                                if (ctrl.controls.view.show) {
+                                    if (typeof ctrl.controls.view.show === "function") {
+                                        ctrl.controls.view.show(event);
+                                    }
+                                    if (typeof ctrl.controls.view.show === "string") {
+                                        ctrl[ctrl.controls.view.show](event);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                };
+                for (var i = 0; i < o.controllers.length; i++) {
+                    var ctrl = App.controller[o.controllers[i]];
+                    if (ctrl.controls) {
+                        if (ctrl.controls[event.target.id]) {
+                            if (ctrl.controls[event.target.id].view) {
+                                if (ctrl.controls[event.target.id].view.show) {
+                                    if (typeof ctrl.controls[event.target.id].view.show === "function") {
+                                        ctrl.controls[event.target.id].view.show(event);
+                                    }
+                                    if (typeof ctrl.controls[event.target.id].view.show === "string") {
+                                        ctrl[ctrl.controls[event.target.id].view.show](event);
+                                    }
+                                }
+                            }
+                        }
+                    };
+                }
+            });
+            document.addEventListener('hide', function(event) {
+                for (var i = 0; i < o.viewControllers.length; i++) {
+                    if (o.viewControllers[i] == event.target.id) {
+                        var ctrl = App.viewController[o.viewControllers[i]];
+                        if (ctrl.controls) {
+                            if (ctrl.controls.view) {
+                                if (ctrl.controls.view.hide) {
+                                    if (typeof ctrl.controls.view.hide === "function") {
+                                        ctrl.controls.view.hide(event);
+                                    }
+                                    if (typeof ctrl.controls.view.hide === "string") {
+                                        ctrl[ctrl.controls.view.hide](event);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                };
+                for (var i = 0; i < o.controllers.length; i++) {
+                    var ctrl = App.controller[o.controllers[i]];
+                    if (ctrl.controls) {
+                        if (ctrl.controls[event.target.id]) {
+                            if (ctrl.controls[event.target.id].view) {
+                                if (ctrl.controls[event.target.id].view.hide) {
+                                    if (typeof ctrl.controls[event.target.id].view.hide === "function") {
+                                        ctrl.controls[event.target.id].view.hide(event);
+                                    }
+                                    if (typeof ctrl.controls[event.target.id].view.hide === "string") {
+                                        ctrl[ctrl.controls[event.target.id].view.hide](event);
+                                    }
+                                }
+                            }
+                        }
+                    };
+                }
+            });
+            document.addEventListener('destroy', function(event) {
+                for (var i = 0; i < o.viewControllers.length; i++) {
+                    if (o.viewControllers[i] == event.target.id) {
+                        var ctrl = App.viewController[o.viewControllers[i]];
+                        if (ctrl.controls) {
+                            if (ctrl.controls.view) {
+                                if (ctrl.controls.view.destroy) {
+                                    if (typeof ctrl.controls.view.destroy === "function") {
+                                        ctrl.controls.view.destroy(event);
+                                    }
+                                    if (typeof ctrl.controls.view.destroy === "string") {
+                                        ctrl[ctrl.controls.view.destroy](event);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                };
+                for (var i = 0; i < o.controllers.length; i++) {
+                    var ctrl = App.controller[o.controllers[i]];
+                    if (ctrl.controls) {
+                        if (ctrl.controls[event.target.id]) {
+                            if (ctrl.controls[event.target.id].view) {
+                                if (ctrl.controls[event.target.id].view.destroy) {
+                                    if (typeof ctrl.controls[event.target.id].view.destroy === "function") {
+                                        ctrl.controls[event.target.id].view.destroy(event);
+                                    }
+                                    if (typeof ctrl.controls[event.target.id].view.destroy === "string") {
+                                        ctrl[ctrl.controls[event.target.id].view.destroy](event);
+                                    }
+                                }
+                            }
+                        }
+                    };
+                }
+            });
             document.addEventListener('init', function(event) {
                 var page = event.target;
                 var langs = page.getElementsByTagName('lang');
@@ -100,7 +220,9 @@ App.apply(App, {
                     };
 
                     if (o.viewControllers[i] == page.id) {
+
                         var page = App.viewController[o.viewControllers[i]].controls;
+
                         for (var elx in page) {
                             for (var events in page[elx]) {
                                 var evt = App.viewController[o.viewControllers[i]][page[elx][events]];
@@ -129,10 +251,10 @@ App.apply(App, {
                                     for (var events in page[elx]) {
                                         var evt = App.controller[o.controllers[i]][page[elx][events]];
                                         if (typeof page[elx][events] === "function") {
-                                            App.$(elx).on(events, page[elx][events]);
+                                            if (elx != "view") App.$(elx).on(events, page[elx][events]);
                                         };
                                         if (typeof page[elx][events] === "string") {
-                                            App.$(elx).on(events, App.controller[o.controllers[i]][page[elx][events]]);
+                                            if (elx != "view") App.$(elx).on(events, App.controller[o.controllers[i]][page[elx][events]]);
                                         }
                                     }
                                 }
@@ -198,7 +320,7 @@ App.apply(App, {
             });
         };
         loadViews(controller.views, 0, function() {
-            App.$(App.stacks.views[view]).appendTo(App.$('body'));
+            App.$('<span>' + App.stacks.views[view] + '</span>').appendTo(App.$('body'));
         });
     },
     init: function(view, onload) {

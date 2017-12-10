@@ -19,8 +19,6 @@ App.apply(App, {
                     var elem = div;
 
                     if (Obj) {
-                        console.log(App.$(elem));
-                        console.log(App.$(Obj));
                         App.$(elem).appendTo(App.$(Obj));
                     }
                 } else {
@@ -38,7 +36,7 @@ App.apply(App, {
                             var elem = [];
                             var span = document.createElement('span');
                             span.innerHTML = obj;
-                            elem.push(span);
+                            elem.push(span.firstChild);
                         }
                     };
                 };
@@ -79,6 +77,17 @@ App.apply(App, {
             },
             get: function(obj) {
                 return App.$(obj, elem[0]);
+            },
+            attr: function(key, value) {
+                for (var i = 0; i < elem.length; i++) {
+                    if (elem[i]) {
+                        if (!value) return elem[i].getAttribute(key);
+                        else {
+                            elem[i].setAttribute(key, value);
+                        }
+                    }
+                };
+                return App.$(elem);
             },
             dom: function() {
                 if (elem.length == 1) return elem[0];

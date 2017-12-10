@@ -688,6 +688,39 @@ App.apply(App, {
     }
 });
 
+/**
+ * @method WatchManager
+ *
+ * Object watchers
+ */
+var WatchManager = (function() {
+    var listeners = {};
+    var values = {};
+
+    function addListener(object, property, listener) {
+        Object.defineProperty(object, property, {
+            set: function(newValue) {
+                values[property] = newValue;
+                listeners[property].forEach(function(listener) {
+                    listener(newValue);
+                });
+            },
+            get: function() {
+                return values[property];
+            }
+        });
+        if (!listeners[property]) {
+            listeners[property] = [];
+        }
+        listeners[property].push(listener);
+        return listeners[property].length - 1;
+    }
+
+    return {
+        watch: addListener
+    }
+})();
+
 window.addEventListener('error', function(e) {
     console.log('%c GURU MEDITATION ', 'background: #222; color: #bada55');
     console.log({
