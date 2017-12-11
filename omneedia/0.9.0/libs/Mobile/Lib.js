@@ -355,11 +355,15 @@ App.apply(App, {
                     };
                     var fading = window.setInterval(func, interval);
                 };
+                if (Kickstart) Kickstart.load();
                 var appLoadingIcon = document.getElementById('appLoadingIcon');
                 var bootstrap = document.getElementById('bootstrap');
+                fade(bootstrap, 'out', 1000);
+                /*
+               
                 appLoadingIcon.classList.remove('slideInDown');
                 appLoadingIcon.classList.add('slideOutUp');
-                fade(bootstrap, 'out', 1000);
+                fade(bootstrap, 'out', 1000);*/
 
                 if (onload) onload();
             }, 1000);
