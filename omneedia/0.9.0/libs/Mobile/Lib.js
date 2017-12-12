@@ -272,9 +272,7 @@ App.apply(App, {
 
         document.addEventListener("deviceready", function() {
             App.getAcceptedLangs(function(lang) {
-                alert(lang);
                 App.loadLang(lang, function() {
-                    alert(lang);
                     loadControllers(o.controllers, 0, function() {
                         loadViewControllers(o.viewControllers, 0, initMainController);
                     });
