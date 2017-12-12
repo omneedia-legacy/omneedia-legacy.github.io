@@ -5,33 +5,30 @@ if (Settings.DEBUG) {
         else
             document.socket = io.connect(Settings.REMOTE_API);
     }
-}
 
-document.socket.on('connect', function() {
-    App.unblur();
-    document.querySelector('.omneedia-overlay').style.display = "none";
-});
 
-document.socket.on('disconnect', function() {
-    App.blur();
-});
+    document.socket.on('connect', function() {
+        App.unblur();
+        document.querySelector('.omneedia-overlay').style.display = "none";
+    });
 
-document.socket.on('session', function(data) {
-    var data = JSON.parse(data);
-    if (!localStorage.getItem("session")) localStorage.setItem('session', data.pid);
-    else {
-        if (localStorage.getItem("session") != data.pid) {
-            localStorage.setItem('session', data.pid);
-            try {
-                App.blur();
-            } catch (e) {};
-            location.reload();
-        }
-    };
-});
+    document.socket.on('disconnect', function() {
+        App.blur();
+    });
 
-if (Settings.DEBUG) {
-
+    document.socket.on('session', function(data) {
+        var data = JSON.parse(data);
+        if (!localStorage.getItem("session")) localStorage.setItem('session', data.pid);
+        else {
+            if (localStorage.getItem("session") != data.pid) {
+                localStorage.setItem('session', data.pid);
+                try {
+                    App.blur();
+                } catch (e) {};
+                location.reload();
+            }
+        };
+    });
     document.socket.on('SERVER__LOG', function(data) {
         console.log('%c ' + 'LOG:', 'color: #00F; font-size:12px', data);
     });
