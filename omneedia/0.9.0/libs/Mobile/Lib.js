@@ -264,17 +264,16 @@ App.apply(App, {
                 };
             });
         };
+        App.getAcceptedLangs(function(lang) {
+            alert(lang);
+            App.loadLang(lang, function() {
+                alert(lang);
+                loadControllers(o.controllers, 0, function() {
+                    loadViewControllers(o.viewControllers, 0, initMainController);
+                });
+            })
+        });
 
-        function loadLang() {
-            App.getAcceptedLangs(function(lang) {
-                App.loadLang(lang, function() {
-                    loadControllers(o.controllers, 0, function() {
-                        loadViewControllers(o.viewControllers, 0, initMainController);
-                    });
-                })
-            });
-        };
-        loadLang();
     },
     /**
      * @namespace App
