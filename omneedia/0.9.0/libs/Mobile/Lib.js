@@ -58,25 +58,23 @@ App.apply(App, {
         };
 
         function initMainController() {
-            if (o.launch) {
-                if (Settings.DEBUG) {
-                    var qry = document.location.search.split('?');
-                    if (qry[1]) {
-                        qry = qry[1];
-                        if (qry.indexOf('ionicPlatform') > -1) var _platform = qry.split('=')[1];
-                        else var _platform = "-1";
-                        if (_platform != '-1') ons.platform.select(_platform)
-                        else {
-                            if (ons.platform.isIOS()) ons.platform.select('ios');
-                            else ons.platform.select('android');
-                        }
-                    } else {
+            if (Settings.DEBUG) {
+                var qry = document.location.search.split('?');
+                if (qry[1]) {
+                    qry = qry[1];
+                    if (qry.indexOf('ionicPlatform') > -1) var _platform = qry.split('=')[1];
+                    else var _platform = "-1";
+                    if (_platform != '-1') ons.platform.select(_platform)
+                    else {
                         if (ons.platform.isIOS()) ons.platform.select('ios');
                         else ons.platform.select('android');
                     }
+                } else {
+                    if (ons.platform.isIOS()) ons.platform.select('ios');
+                    else ons.platform.select('android');
                 }
-                o.launch();
             };
+
             var maincontroller = o.controllers[0];
             if (App.controller[maincontroller].init) {
                 App.controller[maincontroller].init();
@@ -349,6 +347,7 @@ App.apply(App, {
 
                         if (opacity <= 0) el.style.display = 'none'
                         if (opacity <= 0 || opacity >= 1) {
+                            if (o.launch) o.launch();
                             App.loadView(maincontroller, view, function() {});
                             window.clearInterval(fading);
                         }
