@@ -1,10 +1,11 @@
-if (Settings.REMOTE_API) {
-    if (Settings.REMOTE_API.indexOf('https') > -1)
-        document.socket = io.connect(Settings.REMOTE_API, { secure: true, transports: ['xhr-polling'] });
-    else
-        document.socket = io.connect(Settings.REMOTE_API);
+if (Settings.DEBUG) {
+    if (Settings.REMOTE_API) {
+        if (Settings.REMOTE_API.indexOf('https') > -1)
+            document.socket = io.connect(Settings.REMOTE_API, { secure: true, transports: ['xhr-polling'] });
+        else
+            document.socket = io.connect(Settings.REMOTE_API);
+    }
 }
-
 
 document.socket.on('connect', function() {
     App.unblur();
