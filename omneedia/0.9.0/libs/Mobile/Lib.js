@@ -274,11 +274,7 @@ App.apply(App, {
                 })
             });
         };
-        if (Settings.DEBUG) loadLang();
-        else {
-            __MVC__();
-            initMainController();
-        }
+        loadLang();
     },
     /**
      * @namespace App
