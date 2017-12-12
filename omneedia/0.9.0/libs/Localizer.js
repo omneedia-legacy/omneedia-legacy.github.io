@@ -12,15 +12,27 @@ _ = function(x) {
 
 App.apply(App, {
     getAcceptedLangs: function(cb) {
-        App.request({
-            url: Settings.REMOTE_API + '/i18n'
-        }, function(e, r) {
-            // fallback to navigator
-            if (e) cb(navigator.language || navigator.userLanguage);
-            else {
-                cb(r);
-            }
-        });
+        if (Settings.PLATFORM == "mobile") {
+            function successCallback(o) {
+                console.log(o);
+                cb(o.value);
+            };
+
+            function errorCallback(o) {
+                cb(navigator.language || navigator.userLanguage);
+            };
+            navigator.globalization.getPreferredLanguage(successCallback, errorCallback);
+        } else {
+            App.request({
+                url: Settings.REMOTE_API + '/i18n'
+            }, function(e, r) {
+                // fallback to navigator
+                if (e) cb(navigator.language || navigator.userLanguage);
+                else {
+                    cb(r);
+                }
+            });
+        }
     },
     loadLang: function(lang, cb) {
         var _LANG = [];

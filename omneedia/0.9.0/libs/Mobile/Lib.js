@@ -60,6 +60,7 @@ App.apply(App, {
         };
 
         function initMainController() {
+
             if (Settings.DEBUG) {
                 var qry = document.location.search.split('?');
                 if (qry[1]) {
@@ -82,7 +83,9 @@ App.apply(App, {
                 App.controller[maincontroller].init();
                 App.controller[maincontroller].isLoaded = true;
             };
+
             document.addEventListener('show', function(event) {
+
                 var page = event.target;
                 if (Settings.DEBUG) {
                     var link = document.createElement('link');
@@ -199,6 +202,7 @@ App.apply(App, {
                 }
             });
             document.addEventListener('init', function(event) {
+
                 var page = event.target;
                 var langs = page.getElementsByTagName('lang');
                 for (var i = 0; i < langs.length; i++) {
@@ -264,16 +268,18 @@ App.apply(App, {
                 };
             });
         };
-        App.getAcceptedLangs(function(lang) {
-            alert(lang);
-            App.loadLang(lang, function() {
-                alert(lang);
-                loadControllers(o.controllers, 0, function() {
-                    loadViewControllers(o.viewControllers, 0, initMainController);
-                });
-            })
-        });
 
+        document.addEventListener("deviceready", function() {
+            App.getAcceptedLangs(function(lang) {
+                alert(lang);
+                App.loadLang(lang, function() {
+                    alert(lang);
+                    loadControllers(o.controllers, 0, function() {
+                        loadViewControllers(o.viewControllers, 0, initMainController);
+                    });
+                })
+            });
+        }, false);
     },
     /**
      * @namespace App
@@ -327,47 +333,41 @@ App.apply(App, {
             if (App.controller[el].init) var maincontroller = App.controller[el];
         };
         if (maincontroller == -1) return;
-        var boot = function() {
-            window.setTimeout(function() {
-                function fade(el, type, ms) {
-                    var isIn = type === 'in',
-                        opacity = isIn ? 0 : 1,
-                        interval = 50,
-                        duration = ms,
-                        gap = interval / duration,
-                        self = this;
-                    if (isIn) {
-                        el.style.display = 'inline';
-                        el.style.opacity = opacity;
-                    };
 
-                    function func() {
-                        opacity = isIn ? opacity + gap : opacity - gap;
-                        el.style.opacity = opacity;
-
-                        if (opacity <= 0) el.style.display = 'none'
-                        if (opacity <= 0 || opacity >= 1) {
-                            if (App.config.launch) App.config.launch();
-                            App.loadView(maincontroller, view, function() {});
-                            window.clearInterval(fading);
-                        }
-                    };
-                    var fading = window.setInterval(func, interval);
+        window.setTimeout(function() {
+            function fade(el, type, ms) {
+                var isIn = type === 'in',
+                    opacity = isIn ? 0 : 1,
+                    interval = 50,
+                    duration = ms,
+                    gap = interval / duration,
+                    self = this;
+                if (isIn) {
+                    el.style.display = 'inline';
+                    el.style.opacity = opacity;
                 };
-                if (Kickstart) Kickstart.load();
-                var appLoadingIcon = document.getElementById('appLoadingIcon');
-                var bootstrap = document.getElementById('bootstrap');
-                fade(bootstrap, 'out', 1000);
-                /*
-               
-                appLoadingIcon.classList.remove('slideInDown');
-                appLoadingIcon.classList.add('slideOutUp');
-                fade(bootstrap, 'out', 1000);*/
 
-                if (onload) onload();
-            }, 1000);
-        }
-        document.addEventListener("deviceready", boot, false);
+                function func() {
+                    opacity = isIn ? opacity + gap : opacity - gap;
+                    el.style.opacity = opacity;
+
+                    if (opacity <= 0) el.style.display = 'none'
+                    if (opacity <= 0 || opacity >= 1) {
+                        if (App.config.launch) App.config.launch();
+                        App.loadView(maincontroller, view, function() {});
+                        window.clearInterval(fading);
+                    }
+                };
+                var fading = window.setInterval(func, interval);
+            };
+
+            var appLoadingIcon = document.getElementById('appLoadingIcon');
+            var bootstrap = document.getElementById('bootstrap');
+            fade(bootstrap, 'out', 1000);
+
+            if (onload) onload();
+            if (Kickstart) Kickstart.load();
+        }, 1000);
 
     }
 })
