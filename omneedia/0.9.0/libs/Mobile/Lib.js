@@ -20,6 +20,7 @@ App.apply(App, {
             if (!req) req = [];
             if (!req[ndx]) return cb();
             if (App.stacks.requires[req[ndx]]) return loadRequire(req, ndx + 1, cb);
+            if (!Settings.DEBUG) return loadRequire(req, ndx + 1, cb);
             if (req[ndx].indexOf('api') > -1) {
                 var classname = req[ndx].split('.')[1];
                 var url = Settings.REMOTE_API + Settings.API_REMOTE[classname];
