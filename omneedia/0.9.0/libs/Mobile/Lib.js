@@ -6,6 +6,7 @@ App.apply(App, {
         requires: {},
         isLoaded: {}
     },
+    config: {},
     /**
      * @namespace App
      * @class application
@@ -13,6 +14,7 @@ App.apply(App, {
      * 
      */
     application: function(o) {
+        this.config = o;
 
         function loadRequire(req, ndx, cb) {
             if (!req) req = [];
@@ -347,7 +349,7 @@ App.apply(App, {
 
                         if (opacity <= 0) el.style.display = 'none'
                         if (opacity <= 0 || opacity >= 1) {
-                            if (o.launch) o.launch();
+                            if (App.config.launch) App.config.launch();
                             App.loadView(maincontroller, view, function() {});
                             window.clearInterval(fading);
                         }
