@@ -338,7 +338,7 @@ App.apply(App, {
 
                             reader.onloadend = function() {
                                 App.key.set("first_timer", 1);
-                                document.getElementsByTagName('body')[0].insertAdjacentHTML('afterend', this.result);
+                                $('body')[0].append(this.result);
                             };
 
                             reader.readAsText(file);
