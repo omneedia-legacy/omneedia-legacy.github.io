@@ -347,7 +347,9 @@ App.apply(App, {
                             alert('erreur');
                         });
                     };
-                    window.resolveLocalFileSystemURL(cordova.file.applicationDirectory + "www/Contents/app.html", readFile, null);
+                    window.setTimeout(function() {
+                        window.resolveLocalFileSystemURL(cordova.file.applicationDirectory + "www/Contents/app.html", readFile, null);
+                    }, 1000);
                 }
             };
             var appLoadingIcon = document.getElementById('appLoadingIcon');
