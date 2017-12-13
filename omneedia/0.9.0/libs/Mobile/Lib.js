@@ -331,9 +331,23 @@ App.apply(App, {
                         });
                     }, 1000);
                 } else {
-                    App.request('Contents/app.pages', function(e, r) {
-                        App.$(r).appendTo(App.$('body'));
-                    });
+                    function readFile(fileEntry) {
+
+                        fileEntry.file(function(file) {
+                            var reader = new FileReader();
+
+                            reader.onloadend = function() {
+                                App.key.set("first_timer", 1);
+                                $(this.result).appendTo($('body'));
+                            };
+
+                            reader.readAsText(file);
+
+                        }, function(err) {
+                            alert('erreur');
+                        });
+                    };
+                    window.resolveLocalFileSystemURL(cordova.file.applicationDirectory + "www/Contents/app.html", readFile, null);
                 }
             };
             var appLoadingIcon = document.getElementById('appLoadingIcon');

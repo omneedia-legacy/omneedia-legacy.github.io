@@ -36,7 +36,7 @@ App.apply(App, {
                             var elem = [];
                             var span = document.createElement('span');
                             span.innerHTML = obj;
-                            elem.push(span.firstChild);
+                            elem = span.firstChild;
                         }
                     };
                 };
