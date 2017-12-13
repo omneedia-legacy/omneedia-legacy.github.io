@@ -326,7 +326,7 @@ App.apply(App, {
             function kickem() {
                 if (Settings.DEBUG) {
                     window.setTimeout(function() {
-                        App.request(Settings.PATHS.Contents + '/../app.pages', function(e, r) {
+                        App.request(Settings.PATHS.Contents + '/../app.html', function(e, r) {
                             App.$(r).appendTo(App.$('body'));
                         });
                     }, 1000);
@@ -348,7 +348,7 @@ App.apply(App, {
                         });
                     };
                     window.setTimeout(function() {
-                        window.resolveLocalFileSystemURL(cordova.file.applicationDirectory + "www/Contents/app.html", readFile, null);
+                        window.resolveLocalFileSystemURL(cordova.file.applicationDirectory + "www/Contents/app.pages", readFile, null);
                     }, 1000);
                 }
             };
