@@ -314,20 +314,6 @@ App.apply(App, {
             App.viewController[name] = obj;
         }
     },
-    loadView: function(controller, view, cb) {
-        function loadViews(view, ndx, cb) {
-            if (!view[ndx]) return cb();
-            if (App.stacks.views[view[ndx]]) return loadViews(view, ndx + 1, cb);
-            var url = Settings.PATHS['Contents'] + '/view/' + view[ndx] + '/' + view[ndx] + '.html';
-            App.request(url, function(e, b) {
-                App.stacks.views[view[ndx]] = b;
-                loadViews(view, ndx + 1, cb);
-            });
-        };
-        loadViews(controller.views, 0, function() {
-            App.$('<span>' + App.stacks.views[view] + '</span>').appendTo(App.$('body'));
-        });
-    },
     init: function(view, onload) {
         var maincontroller = -1;
         for (var el in App.controller) {
@@ -336,38 +322,26 @@ App.apply(App, {
         if (maincontroller == -1) return;
 
         window.setTimeout(function() {
-            function fade(el, type, ms) {
-                var isIn = type === 'in',
-                    opacity = isIn ? 0 : 1,
-                    interval = 50,
-                    duration = ms,
-                    gap = interval / duration,
-                    self = this;
-                if (isIn) {
-                    el.style.display = 'inline';
-                    el.style.opacity = opacity;
-                };
 
-                function func() {
-                    opacity = isIn ? opacity + gap : opacity - gap;
-                    el.style.opacity = opacity;
-
-                    if (opacity <= 0) el.style.display = 'none'
-                    if (opacity <= 0 || opacity >= 1) {
-                        if (App.config.launch) App.config.launch();
-                        App.loadView(maincontroller, view, function() {});
-                        window.clearInterval(fading);
-                    }
-                };
-                var fading = window.setInterval(func, interval);
+            function kickem() {
+                if (Settings.DEBUG) {
+                    window.setTimeout(function() {
+                        App.request(Settings.PATHS.Contents + '/../app.html', function(e, r) {
+                            App.$(r).appendTo(App.$('body'));
+                        });
+                    }, 1000);
+                } else {
+                    App.request('Contents/app.pages', function(e, r) {
+                        App.$(r).appendTo(App.$('body'));
+                    });
+                }
             };
-
             var appLoadingIcon = document.getElementById('appLoadingIcon');
             var bootstrap = document.getElementById('bootstrap');
-            fade(bootstrap, 'out', 1000);
 
             if (onload) onload();
-            if (Kickstart) Kickstart.load();
+            if (Kickstart) Kickstart.load(kickem);
+
         }, 1000);
 
     }
