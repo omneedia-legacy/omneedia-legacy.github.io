@@ -338,7 +338,7 @@ App.apply(App, {
 
                             reader.onloadend = function() {
                                 App.key.set("first_timer", 1);
-                                $('body')[0].append(this.result);
+                                $('body').append(this.result);
                             };
 
                             reader.readAsText(file);
