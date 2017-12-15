@@ -33,10 +33,10 @@ App.apply(App, {
                                 if (App.isNodeList(elem)) elem = Array.prototype.slice.call(elem);
                             }
                         } catch (e) {
+                            var div = document.createElement('div');
+                            div.innerHTML = obj;
                             var elem = [];
-                            var span = document.createElement('span');
-                            span.innerHTML = obj;
-                            elem = span.firstChild;
+                            for (var z = 0; z < div.childNodes.length; z++) elem.push(div.childNodes[z]);
                         }
                     };
                 };
