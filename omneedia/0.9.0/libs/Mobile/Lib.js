@@ -327,6 +327,13 @@ App.apply(App, {
                 if (Settings.DEBUG) {
                     window.setTimeout(function() {
                         App.request(Settings.PATHS.Contents + '/../app.html', function(e, r) {
+                            if (!r) {
+                                var navig = document.createElement('ons-navigator');
+                                navig.id = "Navigator";
+                                navig.page = "view/" + view + "/" + view + ".html";
+                                document.getElementsByTagName('body')[0].appendChild(navig);
+                                return;
+                            };
                             App.$(r).appendTo(App.$('body'));
                         });
                     }, 1000);
@@ -338,6 +345,9 @@ App.apply(App, {
 
                             reader.onloadend = function() {
                                 App.key.set("first_timer", 1);
+                                if (this.result.indexOf('Navigator') == -1) {
+                                    this.result = '<ons-navigator id="Navigator" navig.page="view/' + view + '/' + view + '.html"></ons-navigator>' + this.result;
+                                };
                                 App.$(this.result).appendTo(App.$('body'));
                             };
 
