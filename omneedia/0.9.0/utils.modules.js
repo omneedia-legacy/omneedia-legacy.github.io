@@ -6,5 +6,6 @@
     "utils/Overlay.js",
     "utils/JSON.js",
     "utils/Arrays.js",
-    "utils/DOM.js"
+    "utils/DOM.js",
+    "utils/Objects.js"
 ]

@@ -6,7 +6,6 @@ if (Settings.DEBUG) {
             document.socket = io.connect(Settings.REMOTE_API);
     }
 
-
     document.socket.on('connect', function() {
         App.unblur();
         document.querySelector('.omneedia-overlay').style.display = "none";
@@ -60,23 +59,29 @@ if (Settings.DEBUG) {
 };
 
 App.define("App.IO", {
-    statics: {
-        subscribe: function(uri) {
-            uri = uri.split(' ');
-            for (var i = 0; i < uri.length; i++) {
-                if (uri[i].indexOf("#") > -1) document.socket.emit('#create', uri[i]);
-            }
-        },
-        on: function(uri, cb) {
-            document.socket.on(uri, cb);
-        },
-        send: function(uri, data, users) {
-            var o = {
-                uri: uri,
-                data: data,
-                users: users
-            };
-            if (uri.indexOf("#") > -1) document.socket.emit('#send', JSON.stringify(o));
+    socket: {},
+    connect: function(cc) {
+        if (cc.indexOf('https') > -1)
+            this.socket = io.connect(cc, { secure: true, transports: ['xhr-polling'] });
+        else
+            this.socket = io.connect(cc);
+    },
+    subscribe: function(uri) {
+        uri = uri.split(' ');
+        for (var i = 0; i < uri.length; i++) {
+            if (uri[i].indexOf("#") > -1) this.socket.emit('#create', uri[i]);
         }
+    },
+    on: function(uri, cb) {
+        this.socket.on(uri, cb);
+    },
+    send: function(uri, data, users) {
+        var o = {
+            uri: uri,
+            data: data,
+            users: users
+        };
+        if (uri.indexOf("#") > -1) this.socket.emit('#send', JSON.stringify(o));
     }
+
 });

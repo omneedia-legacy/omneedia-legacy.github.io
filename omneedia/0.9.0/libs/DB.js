@@ -3,29 +3,44 @@ App.define("App.DB", {
         remote: "",
         namespace: "",
         DB: "",
+        ajax: function(o) {
+            var xhr = new XMLHttpRequest();
+            xhr.open(o.type, o.url);
+            xhr.setRequestHeader('Content-Type', o.contentType);
+            xhr.onload = function() {
+                if (xhr.status === 200) o.success(xhr.responseText);
+                else {
+                    if (o.error) o.error(xhr.status);
+                }
+            };
+            if ((typeof o.data === "object") && (o.data !== null)) xhr.send(JSON.stringify(o.data));
+            else xhr.send(o.data);
+        },
         get: function(uri, cb, cb2) {
             var db = uri.split('://')[0];
             if (Settings.DB[db]) {
-                var param = {
+
+                var post = [{
+                    "action": "__QUERY__",
+                    "method": "exec",
+                    "data": [{ "__SQL__": uri }],
+                    "type": "rpc",
+                    "tid": 1
+                }];
+
+                this.ajax({
+                    type: 'post',
                     url: Settings.DB[db],
-                    method: "POST",
-                    data: [{
-                        "action": "__QUERY__",
-                        "method": "exec",
-                        "data": [
-                            { "__SQL__": uri }
-                        ],
-                        "type": "rpc",
-                        "tid": 1
-                    }]
-                };
-                App.request(param, function(e, b) {
-                    if (!e) {
-                        var data = JSON.parse(b);
-                        if (data.length > 0) cb(data[0].result);
-                        else cb([]);
-                    } else return cb(false);
+                    data: JSON.stringify(post),
+                    contentType: "application/json; charset=utf-8",
+                    success: function(data) {
+                        data = JSON.parse(data);
+                        if (typeof data[0].data === "string") return cb(data[0].data);
+                        if (!typeof data[0].result) return cb(data[0]);
+                        cb(data[0].result);
+                    }
                 });
+
             } else App.__QUERY__.exec({
                 __SQL__: uri
             }, cb);

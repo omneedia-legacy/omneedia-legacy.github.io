@@ -273,6 +273,7 @@ App.apply(App, {
         };
 
         document.addEventListener("deviceready", function() {
+            //StatusBar.hide();
             App.getAcceptedLangs(function(lang) {
                 App.loadLang(lang, function() {
                     loadControllers(o.controllers, 0, function() {
@@ -371,4 +372,37 @@ App.apply(App, {
         }, 1000);
 
     }
-})
+});
+
+App.apply(App, {
+    file: {
+        load: function(url, filename, cb) {
+            if (!cb) {
+                var cb = filename;
+                var filename = App.shortid();
+            };
+            // Chemin de stockage des fichiers de l'application.
+            var fileTransfer = new FileTransfer();
+            if (device.platform == "iOS") {
+                var store = cordova.file.dataDirectory;
+            } else {
+                var store = cordova.file.externalDataDirectory;
+            };
+            fileTransfer.download(
+                encodeURI(url),
+                store + filename,
+                function(entry) {
+                    cb(null, entry)
+                },
+                function(error) {
+                    cb(error, null);
+                },
+                false, {
+                    headers: {
+                        "Authorization": "Basic dGVzdHVzZXJuYW1lOnRlc3RwYXNzd29yZA=="
+                    }
+                }
+            );
+        }
+    }
+});
