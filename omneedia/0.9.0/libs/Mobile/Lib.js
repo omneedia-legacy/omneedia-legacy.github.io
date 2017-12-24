@@ -273,7 +273,7 @@ App.apply(App, {
         };
 
         document.addEventListener("deviceready", function() {
-            //StatusBar.hide();
+            StatusBar.backgroundColorByHexString("#333");
             App.getAcceptedLangs(function(lang) {
                 App.loadLang(lang, function() {
                     loadControllers(o.controllers, 0, function() {
