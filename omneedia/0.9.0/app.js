@@ -328,7 +328,6 @@ App.apply(App, {
         xhr.addEventListener("progress", updateProgress, false);
         xhr.addEventListener("error", transferFailed, false);
         xhr.addEventListener("abort", transferCanceled, false);
-        //console.log('-->'+url);
         xhr.open(method, url);
         if (method == "GET") xhr.send();
         if (method == "POST") {

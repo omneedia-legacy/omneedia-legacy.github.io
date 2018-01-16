@@ -24,7 +24,7 @@ App.apply(App, {
             navigator.globalization.getPreferredLanguage(successCallback, errorCallback);
         } else {
             App.request({
-                url: Settings.REMOTE_API + '/i18n'
+                url: Settings.REMOTE_API + "/i18n"
             }, function(e, r) {
                 // fallback to navigator
                 if (e) cb(navigator.language || navigator.userLanguage);
@@ -64,7 +64,7 @@ App.apply(App, {
             var params = "url0=" + url0 + "&url1=" + url1;
             XHR.addEventListener('load', addLang, false);
             XHR.addEventListener("error", failed, false);
-            XHR.open('POST', Settings.REMOTE_API + '/i18n');
+            XHR.open('POST', Settings.REMOTE_API + "/i18n");
             XHR.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
             XHR.send(params);
         };

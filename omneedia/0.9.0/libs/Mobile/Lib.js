@@ -273,7 +273,7 @@ App.apply(App, {
         };
 
         document.addEventListener("deviceready", function() {
-            StatusBar.hide();
+            if (window.StatusBar) StatusBar.hide();
             App.getAcceptedLangs(function(lang) {
                 App.loadLang(lang, function() {
                     loadControllers(o.controllers, 0, function() {
@@ -386,8 +386,9 @@ App.apply(App, {
             if (device.platform == "iOS") {
                 var store = cordova.file.dataDirectory;
             } else {
-                var store = cordova.file.externalDataDirectory;
+                var store = cordova.file.dataDirectory;
             };
+
             fileTransfer.download(
                 encodeURI(url),
                 store + filename,
@@ -403,6 +404,8 @@ App.apply(App, {
                     }
                 }
             );
+
+
         }
     }
 });
