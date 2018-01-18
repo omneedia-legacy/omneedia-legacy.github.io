@@ -71,7 +71,7 @@ App.define("App.IO", {
         if (cc.indexOf('https') > -1)
             this.socket = io.connect(cc, { secure: true, transports: ['xhr-polling'] });
         else
-            this.socket = io.connect(cc);
+            this.socket = io.connect(cc, { transports: ['xhr-polling'] });
     },
     subscribe: function(uri) {
         uri = uri.split(' ');
