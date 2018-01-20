@@ -186,13 +186,24 @@ App.apply(App, {
                 App.requires(module, 0, cb);
                 return;
             };
+
             if (module.indexOf('http') > -1) {
+
                 App.request(module, function(e, b) {
-                    window.eval(b);
+
+                    try {
+                        window.eval(b);
+                    } catch (e) {
+                        console.log('!! [ERR] ' + module);
+                        console.log(e);
+                        console.log('-----------------');
+                    }
+
                     return cb();
                 });
                 return;
             };
+
             module = module.replace(/\./g, '/');
             var script = "";
             var config = {};
@@ -286,6 +297,7 @@ App.apply(App, {
         });
     },
     request: function(o, cb) {
+
         function param(object) {
             var encodedString = '';
             for (var prop in object) {
@@ -692,6 +704,7 @@ App.apply(App, {
  *
  * Object watchers
  */
+
 var WatchManager = (function() {
     var listeners = {};
     var values = {};
@@ -719,7 +732,7 @@ var WatchManager = (function() {
         watch: addListener
     }
 })();
-
+/*
 window.addEventListener('error', function(e) {
     console.log('%c GURU MEDITATION ', 'background: #222; color: #bada55');
     console.log({
@@ -730,7 +743,7 @@ window.addEventListener('error', function(e) {
         stack: e.error.stack
     })
 });
-
+*/
 if (!Settings.DEBUG) {
     /*if (!window.console) window.console = {};
     var methods = ["log", "debug", "warn", "info"];

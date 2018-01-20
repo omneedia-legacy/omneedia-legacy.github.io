@@ -42,7 +42,3 @@ JSON.unflatten = function(data) {
     }
     return result[""];
 };
-
-Object.prototype.query = function(sql) {
-    return alasql(sql, [this]);
-};

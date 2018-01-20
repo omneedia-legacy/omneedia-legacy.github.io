@@ -1,4 +1,5 @@
 if (Settings.DEBUG) {
+
     if (Settings.REMOTE_API.indexOf('file://') > -1) {
         Settings.REMOTE_API = URL;
     };
@@ -35,6 +36,7 @@ if (Settings.DEBUG) {
             }
         };
     });
+
     document.socket.on('SERVER__LOG', function(data) {
         console.log('%c ' + 'LOG:', 'color: #00F; font-size:12px', data);
     });
@@ -65,8 +67,12 @@ if (Settings.DEBUG) {
     });*/
 };
 
+
 App.define("App.IO", {
     socket: {},
+    constructor: function() {
+
+    },
     connect: function(cc) {
         if (cc.indexOf('https') > -1)
             this.socket = io.connect(cc, { secure: true, transports: ['xhr-polling'] });
@@ -79,8 +85,8 @@ App.define("App.IO", {
             if (uri[i].indexOf("#") > -1) this.socket.emit('#create', uri[i]);
         }
     },
-    on: function(uri, cb) {
-        this.socket.on(uri, cb);
+    on: function(event, cb) {
+        this.socket.on(event, cb);
     },
     send: function(uri, data, users) {
         var o = {

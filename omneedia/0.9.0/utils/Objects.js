@@ -1,4 +1,3 @@
-Object.prototype.query = function(sql) {
+Array.prototype.query = function(sql) {
     return alasql(sql, [this]);
 };
-

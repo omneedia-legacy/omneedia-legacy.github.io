@@ -317,14 +317,17 @@ App.apply(App, {
     },
     init: function(view, onload) {
         var maincontroller = -1;
+
         for (var el in App.controller) {
             if (App.controller[el].init) var maincontroller = App.controller[el];
         };
+
         if (maincontroller == -1) return;
 
         window.setTimeout(function() {
 
             function kickem() {
+
                 if (Settings.DEBUG) {
                     window.setTimeout(function() {
                         App.request(Settings.PATHS.Contents + '/../app.html', function(e, r) {
@@ -333,6 +336,7 @@ App.apply(App, {
                                 navig.id = "Navigator";
                                 navig.page = "view/" + view + "/" + view + ".html";
                                 document.getElementsByTagName('body')[0].appendChild(navig);
+                                App.navigator = App.$('#Navigator').dom();
                                 return;
                             };
                             App.$(r).appendTo(App.$('body'));
@@ -350,6 +354,7 @@ App.apply(App, {
                                     this.result = '<ons-navigator id="Navigator" navig.page="view/' + view + '/' + view + '.html"></ons-navigator>' + this.result;
                                 };
                                 App.$(this.result).appendTo(App.$('body'));
+                                App.navigator = App.$('#Navigator').dom();
                             };
 
                             reader.readAsText(file);

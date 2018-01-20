@@ -7,5 +7,6 @@
     "utils/JSON.js",
     "utils/Arrays.js",
     "utils/DOM.js",
+    "utils/Notification.js",
     "utils/Objects.js"
 ]
