@@ -30,3 +30,7 @@ Array.prototype.equals = function(array) {
 Array.prototype.diff = function(a) {
     return this.filter(function(i) { return a.indexOf(i) < 0; });
 };
+
+Array.prototype.query = function(sql) {
+    return alasql(sql, [this]);
+};
