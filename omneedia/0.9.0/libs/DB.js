@@ -62,7 +62,31 @@ App.define("App.DB", {
             var table = db[1].split('?')[0];
             var field = db[1].split('?')[1];
             var db = db[0];
-            App.__QUERY__.del(db, table, obj, cb);
+
+            if (Settings.DB[db]) {
+
+                var post = [{
+                    "action": "__QUERY__",
+                    "method": "del",
+                    "data": [db, table, obj],
+                    "type": "rpc",
+                    "tid": 1
+                }];
+
+                this.ajax({
+                    type: 'post',
+                    url: Settings.DB[db],
+                    data: JSON.stringify(post),
+                    contentType: "application/json; charset=utf-8",
+                    success: function(data) {
+                        data = JSON.parse(data);
+                        if (typeof data[0].data === "string") return cb(data[0].data);
+                        if (!typeof data[0].result) return cb(data[0]);
+                        cb(data[0].result);
+                    }
+                });
+
+            } else App.__QUERY__.del(db, table, obj, cb);
         },
         post: function(uri, obj, cb) {
             var data = [];
@@ -71,7 +95,30 @@ App.define("App.DB", {
             var db = db[0];
             var data = {};
             var missingfields = [];
-            App.__QUERY__.post(db, table, obj, cb);
+            if (Settings.DB[db]) {
+
+                var post = [{
+                    "action": "__QUERY__",
+                    "method": "post",
+                    "data": [db, table, obj],
+                    "type": "rpc",
+                    "tid": 1
+                }];
+
+                this.ajax({
+                    type: 'post',
+                    url: Settings.DB[db],
+                    data: JSON.stringify(post),
+                    contentType: "application/json; charset=utf-8",
+                    success: function(data) {
+                        data = JSON.parse(data);
+                        if (typeof data[0].data === "string") return cb(data[0].data);
+                        if (!typeof data[0].result) return cb(data[0]);
+                        cb(data[0].result);
+                    }
+                });
+
+            } else App.__QUERY__.post(db, table, obj, cb);
         }
     }
 });

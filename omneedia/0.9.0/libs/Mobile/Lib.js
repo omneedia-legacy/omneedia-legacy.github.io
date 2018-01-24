@@ -70,14 +70,18 @@ App.apply(App, {
                     qry = qry[1];
                     if (qry.indexOf('ionicPlatform') > -1) var _platform = qry.split('=')[1];
                     else var _platform = "-1";
-                    if (_platform != '-1') ons.platform.select(_platform)
-                    else {
+                    if (window.ons) {
+                        if (_platform != '-1') ons.platform.select(_platform)
+                        else {
+                            if (ons.platform.isIOS()) ons.platform.select('ios');
+                            else ons.platform.select('android');
+                        }
+                    }
+                } else {
+                    if (window.ons) {
                         if (ons.platform.isIOS()) ons.platform.select('ios');
                         else ons.platform.select('android');
                     }
-                } else {
-                    if (ons.platform.isIOS()) ons.platform.select('ios');
-                    else ons.platform.select('android');
                 }
             };
 
@@ -317,64 +321,93 @@ App.apply(App, {
     },
     init: function(view, onload) {
         var maincontroller = -1;
+        var me = this;
 
         for (var el in App.controller) {
             if (App.controller[el].init) var maincontroller = App.controller[el];
         };
 
         if (maincontroller == -1) return;
+        if (window.ons) {
+            window.setTimeout(function() {
 
-        window.setTimeout(function() {
+                function kickem() {
 
-            function kickem() {
-
-                if (Settings.DEBUG) {
-                    window.setTimeout(function() {
-                        App.request(Settings.PATHS.Contents + '/../app.html', function(e, r) {
-                            if (!r) {
-                                var navig = document.createElement('ons-navigator');
-                                navig.id = "Navigator";
-                                navig.page = "view/" + view + "/" + view + ".html";
-                                document.getElementsByTagName('body')[0].appendChild(navig);
-                                App.navigator = App.$('#Navigator').dom();
-                                return;
-                            };
-                            App.$(r).appendTo(App.$('body'));
-                        });
-                    }, 1000);
-                } else {
-                    function readFile(fileEntry) {
-
-                        fileEntry.file(function(file) {
-                            var reader = new FileReader();
-
-                            reader.onloadend = function() {
-                                App.key.set("first_timer", 1);
-                                if (this.result.indexOf('Navigator') == -1) {
-                                    this.result = '<ons-navigator id="Navigator" navig.page="view/' + view + '/' + view + '.html"></ons-navigator>' + this.result;
+                    if (Settings.DEBUG) {
+                        window.setTimeout(function() {
+                            App.request(Settings.PATHS.Contents + '/../app.html', function(e, r) {
+                                if (!r) {
+                                    var navig = document.createElement('ons-navigator');
+                                    navig.id = "Navigator";
+                                    navig.page = "view/" + view + "/" + view + ".html";
+                                    document.getElementsByTagName('body')[0].appendChild(navig);
+                                    App.navigator = App.$('#Navigator').dom();
+                                    return;
                                 };
-                                App.$(this.result).appendTo(App.$('body'));
-                                App.navigator = App.$('#Navigator').dom();
-                            };
+                                App.$(r).appendTo(App.$('body'));
+                            });
+                        }, 1000);
+                    } else {
+                        function readFile(fileEntry) {
 
-                            reader.readAsText(file);
+                            fileEntry.file(function(file) {
+                                var reader = new FileReader();
 
-                        }, function(err) {
-                            alert('erreur');
-                        });
+                                reader.onloadend = function() {
+                                    App.key.set("first_timer", 1);
+                                    if (this.result.indexOf('Navigator') == -1) {
+                                        this.result = '<ons-navigator id="Navigator" navig.page="view/' + view + '/' + view + '.html"></ons-navigator>' + this.result;
+                                    };
+                                    App.$(this.result).appendTo(App.$('body'));
+                                    App.navigator = App.$('#Navigator').dom();
+                                };
+
+                                reader.readAsText(file);
+
+                            }, function(err) {
+                                alert('error');
+                            });
+                        };
+                        window.setTimeout(function() {
+                            window.resolveLocalFileSystemURL(cordova.file.applicationDirectory + "www/Contents/app.pages", readFile, null);
+                        }, 1000);
+                    }
+                };
+                var appLoadingIcon = document.getElementById('appLoadingIcon');
+                var bootstrap = document.getElementById('bootstrap');
+
+                if (onload) onload();
+                if (Kickstart) Kickstart.load(kickem);
+
+            }, 1000);
+            return;
+        };
+        window.setTimeout(function() {
+            function kickem() {
+                if (document.getElementsByTagName('html')[0].textContent.indexOf('ion') > -1) {
+                    if (Settings.DEBUG) {
+                        window.setTimeout(function() {
+                            App.request(Settings.PATHS.Contents + '/../app.html', function(e, r) {
+                                if (!r) {
+                                    var ion = document.createElement('ion-app');
+                                    document.getElementsByTagName('body')[0].appendChild(ion);
+                                };
+                                App.$(r).appendTo(App.$('body'));
+                                console.log(me);
+                                if (me.launch) me.launch();
+                            });
+                        }, 1000);
+                    } else {
+
                     };
-                    window.setTimeout(function() {
-                        window.resolveLocalFileSystemURL(cordova.file.applicationDirectory + "www/Contents/app.pages", readFile, null);
-                    }, 1000);
-                }
-            };
-            var appLoadingIcon = document.getElementById('appLoadingIcon');
-            var bootstrap = document.getElementById('bootstrap');
 
+                };
+            };
             if (onload) onload();
             if (Kickstart) Kickstart.load(kickem);
 
         }, 1000);
+
 
     }
 });

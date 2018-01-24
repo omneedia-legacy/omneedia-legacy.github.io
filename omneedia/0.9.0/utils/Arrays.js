@@ -34,3 +34,31 @@ Array.prototype.diff = function(a) {
 Array.prototype.query = function(sql) {
     return alasql(sql, [this]);
 };
+
+Array.prototype.render = function(tplx) {
+
+    var me = this;
+    var newstring = "";
+
+    function replace(items, tpl) {
+        for (var el in tpl) {
+            if (items.indexOf('{' + el + '}') > -1) {
+                if (!tpl[el]) tpl[el] = "";
+                items = items.replaceAll('{' + el + '}', tpl[el]);
+            }
+        };
+        return items;
+    };
+
+    if (!Array.isArray(tplx)) {
+        var tab = [];
+        tab.push(tplx);
+        tplx = tab;
+    };
+
+    for (var i = 0; i < tplx.length; i++) {
+        newstring += replace(this.join(''), tplx[i]);
+    };
+
+    return newstring;
+};

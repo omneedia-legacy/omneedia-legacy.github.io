@@ -67,17 +67,22 @@ if (Settings.DEBUG) {
     });*/
 };
 
-
 App.define("App.IO", {
     socket: {},
-    constructor: function() {
-
+    constructor: function(cc) {
+        if (!cc) return false;
+        if (cc.indexOf('https') > -1)
+            this.socket = io(cc, { secure: true, transports: ['polling'] });
+        else
+            this.socket = io(cc, {
+                transports: ['polling']
+            });
     },
     connect: function(cc) {
         if (cc.indexOf('https') > -1)
-            this.socket = io.connect(cc, { secure: true, transports: ['xhr-polling'] });
+            this.socket = io(cc, { secure: true, transports: ['polling'] });
         else
-            this.socket = io.connect(cc, { transports: ['xhr-polling'] });
+            this.socket = io(cc);
     },
     subscribe: function(uri) {
         uri = uri.split(' ');

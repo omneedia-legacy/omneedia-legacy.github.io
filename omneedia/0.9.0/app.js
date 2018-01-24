@@ -10,10 +10,13 @@
  * 0.9.0	Initial commit
  *
  */
+
 // set location origin
 if (!window.location.origin) window.location.origin = window.location.protocol + "//" + window.location.host;
+
 // Remote API
 if (!Settings.REMOTE_API) Settings.REMOTE_API = document.location.origin;
+
 // Define App
 App = {
     version: '0.9.0',
@@ -23,6 +26,7 @@ App = {
         patch: 0
     }
 };
+
 /**
  * Copies all the properties of config to obj.
  * @param {Object} obj The receiver of the properties
@@ -362,6 +366,9 @@ App.apply(App, {
             App.__key__.set(key, value);
         },
         remove: function(key) {
+            App.__key__.remove(key);
+        },
+        unset: function(key) {
             App.__key__.remove(key);
         },
         get: function(key) {
