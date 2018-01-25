@@ -329,14 +329,31 @@ App.apply(App, {
 
         if (maincontroller == -1) return;
         if (window.ons) {
+            // ONSEN UI Support
             window.setTimeout(function() {
-
-                function kickem() {
-                    var navig = document.createElement('ons-navigator');
-                    navig.id = "Navigator";
-                    navig.page = "view/" + view + "/" + view + ".html";
-                    document.getElementsByTagName('body')[0].appendChild(navig);
-                    App.navigator = App.$('#Navigator').dom();
+                if (Settings.DEBUG) {
+                    function kickem() {
+                        var navig = document.createElement('ons-navigator');
+                        navig.id = "Navigator";
+                        navig.page = "view/" + view + "/" + view + ".html";
+                        document.getElementsByTagName('body')[0].appendChild(navig);
+                        App.navigator = App.$('#Navigator').dom();
+                    };
+                } else {
+                    function readFile(fileEntry) {
+                        fileEntry.file(function(file) {
+                            var reader = new FileReader();
+                            reader.onloadend = function() {
+                                App.key.set("first_timer", 1);
+                                App.$(this.result).appendTo(App.$('body'));
+                                App.navigator = App.$('#Navigator').dom();
+                            };
+                            reader.readAsText(file);
+                        }, function(err) {
+                            alert('error');
+                        });
+                    };
+                    window.resolveLocalFileSystemURL(cordova.file.applicationDirectory + "www/Contents/app.pages", readFile, null);
                 };
 
                 var appLoadingIcon = document.getElementById('appLoadingIcon');
@@ -350,6 +367,7 @@ App.apply(App, {
         };
         window.setTimeout(function() {
             function kickem() {
+                // IONIC Support
                 if (document.getElementsByTagName('html')[0].textContent.indexOf('ion') > -1) {
                     if (Settings.DEBUG) {
                         window.setTimeout(function() {
