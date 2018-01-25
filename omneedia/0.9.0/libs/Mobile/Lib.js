@@ -332,47 +332,13 @@ App.apply(App, {
             window.setTimeout(function() {
 
                 function kickem() {
-
-                    if (Settings.DEBUG) {
-                        window.setTimeout(function() {
-                            App.request(Settings.PATHS.Contents + '/../app.html', function(e, r) {
-                                if (!r) {
-                                    var navig = document.createElement('ons-navigator');
-                                    navig.id = "Navigator";
-                                    navig.page = "view/" + view + "/" + view + ".html";
-                                    document.getElementsByTagName('body')[0].appendChild(navig);
-                                    App.navigator = App.$('#Navigator').dom();
-                                    return;
-                                };
-                                App.$(r).appendTo(App.$('body'));
-                            });
-                        }, 1000);
-                    } else {
-                        function readFile(fileEntry) {
-
-                            fileEntry.file(function(file) {
-                                var reader = new FileReader();
-
-                                reader.onloadend = function() {
-                                    App.key.set("first_timer", 1);
-                                    if (this.result.indexOf('Navigator') == -1) {
-                                        this.result = '<ons-navigator id="Navigator" navig.page="view/' + view + '/' + view + '.html"></ons-navigator>' + this.result;
-                                    };
-                                    App.$(this.result).appendTo(App.$('body'));
-                                    App.navigator = App.$('#Navigator').dom();
-                                };
-
-                                reader.readAsText(file);
-
-                            }, function(err) {
-                                alert('error');
-                            });
-                        };
-                        window.setTimeout(function() {
-                            window.resolveLocalFileSystemURL(cordova.file.applicationDirectory + "www/Contents/app.pages", readFile, null);
-                        }, 1000);
-                    }
+                    var navig = document.createElement('ons-navigator');
+                    navig.id = "Navigator";
+                    navig.page = "view/" + view + "/" + view + ".html";
+                    document.getElementsByTagName('body')[0].appendChild(navig);
+                    App.navigator = App.$('#Navigator').dom();
                 };
+
                 var appLoadingIcon = document.getElementById('appLoadingIcon');
                 var bootstrap = document.getElementById('bootstrap');
 
@@ -397,8 +363,6 @@ App.apply(App, {
                                 if (me.launch) me.launch();
                             });
                         }, 1000);
-                    } else {
-
                     };
 
                 };
