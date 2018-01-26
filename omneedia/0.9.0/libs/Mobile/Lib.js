@@ -331,33 +331,13 @@ App.apply(App, {
         if (window.ons) {
             // ONSEN UI Support
             window.setTimeout(function() {
-                if (Settings.DEBUG) {
-                    function kickem() {
-                        var navig = document.createElement('ons-navigator');
-                        navig.id = "Navigator";
-                        navig.page = "view/" + view + "/" + view + ".html";
-                        document.getElementsByTagName('body')[0].appendChild(navig);
-                        App.navigator = App.$('#Navigator').dom();
-                    };
-                } else {
-                    function readFile(fileEntry) {
-                        fileEntry.file(function(file) {
-                            var reader = new FileReader();
-                            reader.onloadend = function() {
-                                App.key.set("first_timer", 1);
-                                App.$(this.result).appendTo(App.$('body'));
-                                var navig = document.createElement('ons-navigator');
-                                navig.id = "Navigator";
-                                navig.page = "view/" + view + "/" + view + ".html";
-                                document.getElementsByTagName('body')[0].appendChild(navig);
-                                App.navigator = App.$('#Navigator').dom();
-                            };
-                            reader.readAsText(file);
-                        }, function(err) {
-                            alert('error');
-                        });
-                    };
-                    window.resolveLocalFileSystemURL(cordova.file.applicationDirectory + "www/Contents/app.pages", readFile, null);
+
+                function kickem() {
+                    var navig = document.createElement('ons-navigator');
+                    navig.id = "Navigator";
+                    navig.page = "view/" + view + "/" + view + ".html";
+                    document.getElementsByTagName('body')[0].appendChild(navig);
+                    App.navigator = App.$('#Navigator').dom();
                 };
 
                 var appLoadingIcon = document.getElementById('appLoadingIcon');
