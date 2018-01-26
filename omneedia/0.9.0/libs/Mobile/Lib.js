@@ -346,6 +346,10 @@ App.apply(App, {
                             reader.onloadend = function() {
                                 App.key.set("first_timer", 1);
                                 App.$(this.result).appendTo(App.$('body'));
+                                var navig = document.createElement('ons-navigator');
+                                navig.id = "Navigator";
+                                navig.page = "view/" + view + "/" + view + ".html";
+                                document.getElementsByTagName('body')[0].appendChild(navig);
                                 App.navigator = App.$('#Navigator').dom();
                             };
                             reader.readAsText(file);
