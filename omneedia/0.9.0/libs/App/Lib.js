@@ -1,19 +1,11 @@
+var OAApp = Object.create(HTMLElement.prototype);
+var MyApp = document.registerElement('omneedia-app', {
+    prototype: OAApp
+});
+
+App.views = [];
+
 App.apply(App, {
-    control: {
-        create: function(el, data, methods, sss) {
-            var obj = {};
-            obj.template = el;
-            obj.data = data;
-            obj.methods = methods;
-            if (sss) {
-                var arr = {};
-                Object.assign(arr, obj, sss);
-                obj = arr;
-            };
-            return new Vue(obj)
-        }
-    },
-    controls: [],
     stacks: {
         views: {},
         controllers: {},
@@ -80,27 +72,6 @@ App.apply(App, {
         };
 
         function initMainController() {
-
-            if (Settings.DEBUG) {
-                var qry = document.location.search.split('?');
-                if (qry[1]) {
-                    qry = qry[1];
-                    if (qry.indexOf('ionicPlatform') > -1) var _platform = qry.split('=')[1];
-                    else var _platform = "-1";
-                    if (window.ons) {
-                        if (_platform != '-1') ons.platform.select(_platform)
-                        else {
-                            if (ons.platform.isIOS()) ons.platform.select('ios');
-                            else ons.platform.select('android');
-                        }
-                    }
-                } else {
-                    if (window.ons) {
-                        if (ons.platform.isIOS()) ons.platform.select('ios');
-                        else ons.platform.select('android');
-                    }
-                }
-            };
 
             var maincontroller = o.controllers[0];
             if (App.controller[maincontroller].init) {
@@ -227,100 +198,115 @@ App.apply(App, {
             });
             document.addEventListener('init', function(event) {
 
-                var page = event.target;
-                var langs = page.getElementsByTagName('lang');
-                for (var i = 0; i < langs.length; i++) {
-                    langs[i].innerHTML = _(langs[i].innerHTML);
-                };
-                if (Settings.DEBUG) {
-                    var link = document.createElement('link');
-                    link.rel = "stylesheet";
-                    link.type = "text/css";
-                    link.href = Settings.PATHS['Contents'] + '/view/' + page.id + '/' + page.id + '.css';
-                    document.getElementsByTagName('head')[0].appendChild(link);
-                };
-                for (var i = 0; i < o.viewControllers.length; i++) {
-                    if (App.viewController[o.viewControllers[i]].init) {
-                        if (App.viewController[o.viewControllers[i]].isLoaded === false) {
-                            App.viewController[o.viewControllers[i]].isLoaded = true;
-                            App.viewController[o.viewControllers[i]].init();
-                        };
+                var cp = event.detail;
+                App.loadView(cp.view, cp.controller, function(page) {
+                    var langs = page.getElementsByTagName('lang');
+                    for (var i = 0; i < langs.length; i++) {
+                        langs[i].innerHTML = _(langs[i].innerHTML);
                     };
-
-                    if (o.viewControllers[i] == page.id) {
-
-                        var page = App.viewController[o.viewControllers[i]].controls;
-
-                        for (var elx in page) {
-                            if (elx != "view") {
-                                var config = page[elx];
-                                if ((config.data) || (config.methods)) {
-                                    config.el = elx;
-                                    App.control[elx] = new Vue(config);
-                                    if (App.controls.indexOf(elx) == -1) App.controls.push(elx);
-                                } else {
-                                    for (var events in page[elx]) {
-                                        if (typeof page[elx][events] === "function") {
-                                            App.$(elx).on(events, page[elx][events]);
-                                        };
-                                        if (typeof page[elx][events] === "string") {
-                                            App.$(elx).on(events, App.viewController[o.viewControllers[i]][page[elx][events]]);
-                                        }
-                                    }
-                                }
-                            }
-                        };
-
-                    }
-                };
-                for (var i = 0; i < o.controllers.length; i++) {
-                    if (App.controller[o.controllers[i]].init) {
-                        if (App.controller[o.controllers[i]].isLoaded === false) {
-                            App.controller[o.controllers[i]].isLoaded = true;
-                            App.controller[o.controllers[i]].init();
-                        };
+                    if (Settings.DEBUG) {
+                        var link = document.createElement('link');
+                        link.rel = "stylesheet";
+                        link.type = "text/css";
+                        link.href = Settings.PATHS['Contents'] + '/view/' + page.id + '/' + page.id + '.css';
+                        document.getElementsByTagName('head')[0].appendChild(link);
                     };
-                    if (App.controller[o.controllers[i]].views.indexOf(page.id) > -1) {
-                        if (App.controller[o.controllers[i]].controls) {
-                            if (App.controller[o.controllers[i]].controls[page.id]) {
-                                var page = App.controller[o.controllers[i]].controls[page.id];
-                                for (var elx in page) {
-                                    if (elx != "view") {
-                                        var config = page[elx];
-                                        if ((config.data) || (config.methods)) {
-                                            config.el = elx;
-                                            App.control[elx] = new Vue(config);
-                                            if (App.controls.indexOf(elx) == -1) App.controls.push(elx);
-                                        } else {
-                                            for (var events in page[elx]) {
-                                                var evt = App.controller[o.controllers[i]][page[elx][events]];
-                                                if (typeof page[elx][events] === "function") {
-                                                    App.$(elx).on(events, page[elx][events]);
-                                                };
-                                                if (typeof page[elx][events] === "string") {
-                                                    App.$(elx).on(events, App.controller[o.controllers[i]][page[elx][events]]);
-                                                }
-                                            }
-                                        }
+                    for (var i = 0; i < o.viewControllers.length; i++) {
+                        if (App.viewController[o.viewControllers[i]].init) {
+                            if (App.viewController[o.viewControllers[i]].isLoaded === false) {
+                                App.viewController[o.viewControllers[i]].isLoaded = true;
+                                App.viewController[o.viewControllers[i]].init();
+                            };
+                        };
 
+                        if (o.viewControllers[i] == page.id) {
+
+                            var page = App.viewController[o.viewControllers[i]].controls;
+
+                            for (var elx in page) {
+                                for (var events in page[elx]) {
+                                    var evt = App.viewController[o.viewControllers[i]][page[elx][events]];
+                                    if (typeof page[elx][events] === "function") {
+                                        App.$(elx).on(events, page[elx][events]);
+                                    };
+                                    if (typeof page[elx][events] === "string") {
+                                        App.$(elx).on(events, App.viewController[o.viewControllers[i]][page[elx][events]]);
                                     }
                                 }
                             }
                         }
-                    }
-                };
+                    };
+
+                    for (var i = 0; i < o.controllers.length; i++) {
+                        if (App.controller[o.controllers[i]].init) {
+                            if (App.controller[o.controllers[i]].isLoaded === false) {
+                                App.controller[o.controllers[i]].isLoaded = true;
+                                App.controller[o.controllers[i]].init();
+                            };
+                        };
+                        if (App.controller[o.controllers[i]].views.indexOf(page.id) > -1) {
+                            if (App.controller[o.controllers[i]].controls) {
+                                if (App.controller[o.controllers[i]].controls[page.id]) {
+                                    var page = App.controller[o.controllers[i]].controls[page.id];
+                                    console.log(page);
+                                    for (var elx in page) {
+                                        for (var events in page[elx]) {
+                                            var evt = App.controller[o.controllers[i]][page[elx][events]];
+                                            if (typeof page[elx][events] === "function") {
+                                                if (elx != "view") App.$(elx).on(events, page[elx][events]);
+                                            };
+                                            if (typeof page[elx][events] === "string") {
+                                                if (elx != "view") App.$(elx).on(events, App.controller[o.controllers[i]][page[elx][events]]);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    };
+                });
+
             });
         };
-        document.addEventListener("deviceready", function() {
-            if (window.StatusBar) StatusBar.hide();
-            App.getAcceptedLangs(function(lang) {
-                App.loadLang(lang, function() {
-                    loadControllers(o.controllers, 0, function() {
-                        loadViewControllers(o.viewControllers, 0, initMainController);
-                    });
-                })
+
+        App.getAcceptedLangs(function(lang) {
+            App.loadLang(lang, function() {
+                loadControllers(o.controllers, 0, function() {
+                    loadViewControllers(o.viewControllers, 0, initMainController);
+                });
+            })
+        });
+
+    },
+    /**
+     * @namespace App
+     * @class loadView
+     * Implement the loading of a specific view
+     * 
+     */
+    loadView: function(name, cc, callback) {
+        if (App.views[name]) {
+            if (callback) return callback();
+            else return;
+        }
+        if (!cc) return console.error('!!! controller not defined');
+        if (!cc.controls) return console.error('!!! controls not defined in controller');
+        if (!cc.controls['#' + name]) return console.error('!!! #' + name + ' must be defined in controls');
+
+        App.request(Settings.PATHS.Contents + '/view/' + name + '/' + name + '.html', function(e, r) {
+            var oa = document.getElementsByTagName('omneedia-app')[0];
+            App.$(r).hide().appendTo(App.$(oa));
+
+            App.views[name] = new Vue({
+                el: "#" + name,
+                data: cc.controls['#' + name].data
             });
-        }, false);
+
+            App.$("#" + name).show();
+            if (callback) callback(App.$("#" + name).dom());
+
+        });
+
     },
     /**
      * @namespace App
@@ -364,90 +350,32 @@ App.apply(App, {
 
         if (maincontroller == -1) return;
 
-        if (window.ons) {
-            // ONSEN UI Support
-            if (Kickstart) Kickstart.load(function() {
-                window.setTimeout(function() {
-                    function kickem() {
-
-                        var navig = document.createElement('ons-navigator');
-                        navig.id = "Navigator";
-                        navig.page = "view/" + view + "/" + view + ".html";
-                        document.getElementsByTagName('body')[0].appendChild(navig);
-                        App.navigator = App.$('#Navigator').dom();
-                        //App.navigator.pushPage("page1.html");
-                    };
-
-                    var appLoadingIcon = document.getElementById('appLoadingIcon');
-                    var bootstrap = document.getElementById('bootstrap');
-                    App.$(bootstrap).remove();
-
-                    if (onload) onload();
-                    kickem();
-                }, 1000);
-            });
-
-            return;
-        };
         window.setTimeout(function() {
             function kickem() {
-                // IONIC Support
-                if (document.getElementsByTagName('html')[0].textContent.indexOf('ion') > -1) {
-                    if (Settings.DEBUG) {
-                        window.setTimeout(function() {
-                            App.request(Settings.PATHS.Contents + '/../app.html', function(e, r) {
-                                if (!r) {
-                                    var ion = document.createElement('ion-app');
-                                    document.getElementsByTagName('body')[0].appendChild(ion);
-                                };
-                                App.$(r).appendTo(App.$('body'));
-                                console.log(me);
-                                if (me.launch) me.launch();
-                            });
-                        }, 1000);
-                    };
 
+                if (Settings.DEBUG) {
+                    window.setTimeout(function() {
+                        //App.request(Settings.PATHS.Contents + '/../app.html', function(e, r) {
+                        //if (!r) {
+                        var ion = document.createElement('omneedia-app');
+                        document.getElementsByTagName('body')[0].appendChild(ion);
+                        //} else App.$(r).appendTo(App.$('body'));
+
+                        var event = new CustomEvent('init', { 'detail': { "controller": maincontroller, "view": view } });
+                        document.dispatchEvent(event);
+
+                        document.getElementsByTagName('body')[0].removeChild(document.getElementById('bootstrap'));
+                        if (me.launch) me.launch();
+                        //});
+                    }, 1000);
                 };
+
             };
             if (onload) onload();
             if (Kickstart) Kickstart.load(kickem);
 
         }, 1000);
-    }
-});
-
-App.apply(App, {
-    file: {
-        load: function(url, filename, cb) {
-            if (!cb) {
-                var cb = filename;
-                var filename = App.shortid();
-            };
-            // Chemin de stockage des fichiers de l'application.
-            var fileTransfer = new FileTransfer();
-            if (device.platform == "iOS") {
-                var store = cordova.file.dataDirectory;
-            } else {
-                var store = cordova.file.dataDirectory;
-            };
-
-            fileTransfer.download(
-                encodeURI(url),
-                store + filename,
-                function(entry) {
-                    cb(null, entry)
-                },
-                function(error) {
-                    cb(error, null);
-                },
-                false, {
-                    headers: {
-                        "Authorization": "Basic dGVzdHVzZXJuYW1lOnRlc3RwYXNzd29yZA=="
-                    }
-                }
-            );
 
 
-        }
     }
 });

@@ -14,7 +14,6 @@ App.apply(App, {
     getAcceptedLangs: function(cb) {
         if (Settings.PLATFORM == "mobile") {
             function successCallback(o) {
-                console.log(o);
                 cb(o.value);
             };
 
@@ -24,7 +23,7 @@ App.apply(App, {
             navigator.globalization.getPreferredLanguage(successCallback, errorCallback);
         } else {
             App.request({
-                url: Settings.REMOTE_API + "/i18n"
+                url: Settings.REMOTE_API + "i18n"
             }, function(e, r) {
                 // fallback to navigator
                 if (e) cb(navigator.language || navigator.userLanguage);
@@ -61,10 +60,12 @@ App.apply(App, {
                 return ll(urls, i + 1, cb);
             };
             var XHR = new XMLHttpRequest();
+
             var params = "url0=" + url0 + "&url1=" + url1;
+
             XHR.addEventListener('load', addLang, false);
             XHR.addEventListener("error", failed, false);
-            XHR.open('POST', Settings.REMOTE_API + "/i18n");
+            XHR.open('POST', Settings.REMOTE_API + "i18n");
             XHR.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
             XHR.send(params);
         };
@@ -91,7 +92,7 @@ App.apply(App, {
         } else App.DEFAULT_LANG = current;
         if (Settings.DEBUG) {
             // in DEBUG, we load it dynamically
-            Settings['i18n'].push(Settings.REMOTE_API + '/Contents/Culture/' + App.DEFAULT_LANG.split('|')[0] + '.js');
+            Settings['i18n'].push(Settings.REMOTE_API + 'Contents/Culture/' + App.DEFAULT_LANG.split('|')[0] + '.js');
             ll(Settings['i18n'], 0, function() {
                 App.DEFAULT_LANG = App.DEFAULT_LANG.split('|')[0];
                 window.localStorage.setItem('LANG', App.DEFAULT_LANG);

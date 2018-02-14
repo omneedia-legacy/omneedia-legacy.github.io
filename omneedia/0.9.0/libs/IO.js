@@ -1,8 +1,8 @@
 if (Settings.DEBUG) {
-
-    if (Settings.REMOTE_API.indexOf('file://') > -1) {
-        Settings.REMOTE_API = URL;
-    };
+    /*
+        if (Settings.REMOTE_API.indexOf('file://') > -1) {
+            Settings.REMOTE_API = window.location.origin;
+        };*/
     if (Settings.REMOTE_API) {
         if (Settings.REMOTE_API.indexOf('https') > -1)
             document.socket = io.connect(Settings.REMOTE_API, { secure: true, transports: ['xhr-polling'] });

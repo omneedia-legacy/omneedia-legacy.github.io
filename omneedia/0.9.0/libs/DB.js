@@ -27,7 +27,6 @@ App.define("App.DB", {
                     "type": "rpc",
                     "tid": 1
                 }];
-
                 this.ajax({
                     type: 'post',
                     url: Settings.DB[db],

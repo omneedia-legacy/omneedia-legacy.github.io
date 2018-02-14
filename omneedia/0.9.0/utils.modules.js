@@ -7,5 +7,7 @@
     "utils/JSON.js",
     "utils/Arrays.js",
     "utils/DOM.js",
-    "utils/Objects.js"
+    "utils/Objects.js",
+    "utils/Hammer.js",
+    "utils/Watcher.js"
 ]

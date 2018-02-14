@@ -48,10 +48,73 @@ App.apply(App, {
             elem = tab;
         };
         return {
+            /**
+             * Animate a div using CSS
+             * 
+             * @param  {String}   animationName
+             * 
+             * bounce	flash	pulse	rubberBand
+             * shake	headShake	swing	tada
+             * wobble	jello	bounceIn	bounceInDown
+             * bounceInLeft	bounceInRight	bounceInUp	bounceOut
+             * bounceOutDown	bounceOutLeft	bounceOutRight	bounceOutUp
+             * fadeIn	fadeInDown	fadeInDownBig	fadeInLeft
+             * fadeInLeftBig	fadeInRight	fadeInRightBig	fadeInUp
+             * fadeInUpBig	fadeOut	fadeOutDown	fadeOutDownBig
+             * fadeOutLeft	fadeOutLeftBig	fadeOutRight	fadeOutRightBig
+             * fadeOutUp	fadeOutUpBig	flipInX	flipInY
+             * flipOutX	flipOutY	lightSpeedIn	lightSpeedOut
+             * rotateIn	rotateInDownLeft	rotateInDownRight	rotateInUpLeft
+             * rotateInUpRight	rotateOut	rotateOutDownLeft	rotateOutDownRight
+             * rotateOutUpLeft	rotateOutUpRight	hinge	jackInTheBox
+             * rollIn	rollOut	zoomIn	zoomInDown
+             * zoomInLeft	zoomInRight	zoomInUp	zoomOut
+             * zoomOutDown	zoomOutLeft	zoomOutRight	zoomOutUp
+             * slideInDown	slideInLeft	slideInRight	slideInUp
+             * slideOutDown	slideOutLeft	slideOutRight	slideOutUp
+             * 
+             * @param  {Function} callback
+             * 
+             */
+            animate: function(animationName, callback) {
+                var animationEnd = (function(el) {
+                    var animations = {
+                        animation: 'animationend',
+                        OAnimation: 'oAnimationEnd',
+                        MozAnimation: 'mozAnimationEnd',
+                        WebkitAnimation: 'webkitAnimationEnd',
+                    };
+
+                    for (var t in animations) {
+                        if (el.style[t] !== undefined) {
+                            return animations[t];
+                        }
+                    }
+                })(document.createElement('div'));
+
+                App.$(elem).addClass('animated ' + animationName).one(animationEnd, function() {
+                    App.$(elem).removeClass('animated ' + animationName);
+
+                    if (typeof callback === 'function') callback();
+                });
+
+                return App.$(elem);
+            },
             on: function(property, fn) {
                 for (var i = 0; i < elem.length; i++) {
                     if (elem[i]) {
                         elem[i].addEventListener(property, fn);
+                    }
+                };
+            },
+            one: function(property, fn) {
+                for (var i = 0; i < elem.length; i++) {
+                    if (elem[i]) {
+                        elem[i].addEventListener(property, function(el) {
+                            //fn();
+                            el.target.removeEventListener(el.type, arguments.callee);
+                            if (fn) fn();
+                        });
                     }
                 };
             },
@@ -113,6 +176,10 @@ App.apply(App, {
                 };
                 return App.$(elem);
             },
+            find: function(selector) {
+                var elx = elem[0].querySelectorAll(selector);
+                return App.$(elx);
+            },
             remove: function() {
                 for (var i = 0; i < elem.length; i++) {
                     if (elem[i]) elem[i].parentNode.removeChild(elem[i]);
@@ -145,13 +212,17 @@ App.apply(App, {
             },
             addClass: function(cl) {
                 for (var i = 0; i < elem.length; i++) {
-                    if (elem[i]) elem[i].classList.add(cl);
+                    if (elem[i]) {
+                        for (var j = 0; j < cl.split(' ').length; j++) elem[i].classList.add(cl.split(' ')[j]);
+                    }
                 };
                 return App.$(elem[0]);
             },
             removeClass: function(cl) {
                 for (var i = 0; i < elem.length; i++) {
-                    if (elem[i]) elem[i].classList.remove(cl);
+                    if (elem[i]) {
+                        for (var j = 0; j < cl.split(' ').length; j++) elem[i].classList.remove(cl.split(' ')[j]);
+                    }
                 };
                 return App.$(elem);
             },
@@ -166,6 +237,93 @@ App.apply(App, {
                     if (elem[i]) elem[i].style.display = "none";
                 };
                 return App.$(elem);
+            },
+            delay: function(delay) {
+                this._delay = delay;
+                return App.$(elem);
+            },
+            fadeOut: function(ms) {
+                if (this._delay) {
+                    var me = this;
+                    setTimeout(function() {
+                        me.fadeOut(ms);
+                    }, this._delay);
+                    return;
+                };
+
+                function fade(type, ms) {
+                    var isIn = type === 'in',
+                        opacity = isIn ? 0 : 1,
+                        interval = 50,
+                        duration = ms,
+                        gap = interval / duration;
+
+                    if (isIn) {
+                        App.$(elem).dom().style.display = 'inline';
+                        App.$(elem).dom().style.opacity = opacity;
+                    }
+
+                    function func() {
+                        opacity = isIn ? opacity + gap : opacity - gap;
+                        App.$(elem).dom().style.opacity = opacity;
+
+                        if (opacity <= 0) App.$(elem).dom().style.display = 'none'
+                        if (opacity <= 0 || opacity >= 1) window.clearInterval(fading);
+                    }
+
+                    var fading = window.setInterval(func, interval);
+                };
+                if (!ms) var ms = 1000;
+                fade('out', ms);
+                return App.$(elem);
+            },
+            fadeIn: function(ms) {
+                if (this._delay) {
+                    var me = this;
+                    setTimeout(function() {
+                        me.fadeOut(ms);
+                    }, this._delay);
+                    return;
+                };
+
+                function fade(type, ms) {
+                    var isIn = type === 'in',
+                        opacity = isIn ? 0 : 1,
+                        interval = 50,
+                        duration = ms,
+                        gap = interval / duration;
+
+                    if (isIn) {
+                        App.$(elem).dom().style.display = 'inline';
+                        App.$(elem).dom().style.opacity = opacity;
+                    }
+
+                    function func() {
+                        opacity = isIn ? opacity + gap : opacity - gap;
+                        App.$(elem).dom().style.opacity = opacity;
+
+                        if (opacity <= 0) App.$(elem).dom().style.display = 'none'
+                        if (opacity <= 0 || opacity >= 1) window.clearInterval(fading);
+                    }
+
+                    var fading = window.setInterval(func, interval);
+                };
+                if (!ms) var ms = 1000;
+                fade('in', ms);
+                return App.$(elem);
+            },
+            is: function(el) {
+                var matches = function(el, selector) {
+                    return (el.matches || el.matchesSelector || el.msMatchesSelector || el.mozMatchesSelector || el.webkitMatchesSelector || el.oMatchesSelector).call(el, selector);
+                };
+                if (el.indexOf('#')) return App.$(elem).dom() === el;
+                else return matches(App.$(elem).dom(), el);
+            },
+            next: function() {
+                return App.$(App.$(elem).dom().nextElementSibling);
+            },
+            prev: function() {
+                return App.$(App.$(elem).dom().previousElementSibling);
             }
         }
     }

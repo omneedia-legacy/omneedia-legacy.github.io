@@ -12,10 +12,14 @@
  */
 
 // set location origin
-if (!window.location.origin) window.location.origin = window.location.protocol + "//" + window.location.host;
-
+//if (window.location.href.indexOf('file://') > -1) {
+if (!window.location.origin) window.location.origin = document.getElementsByTagName('base')[0].href;
 // Remote API
-if (!Settings.REMOTE_API) Settings.REMOTE_API = document.location.origin;
+if (!Settings.REMOTE_API) Settings.REMOTE_API = document.getElementsByTagName('base')[0].href;
+/*} else {
+    if (!window.location.origin) window.location.origin = window.location.protocol + "//" + window.location.host;
+    if (!Settings.REMOTE_API) Settings.REMOTE_API = window.location.origin;
+}*/
 
 // Define App
 App = {
@@ -322,6 +326,9 @@ App.apply(App, {
         if ((!o.uri) && (!o.url)) throw "GURU MEDITATION: No URL parameter";
         if (o.uri) var url = o.uri;
         if (o.url) var url = o.url;
+
+        if (url.indexOf('://') > -1) url = o.url.split('://')[0] + '://' + o.url.split('://')[1].replace(/\/\//g, "/");
+
         if (!o.method) var method = "GET";
         else var method = o.method;
         var reqListener = function() {
