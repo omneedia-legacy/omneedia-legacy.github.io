@@ -101,7 +101,14 @@ App.apply(App, {
                     }
                 }
             };
-
+            if (window.ons) {
+                if (ons.platform.isIPhoneX()) {
+                    document.documentElement.setAttribute('onsflag-iphonex-portrait', '');
+                };
+                if (ons.platform.isIPhoneX()) {
+                    document.documentElement.setAttribute('onsflag-iphonex-landscape', '');
+                };
+            };
             var maincontroller = o.controllers[0];
             if (App.controller[maincontroller].init) {
                 App.controller[maincontroller].init();
@@ -355,6 +362,7 @@ App.apply(App, {
         }
     },
     init: function(view, onload) {
+
         var maincontroller = -1;
         var me = this;
 
@@ -366,10 +374,10 @@ App.apply(App, {
 
         if (window.ons) {
             // ONSEN UI Support
+
             if (Kickstart) Kickstart.load(function() {
                 window.setTimeout(function() {
                     function kickem() {
-
                         var navig = document.createElement('ons-navigator');
                         navig.id = "Navigator";
                         navig.page = "view/" + view + "/" + view + ".html";
@@ -413,41 +421,5 @@ App.apply(App, {
             if (Kickstart) Kickstart.load(kickem);
 
         }, 1000);
-    }
-});
-
-App.apply(App, {
-    file: {
-        load: function(url, filename, cb) {
-            if (!cb) {
-                var cb = filename;
-                var filename = App.shortid();
-            };
-            // Chemin de stockage des fichiers de l'application.
-            var fileTransfer = new FileTransfer();
-            if (device.platform == "iOS") {
-                var store = cordova.file.dataDirectory;
-            } else {
-                var store = cordova.file.dataDirectory;
-            };
-
-            fileTransfer.download(
-                encodeURI(url),
-                store + filename,
-                function(entry) {
-                    cb(null, entry)
-                },
-                function(error) {
-                    cb(error, null);
-                },
-                false, {
-                    headers: {
-                        "Authorization": "Basic dGVzdHVzZXJuYW1lOnRlc3RwYXNzd29yZA=="
-                    }
-                }
-            );
-
-
-        }
     }
 });
