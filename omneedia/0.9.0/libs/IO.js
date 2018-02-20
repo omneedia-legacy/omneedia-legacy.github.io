@@ -8,6 +8,23 @@ if (Settings.DEBUG) {
             document.socket = io.connect(Settings.REMOTE_API, { secure: true, transports: ['xhr-polling'] });
         else
             document.socket = io.connect(Settings.REMOTE_API);
+    } else {
+        // in production mode, detect if online or not
+        window.addEventListener('load', function() {
+            function updateOnlineStatus(event) {
+                if (navigator.onLine) {
+                    if (Settings.REMOTE_API.indexOf('https') > -1)
+                        document.socket = io.connect(Settings.REMOTE_API, { secure: true, transports: ['xhr-polling'] });
+                    else
+                        document.socket = io.connect(Settings.REMOTE_API);
+                } else {
+                    // handle offline status
+                    console.log('offline');
+                }
+            };
+            window.addEventListener('online', updateOnlineStatus);
+            window.addEventListener('offline', updateOnlineStatus);
+        });
     }
 
     document.socket.on('connect', function() {
