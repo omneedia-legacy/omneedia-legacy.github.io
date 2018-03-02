@@ -275,7 +275,7 @@ App.define('App.model', {
             return _p;
         },
         create: function(cfg) {
-            return Ext.define('MODEL_' + Math.uuid(), cfg);
+            return Ext.define('MODEL_' + App.uuid(), cfg);
         },
         define: function(name, o, z) {
             if (!z) o.extend = "Ext.data.Model";
@@ -450,6 +450,7 @@ App.define("App.store", {
                 return ("M" + (Math.random() * Math.pow(36, 4) << 0).toString(36)).slice(-4)
             };
             var guid = _guid();
+
             if (name instanceof Object == true) {
                 cfg = name;
                 if (cfg.type) var xtd = App.STOREMODELS[cfg.type];
@@ -458,6 +459,11 @@ App.define("App.store", {
                     model: "Ext.data.Model",
                     store: "Ext.data.Store"
                 };
+                App.model.define(guid, {}, xtd.model);
+                cfg.model = Settings.NAMESPACE + ".model." + guid;
+                cfg.require = [];
+                cfg.require.push(Settings.NAMESPACE + ".model." + guid);
+
             } else {
                 if (cfg) {
                     if (cfg.type) var xtd = App.STOREMODELS[cfg.type];
@@ -507,7 +513,9 @@ App.define("App.store", {
                     }
                 }
             };
+
             try {
+                console.log(cfg);
                 var myStore = Ext.create(xtd.store, cfg);
                 if (!myStore.getProxy().extraParams) myStore.getProxy().extraParams = {};
                 myStore.getProxy().extraParams.__SQL__ = name;
