@@ -260,7 +260,8 @@ App.apply(App, {
                 };
             };
             for (var el in Settings.PATHS) {
-                if (module.indexOf(el) > -1) script = Settings.PATHS[el] + '/' + module.split(el)[1];
+                els = el.replace(/\./g, '/');
+                if (module.indexOf(els) > -1) script = Settings.PATHS[el] + '/' + module.split(els)[1];
             };
             if (script == "") script = module;
             if (script.indexOf('.json') == -1) script += ".json";

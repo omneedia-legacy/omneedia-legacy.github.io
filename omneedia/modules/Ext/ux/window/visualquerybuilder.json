@@ -1,0 +1,21 @@
+{
+    "namespace": "Ext.ux.window.visualquerybuilder",
+    "version": "1.0.1",
+    "description": "Visual Query Builder module.",
+    "license": "MIT",
+    "repositories": {},
+    "package": {
+        "js": [
+            "visualquerybuilder.js"
+        ],
+        "css": [
+
+        ],
+        "html": [
+
+        ],
+        "i18n": [
+
+        ]
+    }
+}
