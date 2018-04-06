@@ -1,15 +1,21 @@
-/*
-    if (Settings.REMOTE_API.indexOf('file://') > -1) {
-        Settings.REMOTE_API = window.location.origin;
-    };*/
+function setToken() {
+    var d = new Date().toMySQL().split(' ')[0];
+    return Base64.encode(md5(d));
+};
+
 if (Settings.REMOTE_API) {
     if (Settings.REMOTE_API.indexOf('https') > -1)
         document.socket = io.connect(Settings.REMOTE_API, {
+            query: "engine=worker&iokey=" + setToken(),
             secure: true,
             transports: ['xhr-polling']
         });
     else
-        document.socket = io.connect(Settings.REMOTE_API);
+        document.socket = io.connect(Settings.REMOTE_API, {
+            query: "engine=worker&iokey=" + setToken(),
+            reconnection: true,
+            reconnectionDelay: 1000
+        });
 } else {
     // in production mode, detect if online or not
     window.addEventListener('load', function () {
@@ -17,11 +23,14 @@ if (Settings.REMOTE_API) {
             if (navigator.onLine) {
                 if (Settings.REMOTE_API.indexOf('https') > -1)
                     document.socket = io.connect(Settings.REMOTE_API, {
+                        query: "engine=worker&iokey=" + setToken(),
                         secure: true,
                         transports: ['xhr-polling']
                     });
                 else
-                    document.socket = io.connect(Settings.REMOTE_API);
+                    document.socket = io.connect(Settings.REMOTE_API, {
+                        query: "engine=worker&iokey=" + setToken()
+                    });
             } else {
                 // handle offline status
                 console.log('offline');
@@ -32,32 +41,36 @@ if (Settings.REMOTE_API) {
     });
 }
 
-document.socket.on('connect', function () {
-    App.unblur();
-    try {
-        document.querySelector('.omneedia-overlay').style.display = "none";
-    } catch (e) {
+if (Settings.DEBUG) {
+    document.socket.on('connect', function () {
+        App.unblur();
+        try {
+            document.querySelector('.omneedia-overlay').style.display = "none";
+        } catch (e) {
 
-    };
-});
+        };
+    });
+}
 
 document.socket.on('disconnect', function () {
-    App.blur();
+    if (Settings.DEBUG) App.blur();
 });
 
-document.socket.on('session', function (data) {
-    var data = JSON.parse(data);
-    if (!localStorage.getItem("session")) localStorage.setItem('session', data.pid);
-    else {
-        if (localStorage.getItem("session") != data.pid) {
-            localStorage.setItem('session', data.pid);
-            try {
-                App.blur();
-            } catch (e) {};
-            location.reload();
-        }
-    };
-});
+if (Settings.DEBUG) {
+    document.socket.on('session', function (data) {
+        var data = JSON.parse(data);
+        if (!localStorage.getItem("session")) localStorage.setItem('session', data.pid);
+        else {
+            if (localStorage.getItem("session") != data.pid) {
+                localStorage.setItem('session', data.pid);
+                try {
+                    App.blur();
+                } catch (e) {};
+                location.reload();
+            }
+        };
+    });
+}
 
 document.socket.on('SERVER__LOG', function (data) {
     console.log('%c ' + 'LOG:', 'color: #00F; font-size:12px', data);
