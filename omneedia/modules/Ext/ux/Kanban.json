@@ -1,0 +1,23 @@
+{
+	"namespace": "Ext.ux.Kanban",
+	"version": "2.0.17",
+	"description": "Kanban module.",
+	"license": "MIT",
+	"repositories": {
+
+	},
+	"package": {
+		"js": [
+			"{version}/Kanban.js"
+		],
+		"css": [
+			"{version}/res/classic.css"
+		],
+		"html": [
+
+		],
+		"i18n": [
+
+		]
+	}
+}
