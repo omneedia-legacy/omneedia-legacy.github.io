@@ -1,5 +1,3 @@
-
-
 .ux-mu-status-value {
 	float: right;
 	min-width: 16px;
@@ -17,6 +15,7 @@
 /*
  * Action icons
  */
+
 .ux-mu-icon-action-ok {
 	background-image: url(images/tick.png) !important;
 }
@@ -59,4 +58,8 @@
 
 .upload_attach {
 	background-image: url(images/attach.png);
+}
+
+.icobrowse {
+	background-image: url(images/folder.png);
 }
