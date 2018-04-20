@@ -1,7 +1,7 @@
 i18n_framework = {};
 i18n = {};
 
-_ = function(x) {
+_ = function (x) {
     App.DEFAULT_LANG = window.localStorage['LANG'];
     try {
         return i18n[App.DEFAULT_LANG][x];
@@ -11,7 +11,7 @@ _ = function(x) {
 };
 
 App.apply(App, {
-    getAcceptedLangs: function(cb) {
+    getAcceptedLangs: function (cb) {
         if (Settings.PLATFORM == "mobile") {
             function successCallback(o) {
                 cb(o.value);
@@ -24,7 +24,7 @@ App.apply(App, {
         } else {
             App.request({
                 url: Settings.REMOTE_API + "i18n"
-            }, function(e, r) {
+            }, function (e, r) {
                 // fallback to navigator
                 if (e) cb(navigator.language || navigator.userLanguage);
                 else {
@@ -33,7 +33,7 @@ App.apply(App, {
             });
         }
     },
-    loadLang: function(lang, cb) {
+    loadLang: function (lang, cb) {
         var _LANG = [];
 
         function ll(urls, i, cb) {
@@ -57,23 +57,27 @@ App.apply(App, {
             };
 
             function failed() {
+                //alert(urls[i]);
                 return ll(urls, i + 1, cb);
             };
             var XHR = new XMLHttpRequest();
 
-            var params = "url0=" + url0 + "&url1=" + url1;
-
             XHR.addEventListener('load', addLang, false);
             XHR.addEventListener("error", failed, false);
-            XHR.open('POST', Settings.REMOTE_API + "i18n");
+            XHR.open('GET', url0);
             XHR.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-            XHR.send(params);
+            XHR.send();
+
         };
         var current = "";
+
         if (window.localStorage['LANG']) App._lang = window.localStorage['LANG'];
         if (!App._lang) {
             for (var i = 0; i < Settings.LANGS.length; i++) {
-                if (lang.indexOf(Settings.LANGS[i].toLowerCase()) > -1) current = Settings.LANGS[i] + '|' + lang;
+                console.log(Settings.LANGS[i].toLowerCase());
+                console.log(lang.toLowerCase());
+                console.log(lang.toLowerCase().indexOf(Settings.LANGS[i].toLowerCase()));
+                if (lang.toLowerCase().indexOf(Settings.LANGS[i].toLowerCase()) > -1) current = Settings.LANGS[i] + '|' + lang;
             };
         } else {
             if (App._lang.indexOf('-') > -1) {
@@ -93,7 +97,7 @@ App.apply(App, {
         if (Settings.DEBUG) {
             // in DEBUG, we load it dynamically
             Settings['i18n'].push(Settings.REMOTE_API + 'Contents/Culture/' + App.DEFAULT_LANG.split('|')[0] + '.js');
-            ll(Settings['i18n'], 0, function() {
+            ll(Settings['i18n'], 0, function () {
                 App.DEFAULT_LANG = App.DEFAULT_LANG.split('|')[0];
                 window.localStorage.setItem('LANG', App.DEFAULT_LANG);
                 window.eval('if (!i18n["' + App.DEFAULT_LANG + '"]) i18n["' + App.DEFAULT_LANG + '"]={};i18n_framework["' + App.DEFAULT_LANG + '"]=function(){' + _LANG.join(' ') + '};');
@@ -105,7 +109,6 @@ App.apply(App, {
             window.localStorage.setItem('LANG', App.DEFAULT_LANG);
             // in PROD, It's always binded to source code
             i18n_framework[App.DEFAULT_LANG]();
-            __MVC__();
             cb();
         }
     }

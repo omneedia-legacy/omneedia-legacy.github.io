@@ -3,11 +3,11 @@ App.define("App.DB", {
         remote: "",
         namespace: "",
         DB: "",
-        ajax: function(o) {
+        ajax: function (o) {
             var xhr = new XMLHttpRequest();
             xhr.open(o.type, o.url);
             xhr.setRequestHeader('Content-Type', o.contentType);
-            xhr.onload = function() {
+            xhr.onload = function () {
                 if (xhr.status === 200) o.success(xhr.responseText);
                 else {
                     if (o.error) o.error(xhr.status);
@@ -16,14 +16,16 @@ App.define("App.DB", {
             if ((typeof o.data === "object") && (o.data !== null)) xhr.send(JSON.stringify(o.data));
             else xhr.send(o.data);
         },
-        get: function(uri, cb, cb2) {
+        get: function (uri, cb, cb2) {
             var db = uri.split('://')[0];
             if (Settings.DB[db]) {
 
                 var post = [{
                     "action": "__QUERY__",
                     "method": "exec",
-                    "data": [{ "__SQL__": uri }],
+                    "data": [{
+                        "__SQL__": '!' + cipher.encrypt(window.z, uri)
+                    }],
                     "type": "rpc",
                     "tid": 1
                 }];
@@ -32,7 +34,7 @@ App.define("App.DB", {
                     url: Settings.DB[db],
                     data: JSON.stringify(post),
                     contentType: "application/json; charset=utf-8",
-                    success: function(data) {
+                    success: function (data) {
                         data = JSON.parse(data);
                         if (typeof data[0].data === "string") return cb(data[0].data);
                         if (!typeof data[0].result) return cb(data[0]);
@@ -41,11 +43,11 @@ App.define("App.DB", {
                 });
 
             } else App.__QUERY__.exec({
-                __SQL__: uri
+                __SQL__: '!' + cipher.encrypt(window.z, uri)
             }, cb);
 
         },
-        del: function(uri, obj, cb) {
+        del: function (uri, obj, cb) {
             var db = uri.split('://');
             if (!Array.isArray(obj)) {
                 cb = obj;
@@ -77,7 +79,7 @@ App.define("App.DB", {
                     url: Settings.DB[db],
                     data: JSON.stringify(post),
                     contentType: "application/json; charset=utf-8",
-                    success: function(data) {
+                    success: function (data) {
                         data = JSON.parse(data);
                         if (typeof data[0].data === "string") return cb(data[0].data);
                         if (!typeof data[0].result) return cb(data[0]);
@@ -87,7 +89,7 @@ App.define("App.DB", {
 
             } else App.__QUERY__.del(db, table, obj, cb);
         },
-        post: function(uri, obj, cb) {
+        post: function (uri, obj, cb) {
             var data = [];
             var db = uri.split('://');
             var table = db[1];
@@ -109,7 +111,7 @@ App.define("App.DB", {
                     url: Settings.DB[db],
                     data: JSON.stringify(post),
                     contentType: "application/json; charset=utf-8",
-                    success: function(data) {
+                    success: function (data) {
                         data = JSON.parse(data);
                         if (typeof data[0].data === "string") return cb(data[0].data);
                         if (!typeof data[0].result) return cb(data[0]);

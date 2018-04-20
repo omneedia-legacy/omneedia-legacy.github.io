@@ -1,10 +1,10 @@
 Auth = {
-    logout: function() {
+    logout: function () {
         App.$('.omneedia-overlay').show();
         if (Settings.TYPE == "mobile") {
             if (!Settings.REMOTE_AUTH) Settings.REMOTE_AUTH = "";
             Auth.window = window.open(Settings.REMOTE_AUTH + "/logout", "_blank", "location=no");
-            Auth.window.on('loadstart', function(e) {
+            Auth.window.on('loadstart', function (e) {
                 Auth.window.close();
             });
         } else {
@@ -15,7 +15,7 @@ Auth = {
             document.getElementsByTagName('body')[0].appendChild(divo);
 
             Auth.window = window.open(Settings.REMOTE_AUTH + "/logout", "_blank");
-            __INTERVAL__ = window.setInterval(function() {
+            __INTERVAL__ = window.setInterval(function () {
                 if (Settings.REMOTE_AUTH) var a_auth = Settings.REMOTE_AUTH;
                 else var a_auth = "";
                 Ext.Ajax.request({
@@ -23,11 +23,11 @@ Auth = {
                     method: "POST",
                     withCredentials: true,
                     useDefaultXhrHeader: false,
-                    success: function(response, opts) {
+                    success: function (response, opts) {
                         window.clearInterval(__INTERVAL__);
                         location.reload(true);
                     },
-                    failure: function(response, opts) {
+                    failure: function (response, opts) {
                         window.clearInterval(__INTERVAL__);
                         location.reload(true);
                     }
@@ -35,7 +35,7 @@ Auth = {
             }, 1000);
         }
     },
-    doLogin: function(fn) {
+    doLogin: function (fn) {
 
         var divo = document.createElement('div');
         divo.className = "QxOverlay";
@@ -67,12 +67,12 @@ Auth = {
             };
             App.$('.QxPassports').html(App.$('.QxPassports').html() + '<a class="button_passport ' + Settings.AUTH.passports[jk] + '">' + Settings.AUTH.passport[Settings.AUTH.passports[jk]].caption + '</a>');
         };
-        App.$('.css_btn_cancel').click(function() {
+        App.$('.css_btn_cancel').click(function () {
             App.$('.CWaitSignOn').hide();
             App.$('.CSignOn').show();
         });
 
-        App.$('.button_passport').click(function(e) {
+        App.$('.button_passport').click(function (e) {
             App.$('.CWaitSignOn').show();
             App.$('.CSignOn').hide();
             var target = e.target.className.split('button_passport ')[1];
@@ -82,26 +82,30 @@ Auth = {
                 var win = window.open("/auth/" + target, "_blank");
                 win.focus();
             };
-            document.socket.on('#auth', function(response) {
+            document.socket.on('#auth', function (response) {
                 Auth.User = JSON.parse(response);
                 App.$('.QxOverlay').remove();
                 App.unblur('.x-panel');
                 App.$('.QxLoginBox').addClass('bounceOutDown');
-                window.setTimeout(function() { App.$('.QxLoginBox').remove(); }, 1000);
+                window.setTimeout(function () {
+                    App.$('.QxLoginBox').remove();
+                }, 1000);
                 if (Settings.TYPE != "mobile") {
                     Ext.getCmp('GlobalMenuUser').setText(Auth.User.mail.split('@')[0]);
                     Ext.getCmp('GlobalMenuUser').show();
                 };
                 if (fn) fn(Auth.User);
             });
-            document.socket.on('#failedauth', function(response) {
+            document.socket.on('#failedauth', function (response) {
                 App.$('.QxLoginBox').addClass('bounceOutDown');
-                window.setTimeout(function() { App.$('.QxLoginBox').remove(); }, 1000);
+                window.setTimeout(function () {
+                    App.$('.QxLoginBox').remove();
+                }, 1000);
                 App.notify('Auth', "Vous avez bien été identifié mais vous n'avez pas accès a cette application.");
             });
         });
     },
-    user: function(cb) {
+    user: function (cb) {
         if (Settings.REMOTE_AUTH) var a_auth = Settings.REMOTE_AUTH;
         else var a_auth = "";
         Ext.Ajax.request({
@@ -112,17 +116,17 @@ Auth = {
             },
             withCredentials: true,
             useDefaultXhrHeader: false,
-            success: function(response, opts) {
+            success: function (response, opts) {
                 Auth.User = JSON.parse(response.responseText);
                 cb(Auth.User);
             },
-            failure: function(response, opts) {
+            failure: function (response, opts) {
                 //Auth.doLogin();
             }
         });
     },
     User: {},
-    login: function(fn) {
+    login: function (fn) {
         if (Settings.REMOTE_AUTH) var a_auth = Settings.REMOTE_AUTH;
         else var a_auth = "";
 
@@ -136,7 +140,7 @@ Auth = {
             },
             withCredentials: true,
             useDefaultXhrHeader: false,
-            success: function(response, opts) {
+            success: function (response, opts) {
 
                 Auth.User = JSON.parse(response.responseText);
                 if (Auth.User.response == "NOT_LOGIN") return Auth.doLogin(fn);
@@ -146,14 +150,12 @@ Auth = {
                 App.$('.QxLoginBox').addClass('bounceOutDown');
                 App.$('.x-panel').addClass('QxSharp');
                 if (Settings.TYPE == "mobile") App.$('.x-container').addClass('QxSharp');
-                window.setTimeout(function() { App.$('.QxLoginBox').remove(); }, 1000);
-                if (Settings.TYPE != "mobile") {
-                    Ext.getCmp('GlobalMenuUser').setText(Auth.User.mail.split('@')[0]);
-                    Ext.getCmp('GlobalMenuUser').show();
-                };
+                window.setTimeout(function () {
+                    App.$('.QxLoginBox').remove();
+                }, 1000);
                 if (fn) fn(Auth.User);
             },
-            failure: function(response, opts) {
+            failure: function (response, opts) {
                 Auth.doLogin(fn);
             }
         });

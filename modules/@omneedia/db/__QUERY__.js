@@ -1,7 +1,7 @@
 var MSettings = global.settings;
 
 __QUERY__ = {
-    post: function(_db, tb, obj, cb) {
+    post: function (_db, tb, obj, cb) {
         try {
             var db = __QUERY__.using('db');
         } catch (e) {
@@ -9,7 +9,7 @@ __QUERY__ = {
         };
         db.post(_db, tb, obj, cb);
     },
-    del: function(_db, tb, obj, cb) {
+    del: function (_db, tb, obj, cb) {
         try {
             var db = __QUERY__.using('db');
         } catch (e) {
@@ -17,7 +17,7 @@ __QUERY__ = {
         };
         db.del(_db, tb, obj, cb);
     },
-    exec: function(o, cb) {
+    exec: function (o, cb) {
 
 
         var err = null;
@@ -161,7 +161,7 @@ __QUERY__ = {
                 //if (typeof str === 'object') return "";
                 if (str == "null") return "NULL";
                 try {
-                    var obj = '\'' + str.replace(/[\0\x08\x09\x1a\n\r"'\\\%]/g, function(char) {
+                    var obj = '\'' + str.replace(/[\0\x08\x09\x1a\n\r"'\\\%]/g, function (char) {
                         switch (char) {
                             case "\0":
                                 return "\\0";
@@ -197,7 +197,10 @@ __QUERY__ = {
                     if (qvalue.indexOf('=') > -1) qvalue = qvalue.substr(qvalue.indexOf('=') + 1, qvalue.length);
                 };
                 var qkey = q.substr(0, q.indexOf('='));
-                if (qkey.indexOf('!') > -1) { qkey = qkey.split('!')[0]; var operator = '!='; } else var operator = '==';
+                if (qkey.indexOf('!') > -1) {
+                    qkey = qkey.split('!')[0];
+                    var operator = '!=';
+                } else var operator = '==';
                 // =
                 if (qvalue.indexOf('*') > -1) {
                     // like
@@ -286,7 +289,7 @@ __QUERY__ = {
             Liste des champs de la table
             */
             if (cmd.indexOf('@') == 0) {
-                db.model(o[0], "SHOW COLUMNS FROM " + cmd.split('@')[1], function(e, r) {
+                db.model(o[0], "SHOW COLUMNS FROM " + cmd.split('@')[1], function (e, r) {
                     cb(e, r);
                 });
                 return;
@@ -398,7 +401,7 @@ __QUERY__ = {
                         var kery = cmd.split('(')[1].split(')')[0].split('||');
                         if (kery.length == 1) {
                             // fonction
-                            console.log('FONCTION');
+                            //console.log('FONCTION');
                             var item = await query_fields(query[i]);
                             SQL.push(item);
                         } else {
@@ -445,19 +448,17 @@ __QUERY__ = {
                     }
                 }
             }
-            if (OUTPUT != "sql") {
-                console.log('------------------------------');
-                console.log(o.join('://'));
-                SQL = SQL.join(' ');
-                console.log(SQL);
-                console.log("output=" + OUTPUT);
-                console.log('------------------------------');
-            } else SQL = SQL.join(' ');
+
+            SQL = SQL.join(' ');
+
             if (OUTPUT == '-1') db.model(o[0], SQL, cb);
-            if (OUTPUT == 'json') db.query(o[0], SQL, function(e, r) {
+
+            if (OUTPUT == 'json') db.query(o[0], SQL, function (e, r) {
                 cb(JSON.stringify(r, null, 4));
             });
+
             if (OUTPUT == "raw") db.query(o[0], SQL, cb);
+
             if (OUTPUT == "store") db.store(o[0], SQL, cb);
 
             if (OUTPUT == "sql") cb(null, SQL);
@@ -466,7 +467,7 @@ __QUERY__ = {
 
         function qcommander(o, PARAMS) {
             return new Promise((resolve, reject) => {
-                querycommander(o, PARAMS, function(err, result) {
+                querycommander(o, PARAMS, function (err, result) {
                     if (err) {
                         return reject(err)
                     }
@@ -475,12 +476,34 @@ __QUERY__ = {
             });
         };
 
+        function CYPHER_decode(key, str) {
+            function keyCharAt(key, i) {
+                return key.charCodeAt(Math.floor(i % key.length));
+            };
+            var arr = Buffer.from(str, 'base64').toString('utf-8');
+            if (arr.indexOf('|') == -1) return false;
+            var _key = arr.split('|')[1];
+            if (!_key) return false;
+            if (_key != key) return false;
+            if (key != __QUERY__.fingerprint) return false;
+            arr = arr.split('|')[0].match(/.{1,3}/g);
+            var decode = [];
+            for (var i = 0; i < arr.length; i++) decode.push(String.fromCharCode(arr[i] * 1 - keyCharAt(key, i)));
+
+            return decode.reverse().join('');
+        };
+
         if (!o.__SQL__) {
             // Pas de params __SQL__ --> Mauvaise réponse
             err = {
                 msg: "BAD_RESPONSE"
             };
         } else {
+
+
+            if (o.__SQL__.indexOf('!') > -1) {
+                o.__SQL__ = CYPHER_decode(__QUERY__.fingerprint, o.__SQL__.substr(1, o.__SQL__.length));
+            };
 
             // get params
             var xargs = [];
@@ -518,6 +541,7 @@ __QUERY__ = {
                     var arg = cc[el];
                     if (arg.indexOf('#') > -1) {
                         var kargs = arg.split('.');
+                        if (kargs[0].indexOf('=') > -1) kargs[0] = kargs[0].split('=')[1];
                         if (kargs[0] == "#user") arg = __QUERY__.auth[kargs[1]];
                         if (kargs[0] == "#auth") arg = __QUERY__.auth[kargs[1]];
                     };
@@ -525,10 +549,10 @@ __QUERY__ = {
                 };
 
                 if (QUEST) {
-                    console.log('--- QUEST -----------------------------------------');
+
                     QUEST = JSON.parse(QUEST);
                     for (var i = 0; i < QUEST.length; i++) {
-                        console.log(QUEST[i]);
+
                         var str = "";
                         if (i != 0) {
                             str = ' ' + QUEST[i].operator + ' ';

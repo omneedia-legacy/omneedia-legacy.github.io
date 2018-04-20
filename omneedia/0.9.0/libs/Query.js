@@ -1,5 +1,5 @@
 App.apply(App, {
-    $: function(obj, Obj) {
+    $: function (obj, Obj) {
         if (App.isArray(obj)) {
             var elem = [];
             for (var i = 0; i < obj.length; i++) elem.push(obj[i]);
@@ -76,8 +76,8 @@ App.apply(App, {
              * @param  {Function} callback
              * 
              */
-            animate: function(animationName, callback) {
-                var animationEnd = (function(el) {
+            animate: function (animationName, callback) {
+                var animationEnd = (function (el) {
                     var animations = {
                         animation: 'animationend',
                         OAnimation: 'oAnimationEnd',
@@ -92,7 +92,7 @@ App.apply(App, {
                     }
                 })(document.createElement('div'));
 
-                App.$(elem).addClass('animated ' + animationName).one(animationEnd, function() {
+                App.$(elem).addClass('animated ' + animationName).one(animationEnd, function () {
                     App.$(elem).removeClass('animated ' + animationName);
 
                     if (typeof callback === 'function') callback();
@@ -100,17 +100,17 @@ App.apply(App, {
 
                 return App.$(elem);
             },
-            on: function(property, fn) {
+            on: function (property, fn) {
                 for (var i = 0; i < elem.length; i++) {
                     if (elem[i]) {
                         elem[i].addEventListener(property, fn);
                     }
                 };
             },
-            one: function(property, fn) {
+            one: function (property, fn) {
                 for (var i = 0; i < elem.length; i++) {
                     if (elem[i]) {
-                        elem[i].addEventListener(property, function(el) {
+                        elem[i].addEventListener(property, function (el) {
                             //fn();
                             el.target.removeEventListener(el.type, arguments.callee);
                             if (fn) fn();
@@ -118,7 +118,7 @@ App.apply(App, {
                     }
                 };
             },
-            up: function(p) {
+            up: function (p) {
                 if (!p) return App.$(elem[0].parentNode);
                 var obz = elem[0];
                 while (obz) {
@@ -128,7 +128,7 @@ App.apply(App, {
                 };
                 return false;
             },
-            down: function(p) {
+            down: function (p) {
                 if (!p) return App.$(elem[0].ChildNode);
                 var obz = elem[0];
                 while (obz) {
@@ -138,10 +138,10 @@ App.apply(App, {
                 };
                 return false;
             },
-            get: function(obj) {
+            get: function (obj) {
                 return App.$(obj, elem[0]);
             },
-            attr: function(key, value) {
+            attr: function (key, value) {
                 for (var i = 0; i < elem.length; i++) {
                     if (elem[i]) {
                         if (!value) return elem[i].getAttribute(key);
@@ -152,11 +152,11 @@ App.apply(App, {
                 };
                 return App.$(elem);
             },
-            dom: function() {
+            dom: function () {
                 if (elem.length == 1) return elem[0];
                 else return elem;
             },
-            css: function(key, value) {
+            css: function (key, value) {
                 for (var i = 0; i < elem.length; i++) {
                     if (elem[i]) {
                         if (!value) return elem[i].style[key];
@@ -167,7 +167,7 @@ App.apply(App, {
                 };
                 return App.$(elem);
             },
-            html: function(xhtml) {
+            html: function (xhtml) {
                 for (var i = 0; i < elem.length; i++) {
                     if (elem[i]) {
                         if (!xhtml) return elem[i].innerHTML;
@@ -176,23 +176,23 @@ App.apply(App, {
                 };
                 return App.$(elem);
             },
-            find: function(selector) {
+            find: function (selector) {
                 var elx = elem[0].querySelectorAll(selector);
                 return App.$(elx);
             },
-            remove: function() {
+            remove: function () {
                 for (var i = 0; i < elem.length; i++) {
                     if (elem[i]) elem[i].parentNode.removeChild(elem[i]);
                 };
                 return App.$(elem);
             },
-            click: function(fn) {
+            click: function (fn) {
                 for (var i = 0; i < elem.length; i++) {
                     elem[i].addEventListener('click', fn, true);
                 };
                 return App.$(elem);
             },
-            appendTo: function(div) {
+            appendTo: function (div) {
                 for (var i = 0; i < elem.length; i++) {
                     if (elem[i]) {
                         if (div.dom) div = div.dom();
@@ -210,7 +210,7 @@ App.apply(App, {
                 };
                 return App.$(elem);
             },
-            addClass: function(cl) {
+            addClass: function (cl) {
                 for (var i = 0; i < elem.length; i++) {
                     if (elem[i]) {
                         for (var j = 0; j < cl.split(' ').length; j++) elem[i].classList.add(cl.split(' ')[j]);
@@ -218,7 +218,12 @@ App.apply(App, {
                 };
                 return App.$(elem[0]);
             },
-            removeClass: function(cl) {
+            hasClass: function (cl) {
+                for (var i = 0; i < elem.length; i++) {
+                    if (elem[i]) return elem.classList.contains(className);
+                };
+            },
+            removeClass: function (cl) {
                 for (var i = 0; i < elem.length; i++) {
                     if (elem[i]) {
                         for (var j = 0; j < cl.split(' ').length; j++) elem[i].classList.remove(cl.split(' ')[j]);
@@ -226,26 +231,26 @@ App.apply(App, {
                 };
                 return App.$(elem);
             },
-            show: function() {
+            show: function () {
                 for (var i = 0; i < elem.length; i++) {
                     if (elem[i]) elem[i].style.display = "";
                 };
                 return App.$(elem);
             },
-            hide: function() {
+            hide: function () {
                 for (var i = 0; i < elem.length; i++) {
                     if (elem[i]) elem[i].style.display = "none";
                 };
                 return App.$(elem);
             },
-            delay: function(delay) {
+            delay: function (delay) {
                 this._delay = delay;
                 return App.$(elem);
             },
-            fadeOut: function(ms) {
+            fadeOut: function (ms) {
                 if (this._delay) {
                     var me = this;
-                    setTimeout(function() {
+                    setTimeout(function () {
                         me.fadeOut(ms);
                     }, this._delay);
                     return;
@@ -277,10 +282,10 @@ App.apply(App, {
                 fade('out', ms);
                 return App.$(elem);
             },
-            fadeIn: function(ms) {
+            fadeIn: function (ms) {
                 if (this._delay) {
                     var me = this;
-                    setTimeout(function() {
+                    setTimeout(function () {
                         me.fadeOut(ms);
                     }, this._delay);
                     return;
@@ -312,17 +317,17 @@ App.apply(App, {
                 fade('in', ms);
                 return App.$(elem);
             },
-            is: function(el) {
-                var matches = function(el, selector) {
+            is: function (el) {
+                var matches = function (el, selector) {
                     return (el.matches || el.matchesSelector || el.msMatchesSelector || el.mozMatchesSelector || el.webkitMatchesSelector || el.oMatchesSelector).call(el, selector);
                 };
                 if (el.indexOf('#')) return App.$(elem).dom() === el;
                 else return matches(App.$(elem).dom(), el);
             },
-            next: function() {
+            next: function () {
                 return App.$(App.$(elem).dom().nextElementSibling);
             },
-            prev: function() {
+            prev: function () {
                 return App.$(App.$(elem).dom().previousElementSibling);
             }
         }
