@@ -1,0 +1,13 @@
+[
+    "utils/String.js",
+    "utils/Date.js",
+    "utils/Persist.js",
+    "utils/Hashes.js",
+    "utils/Overlay.js",
+    "utils/JSON.js",
+    "utils/Arrays.js",
+    "utils/DOM.js",
+    "utils/Objects.js",
+    "utils/Hammer.js",
+    "utils/Watcher.js"
+]

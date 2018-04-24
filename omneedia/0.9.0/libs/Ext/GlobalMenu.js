@@ -5,7 +5,7 @@ Ext.define('omneedia.webapp.GlobalMenu', {
     extend: 'Ext.Panel',
     xtype: "Menu",
     border: false,
-    constructor: function (cnfg) {
+    constructor: function(cnfg) {
         var _p = this;
         this.callParent(arguments);
         this.initConfig(cnfg);
@@ -16,7 +16,7 @@ Ext.define('omneedia.webapp.GlobalMenu', {
             menu: {
                 items: [{
                     text: "A propos de...",
-                    handler: function () {
+                    handler: function() {
                         Ext.create("Ext.Window", {
                             title: 'A propos de...',
                             width: 500,
@@ -29,7 +29,7 @@ Ext.define('omneedia.webapp.GlobalMenu', {
                             border: false,
                             buttonAlign: "center",
                             listeners: {
-                                show: function () {
+                                show: function() {
                                     /*
                                     var Authors="";
                                     for (var i=0;i<Settings.AUTHORS.length;i++)
@@ -43,7 +43,7 @@ Ext.define('omneedia.webapp.GlobalMenu', {
                             bbar: [{
                                 text: "Credits",
                                 hidden: true,
-                                handler: function () {
+                                handler: function() {
                                     Ext.create("Ext.Window", {
                                         title: 'Credits',
                                         width: 400,
@@ -57,7 +57,7 @@ Ext.define('omneedia.webapp.GlobalMenu', {
                                         bbar: [
                                             '->', {
                                                 text: "Fermer",
-                                                handler: function (w) {
+                                                handler: function(w) {
                                                     w.up().up().close();
                                                 }
                                             }
@@ -70,7 +70,7 @@ Ext.define('omneedia.webapp.GlobalMenu', {
                             }, {
                                 text: "Licence",
                                 hidden: true,
-                                handler: function () {
+                                handler: function() {
                                     Ext.create("Ext.Window", {
                                         title: 'License',
                                         width: 640,
@@ -84,7 +84,7 @@ Ext.define('omneedia.webapp.GlobalMenu', {
                                         bbar: [
                                             '->', {
                                                 text: "Fermer",
-                                                handler: function (w) {
+                                                handler: function(w) {
                                                     w.up().up().close();
                                                 }
                                             }
@@ -96,7 +96,7 @@ Ext.define('omneedia.webapp.GlobalMenu', {
                                 }
                             }, '->', {
                                 text: "Fermer",
-                                handler: function (w) {
+                                handler: function(w) {
                                     w.up().up().close();
                                 }
                             }],
@@ -135,7 +135,7 @@ Ext.define('omneedia.webapp.GlobalMenu', {
                 }, {
                     iconCls: "mnu_preferences",
                     text: "Préférences",
-                    handler: function () {
+                    handler: function() {
                         Ext.create("Ext.Window", {
                             title: 'Préférences',
                             width: 380,
@@ -150,7 +150,7 @@ Ext.define('omneedia.webapp.GlobalMenu', {
                             layout: "accordion",
                             items: [],
                             listeners: {
-                                show: function () {
+                                show: function() {
                                     var p = this;
 
                                     if (App.prefs) {
@@ -177,7 +177,7 @@ Ext.define('omneedia.webapp.GlobalMenu', {
             menu: {
                 items: [{
                     text: "Déconnexion",
-                    handler: function () {
+                    handler: function() {
                         Auth.logout();
                     }
                 }]
@@ -196,7 +196,7 @@ Ext.define('omneedia.webapp.GlobalMenu', {
         };
         menu[i + 5] = {
             iconCls: 'QxNotificationBar',
-            handler: function () {
+            handler: function() {
                 //$.pageslide({ direction: 'left', href:'/notificationcenter.plugin' });
                 App.__NOTIFY__.center = document.createElement('iframe');
                 App.__NOTIFY__.center.style.width = "100%";
@@ -208,7 +208,7 @@ Ext.define('omneedia.webapp.GlobalMenu', {
                 App.__NOTIFY__.center.src = "/notification-center";
                 App.__NOTIFY__.center.id = App.uuid();
                 App.__NOTIFY__.appendChild(App.__NOTIFY__.center);
-                App.__NOTIFY__.center.onload = function () {
+                App.__NOTIFY__.center.onload = function() {
                     var dom = App.__NOTIFY__.center.contentWindow.document;
                     var today = new Date();
                     dom.querySelector('.date').innerHTML = today.toString('dddd') + '<br>' + today.toString('dd') + ' ' + today.toString('MMMM');
@@ -230,12 +230,12 @@ Ext.define('omneedia.webapp.GlobalMenu', {
             items: menu
         });
         this.addDocked(tbar);
-        window.setInterval(function () {
+        window.setInterval(function() {
             Ext.getCmp('GlobalMenuDateTime').setText(Ext.Date.format(new Date(), 'D d M Y H:i:s '));
         }, 1000);
         Ext.getCmp('GlobalMenuUser').hide();
         if (Settings.TYPE != "mobile") {
-            Auth.user(function (o) {
+            Auth.user(function(o) {
                 if (o.mail) {
                     Ext.getCmp('GlobalMenuUser').setText(o.mail.split('@')[0]);
                     Ext.getCmp('GlobalMenuUser').show();
@@ -244,7 +244,7 @@ Ext.define('omneedia.webapp.GlobalMenu', {
             for (var i = 0; i < Settings.LANGS.length; i++) {
                 Ext.getCmp('GlobalMenuLang').menu.add({
                     text: Settings.LANGS[i].toUpperCase(),
-                    handler: function (x) {
+                    handler: function(x) {
                         window.localStorage['LANG'] = x.text.toLowerCase();
                         document.location.reload(true);
                     }

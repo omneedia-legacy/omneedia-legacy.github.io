@@ -4,7 +4,7 @@
  */
 function getAllChildren(panel) {
     var children = panel.items ? panel.items.items : [];
-    Ext.each(children, function (child) {
+    Ext.each(children, function(child) {
         children = children.concat(getAllChildren(child));
     })
     return children;
@@ -22,7 +22,7 @@ function getAllChildrenIds(panel) {
 };
 Ext.define('Ext.overrides.layout.container.Container', {
     override: 'Ext.layout.container.Container',
-    notifyOwner: function () {
+    notifyOwner: function() {
         this.owner.afterLayout(this);
     }
 });
@@ -32,7 +32,7 @@ Ext.define('Ext.overrides.layout.container.Container', {
  */
 Ext.define('Ext.overrides.layout.container.Container', {
     override: 'Ext.layout.container.Container',
-    notifyOwner: function () {
+    notifyOwner: function() {
         this.owner.afterLayout(this);
     }
 });
@@ -51,7 +51,7 @@ App.apply(App, {
      * result in ["test","test2"];
      * @return (Array) - flat array from an array of objects 
      */
-    getArray: function (obj, field) {
+    getArray: function(obj, field) {
         var data = [];
         for (var i = 0; i < obj.length; i++) {
             data.push(obj[i][field]);
@@ -66,7 +66,7 @@ App.apply(App, {
  */
 App.define('App.info', {
     statics: {
-        loading: function (alpha) {
+        loading: function(alpha) {
             if (!alpha) alpha = "";
             var opts = {
                 lines: 13,
@@ -93,21 +93,21 @@ App.define('App.info', {
                 spinner: spinner
             });
         },
-        success: function (alpha) {
+        success: function(alpha) {
             if (!alpha) alpha = "";
             App._loading = _Overlay({
                 icon: "overlay_check",
                 text: alpha
             });
         },
-        error: function (alpha) {
+        error: function(alpha) {
             if (!alpha) alpha = "";
             App._loading = _Overlay({
                 icon: "overlay_error",
                 text: alpha
             });
         },
-        hide: function () {
+        hide: function() {
             if (App._loading) App._loading.hide();
         }
     }
@@ -121,12 +121,12 @@ App.define('App.info', {
  * 
  */
 App.apply(App, {
-    stores: function (x) {
+    stores: function(x) {
         var cc = 0;
 
         function getAllChildren(panel) {
             var children = panel.items ? panel.items.items : [];
-            Ext.each(children, function (child) {
+            Ext.each(children, function(child) {
                 children = children.concat(getAllChildren(child));
             })
             return children;
@@ -145,12 +145,12 @@ App.apply(App, {
                 };
             };
             return {
-                get: function () {
+                get: function() {
                     return tab;
                 },
-                on: function (event, cb) {
+                on: function(event, cb) {
                     for (var i = 0; i < tab.length; i++) {
-                        tab[i].on(event, function (x) {
+                        tab[i].on(event, function(x) {
                             counter(tab.length - 1, cb);
                         });
                     };
@@ -160,7 +160,7 @@ App.apply(App, {
     }
 });
 App.apply(App, {
-    get: function (x, z) {
+    get: function(x, z) {
         if (!z) {
             if (Ext.ComponentQuery.query(x).length > 0) return Ext.ComponentQuery.query(x)[0];
             else return null;
@@ -170,10 +170,10 @@ App.apply(App, {
             } else return null;
         }
     },
-    getData: function (obj) {
+    getData: function(obj) {
         function getAllChildren(panel) {
             var children = panel.items ? panel.items.items : [];
-            Ext.each(children, function (child) {
+            Ext.each(children, function(child) {
                 children = children.concat(getAllChildren(child));
             })
             return children;
@@ -202,7 +202,7 @@ App.apply(App, {
             }
         };
     },
-    getAll: function (x, z) {
+    getAll: function(x, z) {
             if (!z) return Ext.ComponentQuery.query(x);
             else {
                 if (typeof x === 'object') return x.query(z);
@@ -221,12 +221,13 @@ App.apply(App, {
         	}).show();
         }*/
         ,
-    using: function (namespace) {
+    using: function(namespace) {
         var _p = this;
         this.namespace = Settings.NAMESPACE;
         var url = Settings.REMOTE_API + "/api/" + namespace + "?javascript";
-        if (Settings.DEBUG) App.libs.push(url);
-
+        if (Settings.DEBUG) {
+            App.libs.push(url);
+        }
     },
     STOREMODELS: {
         'tree': {
@@ -250,14 +251,14 @@ App.apply(App, {
             store: "Ext.ux.Scheduler.data.ResourceTreeStore"
         }
     },
-    items: function () {
+    items: function() {
         return this.FORMS.items.items;
     },
     FORMS: {},
-    show: function (ndx) {
+    show: function(ndx) {
         this.FORMS.layout.setActiveItem(ndx);
     },
-    override: function (name, o) {
+    override: function(name, o) {
         return Ext.define(Settings.NAMESPACE + '.overrides.' + name, o);
     }
 });
@@ -269,14 +270,14 @@ App.apply(App, {
  */
 App.define('App.model', {
     statics: {
-        get: function (name) {
+        get: function(name) {
             eval('var _p=' + Settings.NAMESPACE + ".model." + name);
             return _p;
         },
-        create: function (cfg) {
+        create: function(cfg) {
             return Ext.define('MODEL_' + App.uuid(), cfg);
         },
-        define: function (name, o, z) {
+        define: function(name, o, z) {
             if (!z) o.extend = "Ext.data.Model";
             else o.extend = z;
             if (o.api) {
@@ -338,7 +339,7 @@ App.define('App.model', {
  */
 App.define('App.view', {
     statics: {
-        define: function (name, o) {
+        define: function(name, o) {
             if (o.requires) {
                 for (var i = 0; i < o.requires.length; i++) {
                     o.requires[i] = Settings.NAMESPACE + ".view." + o.requires[i];
@@ -346,17 +347,17 @@ App.define('App.view', {
             };
             return Ext.define(Settings.NAMESPACE + ".view." + name, o);
         },
-        create: function (name, o) {
+        create: function(name, o) {
             if (o) return Ext.create(Settings.NAMESPACE + ".view." + name, o);
             else return Ext.create(Settings.NAMESPACE + ".view." + name);
         },
-        show: function (name, o) {
+        show: function(name, o) {
             alert('not yet implemented');
         },
-        hide: function (name, o) {
+        hide: function(name, o) {
             alert('not yet implemented');
         },
-        back: function (type, direction) {
+        back: function(type, direction) {
             alert('not yet implemented');
         }
     }
@@ -369,9 +370,9 @@ App.define('App.view', {
  */
 App.define("App.store", {
     statics: {
-        createColumns: function (grid, cb) {
+        createColumns: function(grid, cb) {
             var store = grid.getStore();
-            store.on('load', function (data) {
+            store.on('load', function(data) {
                 var model = data.model.getFields();
                 var tabs = [];
                 for (var i = 0; i < model.length; i++) {
@@ -385,9 +386,9 @@ App.define("App.store", {
                 cb();
             });
         },
-        createEditorColumns: function (grid) {
+        createEditorColumns: function(grid) {
             var store = grid.getStore();
-            store.on('load', function (data) {
+            store.on('load', function(data) {
                 var model = data.model.getFields();
                 var tabs = [];
                 for (var i = 0; i < model.length; i++) {
@@ -424,7 +425,7 @@ App.define("App.store", {
                 grid.reconfigure(store, tabs);
             });
         },
-        define: function (name, o) {
+        define: function(name, o) {
             o.extend = "Ext.data.Store";
             if (o.model) {
                 if (!o.requires) o.requires = [];
@@ -439,11 +440,11 @@ App.define("App.store", {
             };
             return Ext.define(Settings.NAMESPACE + ".store." + name, o);
         },
-        get: function (name) {
+        get: function(name) {
             eval('var _p=' + Settings.NAMESPACE + ".store." + name);
             return _p;
         },
-        create: function (name, cfg) {
+        create: function(name, cfg) {
             // generate uniqueid for temp model class
             function _guid() {
                 return ("M" + (Math.random() * Math.pow(36, 4) << 0).toString(36)).slice(-4)
@@ -514,14 +515,10 @@ App.define("App.store", {
             };
 
             try {
+                console.log(cfg);
                 var myStore = Ext.create(xtd.store, cfg);
                 if (!myStore.getProxy().extraParams) myStore.getProxy().extraParams = {};
-                if (name.indexOf) {
-                    if (name.indexOf('://') > -1) {
-                        myStore.getProxy().extraParams.__SQL__ = '!' + cipher.encrypt(window.z, name);
-                    } else myStore.getProxy().extraParams.__SQL__ = name;
-                } else myStore.getProxy().extraParams.__SQL__ = name;
-
+                myStore.getProxy().extraParams.__SQL__ = name;
             } catch (e) {
                 console.log(e);
             };
@@ -538,7 +535,7 @@ App.define("App.store", {
  */
 App.define('App.controller', {
     statics: {
-        define: function (name, o) {
+        define: function(name, o) {
             o.extend = "Ext.app.Controller";
             if (o.requires) {
                 for (var i = 0; i < o.requires.length; i++) {
@@ -547,25 +544,8 @@ App.define('App.controller', {
             };
             return Ext.define(Settings.NAMESPACE + ".controller." + name, o);
         },
-        create: function (name) {
+        create: function(name) {
             return Ext.create(Settings.NAMESPACE + ".controller." + name);
         }
-    }
-});
-
-/*
- *
- * Fingerprint 
- * 
- */
-
-Ext.Ajax.setDefaultHeaders = {
-    'accept-encoding': true,
-    'z': window.z
-};
-Ext.override(Ext.data.proxy.Ajax, {
-    headers: {
-        'accept-encoding': true,
-        'z': window.z
     }
 });

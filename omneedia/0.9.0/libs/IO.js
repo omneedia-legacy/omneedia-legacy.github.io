@@ -6,40 +6,41 @@ function setToken() {
 if (Settings.REMOTE_API) {
     if (Settings.REMOTE_API.indexOf('https') > -1)
         document.socket = io.connect(Settings.REMOTE_API, {
-            query: "engine=worker&iokey=" + setToken() + '&z=' + window.z,
+            query: "engine=worker&iokey=" + setToken(),
             secure: true,
             transports: ['xhr-polling']
         });
     else
         document.socket = io.connect(Settings.REMOTE_API, {
-            query: "engine=worker&iokey=" + setToken() + '&z=' + window.z,
+            query: "engine=worker&iokey=" + setToken(),
             reconnection: true,
             reconnectionDelay: 1000
         });
+} else {
+    // in production mode, detect if online or not
+    window.addEventListener('load', function () {
+        function updateOnlineStatus(event) {
+            if (navigator.onLine) {
+                if (Settings.REMOTE_API.indexOf('https') > -1)
+                    document.socket = io.connect(Settings.REMOTE_API, {
+                        query: "engine=worker&iokey=" + setToken(),
+                        secure: true,
+                        transports: ['xhr-polling']
+                    });
+                else
+                    document.socket = io.connect(Settings.REMOTE_API, {
+                        query: "engine=worker&iokey=" + setToken()
+                    });
+            } else {
+                // handle offline status
+                console.log('offline');
+            }
+        };
+        window.addEventListener('online', updateOnlineStatus);
+        window.addEventListener('offline', updateOnlineStatus);
+    });
 }
-/*
-window.addEventListener('load', function () {
-    function updateOnlineStatus(event) {
-        if (navigator.onLine) {
-            if (Settings.REMOTE_API.indexOf('https') > -1)
-                document.socket = io.connect(Settings.REMOTE_API, {
-                    query: "engine=worker&iokey=" + setToken() + '&z=' + fingerprint,
-                    secure: true,
-                    transports: ['xhr-polling']
-                });
-            else
-                document.socket = io.connect(Settings.REMOTE_API, {
-                    query: "engine=worker&iokey=" + setToken() + '&z=' + fingerprint
-                });
-        } else {
-            // handle offline status
-            console.log('offline');
-        }
-    };
-    window.addEventListener('online', updateOnlineStatus);
-    window.addEventListener('offline', updateOnlineStatus);
-});
-*/
+
 if (Settings.DEBUG) {
     document.socket.on('connect', function () {
         App.unblur();
@@ -86,7 +87,6 @@ document.socket.on('SERVER__DEBUG', function (data) {
 document.socket.on('SERVER__ERROR', function (data) {
     console.error('%c' + 'ERROR: \n', 'color: red; font-family:"Arial", Helevetica; font-size:10px;font-weight:bold', data);
 });
-
 
 
 App.define("App.IO", {
