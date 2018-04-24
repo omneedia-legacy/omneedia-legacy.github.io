@@ -134,6 +134,7 @@ module.exports = {
                                     if (typ == "blob") typ = "string";
                                     if (typ == "tiny") typ = "boolean";
                                     if (typ == "short") typ = "int";
+                                    if (typ == "int24") typ = "int";
                                     if (typ == "double") typ = "float";
                                     if (field.flags == "16899") model.metaData.idProperty = field.name;
                                     var o = {

@@ -1,5 +1,5 @@
 App.apply(App, {
-    notify: function(_subject, _object, options) {
+    notify: function (_subject, _object, options) {
         if (!window.APP_NOTIFIER) APP_NOTIFIER = [];
 
         function add_notif() {
@@ -15,7 +15,8 @@ App.apply(App, {
                     right: "40px",
                     top: myTOP,
                     width: "400px",
-                    height: "100px"
+                    height: "100px",
+                    zIndex: "99999999"
                 }
             }).appendTo('body').addClass('animated').addClass('fadeInRightBig');
             var h = App.$({
@@ -50,20 +51,20 @@ App.apply(App, {
                 className: "OACardSubject",
                 innerHTML: _object
             }).appendTo(c);
-            closer.on('click', function() {
+            closer.on('click', function () {
                 for (var i = 0; i < APP_NOTIFIER.length; i++) {
                     if (APP_NOTIFIER[i].id == closer.up('.OACard').id) APP_NOTIFIER.splice(i, 1);
                 };
                 closer.up('.OACard').remove();
             });
-            h.on('mouseover', function() {
+            h.on('mouseover', function () {
                 h.get('.OACardClose').show();
             });
-            h.on('mouseleave', function() {
+            h.on('mouseleave', function () {
                 h.get('.OACardClose').hide();
             })
             APP_NOTIFIER.push(div);
-            setTimeout(function() {
+            setTimeout(function () {
                 div.removeClass('fadeInRightBig').addClass('fadeOutUpBig');
                 APP_NOTIFIER.shift();
             }, 5000);

@@ -3,7 +3,7 @@ Ext.define('Ext.ux.upload.Progress', {
     height: 500,
     width: 300,
     layout: "fit",
-    initComponent: function () {
+    initComponent: function (win) {
         var me = this;
         this.title = this._lang.uploading;
         this.listeners = {
@@ -19,7 +19,10 @@ Ext.define('Ext.ux.upload.Progress', {
                 };
 
                 function upload(files, ndx, cb) {
-                    if (!files[ndx]) return cb();
+                    if (!files[ndx]) {
+                        me._parent.fireEvent('complete', me._parent);
+                        return cb();
+                    };
 
                     var file = files[ndx];
 
@@ -36,6 +39,7 @@ Ext.define('Ext.ux.upload.Progress', {
                         this.suspendEvents();
                         xhr.abort();
                         this.resumeEvents();
+                        me._parent.fireEvent('cancel', me._parent);
                     };
 
                     xhr.setRequestHeader(this.filenameHeader, file.name);
@@ -44,6 +48,12 @@ Ext.define('Ext.ux.upload.Progress', {
 
                     function loadendhandler(x) {
                         me._parent.down('grid').getStore().add({
+                            docId: x.currentTarget.responseText.replace(/"/g, ""),
+                            filename: files[0].name,
+                            filesize: files[0].size,
+                            filetype: files[0].type
+                        });
+                        me._parent.fireEvent('upload', me._parent, {
                             docId: x.currentTarget.responseText.replace(/"/g, ""),
                             filename: files[0].name,
                             filesize: files[0].size,
@@ -72,10 +82,12 @@ Ext.define('Ext.ux.upload.Progress', {
                     for (var i = 0; i < me._parent.down('grid').getStore().getData().items.length; i++) {
                         results.push(me._parent.down('grid').getStore().getData().items[i].data);
                     };
-                    me._parent.fireEvent('upload', results);
                     me.close();
                 });
             }
+        };
+        this.getFiles = function () {
+            return this.items.items[0].getStore().data;
         };
         this.items = [{
             xtype: "grid",
@@ -143,7 +155,6 @@ Ext.define('Ext.ux.upload.Panel', {
         this.layout = "fit";
         this.getFiles = function () {
             var dta = me.down('grid').items.items[0].getStore().data.items;
-            console.log(dta);
             var DTA = [];
             for (var i = 0; i < dta.length; i++) {
                 DTA.push(dta[i].data);
@@ -155,39 +166,51 @@ Ext.define('Ext.ux.upload.Panel', {
             me.down('grid').items.items[0].getStore().loadData(data);
         };
 
+        if (me.readOnly) tbar = false;
+        else tbar = [{
+            xtype: "button",
+            text: me.lang.browse,
+            iconCls: me.lang.browse_ico,
+            handler: function () {
+                me.inputField = document.createElement('input');
+                me.inputField.type = 'file';
+                me.inputField.hidden = false;
+                me.inputField.multiple = true;
+                document.getElementsByTagName('body')[0].appendChild(me.inputField);
+                me.inputField.click();
+                me.inputField.addEventListener('change', function (x) {
+                    if (x.target.files.length <= 0) return;
+                    var files = [];
+                    for (var i = 0; i < x.target.files.length; i++) files.push(x.target.files[i]);
+                    var w1 = Ext.create('Ext.ux.upload.Progress', {
+                        modal: true,
+                        _files: files,
+                        _url: me.url,
+                        _parent: me,
+                        _lang: me.lang
+                    });
+                    w1.show();
+                });
+            }
+        }, '->', {
+            xtype: "button",
+            iconCls: me.lang.trash_ico,
+            text: me.lang.trash,
+            handler: function (p) {
+                var sels = p.up('grid').getSelectionModel().getSelection();
+                var dels = [];
+                for (var i = 0; i < sels.length; i++) {
+                    dels.push(sels[i].data.docId);
+                    p.up('grid').getStore().remove(sels[i]);
+                };
+                me.fireEvent('del', me, dels);
+            }
+        }];
+
         this.items = [{
             xtype: "grid",
             multiSelect: true,
-            tbar: [{
-                xtype: "button",
-                text: me.lang.browse,
-                iconCls: me.lang.browse_ico,
-                handler: function () {
-                    me.inputField = document.createElement('input');
-                    me.inputField.type = 'file';
-                    me.inputField.hidden = false;
-                    me.inputField.multiple = true;
-                    document.getElementsByTagName('body')[0].appendChild(me.inputField);
-                    me.inputField.click();
-                    me.inputField.addEventListener('change', function (x) {
-                        if (x.target.files.length <= 0) return;
-                        var files = [];
-                        for (var i = 0; i < x.target.files.length; i++) files.push(x.target.files[i]);
-                        var w1 = Ext.create('Ext.ux.upload.Progress', {
-                            modal: true,
-                            _files: files,
-                            _url: me.url,
-                            _parent: me,
-                            _lang: me.lang
-                        });
-                        w1.show();
-                    });
-                }
-            }, '->', {
-                xtype: "button",
-                iconCls: me.lang.trash_ico,
-                text: me.lang.trash
-            }],
+            tbar: tbar,
             columns: [{
                     text: me.lang.filename,
                     dataIndex: "filename",
@@ -227,10 +250,11 @@ Ext.define('Ext.ux.upload.Panel', {
             }),
             listeners: {
                 itemdblclick: function (p, record) {
-                    me.fireEvent('itemdblclick', p, record);
+                    me.fireEvent('itemdblclick', p, record.data);
                 },
                 beforeitemcontextmenu: function (view, record, item, index, e) {
                     e.stopEvent();
+                    /*
                     if (me.readOnly) return;
                     var gridMenu = Ext.create('Ext.menu.Menu', {
                         items: [{
@@ -240,7 +264,7 @@ Ext.define('Ext.ux.upload.Panel', {
                             }
                         }]
                     });
-                    gridMenu.showAt(e.getXY());
+                    gridMenu.showAt(e.getXY());*/
                 }
             }
         }];
