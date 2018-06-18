@@ -1038,7 +1038,7 @@ Ext.define('Ext.ux.window.visualsqlquerybuilder.SQLTableSprite', {
         // get the size of the previously added sqltable
         xyChildPos = win.el.getXY();
         
-        me.prev = [xyChildPos[0] - xyParentPos[0] + 2, xyChildPos[1] - xyParentPos[1] + 2];
+        me.prev = me.surface.transformToViewBox(xyChildPos[0] - xyParentPos[0] + 2, xyChildPos[1] - xyParentPos[1] + 2);
     },
     
     onDrag: function(relPosMovement){
@@ -1876,7 +1876,7 @@ Ext.define('Ext.ux.window.visualsqlquerybuilder.SQLFieldsGrid', {
             store.sync();
         },
         items: [{
-            iconCls: 'vsql_arrow_up',
+            icon: 'resources/images/up_arrow.gif',
             tooltip: 'Move Column Up',
             getClass: function(value, metadata, record){
                 var store, index;
@@ -1894,7 +1894,7 @@ Ext.define('Ext.ux.window.visualsqlquerybuilder.SQLFieldsGrid', {
                 this.moveGridRow(grid, rec, rowIndex, -1);
             }
         }, {
-            iconCls: 'vsql_arrow_down',
+            icon: 'resources/images/down_arrow.gif',
             getClass: function(value, metadata, record){
                 var store, index;
                 store = record.store;
@@ -1912,7 +1912,8 @@ Ext.define('Ext.ux.window.visualsqlquerybuilder.SQLFieldsGrid', {
                 this.moveGridRow(grid, rec, rowIndex, 1);
             }
         }, {
-            iconCls: 'x-grid-center-icon vsql_key_delete',
+            icon: 'resources/images/remove.gif',
+            iconCls: 'x-grid-center-icon',
             tooltip: 'Delete Column',
             handler: function(grid, rowIndex, colIndex){
                 var rec = grid.getStore().getAt(rowIndex), store, tableId, tableGrid, selectionModel, bDel = true;
@@ -2083,12 +2084,10 @@ Ext.define('Ext.ux.window.visualsqlquerybuilder.SQLTableGrid', {
                     ddGroup: 'SQLTableGridDDGroup',
                     dragText: '{0} selected table column{1}',
                     onInitDrag: function(x, y){
-						
                         var me = this, data = me.dragData, view = data.view, selectionModel = view.getSelectionModel(), record = view.getRecord(data.item), e = data.event;
                         data.records = [record];
-                        //me.ddel.update(me.getDragText());
-						console.log(me.ddel);
-                        me.proxy.update(me.ddel);
+                        me.ddel.update(me.getDragText());
+                        me.proxy.update(me.ddel.dom);
                         me.onStartDrag(x, y);
                         return true;
                     }
@@ -2099,10 +2098,8 @@ Ext.define('Ext.ux.window.visualsqlquerybuilder.SQLTableGrid', {
                     ddGroup: 'SQLTableGridDDGroup',
                     handleNodeDrop: function(data, record, position){
                         // Was soll nach dem Drop passieren?
-						console.log('--------');
                     },
                     onNodeOver: function(node, dragZone, e, data){
-						
                         var me = this, view = me.view, pos = me.getPosition(e, node), overRecord = view.getRecord(node), draggingRecords = data.records;
                         
                         if (!Ext.Array.contains(data.records, me.view.getRecord(node))) {
@@ -2127,10 +2124,8 @@ Ext.define('Ext.ux.window.visualsqlquerybuilder.SQLTableGrid', {
                 });
             },
             drop: function(node, data, dropRec, dropPosition){
-				
                 var sqlTable1, sqlTable2, showJoinCM, connection, aBBPos, join, joinCondition = '', dropTable, targetTable;
-                //alert('x');
-				return;
+                
                 showJoinCM = function(event, el){
                     var cm;
                     // stop the browsers event bubbling
@@ -2182,8 +2177,6 @@ Ext.define('Ext.ux.window.visualsqlquerybuilder.SQLTableGrid', {
                     targetTable = ux.vqbuilder.sqlSelect.getTableById(sqlTable2.tableId);
                     
                     aBBPos = [data.item.viewIndex, node.viewIndex];
-					
-					alert(aBBPos);
                     
                     connection = sqlTable2.connection(sqlTable1.shadowSprite, sqlTable2.shadowSprite, "#000", aBBPos);
                     
@@ -2310,7 +2303,7 @@ Ext.define('Ext.ux.window.visualsqlquerybuilder.SQLTable', {
         // unregister mousedown event
         this.getHeader().el.un('mousedown', this.regStartDrag, this);
         // unregister mousemove event
-        Ext.getDoc().on('mousemove', this.moveWindow, this);
+        Ext.EventManager.un(document, 'mousemove', this.moveWindow, this);
         // remove sprite from surface
         Ext.getCmp('SQLTablePanel').down('draw').surface.remove(this.shadowSprite, false);
         // remove any connection lines from surface and from array ux.vqbuilder.connections
@@ -2357,8 +2350,7 @@ Ext.define('Ext.ux.window.visualsqlquerybuilder.SQLTable', {
         });
         
         // add the sprite to the surface of the sqlTablePanel
-		//alert(sqlTablePanel.down('draw').getSurface());
-        this.shadowSprite = sqlTablePanel.down('draw').getSurface().add(sprite).show(true);
+        this.shadowSprite = sqlTablePanel.down('draw').surface.add(sprite).show(true);
         
         // handle resizeing of sqltabel
         this.resizer.on('resize', function(resizer, width, height, event){
@@ -2382,10 +2374,10 @@ Ext.define('Ext.ux.window.visualsqlquerybuilder.SQLTable', {
         this.getHeader().origValue = '';
         
         // register method this.moveWindow for the mousemove event on the document and bind to this scope
-        Ext.getDoc().on('mousemove', this.moveWindow, this);
+        Ext.EventManager.on(document, 'mousemove', this.moveWindow, this);
         
         // register a function for the mouseup event on the document and add the this scope
-        Ext.getDoc().on('mouseup', function(){
+        Ext.EventManager.on(document, 'mouseup', function(){
             // save the mousedown state
             this.bMouseDown = false;
         }, this);
@@ -2529,14 +2521,10 @@ Ext.define('Ext.ux.window.visualsqlquerybuilder.SQLTable', {
         // BoundingBox Koordinaten für beide Sprites abrufen
         
         bb1 = obj1.getBBox();
-		console.log('bb1=');
-		console.log(bb1);
         // y Wert für connection Points auf der linken und rechten Seite von bb1
         bb1.pY = bb1.y + headerHeight + ((aBBPos[0] - 1) * columHeight) + (columHeight / 2) - obj1.scrollTop;
         
         bb2 = obj2.getBBox();
-		console.log('bb2=');
-		console.log(bb2);		
         // y Wert für connection Points auf der linken und rechten Seite von bb2
         bb2.pY = bb2.y + headerHeight + ((aBBPos[1] - 1) * columHeight) + (columHeight / 2) - obj2.scrollTop;
         

@@ -2046,7 +2046,7 @@ Ext.define('Ext.ux.window.visualsqlquerybuilder.SQLTableTree', {
             },
             proxy: {
                 type: 'ajax',
-                url: '/data/database/getTables'
+                url: 'data/database.cfc?method=getTables'
             }
         });
         
@@ -2165,7 +2165,7 @@ Ext.define('Ext.ux.window.visualsqlquerybuilder.SQLTableGrid', {
                     // show the contextmenu next to current mouse position
                     cm.showAt(event.getXY());
                 };
-                console.log(node);
+                
                 if (node.boundView) {
                     sqlTable1 = data.view.up('window');
                     sqlTable1.shadowSprite.bConnections = true;
@@ -2177,7 +2177,6 @@ Ext.define('Ext.ux.window.visualsqlquerybuilder.SQLTableGrid', {
                     targetTable = ux.vqbuilder.sqlSelect.getTableById(sqlTable2.tableId);
                     
                     aBBPos = [data.item.viewIndex, node.viewIndex];
-					console.log(aBBPos);
                     
                     connection = sqlTable2.connection(sqlTable1.shadowSprite, sqlTable2.shadowSprite, "#000", aBBPos);
                     
@@ -2342,7 +2341,7 @@ Ext.define('Ext.ux.window.visualsqlquerybuilder.SQLTable', {
         // to position and size of the the sqltable 
         sprite = Ext.create('Ext.ux.window.visualsqlquerybuilder.SQLTableSprite', {
             type: 'rect',
-            stroke: 'red',
+            stroke: '#fff',
             height: childSize.height - 4,
             width: childSize.width - 4,
             x: xyChildPos[0] - xyParentPos[0] + 2,
@@ -2757,7 +2756,7 @@ Ext.define('Ext.ux.window.visualsqlquerybuilder.SQLTable', {
             }],
             proxy: {
                 type: 'ajax',
-                url: 'data/database/getTableInfo',
+                url: 'data/database.cfc?method=getTableInfo',
                 extraParams: {
                     tablename: this.title
                 },
