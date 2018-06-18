@@ -1,0 +1,62 @@
+
+
+.ux-mu-status-value {
+	float: right;
+	min-width: 16px;
+	height: 16px;
+	background-repeat: no-repeat;
+	margin: 0 3px 0 2px;
+	cursor: pointer;
+	overflow: hidden;
+}
+
+.icon-help {
+	background-image: url(images/help.png) !important;
+}
+
+/*
+ * Action icons
+ */
+.ux-mu-icon-action-ok {
+	background-image: url(images/tick.png) !important;
+}
+
+.ux-mu-icon-action-upload {
+	background-image: url(images/arrow_up.png) !important;
+}
+
+.ux-mu-icon-action-abort {
+	background-image: url(images/cancel.png) !important;
+}
+
+.ux-mu-icon-action-remove {
+	background-image: url(images/delete.png) !important;
+}
+
+.ux-mu-icon-action-browse {
+	background-image: url(images/folder.png) !important;
+}
+
+/*
+ * Upload status icons
+ */
+
+.ux-mu-icon-upload-uploading {
+	background-image: url(images/loading.gif) !important;
+}
+
+.ux-mu-icon-upload-uploaded {
+	background-image: url(images/accept.png) !important;
+}
+
+.ux-mu-icon-upload-uploaderror {
+	background-image: url(images/exclamation.png) !important;
+}
+
+.upload_trash {
+	background-image: url(images/trash.png);
+}
+
+.upload_attach {
+	background-image: url(images/attach.png);
+}
