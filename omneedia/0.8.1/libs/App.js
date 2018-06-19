@@ -1214,9 +1214,10 @@ if (Settings.DEBUG) {
 		});
 	};
 	*/
+	io_start(io);
 };
 
-io_start(io);
+
 
 
 var iosOverlay = function (params) {
