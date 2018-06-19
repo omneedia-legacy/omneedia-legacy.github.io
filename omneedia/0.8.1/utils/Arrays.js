@@ -1,10 +1,10 @@
-Array.prototype.getFields = function(field) {
-    return this.map(function(o) {
+Array.prototype.getFields = function (field) {
+    return this.map(function (o) {
         return o[field];
     });
 };
 
-Array.prototype.equals = function(array) {
+Array.prototype.equals = function (array) {
     // if the other array is a falsy value, return
     if (!array)
         return false;
@@ -27,15 +27,17 @@ Array.prototype.equals = function(array) {
     return true;
 };
 
-Array.prototype.diff = function(a) {
-    return this.filter(function(i) { return a.indexOf(i) < 0; });
+Array.prototype.diff = function (a) {
+    return this.filter(function (i) {
+        return a.indexOf(i) < 0;
+    });
 };
 
-Array.prototype.query = function(sql) {
+Array.prototype.query = function (sql) {
     return alasql(sql, [this]);
 };
 
-Array.prototype.render = function(tplx) {
+Array.prototype.render = function (tplx) {
 
     var me = this;
     var newstring = "";
@@ -63,7 +65,7 @@ Array.prototype.render = function(tplx) {
     return newstring;
 };
 
-Array.prototype.remove = function() {
+Array.prototype.remove = function () {
     var what, a = arguments,
         L = a.length,
         ax;

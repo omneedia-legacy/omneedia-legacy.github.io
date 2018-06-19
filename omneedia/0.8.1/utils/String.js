@@ -825,16 +825,16 @@ Latinise.latin_map = {
     "ᵥ": "v",
     "ₓ": "x"
 };
-String.prototype.latinise = function() {
-    return this.replace(/[^A-Za-z0-9\[\] ]/g, function(a) {
+String.prototype.latinise = function () {
+    return this.replace(/[^A-Za-z0-9\[\] ]/g, function (a) {
         return Latinise.latin_map[a] || a
     })
 };
 String.prototype.latinize = String.prototype.latinise;
-String.prototype.isLatin = function() {
+String.prototype.isLatin = function () {
     return this == this.latinise()
 }
-String.prototype.toDate = function() {
+String.prototype.toDate = function () {
     try {
         var mydate = this.split('T')[0];
         var mytime = this.split('T')[1].split('Z')[0];
@@ -851,14 +851,21 @@ String.prototype.toDate = function() {
         return new Date(0, 0, 0, 0, 0, 0);
     }
 };
-String.prototype.cleanURL = function() {
+String.prototype.cleanURL = function () {
     return this.replace(/([^:])(\/\/+)/g, '$1/');
 };
 
-String.prototype.replaceAll = function(a, b) {
+String.prototype.replaceAll = function (a, b) {
     return this.replace(new RegExp(a.replace(/([.?*+^$[\]\\(){}|-])/ig, "\\$1"), 'ig'), b)
 };
 
 function isNumeric(n) {
     return !isNaN(parseFloat(n)) && isFinite(n);
 };
+
+String.prototype.lpad = function (padString, length) {
+    var str = this;
+    while (str.length < length)
+        str = padString + str;
+    return str;
+}

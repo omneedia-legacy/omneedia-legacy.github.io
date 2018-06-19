@@ -105430,7 +105430,9 @@ Ext.define('Ext.view.Table', {
         }
 
         if (item && me.isRowStyleFirst(item)) {
-            me.getRowStyleTableEl(item).addCls(me.tableOverFirstCls);
+            try {
+                me.getRowStyleTableEl(item).addCls(me.tableOverFirstCls);
+            }catch(e) {}
         }
 
         me.callParent(arguments);
