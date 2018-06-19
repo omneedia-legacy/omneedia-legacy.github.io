@@ -12,6 +12,7 @@
  */
 
 App = {};
+LANGS = [];
 
 // Change Settings REMOTE_API
 if (!window.location.origin)
@@ -4188,26 +4189,250 @@ Ext.define("omneedia.App", {
 				store: "Ext.ux.Scheduler.data.ResourceStore"
 			}
 		},
-		blur: function () {
-			$('.omneedia-overlay').show();
-			if (!App._vague) {
-				App._vague = $('Body').Vague({
-					intensity: 4,
-					forceSVGUrl: false,
-					animationOptions: {
-						duration: 1000,
-						easing: 'linear'
-					}
-				});
-				App._vague.blur();
-			}
+		blur: function (OBJ) {
+			if (!OBJ) var OBJ = document.getElementsByTagName('body')[0];
+			else OBJ = document.querySelector(OBJ);
+			var _createSvgElement = function (tagName) {
+				return document.createElementNS('http://www.w3.org/2000/svg', tagName);
+			};
+			var svgUrl = document.location.protocol + '//' + document.location.host + document.location.pathname + document.location.search;
+			var svg = _createSvgElement('svg');
+			var filter = _createSvgElement('filter');
+			filter.id = "blurme" + Math.uuid();
+			var _svgGaussianFilter = _createSvgElement('feGaussianBlur');
+			_svgGaussianFilter.setAttribute('stdDeviation', '5');
+			svg.setAttribute('style', 'position:absolute');
+			svg.setAttribute('width', '0');
+			svg.setAttribute('height', '0');
+			filter.appendChild(_svgGaussianFilter);
+			svg.appendChild(filter);
+			document.getElementsByTagName('body')[0].appendChild(svg);
+			var cssFilterValue = 'url(' + svgUrl + '#' + filter.id + ')';
+			OBJ.style['filter'] = cssFilterValue;
 		},
-		unblur: function (fx) {
-			$('.omneedia-overlay').hide();
-			if (App._vague) {
-				App._vague.unblur();
-				delete App._vague;
+		unblur: function (OBJ) {
+			if (!OBJ) var OBJ = document.getElementsByTagName('body')[0];
+			else OBJ = document.querySelector(OBJ);
+			OBJ.style['filter'] = '';
+		},
+		request: function (o, cb) {
+
+			function param(object) {
+				var encodedString = '';
+				for (var prop in object) {
+					if (object.hasOwnProperty(prop)) {
+						if (encodedString.length > 0) {
+							encodedString += '&';
+						}
+						encodedString += encodeURI(prop + '=' + object[prop]);
+					}
+				};
+				return encodedString;
+			};
+			var xhr = new XMLHttpRequest();
+			var error = {};
+			if (!App.isObject(o)) o = {
+				url: o
+			};
+			if ((!o.uri) && (!o.url)) throw "GURU MEDITATION: No URL parameter";
+			if (o.uri) var url = o.uri;
+			if (o.url) var url = o.url;
+
+			if (url.indexOf('://') > -1) url = o.url.split('://')[0] + '://' + o.url.split('://')[1].replace(/\/\//g, "/");
+
+			if (!o.method) var method = "GET";
+			else var method = o.method;
+			var reqListener = function () {
+				if (xhr.status === 200) {
+					cb(null, xhr.responseText, xhr);
+				} else {
+					cb(xhr, null);
+				}
+			};
+			var updateProgress = function (p) {
+				//console.log(p);
+			};
+			var transferFailed = function (e) {
+				cb(e, null);
+			};
+			var transferCanceled = function () {
+				//console.log('z');
+			};
+			xhr.addEventListener("load", reqListener, false);
+			xhr.addEventListener("progress", updateProgress, false);
+			xhr.addEventListener("error", transferFailed, false);
+			xhr.addEventListener("abort", transferCanceled, false);
+			xhr.open(method, url);
+			if (method == "GET") xhr.send();
+			if (method == "POST") {
+				xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+				if (o.form) xhr.send(encodeURI(param(o.form)));
+				else {
+					if (o.data) {
+						xhr.setRequestHeader('Content-Type', 'application/json; charset=utf-8');
+						xhr.send(JSON.stringify(o.data));
+					} else xhr.send();
+				}
+			};
+		},
+		isEmpty: function (value, allowEmptyString) {
+				return (value === null) || (value === undefined) || (!allowEmptyString ? value === '' : false) || (App.isArray(value) && value.length === 0);
 			}
+			/**
+			 * Returns true if the passed value is a NodeList, false otherwise.
+			 *
+			 * @param {Object} target The target to test
+			 * @return {Boolean}
+			 * @method
+			 */
+			,
+		isNodeList: function (nodes) {
+			return NodeList.prototype.isPrototypeOf(nodes)
+		},
+		/**
+		 * Returns true if the passed value is a JavaScript Array, false otherwise.
+		 *
+		 * @param {Object} target The target to test
+		 * @return {Boolean}
+		 * @method
+		 */
+		isArray: ('isArray' in Array) ? Array.isArray : function (value) {
+			return toString.call(value) === '[object Array]';
+		},
+		/**
+		 * Returns true if the passed value is a JavaScript Date object, false otherwise.
+		 * @param {Object} object The object to test
+		 * @return {Boolean}
+		 */
+		isDate: function (value) {
+			return toString.call(value) === '[object Date]';
+		},
+		/**
+		 * Returns true if the passed value is a JavaScript Object, false otherwise.
+		 * @param {Object} value The value to test
+		 * @return {Boolean}
+		 * @method
+		 */
+		isObject: (toString.call(null) === '[object Object]') ? function (value) {
+			// check ownerDocument here as well to exclude DOM nodes
+			return value !== null && value !== undefined && toString.call(value) === '[object Object]' && value.ownerDocument === undefined;
+		} : function (value) {
+			return toString.call(value) === '[object Object]';
+		},
+		/**
+		 * @private
+		 */
+		isSimpleObject: function (value) {
+			return value instanceof Object && value.constructor === Object;
+		},
+		/**
+		 * Returns true if the passed value is a JavaScript 'primitive', a string, number or boolean.
+		 * @param {Object} value The value to test
+		 * @return {Boolean}
+		 */
+		isPrimitive: function (value) {
+			var type = typeof value;
+			return type === 'string' || type === 'number' || type === 'boolean';
+		},
+		/**
+		 * Returns true if the passed value is a JavaScript Function, false otherwise.
+		 * @param {Object} value The value to test
+		 * @return {Boolean}
+		 * @method
+		 */
+		isFunction:
+			// Safari 3.x and 4.x returns 'function' for typeof <NodeList>, hence we need to fall back to using
+			// Object.prototype.toString (slower)
+			(typeof document !== 'undefined' && typeof document.getElementsByTagName('body') === 'function') ? function (value) {
+				return !!value && toString.call(value) === '[object Function]';
+			} : function (value) {
+				return !!value && typeof value === 'function';
+			},
+		/**
+		 * Returns true if the passed value is a number. Returns false for non-finite numbers.
+		 * @param {Object} value The value to test
+		 * @return {Boolean}
+		 */
+		isNumber: function (value) {
+			return typeof value === 'number' && isFinite(value);
+		},
+		/**
+		 * Validates that a value is numeric.
+		 * @param {Object} value Examples: 1, '1', '2.34'
+		 * @return {Boolean} True if numeric, false otherwise
+		 */
+		isNumeric: function (value) {
+			return !isNaN(parseFloat(value)) && isFinite(value);
+		},
+		/**
+		 * Returns true if the passed value is a string.
+		 * @param {Object} value The value to test
+		 * @return {Boolean}
+		 */
+		isString: function (value) {
+			return typeof value === 'string';
+		},
+		/**
+		 * Returns true if the passed value is a boolean.
+		 *
+		 * @param {Object} value The value to test
+		 * @return {Boolean}
+		 */
+		isBoolean: function (value) {
+			return typeof value === 'boolean';
+		},
+		/**
+		 * Returns true if the passed value is an HTMLElement
+		 * @param {Object} value The value to test
+		 * @return {Boolean}
+		 */
+		isElement: function (value) {
+			return value ? value.nodeType === 1 : false;
+		},
+		/**
+		 * Returns true if the passed value is a TextNode
+		 * @param {Object} value The value to test
+		 * @return {Boolean}
+		 */
+		isTextNode: function (value) {
+			return value ? value.nodeName === "#text" : false;
+		},
+		/**
+		 * Returns true if the passed value is defined.
+		 * @param {Object} value The value to test
+		 * @return {Boolean}
+		 */
+		isDefined: function (value) {
+			return typeof value !== 'undefined';
+		},
+		/**
+		 * Returns `true` if the passed value is iterable, that is, if elements of it are addressable using array
+		 * notation with numeric indices, `false` otherwise.
+		 *
+		 * Arrays and function `arguments` objects are iterable. Also HTML collections such as `NodeList` and `HTMLCollection'
+		 * are iterable.
+		 *
+		 * @param {Object} value The value to test
+		 * @return {Boolean}
+		 */
+		isIterable: function (value) {
+			// To be iterable, the object must have a numeric length property and must not be a string or function.
+			if (!value || typeof value.length !== 'number' || typeof value === 'string' || App.isFunction(value)) {
+				return false;
+			}
+			// Certain "standard" collections in IE (such as document.images) do not offer the correct
+			// Javascript Object interface; specifically, they lack the propertyIsEnumerable method.
+			// And the item property while it does exist is not typeof "function"
+			if (!value.propertyIsEnumerable) {
+				return !!value.item;
+			}
+			// If it is a regular, interrogatable JS object (not an IE ActiveX object), then...
+			// If it has its own property called "length", but not enumerable, it's iterable
+			if (value.hasOwnProperty('length') && !value.propertyIsEnumerable('length')) {
+				return true;
+			}
+			// Test against whitelist which includes known iterable collection types
+			return iterableRe.test(toString.call(value));
 		},
 		model: {
 			get: function (name) {
@@ -4235,6 +4460,9 @@ Ext.define("omneedia.App", {
 							if (o.config.extraParams) {
 								var proxy = {
 									type: "direct",
+									headers: {
+										'z': window.z
+									},
 									extraParams: {
 										pudid: pudid,
 										__SQL__: o.config.extraParams.__SQL__
@@ -4244,6 +4472,9 @@ Ext.define("omneedia.App", {
 							} else {
 								var proxy = {
 									type: "direct",
+									headers: {
+										'z': window.z
+									},
 									extraParams: {
 										pudid: pudid
 									},
@@ -4254,6 +4485,9 @@ Ext.define("omneedia.App", {
 							if (o.config.extraParams) {
 								var proxy = {
 									type: "direct",
+									headers: {
+										'z': window.z
+									},
 									extraParams: {
 										pudid: pudid,
 										__SQL__: o.config.extraParams.__SQL__
@@ -4263,6 +4497,9 @@ Ext.define("omneedia.App", {
 							} else {
 								var proxy = {
 									type: "direct",
+									headers: {
+										'z': window.z
+									},
 									extraParams: {
 										pudid: pudid
 									},
@@ -4278,6 +4515,9 @@ Ext.define("omneedia.App", {
 							if (Settings.REMOTE_API) my_url = Settings.REMOTE_API + "/db/" + o.config.db.schema + ":model";
 							o.config.proxy = {
 								type: 'rest',
+								headers: {
+									'z': window.z
+								},
 								extraParams: {
 									fields: Ext.encode(o.config.db.fields),
 									where: Ext.encode(o.config.db.where)
@@ -4299,6 +4539,9 @@ Ext.define("omneedia.App", {
 							if (Auth.User) pudid = Auth.User.pudid;
 							var proxy = {
 								type: "direct",
+								headers: {
+									'z': window.z
+								},
 								extraParams: {
 									pudid: pudid
 								},
@@ -4309,6 +4552,9 @@ Ext.define("omneedia.App", {
 								type: "direct",
 								extraParams: {
 									pudid: pudid
+								},
+								headers: {
+									'z': window.z
 								},
 								directFn: o.api
 							};
@@ -4321,6 +4567,9 @@ Ext.define("omneedia.App", {
 							if (Settings.REMOTE_API) my_url = Settings.REMOTE_API + "/db/" + o.db.schema + ":model";
 							o.proxy = {
 								type: 'rest',
+								headers: {
+									'z': window.z
+								},
 								extraParams: {
 									fields: Ext.encode(o.db.fields),
 									where: Ext.encode(o.db.where)
@@ -5105,35 +5354,49 @@ Ext.define("omneedia.DB", {
 		remote: "",
 		namespace: "",
 		DB: "",
-		get: function (uri, cb, cb2) {
-			function getAllChildren(panel) {
-				var children = panel.items ? panel.items.items : [];
-				Ext.each(children, function (child) {
-					children = children.concat(getAllChildren(child));
-				})
-				return children;
+		ajax: function (o) {
+			var xhr = new XMLHttpRequest();
+			xhr.open(o.type, o.url);
+			xhr.setRequestHeader('Content-Type', o.contentType);
+			xhr.onload = function () {
+				if (xhr.status === 200) o.success(xhr.responseText);
+				else {
+					if (o.error) o.error(xhr.status);
+				}
 			};
-			if (cb instanceof Ext.Component) {
-				App.__QUERY__.exec({
-					__SQL__: uri
-				}, function (o) {
-					var oo = o;
-					if (o.data.length >= 1) o = o.data[0];
-					var all = getAllChildren(cb);
-					for (var i = 0; i < all.length; i++) {
-						if (all[i].bindTo) {
+			if ((typeof o.data === "object") && (o.data !== null)) xhr.send(JSON.stringify(o.data));
+			else xhr.send(o.data);
+		},
+		get: function (uri, cb, cb2) {
+			var db = uri.split('://')[0];
+			if (Settings.DB[db]) {
 
-							if ((all[i].setValue) && (o[all[i].bindTo])) {
-								if (all[i].xtype.indexOf('date') > -1) o[all[i].bindTo] = o[all[i].bindTo].toDate();
-								all[i].setValue(o[all[i].bindTo]);
-							}
-						};
-					};
-					if (cb2) cb2(oo);
+				var post = [{
+					"action": "__QUERY__",
+					"method": "exec",
+					"data": [{
+						"__SQL__": '!' + cipher.encrypt(window.z, uri)
+					}],
+					"type": "rpc",
+					"tid": 1
+				}];
+				this.ajax({
+					type: 'post',
+					url: Settings.DB[db],
+					data: JSON.stringify(post),
+					contentType: "application/json; charset=utf-8",
+					success: function (data) {
+						data = JSON.parse(data);
+						if (typeof data[0].data === "string") return cb(data[0].data);
+						if (!typeof data[0].result) return cb(data[0]);
+						cb(data[0].result);
+					}
 				});
+
 			} else App.__QUERY__.exec({
-				__SQL__: uri
+				__SQL__: '!' + cipher.encrypt(window.z, uri)
 			}, cb);
+
 		},
 		del: function (uri, obj, cb) {
 			var db = uri.split('://');
@@ -5145,61 +5408,68 @@ Ext.define("omneedia.DB", {
 					if (sp.indexOf('=') > -1) {
 						sp = sp.split('=')[1];
 					};
-					console.log(sp);
 					obj = sp.split(',');
 				}
 			};
 			var table = db[1].split('?')[0];
 			var field = db[1].split('?')[1];
 			var db = db[0];
-			console.log(db);
-			console.log(table);
-			console.log(obj);
-			App.__QUERY__.del(db, table, obj, cb);
+
+			if (Settings.DB[db]) {
+
+				var post = [{
+					"action": "__QUERY__",
+					"method": "del",
+					"data": [db, table, obj],
+					"type": "rpc",
+					"tid": 1
+				}];
+
+				this.ajax({
+					type: 'post',
+					url: Settings.DB[db],
+					data: JSON.stringify(post),
+					contentType: "application/json; charset=utf-8",
+					success: function (data) {
+						data = JSON.parse(data);
+						if (typeof data[0].data === "string") return cb(data[0].data);
+						if (!typeof data[0].result) return cb(data[0]);
+						cb(data[0].result);
+					}
+				});
+
+			} else App.__QUERY__.del(db, table, obj, cb);
 		},
 		post: function (uri, obj, cb) {
 			var data = [];
-
-			function getAllChildren(panel) {
-				var children = panel.items ? panel.items.items : [];
-				Ext.each(children, function (child) {
-					children = children.concat(getAllChildren(child));
-				})
-				return children;
-			};
 			var db = uri.split('://');
 			var table = db[1];
 			var db = db[0];
 			var data = {};
 			var missingfields = [];
-			if (obj instanceof Ext.Component) {
-				var all = getAllChildren(obj);
-				console.log(all);
-				var witness = 0;
-				for (var i = 0; i < all.length; i++) {
-					if (all[i].bindTo) {
-						if (all[i].getValue) {
-							/*if (!all[i].allowBlank) {
-								if ((all[i].getValue()=="") || (!all[i].getValue())) {
-									witness=1;
-									if (all[i].fieldLabel) missingfields.push(all[i].fieldLabel); else missingfields.push(all[i].bind);
-								}
-							};*/
-							data[all[i].bindTo] = all[i].getValue();
-						}
-					};
-				};
-				if (witness == 0) App.__QUERY__.post(db, table, data, cb);
-				else {
-					var response = {
-						result: {
-							message: "MISSING_FIELDS",
-							success: false,
-							data: missingfields
-						}
-					};
-					cb(response);
-				};
+			if (Settings.DB[db]) {
+
+				var post = [{
+					"action": "__QUERY__",
+					"method": "post",
+					"data": [db, table, obj],
+					"type": "rpc",
+					"tid": 1
+				}];
+
+				this.ajax({
+					type: 'post',
+					url: Settings.DB[db],
+					data: JSON.stringify(post),
+					contentType: "application/json; charset=utf-8",
+					success: function (data) {
+						data = JSON.parse(data);
+						if (typeof data[0].data === "string") return cb(data[0].data);
+						if (!typeof data[0].result) return cb(data[0]);
+						cb(data[0].result);
+					}
+				});
+
 			} else App.__QUERY__.post(db, table, obj, cb);
 		}
 	}
@@ -6079,3 +6349,20 @@ if (Settings.DEBUG) {
 } else {
 	//console.log = function () {};
 }
+
+/*
+ *
+ * Fingerprint 
+ * 
+ */
+
+Ext.Ajax.setDefaultHeaders = {
+	'accept-encoding': true,
+	'z': window.z
+};
+Ext.override(Ext.data.proxy.Ajax, {
+	headers: {
+		'accept-encoding': true,
+		'z': window.z
+	}
+});

@@ -8,6 +8,7 @@
  * CHANGELOG
  * ---------
  * 0.9.0	Initial commit
+ * 0.9.1    PRE-ALPHA RELEASE
  *
  */
 
@@ -23,11 +24,11 @@ if (!Settings.REMOTE_API) Settings.REMOTE_API = document.getElementsByTagName('b
 
 // Define App
 App = {
-    version: '0.9.0',
+    version: '0.9.1',
     versionDetail: {
         major: 0,
         minor: 9,
-        patch: 0
+        patch: 1
     }
 };
 
@@ -39,7 +40,7 @@ App = {
  * @return {Object} returns obj
  * @member App apply
  */
-App.apply = function(o, c, defaults) {
+App.apply = function (o, c, defaults) {
     // no "this" reference for friendly out of scope calls
     if (defaults) {
         App.apply(o, defaults);
@@ -52,11 +53,11 @@ App.apply = function(o, c, defaults) {
     return o;
 };
 App.apply(App, {
-    global: (function() {
+    global: (function () {
         return this;
     })(),
     namespaceCache: {},
-    createNamespace: function(namespace, constructor, extend) {
+    createNamespace: function (namespace, constructor, extend) {
         var cache = App.namespaceCache,
             ns = cache[namespace],
             i, n, part, parts, partials;
@@ -65,10 +66,10 @@ App.apply(App, {
             // First match everything inside the function argument parens.
             var args = func.toString().match(/function\s.*?\(([^)]*)\)/)[1];
             // Split the arguments string into an array comma delimited.
-            return args.split(',').map(function(arg) {
+            return args.split(',').map(function (arg) {
                 // Ensure no inline comments are parsed and trim the whitespace.
                 return arg.replace(/\/\*.*\*\//, '').trim();
-            }).filter(function(arg) {
+            }).filter(function (arg) {
                 // Ensure no undefined values are added.
                 return arg;
             });
@@ -81,7 +82,7 @@ App.apply(App, {
                 for (i = 0, n = parts.length; i < n; ++i) {
                     part = parts[i];
                     if (constructor) {
-                        if (extend) ns = ns[part] || (ns[part] = (function() {
+                        if (extend) ns = ns[part] || (ns[part] = (function () {
                             var _p = eval(extend);
                             _p.apply(this, arguments);
                             return constructor;
@@ -100,10 +101,10 @@ App.apply(App, {
      * @param {Mixed} value The value to test
      * @return {Boolean}
      */
-    isDefined: function(v) {
+    isDefined: function (v) {
         return typeof v !== 'undefined';
     },
-    applyIf: function(o, c) {
+    applyIf: function (o, c) {
         if (o) {
             for (var p in c) {
                 if (!App.isDefined(o[p])) {
@@ -116,7 +117,7 @@ App.apply(App, {
     /* 
 	UUID Generator
 	*/
-    uuid: function() {
+    uuid: function () {
         var CHARS = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.split('');
         var chars = CHARS,
             uuid = new Array(36),
@@ -141,7 +142,7 @@ App.apply(App, {
      * @method define
      * Defines a class
      */
-    define: function(className, o) {
+    define: function (className, o) {
         // We create statics objects
         if (o.statics) {
             var object = App.createNamespace(className);
@@ -168,26 +169,26 @@ App.apply(App, {
     },
     logger: {
         oldConsoleLog: null,
-        enable: function() {
+        enable: function () {
             if (this.oldConsoleLog == null) return;
             window['console']['log'] = this.oldConsoleLog;
         },
-        disable: function() {
+        disable: function () {
             this.oldConsoleLog = console.log;
-            window['console']['log'] = function() {};
+            window['console']['log'] = function () {};
         }
     },
-    isURLOnline: function(url, cb) {
+    isURLOnline: function (url, cb) {
         var req = new XMLHttpRequest();
         req.open('HEAD', url);
-        req.onreadystatechange = function() {
+        req.onreadystatechange = function () {
             if (this.readyState == this.DONE) {
                 cb(this.status != 404);
             }
         };
         req.send();
     },
-    require: function(module, cb) {
+    require: function (module, cb) {
         if (Settings.DEBUG) {
 
             if (App.isArray(module)) {
@@ -197,7 +198,7 @@ App.apply(App, {
 
             if (module.indexOf('http') > -1) {
 
-                App.request(module, function(e, b) {
+                App.request(module, function (e, b) {
 
                     try {
                         window.eval(b);
@@ -227,7 +228,7 @@ App.apply(App, {
                     scripts[i] = script.replace('.json', '/') + scripts[i];
                 };
                 scripts[i] = scripts[i].cleanURL();
-                App.request(scripts[i], function(e, b) {
+                App.request(scripts[i], function (e, b) {
                     window.eval(b);
                     req(scripts, i + 1, cb);
                 })
@@ -243,7 +244,7 @@ App.apply(App, {
                     }
                 };
                 scripts[i] = scripts[i].cleanURL();
-                App.request(scripts[i], function(e, b) {
+                App.request(scripts[i], function (e, b) {
                     arr.push(b);
                     reqns(scripts, i + 1, cb, arr);
                 })
@@ -253,7 +254,7 @@ App.apply(App, {
                 if (!s[i]) return cb();
                 for (var el in s[i]) {
                     if (!App.isArray(s[i][el])) s[i][el] = [s[i][el]];
-                    reqns(s[i][el], 0, function(arr) {
+                    reqns(s[i][el], 0, function (arr) {
                         window.eval(config.namespace + '.' + el + '=function() {' + arr.join('\n') + '}');
                         reqObj(s, i + 1, cb);
                     }, [])
@@ -266,7 +267,7 @@ App.apply(App, {
             if (script == "") script = module;
             if (script.indexOf('.json') == -1) script += ".json";
             script = script.cleanURL();
-            App.request(script, function(e, b) {
+            App.request(script, function (e, b) {
 
                 config = JSON.parse(b);
                 var scripts = config.package.js;
@@ -293,19 +294,19 @@ App.apply(App, {
                     link.href = url;
                     document.getElementsByTagName('head')[0].appendChild(link);
                 };
-                req(scr, 0, function() {
+                req(scr, 0, function () {
                     reqObj(zobj, 0, cb);
                 });
             });
         } else cb();
     },
-    requires: function(m, i, cb) {
+    requires: function (m, i, cb) {
         if (!m[i]) return cb();
-        App.require(m[i], function() {
+        App.require(m[i], function () {
             App.requires(m, i + 1, cb);
         });
     },
-    request: function(o, cb) {
+    request: function (o, cb) {
 
         function param(object) {
             var encodedString = '';
@@ -332,20 +333,20 @@ App.apply(App, {
 
         if (!o.method) var method = "GET";
         else var method = o.method;
-        var reqListener = function() {
+        var reqListener = function () {
             if (xhr.status === 200) {
                 cb(null, xhr.responseText, xhr);
             } else {
                 cb(xhr, null);
             }
         };
-        var updateProgress = function(p) {
+        var updateProgress = function (p) {
             //console.log(p);
         };
-        var transferFailed = function(e) {
+        var transferFailed = function (e) {
             cb(e, null);
         };
-        var transferCanceled = function() {
+        var transferCanceled = function () {
             //console.log('z');
         };
         xhr.addEventListener("load", reqListener, false);
@@ -367,19 +368,19 @@ App.apply(App, {
     },
     __key__: new Persist.Store(Settings.NAMESPACE.replace(/\./g, '')),
     key: {
-        set: function(key, value) {
+        set: function (key, value) {
             if (!key) return false;
             if (!value) return false;
             if (value !== null && typeof value === 'object') value = JSON.stringify(value);
             App.__key__.set(key, value);
         },
-        remove: function(key) {
+        remove: function (key) {
             App.__key__.remove(key);
         },
-        unset: function(key) {
+        unset: function (key) {
             App.__key__.remove(key);
         },
-        get: function(key) {
+        get: function (key) {
             var response = App.__key__.get(key);
             try {
                 return JSON.parse(response);
@@ -392,19 +393,19 @@ App.apply(App, {
 // Generate App Unique ID
 App.uid = App.uuid();
 App.apply(App, {
-    getObjectProperty: function(obj, desc) {
+    getObjectProperty: function (obj, desc) {
         var arr = desc.split('.');
         while (arr.length && (obj = obj[arr.shift()]));
         return obj;
     },
-    getObjectProperties: function(obj) {
+    getObjectProperties: function (obj) {
         var o = JSON.flatten(obj);
         var arr = [];
         for (var el in o) arr.push(el);
         return arr;
     },
-    setObjectProperty: function(obj, property, value) {
-        Object.prop = function(obj, prop, val) {
+    setObjectProperty: function (obj, property, value) {
+        Object.prop = function (obj, prop, val) {
             var props = prop.split('.'),
                 final = props.pop(),
                 p
@@ -417,20 +418,20 @@ App.apply(App, {
         Object.prop(obj, property, value);
     }
 });
-App.import = function(scripts, cb) {
-    var loadScript = function(url, i, callback) {
+App.import = function (scripts, cb) {
+    var loadScript = function (url, i, callback) {
         if (!url[i]) return callback();
         var script = document.createElement("script")
         script.type = "text/javascript";
         if (script.readyState) { //IE
-            script.onreadystatechange = function() {
+            script.onreadystatechange = function () {
                 if (script.readyState == "loaded" || script.readyState == "complete") {
                     script.onreadystatechange = null;
                     loadScript(url, i + 1, callback);
                 }
             };
         } else { //Others
-            script.onload = function() {
+            script.onload = function () {
                 loadScript(url, i + 1, callback);
             };
         };
@@ -441,8 +442,8 @@ App.import = function(scripts, cb) {
     loadScript(scripts, 0, cb);
 };
 App.apply(App, {
-    shortid: function(previous) {
-        var generate = function() {
+    shortid: function (previous) {
+        var generate = function () {
             var ID_LENGTH = 8;
             var ALPHABET = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
             var rtn = '';
@@ -466,7 +467,7 @@ App.apply(App, {
     }
 });
 App.apply(App, {
-    isEmpty: function(value, allowEmptyString) {
+    isEmpty: function (value, allowEmptyString) {
             return (value === null) || (value === undefined) || (!allowEmptyString ? value === '' : false) || (App.isArray(value) && value.length === 0);
         }
         /**
@@ -477,7 +478,7 @@ App.apply(App, {
          * @method
          */
         ,
-    isNodeList: function(nodes) {
+    isNodeList: function (nodes) {
         return NodeList.prototype.isPrototypeOf(nodes)
     },
     /**
@@ -487,7 +488,7 @@ App.apply(App, {
      * @return {Boolean}
      * @method
      */
-    isArray: ('isArray' in Array) ? Array.isArray : function(value) {
+    isArray: ('isArray' in Array) ? Array.isArray : function (value) {
         return toString.call(value) === '[object Array]';
     },
     /**
@@ -495,7 +496,7 @@ App.apply(App, {
      * @param {Object} object The object to test
      * @return {Boolean}
      */
-    isDate: function(value) {
+    isDate: function (value) {
         return toString.call(value) === '[object Date]';
     },
     /**
@@ -504,16 +505,16 @@ App.apply(App, {
      * @return {Boolean}
      * @method
      */
-    isObject: (toString.call(null) === '[object Object]') ? function(value) {
+    isObject: (toString.call(null) === '[object Object]') ? function (value) {
         // check ownerDocument here as well to exclude DOM nodes
         return value !== null && value !== undefined && toString.call(value) === '[object Object]' && value.ownerDocument === undefined;
-    } : function(value) {
+    } : function (value) {
         return toString.call(value) === '[object Object]';
     },
     /**
      * @private
      */
-    isSimpleObject: function(value) {
+    isSimpleObject: function (value) {
         return value instanceof Object && value.constructor === Object;
     },
     /**
@@ -521,7 +522,7 @@ App.apply(App, {
      * @param {Object} value The value to test
      * @return {Boolean}
      */
-    isPrimitive: function(value) {
+    isPrimitive: function (value) {
         var type = typeof value;
         return type === 'string' || type === 'number' || type === 'boolean';
     },
@@ -532,19 +533,19 @@ App.apply(App, {
      * @method
      */
     isFunction:
-    // Safari 3.x and 4.x returns 'function' for typeof <NodeList>, hence we need to fall back to using
-    // Object.prototype.toString (slower)
-        (typeof document !== 'undefined' && typeof document.getElementsByTagName('body') === 'function') ? function(value) {
-        return !!value && toString.call(value) === '[object Function]';
-    } : function(value) {
-        return !!value && typeof value === 'function';
-    },
+        // Safari 3.x and 4.x returns 'function' for typeof <NodeList>, hence we need to fall back to using
+        // Object.prototype.toString (slower)
+        (typeof document !== 'undefined' && typeof document.getElementsByTagName('body') === 'function') ? function (value) {
+            return !!value && toString.call(value) === '[object Function]';
+        } : function (value) {
+            return !!value && typeof value === 'function';
+        },
     /**
      * Returns true if the passed value is a number. Returns false for non-finite numbers.
      * @param {Object} value The value to test
      * @return {Boolean}
      */
-    isNumber: function(value) {
+    isNumber: function (value) {
         return typeof value === 'number' && isFinite(value);
     },
     /**
@@ -552,7 +553,7 @@ App.apply(App, {
      * @param {Object} value Examples: 1, '1', '2.34'
      * @return {Boolean} True if numeric, false otherwise
      */
-    isNumeric: function(value) {
+    isNumeric: function (value) {
         return !isNaN(parseFloat(value)) && isFinite(value);
     },
     /**
@@ -560,7 +561,7 @@ App.apply(App, {
      * @param {Object} value The value to test
      * @return {Boolean}
      */
-    isString: function(value) {
+    isString: function (value) {
         return typeof value === 'string';
     },
     /**
@@ -569,7 +570,7 @@ App.apply(App, {
      * @param {Object} value The value to test
      * @return {Boolean}
      */
-    isBoolean: function(value) {
+    isBoolean: function (value) {
         return typeof value === 'boolean';
     },
     /**
@@ -577,7 +578,7 @@ App.apply(App, {
      * @param {Object} value The value to test
      * @return {Boolean}
      */
-    isElement: function(value) {
+    isElement: function (value) {
         return value ? value.nodeType === 1 : false;
     },
     /**
@@ -585,7 +586,7 @@ App.apply(App, {
      * @param {Object} value The value to test
      * @return {Boolean}
      */
-    isTextNode: function(value) {
+    isTextNode: function (value) {
         return value ? value.nodeName === "#text" : false;
     },
     /**
@@ -593,7 +594,7 @@ App.apply(App, {
      * @param {Object} value The value to test
      * @return {Boolean}
      */
-    isDefined: function(value) {
+    isDefined: function (value) {
         return typeof value !== 'undefined';
     },
     /**
@@ -606,7 +607,7 @@ App.apply(App, {
      * @param {Object} value The value to test
      * @return {Boolean}
      */
-    isIterable: function(value) {
+    isIterable: function (value) {
         // To be iterable, the object must have a numeric length property and must not be a string or function.
         if (!value || typeof value.length !== 'number' || typeof value === 'string' || App.isFunction(value)) {
             return false;
@@ -634,11 +635,11 @@ App.apply(App, {
      * @param  {Function} callback
      * @param  {String}   [outputFormat=image/png]
      */
-    convertImgToBase64URL: function(url, callback, outputFormat) {
+    convertImgToBase64URL: function (url, callback, outputFormat) {
         var img = new Image();
         img.crossOrigin = 'Anonymous';
         if (!outputFormat) var outputFormat = 'image/png';
-        img.onload = function() {
+        img.onload = function () {
             var canvas = document.createElement('CANVAS'),
                 ctx = canvas.getContext('2d'),
                 dataURL;
@@ -655,21 +656,21 @@ App.apply(App, {
             img.src = url;
         }
     },
-    loadAPI: function(api) {
+    loadAPI: function (api) {
         var script_tag = document.createElement('script');
         script_tag.setAttribute("type", "text/javascript");
         script_tag.setAttribute("src", api);
         (document.getElementsByTagName("head")[0] || document.documentElement).appendChild(script_tag);
     },
-    readFile: function(file, cb) {
+    readFile: function (file, cb) {
         var reader = new FileReader();
-        reader.onload = function(e) {
+        reader.onload = function (e) {
             var text = reader.result;
             cb(text, e);
         };
         reader.readAsDataURL(file);
     },
-    origin: function() {
+    origin: function () {
         return window.location.protocol + "//" + window.location.host;
     }
 });
@@ -680,10 +681,10 @@ App.apply(App, {
      *
      * Blur the app
      */
-    blur: function(OBJ) {
+    blur: function (OBJ) {
         if (!OBJ) var OBJ = document.getElementsByTagName('body')[0];
         else OBJ = document.querySelector(OBJ);
-        var _createSvgElement = function(tagName) {
+        var _createSvgElement = function (tagName) {
             return document.createElementNS('http://www.w3.org/2000/svg', tagName);
         };
         var svgUrl = document.location.protocol + '//' + document.location.host + document.location.pathname + document.location.search;
@@ -707,7 +708,7 @@ App.apply(App, {
      *
      * unBlur the app
      */
-    unblur: function(OBJ) {
+    unblur: function (OBJ) {
         if (!OBJ) var OBJ = document.getElementsByTagName('body')[0];
         else OBJ = document.querySelector(OBJ);
         OBJ.style['filter'] = '';
@@ -720,19 +721,19 @@ App.apply(App, {
  * Object watchers
  */
 
-var WatchManager = (function() {
+var WatchManager = (function () {
     var listeners = {};
     var values = {};
 
     function addListener(object, property, listener) {
         Object.defineProperty(object, property, {
-            set: function(newValue) {
+            set: function (newValue) {
                 values[property] = newValue;
-                listeners[property].forEach(function(listener) {
+                listeners[property].forEach(function (listener) {
                     listener(newValue);
                 });
             },
-            get: function() {
+            get: function () {
                 return values[property];
             }
         });

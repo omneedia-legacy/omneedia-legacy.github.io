@@ -1,183 +1,179 @@
-
-.NotificationBackground
-{
+.NotificationBackground {
 	margin: 0;
 	padding: 0;
 	background-image: url(webapp/01.jpg);
 }
+
 .css_btn_cancel {
-	font-size:16px;
-	font-family:Arial;
-	font-weight:normal;
-	-moz-border-radius:8px;
-	-webkit-border-radius:8px;
-	border-radius:8px;
-	border:1px solid #dcdcdc;
-	padding:5px 18px;
-	text-decoration:none;
-	background:-webkit-gradient( linear, left top, left bottom, color-stop(5%, #ededed), color-stop(100%, #dfdfdf) );
-	background:-moz-linear-gradient( center top, #ededed 5%, #dfdfdf 100% );
-	background:-ms-linear-gradient( top, #ededed 5%, #dfdfdf 100% );
-	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ededed', endColorstr='#dfdfdf');
-	background-color:#ededed;
-	color:#777777;
-	display:inline-block;
-	text-shadow:1px 1px 0px #ffffff;
- 	-webkit-box-shadow:inset 1px 1px 0px 0px #ffffff;
- 	-moz-box-shadow:inset 1px 1px 0px 0px #ffffff;
- 	box-shadow:inset 1px 1px 0px 0px #ffffff;
+	font-size: 16px;
+	font-family: Arial;
+	font-weight: normal;
+	-moz-border-radius: 8px;
+	-webkit-border-radius: 8px;
+	border-radius: 8px;
+	border: 1px solid #dcdcdc;
+	padding: 5px 18px;
+	text-decoration: none;
+	background: -webkit-gradient( linear, left top, left bottom, color-stop(5%, #ededed), color-stop(100%, #dfdfdf));
+	background: -moz-linear-gradient( center top, #ededed 5%, #dfdfdf 100%);
+	background: -ms-linear-gradient( top, #ededed 5%, #dfdfdf 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ededed', endColorstr='#dfdfdf');
+	background-color: #ededed;
+	color: #777777;
+	display: inline-block;
+	text-shadow: 1px 1px 0px #ffffff;
+	-webkit-box-shadow: inset 1px 1px 0px 0px #ffffff;
+	-moz-box-shadow: inset 1px 1px 0px 0px #ffffff;
+	box-shadow: inset 1px 1px 0px 0px #ffffff;
 }
+
 .css_btn_cancel:hover {
-	background:-webkit-gradient( linear, left top, left bottom, color-stop(5%, #dfdfdf), color-stop(100%, #ededed) );
-	background:-moz-linear-gradient( center top, #dfdfdf 5%, #ededed 100% );
-	background:-ms-linear-gradient( top, #dfdfdf 5%, #ededed 100% );
-	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#dfdfdf', endColorstr='#ededed');
-	background-color:#dfdfdf;
+	background: -webkit-gradient( linear, left top, left bottom, color-stop(5%, #dfdfdf), color-stop(100%, #ededed));
+	background: -moz-linear-gradient( center top, #dfdfdf 5%, #ededed 100%);
+	background: -ms-linear-gradient( top, #dfdfdf 5%, #ededed 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#dfdfdf', endColorstr='#ededed');
+	background-color: #dfdfdf;
 }
+
 .css_btn_cancel:active {
-	position:relative;
-	top:1px;
+	position: relative;
+	top: 1px;
 }
-#appLoadingFailed
-{
-	background-image:url(webapp/failed.png);
-	position:absolute;
-	top:0;
-	left:0;
-	width:100%;
-	height:100%;
+
+#appLoadingFailed {
+	background-image: url(webapp/failed.png);
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
 	z-index: 9999999;
-	background-repeat:no-repeat;
+	background-repeat: no-repeat;
 	display: none;
-	background-position:center center;
+	background-position: center center;
 }
-.omneedia-overlay
-{
-	background-image:url(webapp/img-overlay.png);
-	position:absolute;
-	top:0;
-	left:0;
-	width:100%;
-	height:100%;
+
+.omneedia-overlay {
+	background-image: url(webapp/img-overlay.png);
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
 	z-index: 999999;
-	background-repeat:repeat;
+	background-repeat: repeat;
 	display: none;
 }
-.QxNotificationBar
-{
-	background-image:url(webapp/icon-notification-center.png);
+
+.QxNotificationBar {
+	background-image: url(webapp/icon-notification-center.png);
 }
-.CWaitSignOn
-{
+
+.CWaitSignOn {
 	font-family: tahoma;
 	font-size: 20px;
 }
-.AboutBoxTitle
-{
-	text-align:left;
-	width:100%;
+
+.AboutBoxTitle {
+	text-align: left;
+	width: 100%;
 	font-family: arial;
-	font-size:20px;
-}
-.AboutBoxDescription
-{
-	padding-top: 1px;
-	text-align:left;
-	width:100%;
-	font-family: tahoma;
-	font-size:13px;
-}
-.AboutBoxVersion
-{
-	padding-top:3px;
-	text-align:left;
-	width:100%;
-	color: #AAAAAA;
-	font-family: verdana;
-	font-size:11px;
-}
-.AboutBoxCopyright
-{
-	padding-top: 29px;
-	text-align:left;
-	width:100%;
-	font-family: tahoma;
-	font-size:12px;
-}
-.AboutBoxLicence
-{
-	padding: 5px;
-	text-align:justify;
-	width:100%;
-	font-family: arial;
-	font-size:8px;
+	font-size: 20px;
 }
 
-.QxOverlay
-{
-    position: absolute;
-	z-index:999;
-    width: 100%;
-	height:100%;
-    top: 0px;
-    left: 0px;
+.AboutBoxDescription {
+	padding-top: 1px;
+	text-align: left;
+	width: 100%;
+	font-family: tahoma;
+	font-size: 13px;
+}
+
+.AboutBoxVersion {
+	padding-top: 3px;
+	text-align: left;
+	width: 100%;
+	color: #AAAAAA;
+	font-family: verdana;
+	font-size: 11px;
+}
+
+.AboutBoxCopyright {
+	padding-top: 29px;
+	text-align: left;
+	width: 100%;
+	font-family: tahoma;
+	font-size: 12px;
+}
+
+.AboutBoxLicence {
+	padding: 5px;
+	text-align: justify;
+	width: 100%;
+	font-family: arial;
+	font-size: 8px;
+}
+
+.QxOverlay {
+	position: absolute;
+	z-index: 999;
+	width: 100%;
+	height: 100%;
+	top: 0px;
+	left: 0px;
 	/*background-color: rgba(0,0,255,0.5);	*/
 }
 
-.QxLoginBox
-{
-	position:absolute;
-	left:50%;
-	top:50%;
-	margin:-300px 0 0 -200px;
+.QxLoginBox {
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	margin: -300px 0 0 -200px;
 	z-index: 99999999;
-	width:400px;
-	height:600px;
-	border:2px solid #BBBBBB;
+	width: 400px;
+	height: 600px;
+	border: 2px solid #BBBBBB;
+	background: #EEEEEE;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+	z-index: 99999;
+}
+
+.QxLoginBox.tablet {
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	margin: -300px 0 0 -200px;
+	z-index: 99999999;
+	width: 400px;
+	height: 600px;
+	border: 2px solid #BBBBBB;
 	background: #EEEEEE;
 	-webkit-border-radius: 5px;
 	-moz-border-radius: 5px;
 	border-radius: 5px;
 }
 
-.QxLoginBox.tablet
-{
-	position:absolute;
-	left:50%;
-	top:50%;
-	margin:-300px 0 0 -200px;
+.QxLoginBox.smartphone {
+	position: absolute;
+	left: 0px;
+	top: 0px;
+	margin: 0 0 0 0;
 	z-index: 99999999;
-	width:400px;
-	height:600px;
-	border:2px solid #BBBBBB;
-	background: #EEEEEE;
-	-webkit-border-radius: 5px;
-	-moz-border-radius: 5px;
-	border-radius: 5px;
-}
-
-.QxLoginBox.smartphone
-{
-	position:absolute;
-	left:0px;
-	top:0px;
-	margin:0 0 0 0;
-	z-index: 99999999;
-	width:100%;
-	height:100%;
-	border:2px solid #BBBBBB;
+	width: 100%;
+	height: 100%;
+	border: 2px solid #BBBBBB;
 	background: #FFFFFF;
 }
 
-.QxLoginBoxTitle
-{
+.QxLoginBoxTitle {
 	font-family: Verdana;
 	font-size: 18px;
 }
 
-.qxLoginTable
-{
-	background-color:#FFFFFF;
+.qxLoginTable {
+	background-color: #FFFFFF;
 	border: 1px solid black;
 	padding: 0px;
 	font-family: arial;
@@ -187,9 +183,9 @@
 	border-radius: 0px;
 	border: 0px solid black;
 }
-#qxLogin
-{
-	border:0px solid black;
+
+#qxLogin {
+	border: 0px solid black;
 	padding: 10px;
 	font-family: arial;
 	font-size: 18px;
@@ -198,9 +194,9 @@
 	border-bottom: 1px solid #DDDDDD;
 	width: 100%;
 }
-#qxPassword
-{
-	border:0px solid black;
+
+#qxPassword {
+	border: 0px solid black;
 	padding: 10px;
 	font-family: arial;
 	font-size: 18px;
@@ -209,30 +205,30 @@
 	border-bottom: 1px solid #DDDDDD;
 	width: 100%;
 }
-.qxLoginLabel
-{
+
+.qxLoginLabel {
 	padding: 10px;
 	font-family: arial;
 	font-size: 12px;
 	font-weight: bold;
 	display: none;
 }
-.qx2ndline
-{
+
+.qx2ndline {
 	/*border-top:1px solid #CCCCCC*/
 }
-.qxConnect
-{
+
+.qxConnect {
 	font-family: arial;
 	font-size: 18px;
 	width: 100%;
 	text-align: center;
 }
-.qxUnkwownUser
-{
-	background-image:url(webapp/qxlogin.png);
-	background-repeat:no-repeat;
-	background-position:center center;
+
+.qxUnkwownUser {
+	background-image: url(webapp/qxlogin.png);
+	background-repeat: no-repeat;
+	background-position: center center;
 	background-size: 122px 142px;
 	border-radius: 150px;
 	-webkit-border-radius: 150px;
@@ -244,12 +240,12 @@
 	height: 125px;
 }
 
-.qxDefaultUser
-{
-	padding-top:9px;
+.qxDefaultUser {
+	padding-top: 9px;
 }
 
 /* Icons */
+
 .ux-notification-icon-information {
 	background-image: url(webapp/icon16_info.png);
 }
@@ -258,8 +254,8 @@
 	background-image: url(webapp/icon16_error.png);
 }
 
-
 /* Using standard theme */
+
 .ux-notification-window .x-window-body {
 	text-align: center;
 	padding: 15px 5px 15px 5px;
@@ -282,8 +278,7 @@ body .ux-notification-light {
 	border: 0px solid white;
 }
 
-.QxSpinner
-{
+.QxSpinner {
 	width: 220px;
 	height: 20px;
 	background-repeat: no-repeat;
@@ -291,43 +286,70 @@ body .ux-notification-light {
 	padding: 15px;
 }
 
-
 .animated {
 	-webkit-animation-duration: 1s;
-	   -moz-animation-duration: 1s;
-	     -o-animation-duration: 1s;
-	        animation-duration: 1s;
+	-moz-animation-duration: 1s;
+	-o-animation-duration: 1s;
+	animation-duration: 1s;
 	-webkit-animation-fill-mode: both;
-	   -moz-animation-fill-mode: both;
-	     -o-animation-fill-mode: both;
-	        animation-fill-mode: both;
+	-moz-animation-fill-mode: both;
+	-o-animation-fill-mode: both;
+	animation-fill-mode: both;
 }
 
 .animated.hinge {
 	-webkit-animation-duration: 2s;
-	   -moz-animation-duration: 2s;
-	     -o-animation-duration: 2s;
-	        animation-duration: 2s;
+	-moz-animation-duration: 2s;
+	-o-animation-duration: 2s;
+	animation-duration: 2s;
 }
 
 @-webkit-keyframes flash {
-	0%, 50%, 100% {opacity: 1;}
-	25%, 75% {opacity: 0;}
+	0%,
+	50%,
+	100% {
+		opacity: 1;
+	}
+	25%,
+	75% {
+		opacity: 0;
+	}
 }
 
 @-moz-keyframes flash {
-	0%, 50%, 100% {opacity: 1;}
-	25%, 75% {opacity: 0;}
+	0%,
+	50%,
+	100% {
+		opacity: 1;
+	}
+	25%,
+	75% {
+		opacity: 0;
+	}
 }
 
 @-o-keyframes flash {
-	0%, 50%, 100% {opacity: 1;}
-	25%, 75% {opacity: 0;}
+	0%,
+	50%,
+	100% {
+		opacity: 1;
+	}
+	25%,
+	75% {
+		opacity: 0;
+	}
 }
 
 @keyframes flash {
-	0%, 50%, 100% {opacity: 1;}
-	25%, 75% {opacity: 0;}
+	0%,
+	50%,
+	100% {
+		opacity: 1;
+	}
+	25%,
+	75% {
+		opacity: 0;
+	}
 }
 
 .animated.flash {
@@ -336,28 +358,85 @@ body .ux-notification-light {
 	-o-animation-name: flash;
 	animation-name: flash;
 }
+
 @-webkit-keyframes shake {
-	0%, 100% {-webkit-transform: translateX(0);}
-	10%, 30%, 50%, 70%, 90% {-webkit-transform: translateX(-10px);}
-	20%, 40%, 60%, 80% {-webkit-transform: translateX(10px);}
+	0%,
+	100% {
+		-webkit-transform: translateX(0);
+	}
+	10%,
+	30%,
+	50%,
+	70%,
+	90% {
+		-webkit-transform: translateX(-10px);
+	}
+	20%,
+	40%,
+	60%,
+	80% {
+		-webkit-transform: translateX(10px);
+	}
 }
 
 @-moz-keyframes shake {
-	0%, 100% {-moz-transform: translateX(0);}
-	10%, 30%, 50%, 70%, 90% {-moz-transform: translateX(-10px);}
-	20%, 40%, 60%, 80% {-moz-transform: translateX(10px);}
+	0%,
+	100% {
+		-moz-transform: translateX(0);
+	}
+	10%,
+	30%,
+	50%,
+	70%,
+	90% {
+		-moz-transform: translateX(-10px);
+	}
+	20%,
+	40%,
+	60%,
+	80% {
+		-moz-transform: translateX(10px);
+	}
 }
 
 @-o-keyframes shake {
-	0%, 100% {-o-transform: translateX(0);}
-	10%, 30%, 50%, 70%, 90% {-o-transform: translateX(-10px);}
-	20%, 40%, 60%, 80% {-o-transform: translateX(10px);}
+	0%,
+	100% {
+		-o-transform: translateX(0);
+	}
+	10%,
+	30%,
+	50%,
+	70%,
+	90% {
+		-o-transform: translateX(-10px);
+	}
+	20%,
+	40%,
+	60%,
+	80% {
+		-o-transform: translateX(10px);
+	}
 }
 
 @keyframes shake {
-	0%, 100% {transform: translateX(0);}
-	10%, 30%, 50%, 70%, 90% {transform: translateX(-10px);}
-	20%, 40%, 60%, 80% {transform: translateX(10px);}
+	0%,
+	100% {
+		transform: translateX(0);
+	}
+	10%,
+	30%,
+	50%,
+	70%,
+	90% {
+		transform: translateX(-10px);
+	}
+	20%,
+	40%,
+	60%,
+	80% {
+		transform: translateX(10px);
+	}
 }
 
 .animated.shake {
@@ -366,27 +445,69 @@ body .ux-notification-light {
 	-o-animation-name: shake;
 	animation-name: shake;
 }
+
 @-webkit-keyframes bounce {
-	0%, 20%, 50%, 80%, 100% {-webkit-transform: translateY(0);}
-	40% {-webkit-transform: translateY(-30px);}
-	60% {-webkit-transform: translateY(-15px);}
+	0%,
+	20%,
+	50%,
+	80%,
+	100% {
+		-webkit-transform: translateY(0);
+	}
+	40% {
+		-webkit-transform: translateY(-30px);
+	}
+	60% {
+		-webkit-transform: translateY(-15px);
+	}
 }
 
 @-moz-keyframes bounce {
-	0%, 20%, 50%, 80%, 100% {-moz-transform: translateY(0);}
-	40% {-moz-transform: translateY(-30px);}
-	60% {-moz-transform: translateY(-15px);}
+	0%,
+	20%,
+	50%,
+	80%,
+	100% {
+		-moz-transform: translateY(0);
+	}
+	40% {
+		-moz-transform: translateY(-30px);
+	}
+	60% {
+		-moz-transform: translateY(-15px);
+	}
 }
 
 @-o-keyframes bounce {
-	0%, 20%, 50%, 80%, 100% {-o-transform: translateY(0);}
-	40% {-o-transform: translateY(-30px);}
-	60% {-o-transform: translateY(-15px);}
+	0%,
+	20%,
+	50%,
+	80%,
+	100% {
+		-o-transform: translateY(0);
+	}
+	40% {
+		-o-transform: translateY(-30px);
+	}
+	60% {
+		-o-transform: translateY(-15px);
+	}
 }
+
 @keyframes bounce {
-	0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
-	40% {transform: translateY(-30px);}
-	60% {transform: translateY(-15px);}
+	0%,
+	20%,
+	50%,
+	80%,
+	100% {
+		transform: translateY(0);
+	}
+	40% {
+		transform: translateY(-30px);
+	}
+	60% {
+		transform: translateY(-15px);
+	}
 }
 
 .animated.bounce {
@@ -395,36 +516,101 @@ body .ux-notification-light {
 	-o-animation-name: bounce;
 	animation-name: bounce;
 }
+
 @-webkit-keyframes tada {
-	0% {-webkit-transform: scale(1);}
-	10%, 20% {-webkit-transform: scale(0.9) rotate(-3deg);}
-	30%, 50%, 70%, 90% {-webkit-transform: scale(1.1) rotate(3deg);}
-	40%, 60%, 80% {-webkit-transform: scale(1.1) rotate(-3deg);}
-	100% {-webkit-transform: scale(1) rotate(0);}
+	0% {
+		-webkit-transform: scale(1);
+	}
+	10%,
+	20% {
+		-webkit-transform: scale(0.9) rotate(-3deg);
+	}
+	30%,
+	50%,
+	70%,
+	90% {
+		-webkit-transform: scale(1.1) rotate(3deg);
+	}
+	40%,
+	60%,
+	80% {
+		-webkit-transform: scale(1.1) rotate(-3deg);
+	}
+	100% {
+		-webkit-transform: scale(1) rotate(0);
+	}
 }
 
 @-moz-keyframes tada {
-	0% {-moz-transform: scale(1);}
-	10%, 20% {-moz-transform: scale(0.9) rotate(-3deg);}
-	30%, 50%, 70%, 90% {-moz-transform: scale(1.1) rotate(3deg);}
-	40%, 60%, 80% {-moz-transform: scale(1.1) rotate(-3deg);}
-	100% {-moz-transform: scale(1) rotate(0);}
+	0% {
+		-moz-transform: scale(1);
+	}
+	10%,
+	20% {
+		-moz-transform: scale(0.9) rotate(-3deg);
+	}
+	30%,
+	50%,
+	70%,
+	90% {
+		-moz-transform: scale(1.1) rotate(3deg);
+	}
+	40%,
+	60%,
+	80% {
+		-moz-transform: scale(1.1) rotate(-3deg);
+	}
+	100% {
+		-moz-transform: scale(1) rotate(0);
+	}
 }
 
 @-o-keyframes tada {
-	0% {-o-transform: scale(1);}
-	10%, 20% {-o-transform: scale(0.9) rotate(-3deg);}
-	30%, 50%, 70%, 90% {-o-transform: scale(1.1) rotate(3deg);}
-	40%, 60%, 80% {-o-transform: scale(1.1) rotate(-3deg);}
-	100% {-o-transform: scale(1) rotate(0);}
+	0% {
+		-o-transform: scale(1);
+	}
+	10%,
+	20% {
+		-o-transform: scale(0.9) rotate(-3deg);
+	}
+	30%,
+	50%,
+	70%,
+	90% {
+		-o-transform: scale(1.1) rotate(3deg);
+	}
+	40%,
+	60%,
+	80% {
+		-o-transform: scale(1.1) rotate(-3deg);
+	}
+	100% {
+		-o-transform: scale(1) rotate(0);
+	}
 }
 
 @keyframes tada {
-	0% {transform: scale(1);}
-	10%, 20% {transform: scale(0.9) rotate(-3deg);}
-	30%, 50%, 70%, 90% {transform: scale(1.1) rotate(3deg);}
-	40%, 60%, 80% {transform: scale(1.1) rotate(-3deg);}
-	100% {transform: scale(1) rotate(0);}
+	0% {
+		transform: scale(1);
+	}
+	10%,
+	20% {
+		transform: scale(0.9) rotate(-3deg);
+	}
+	30%,
+	50%,
+	70%,
+	90% {
+		transform: scale(1.1) rotate(3deg);
+	}
+	40%,
+	60%,
+	80% {
+		transform: scale(1.1) rotate(-3deg);
+	}
+	100% {
+		transform: scale(1) rotate(0);
+	}
 }
 
 .animated.tada {
@@ -433,37 +619,84 @@ body .ux-notification-light {
 	-o-animation-name: tada;
 	animation-name: tada;
 }
+
 @-webkit-keyframes swing {
-	20%, 40%, 60%, 80%, 100% { -webkit-transform-origin: top center; }
-	20% { -webkit-transform: rotate(15deg); }
-	40% { -webkit-transform: rotate(-10deg); }
-	60% { -webkit-transform: rotate(5deg); }
-	80% { -webkit-transform: rotate(-5deg); }
-	100% { -webkit-transform: rotate(0deg); }
+	20%,
+	40%,
+	60%,
+	80%,
+	100% {
+		-webkit-transform-origin: top center;
+	}
+	20% {
+		-webkit-transform: rotate(15deg);
+	}
+	40% {
+		-webkit-transform: rotate(-10deg);
+	}
+	60% {
+		-webkit-transform: rotate(5deg);
+	}
+	80% {
+		-webkit-transform: rotate(-5deg);
+	}
+	100% {
+		-webkit-transform: rotate(0deg);
+	}
 }
 
 @-moz-keyframes swing {
-	20% { -moz-transform: rotate(15deg); }
-	40% { -moz-transform: rotate(-10deg); }
-	60% { -moz-transform: rotate(5deg); }
-	80% { -moz-transform: rotate(-5deg); }
-	100% { -moz-transform: rotate(0deg); }
+	20% {
+		-moz-transform: rotate(15deg);
+	}
+	40% {
+		-moz-transform: rotate(-10deg);
+	}
+	60% {
+		-moz-transform: rotate(5deg);
+	}
+	80% {
+		-moz-transform: rotate(-5deg);
+	}
+	100% {
+		-moz-transform: rotate(0deg);
+	}
 }
 
 @-o-keyframes swing {
-	20% { -o-transform: rotate(15deg); }
-	40% { -o-transform: rotate(-10deg); }
-	60% { -o-transform: rotate(5deg); }
-	80% { -o-transform: rotate(-5deg); }
-	100% { -o-transform: rotate(0deg); }
+	20% {
+		-o-transform: rotate(15deg);
+	}
+	40% {
+		-o-transform: rotate(-10deg);
+	}
+	60% {
+		-o-transform: rotate(5deg);
+	}
+	80% {
+		-o-transform: rotate(-5deg);
+	}
+	100% {
+		-o-transform: rotate(0deg);
+	}
 }
 
 @keyframes swing {
-	20% { transform: rotate(15deg); }
-	40% { transform: rotate(-10deg); }
-	60% { transform: rotate(5deg); }
-	80% { transform: rotate(-5deg); }
-	100% { transform: rotate(0deg); }
+	20% {
+		transform: rotate(15deg);
+	}
+	40% {
+		transform: rotate(-10deg);
+	}
+	60% {
+		transform: rotate(5deg);
+	}
+	80% {
+		transform: rotate(-5deg);
+	}
+	100% {
+		transform: rotate(0deg);
+	}
 }
 
 .animated.swing {
@@ -476,46 +709,103 @@ body .ux-notification-light {
 	-o-animation-name: swing;
 	animation-name: swing;
 }
+
 /* originally authored by Nick Pettit - https://github.com/nickpettit/glide */
 
 @-webkit-keyframes wobble {
-  0% { -webkit-transform: translateX(0%); }
-  15% { -webkit-transform: translateX(-25%) rotate(-5deg); }
-  30% { -webkit-transform: translateX(20%) rotate(3deg); }
-  45% { -webkit-transform: translateX(-15%) rotate(-3deg); }
-  60% { -webkit-transform: translateX(10%) rotate(2deg); }
-  75% { -webkit-transform: translateX(-5%) rotate(-1deg); }
-  100% { -webkit-transform: translateX(0%); }
+	0% {
+		-webkit-transform: translateX(0%);
+	}
+	15% {
+		-webkit-transform: translateX(-25%) rotate(-5deg);
+	}
+	30% {
+		-webkit-transform: translateX(20%) rotate(3deg);
+	}
+	45% {
+		-webkit-transform: translateX(-15%) rotate(-3deg);
+	}
+	60% {
+		-webkit-transform: translateX(10%) rotate(2deg);
+	}
+	75% {
+		-webkit-transform: translateX(-5%) rotate(-1deg);
+	}
+	100% {
+		-webkit-transform: translateX(0%);
+	}
 }
 
 @-moz-keyframes wobble {
-  0% { -moz-transform: translateX(0%); }
-  15% { -moz-transform: translateX(-25%) rotate(-5deg); }
-  30% { -moz-transform: translateX(20%) rotate(3deg); }
-  45% { -moz-transform: translateX(-15%) rotate(-3deg); }
-  60% { -moz-transform: translateX(10%) rotate(2deg); }
-  75% { -moz-transform: translateX(-5%) rotate(-1deg); }
-  100% { -moz-transform: translateX(0%); }
+	0% {
+		-moz-transform: translateX(0%);
+	}
+	15% {
+		-moz-transform: translateX(-25%) rotate(-5deg);
+	}
+	30% {
+		-moz-transform: translateX(20%) rotate(3deg);
+	}
+	45% {
+		-moz-transform: translateX(-15%) rotate(-3deg);
+	}
+	60% {
+		-moz-transform: translateX(10%) rotate(2deg);
+	}
+	75% {
+		-moz-transform: translateX(-5%) rotate(-1deg);
+	}
+	100% {
+		-moz-transform: translateX(0%);
+	}
 }
 
 @-o-keyframes wobble {
-  0% { -o-transform: translateX(0%); }
-  15% { -o-transform: translateX(-25%) rotate(-5deg); }
-  30% { -o-transform: translateX(20%) rotate(3deg); }
-  45% { -o-transform: translateX(-15%) rotate(-3deg); }
-  60% { -o-transform: translateX(10%) rotate(2deg); }
-  75% { -o-transform: translateX(-5%) rotate(-1deg); }
-  100% { -o-transform: translateX(0%); }
+	0% {
+		-o-transform: translateX(0%);
+	}
+	15% {
+		-o-transform: translateX(-25%) rotate(-5deg);
+	}
+	30% {
+		-o-transform: translateX(20%) rotate(3deg);
+	}
+	45% {
+		-o-transform: translateX(-15%) rotate(-3deg);
+	}
+	60% {
+		-o-transform: translateX(10%) rotate(2deg);
+	}
+	75% {
+		-o-transform: translateX(-5%) rotate(-1deg);
+	}
+	100% {
+		-o-transform: translateX(0%);
+	}
 }
 
 @keyframes wobble {
-  0% { transform: translateX(0%); }
-  15% { transform: translateX(-25%) rotate(-5deg); }
-  30% { transform: translateX(20%) rotate(3deg); }
-  45% { transform: translateX(-15%) rotate(-3deg); }
-  60% { transform: translateX(10%) rotate(2deg); }
-  75% { transform: translateX(-5%) rotate(-1deg); }
-  100% { transform: translateX(0%); }
+	0% {
+		transform: translateX(0%);
+	}
+	15% {
+		transform: translateX(-25%) rotate(-5deg);
+	}
+	30% {
+		transform: translateX(20%) rotate(3deg);
+	}
+	45% {
+		transform: translateX(-15%) rotate(-3deg);
+	}
+	60% {
+		transform: translateX(10%) rotate(2deg);
+	}
+	75% {
+		transform: translateX(-5%) rotate(-1deg);
+	}
+	100% {
+		transform: translateX(0%);
+	}
 }
 
 .animated.wobble {
@@ -524,27 +814,55 @@ body .ux-notification-light {
 	-o-animation-name: wobble;
 	animation-name: wobble;
 }
+
 /* originally authored by Nick Pettit - https://github.com/nickpettit/glide */
 
 @-webkit-keyframes pulse {
-    0% { -webkit-transform: scale(1); }
-	50% { -webkit-transform: scale(1.1); }
-    100% { -webkit-transform: scale(1); }
+	0% {
+		-webkit-transform: scale(1);
+	}
+	50% {
+		-webkit-transform: scale(1.1);
+	}
+	100% {
+		-webkit-transform: scale(1);
+	}
 }
+
 @-moz-keyframes pulse {
-    0% { -moz-transform: scale(1); }
-	50% { -moz-transform: scale(1.1); }
-    100% { -moz-transform: scale(1); }
+	0% {
+		-moz-transform: scale(1);
+	}
+	50% {
+		-moz-transform: scale(1.1);
+	}
+	100% {
+		-moz-transform: scale(1);
+	}
 }
+
 @-o-keyframes pulse {
-    0% { -o-transform: scale(1); }
-	50% { -o-transform: scale(1.1); }
-    100% { -o-transform: scale(1); }
+	0% {
+		-o-transform: scale(1);
+	}
+	50% {
+		-o-transform: scale(1.1);
+	}
+	100% {
+		-o-transform: scale(1);
+	}
 }
+
 @keyframes pulse {
-    0% { transform: scale(1); }
-	50% { transform: scale(1.1); }
-    100% { transform: scale(1); }
+	0% {
+		transform: scale(1);
+	}
+	50% {
+		transform: scale(1.1);
+	}
+	100% {
+		transform: scale(1);
+	}
 }
 
 .animated.pulse {
@@ -553,6 +871,7 @@ body .ux-notification-light {
 	-o-animation-name: pulse;
 	animation-name: pulse;
 }
+
 @-webkit-keyframes flip {
 	0% {
 		-webkit-transform: perspective(400px) translateZ(0) rotateY(0) scale(1);
@@ -575,6 +894,7 @@ body .ux-notification-light {
 		-webkit-animation-timing-function: ease-in;
 	}
 }
+
 @-moz-keyframes flip {
 	0% {
 		-moz-transform: perspective(400px) translateZ(0) rotateY(0) scale(1);
@@ -597,6 +917,7 @@ body .ux-notification-light {
 		-moz-animation-timing-function: ease-in;
 	}
 }
+
 @-o-keyframes flip {
 	0% {
 		-o-transform: perspective(400px) translateZ(0) rotateY(0) scale(1);
@@ -619,6 +940,7 @@ body .ux-notification-light {
 		-o-animation-timing-function: ease-in;
 	}
 }
+
 @keyframes flip {
 	0% {
 		transform: perspective(400px) translateZ(0) rotateY(0) scale(1);
@@ -652,81 +974,73 @@ body .ux-notification-light {
 	backface-visibility: visible !important;
 	animation-name: flip;
 }
+
 @-webkit-keyframes flipInX {
-    0% {
-        -webkit-transform: perspective(400px) rotateX(90deg);
-        opacity: 0;
-    }
-
-    40% {
-        -webkit-transform: perspective(400px) rotateX(-10deg);
-    }
-
-    70% {
-        -webkit-transform: perspective(400px) rotateX(10deg);
-    }
-
-    100% {
-        -webkit-transform: perspective(400px) rotateX(0deg);
-        opacity: 1;
-    }
+	0% {
+		-webkit-transform: perspective(400px) rotateX(90deg);
+		opacity: 0;
+	}
+	40% {
+		-webkit-transform: perspective(400px) rotateX(-10deg);
+	}
+	70% {
+		-webkit-transform: perspective(400px) rotateX(10deg);
+	}
+	100% {
+		-webkit-transform: perspective(400px) rotateX(0deg);
+		opacity: 1;
+	}
 }
+
 @-moz-keyframes flipInX {
-    0% {
-        -moz-transform: perspective(400px) rotateX(90deg);
-        opacity: 0;
-    }
-
-    40% {
-        -moz-transform: perspective(400px) rotateX(-10deg);
-    }
-
-    70% {
-        -moz-transform: perspective(400px) rotateX(10deg);
-    }
-
-    100% {
-        -moz-transform: perspective(400px) rotateX(0deg);
-        opacity: 1;
-    }
+	0% {
+		-moz-transform: perspective(400px) rotateX(90deg);
+		opacity: 0;
+	}
+	40% {
+		-moz-transform: perspective(400px) rotateX(-10deg);
+	}
+	70% {
+		-moz-transform: perspective(400px) rotateX(10deg);
+	}
+	100% {
+		-moz-transform: perspective(400px) rotateX(0deg);
+		opacity: 1;
+	}
 }
+
 @-o-keyframes flipInX {
-    0% {
-        -o-transform: perspective(400px) rotateX(90deg);
-        opacity: 0;
-    }
-
-    40% {
-        -o-transform: perspective(400px) rotateX(-10deg);
-    }
-
-    70% {
-        -o-transform: perspective(400px) rotateX(10deg);
-    }
-
-    100% {
-        -o-transform: perspective(400px) rotateX(0deg);
-        opacity: 1;
-    }
+	0% {
+		-o-transform: perspective(400px) rotateX(90deg);
+		opacity: 0;
+	}
+	40% {
+		-o-transform: perspective(400px) rotateX(-10deg);
+	}
+	70% {
+		-o-transform: perspective(400px) rotateX(10deg);
+	}
+	100% {
+		-o-transform: perspective(400px) rotateX(0deg);
+		opacity: 1;
+	}
 }
+
 @keyframes flipInX {
-    0% {
-        transform: perspective(400px) rotateX(90deg);
-        opacity: 0;
-    }
-
-    40% {
-        transform: perspective(400px) rotateX(-10deg);
-    }
-
-    70% {
-        transform: perspective(400px) rotateX(10deg);
-    }
-
-    100% {
-        transform: perspective(400px) rotateX(0deg);
-        opacity: 1;
-    }
+	0% {
+		transform: perspective(400px) rotateX(90deg);
+		opacity: 0;
+	}
+	40% {
+		transform: perspective(400px) rotateX(-10deg);
+	}
+	70% {
+		transform: perspective(400px) rotateX(10deg);
+	}
+	100% {
+		transform: perspective(400px) rotateX(0deg);
+		opacity: 1;
+	}
 }
 
 .animated.flipInX {
@@ -739,48 +1053,49 @@ body .ux-notification-light {
 	backface-visibility: visible !important;
 	animation-name: flipInX;
 }
+
 @-webkit-keyframes flipOutX {
-    0% {
-        -webkit-transform: perspective(400px) rotateX(0deg);
-        opacity: 1;
-    }
+	0% {
+		-webkit-transform: perspective(400px) rotateX(0deg);
+		opacity: 1;
+	}
 	100% {
-        -webkit-transform: perspective(400px) rotateX(90deg);
-        opacity: 0;
-    }
+		-webkit-transform: perspective(400px) rotateX(90deg);
+		opacity: 0;
+	}
 }
 
 @-moz-keyframes flipOutX {
-    0% {
-        -moz-transform: perspective(400px) rotateX(0deg);
-        opacity: 1;
-    }
+	0% {
+		-moz-transform: perspective(400px) rotateX(0deg);
+		opacity: 1;
+	}
 	100% {
-        -moz-transform: perspective(400px) rotateX(90deg);
-        opacity: 0;
-    }
+		-moz-transform: perspective(400px) rotateX(90deg);
+		opacity: 0;
+	}
 }
 
 @-o-keyframes flipOutX {
-    0% {
-        -o-transform: perspective(400px) rotateX(0deg);
-        opacity: 1;
-    }
+	0% {
+		-o-transform: perspective(400px) rotateX(0deg);
+		opacity: 1;
+	}
 	100% {
-        -o-transform: perspective(400px) rotateX(90deg);
-        opacity: 0;
-    }
+		-o-transform: perspective(400px) rotateX(90deg);
+		opacity: 0;
+	}
 }
 
 @keyframes flipOutX {
-    0% {
-        transform: perspective(400px) rotateX(0deg);
-        opacity: 1;
-    }
+	0% {
+		transform: perspective(400px) rotateX(0deg);
+		opacity: 1;
+	}
 	100% {
-        transform: perspective(400px) rotateX(90deg);
-        opacity: 0;
-    }
+		transform: perspective(400px) rotateX(90deg);
+		opacity: 0;
+	}
 }
 
 .animated.flipOutX {
@@ -793,81 +1108,73 @@ body .ux-notification-light {
 	animation-name: flipOutX;
 	backface-visibility: visible !important;
 }
+
 @-webkit-keyframes flipInY {
-    0% {
-        -webkit-transform: perspective(400px) rotateY(90deg);
-        opacity: 0;
-    }
-
-    40% {
-        -webkit-transform: perspective(400px) rotateY(-10deg);
-    }
-
-    70% {
-        -webkit-transform: perspective(400px) rotateY(10deg);
-    }
-
-    100% {
-        -webkit-transform: perspective(400px) rotateY(0deg);
-        opacity: 1;
-    }
+	0% {
+		-webkit-transform: perspective(400px) rotateY(90deg);
+		opacity: 0;
+	}
+	40% {
+		-webkit-transform: perspective(400px) rotateY(-10deg);
+	}
+	70% {
+		-webkit-transform: perspective(400px) rotateY(10deg);
+	}
+	100% {
+		-webkit-transform: perspective(400px) rotateY(0deg);
+		opacity: 1;
+	}
 }
+
 @-moz-keyframes flipInY {
-    0% {
-        -moz-transform: perspective(400px) rotateY(90deg);
-        opacity: 0;
-    }
-
-    40% {
-        -moz-transform: perspective(400px) rotateY(-10deg);
-    }
-
-    70% {
-        -moz-transform: perspective(400px) rotateY(10deg);
-    }
-
-    100% {
-        -moz-transform: perspective(400px) rotateY(0deg);
-        opacity: 1;
-    }
+	0% {
+		-moz-transform: perspective(400px) rotateY(90deg);
+		opacity: 0;
+	}
+	40% {
+		-moz-transform: perspective(400px) rotateY(-10deg);
+	}
+	70% {
+		-moz-transform: perspective(400px) rotateY(10deg);
+	}
+	100% {
+		-moz-transform: perspective(400px) rotateY(0deg);
+		opacity: 1;
+	}
 }
+
 @-o-keyframes flipInY {
-    0% {
-        -o-transform: perspective(400px) rotateY(90deg);
-        opacity: 0;
-    }
-
-    40% {
-        -o-transform: perspective(400px) rotateY(-10deg);
-    }
-
-    70% {
-        -o-transform: perspective(400px) rotateY(10deg);
-    }
-
-    100% {
-        -o-transform: perspective(400px) rotateY(0deg);
-        opacity: 1;
-    }
+	0% {
+		-o-transform: perspective(400px) rotateY(90deg);
+		opacity: 0;
+	}
+	40% {
+		-o-transform: perspective(400px) rotateY(-10deg);
+	}
+	70% {
+		-o-transform: perspective(400px) rotateY(10deg);
+	}
+	100% {
+		-o-transform: perspective(400px) rotateY(0deg);
+		opacity: 1;
+	}
 }
+
 @keyframes flipInY {
-    0% {
-        transform: perspective(400px) rotateY(90deg);
-        opacity: 0;
-    }
-
-    40% {
-        transform: perspective(400px) rotateY(-10deg);
-    }
-
-    70% {
-        transform: perspective(400px) rotateY(10deg);
-    }
-
-    100% {
-        transform: perspective(400px) rotateY(0deg);
-        opacity: 1;
-    }
+	0% {
+		transform: perspective(400px) rotateY(90deg);
+		opacity: 0;
+	}
+	40% {
+		transform: perspective(400px) rotateY(-10deg);
+	}
+	70% {
+		transform: perspective(400px) rotateY(10deg);
+	}
+	100% {
+		transform: perspective(400px) rotateY(0deg);
+		opacity: 1;
+	}
 }
 
 .animated.flipInY {
@@ -880,45 +1187,49 @@ body .ux-notification-light {
 	backface-visibility: visible !important;
 	animation-name: flipInY;
 }
+
 @-webkit-keyframes flipOutY {
-    0% {
-        -webkit-transform: perspective(400px) rotateY(0deg);
-        opacity: 1;
-    }
+	0% {
+		-webkit-transform: perspective(400px) rotateY(0deg);
+		opacity: 1;
+	}
 	100% {
-        -webkit-transform: perspective(400px) rotateY(90deg);
-        opacity: 0;
-    }
+		-webkit-transform: perspective(400px) rotateY(90deg);
+		opacity: 0;
+	}
 }
+
 @-moz-keyframes flipOutY {
-    0% {
-        -moz-transform: perspective(400px) rotateY(0deg);
-        opacity: 1;
-    }
+	0% {
+		-moz-transform: perspective(400px) rotateY(0deg);
+		opacity: 1;
+	}
 	100% {
-        -moz-transform: perspective(400px) rotateY(90deg);
-        opacity: 0;
-    }
+		-moz-transform: perspective(400px) rotateY(90deg);
+		opacity: 0;
+	}
 }
+
 @-o-keyframes flipOutY {
-    0% {
-        -o-transform: perspective(400px) rotateY(0deg);
-        opacity: 1;
-    }
+	0% {
+		-o-transform: perspective(400px) rotateY(0deg);
+		opacity: 1;
+	}
 	100% {
-        -o-transform: perspective(400px) rotateY(90deg);
-        opacity: 0;
-    }
+		-o-transform: perspective(400px) rotateY(90deg);
+		opacity: 0;
+	}
 }
+
 @keyframes flipOutY {
-    0% {
-        transform: perspective(400px) rotateY(0deg);
-        opacity: 1;
-    }
+	0% {
+		transform: perspective(400px) rotateY(0deg);
+		opacity: 1;
+	}
 	100% {
-        transform: perspective(400px) rotateY(90deg);
-        opacity: 0;
-    }
+		transform: perspective(400px) rotateY(90deg);
+		opacity: 0;
+	}
 }
 
 .animated.flipOutY {
@@ -931,24 +1242,41 @@ body .ux-notification-light {
 	backface-visibility: visible !important;
 	animation-name: flipOutY;
 }
+
 @-webkit-keyframes fadeIn {
-	0% {opacity: 0;}
-	100% {opacity: 1;}
+	0% {
+		opacity: 0;
+	}
+	100% {
+		opacity: 1;
+	}
 }
 
 @-moz-keyframes fadeIn {
-	0% {opacity: 0;}
-	100% {opacity: 1;}
+	0% {
+		opacity: 0;
+	}
+	100% {
+		opacity: 1;
+	}
 }
 
 @-o-keyframes fadeIn {
-	0% {opacity: 0;}
-	100% {opacity: 1;}
+	0% {
+		opacity: 0;
+	}
+	100% {
+		opacity: 1;
+	}
 }
 
 @keyframes fadeIn {
-	0% {opacity: 0;}
-	100% {opacity: 1;}
+	0% {
+		opacity: 0;
+	}
+	100% {
+		opacity: 1;
+	}
 }
 
 .animated.fadeIn {
@@ -957,12 +1285,12 @@ body .ux-notification-light {
 	-o-animation-name: fadeIn;
 	animation-name: fadeIn;
 }
+
 @-webkit-keyframes fadeInUp {
 	0% {
 		opacity: 0;
 		-webkit-transform: translateY(20px);
 	}
-
 	100% {
 		opacity: 1;
 		-webkit-transform: translateY(0);
@@ -974,7 +1302,6 @@ body .ux-notification-light {
 		opacity: 0;
 		-moz-transform: translateY(20px);
 	}
-
 	100% {
 		opacity: 1;
 		-moz-transform: translateY(0);
@@ -986,7 +1313,6 @@ body .ux-notification-light {
 		opacity: 0;
 		-o-transform: translateY(20px);
 	}
-
 	100% {
 		opacity: 1;
 		-o-transform: translateY(0);
@@ -998,7 +1324,6 @@ body .ux-notification-light {
 		opacity: 0;
 		transform: translateY(20px);
 	}
-
 	100% {
 		opacity: 1;
 		transform: translateY(0);
@@ -1011,12 +1336,12 @@ body .ux-notification-light {
 	-o-animation-name: fadeInUp;
 	animation-name: fadeInUp;
 }
+
 @-webkit-keyframes fadeInDown {
 	0% {
 		opacity: 0;
 		-webkit-transform: translateY(-20px);
 	}
-
 	100% {
 		opacity: 1;
 		-webkit-transform: translateY(0);
@@ -1028,7 +1353,6 @@ body .ux-notification-light {
 		opacity: 0;
 		-moz-transform: translateY(-20px);
 	}
-
 	100% {
 		opacity: 1;
 		-moz-transform: translateY(0);
@@ -1040,7 +1364,6 @@ body .ux-notification-light {
 		opacity: 0;
 		-o-transform: translateY(-20px);
 	}
-
 	100% {
 		opacity: 1;
 		-o-transform: translateY(0);
@@ -1052,7 +1375,6 @@ body .ux-notification-light {
 		opacity: 0;
 		transform: translateY(-20px);
 	}
-
 	100% {
 		opacity: 1;
 		transform: translateY(0);
@@ -1065,12 +1387,12 @@ body .ux-notification-light {
 	-o-animation-name: fadeInDown;
 	animation-name: fadeInDown;
 }
+
 @-webkit-keyframes fadeInLeft {
 	0% {
 		opacity: 0;
 		-webkit-transform: translateX(-20px);
 	}
-
 	100% {
 		opacity: 1;
 		-webkit-transform: translateX(0);
@@ -1082,7 +1404,6 @@ body .ux-notification-light {
 		opacity: 0;
 		-moz-transform: translateX(-20px);
 	}
-
 	100% {
 		opacity: 1;
 		-moz-transform: translateX(0);
@@ -1094,7 +1415,6 @@ body .ux-notification-light {
 		opacity: 0;
 		-o-transform: translateX(-20px);
 	}
-
 	100% {
 		opacity: 1;
 		-o-transform: translateX(0);
@@ -1106,7 +1426,6 @@ body .ux-notification-light {
 		opacity: 0;
 		transform: translateX(-20px);
 	}
-
 	100% {
 		opacity: 1;
 		transform: translateX(0);
@@ -1119,12 +1438,12 @@ body .ux-notification-light {
 	-o-animation-name: fadeInLeft;
 	animation-name: fadeInLeft;
 }
+
 @-webkit-keyframes fadeInRight {
 	0% {
 		opacity: 0;
 		-webkit-transform: translateX(20px);
 	}
-
 	100% {
 		opacity: 1;
 		-webkit-transform: translateX(0);
@@ -1136,7 +1455,6 @@ body .ux-notification-light {
 		opacity: 0;
 		-moz-transform: translateX(20px);
 	}
-
 	100% {
 		opacity: 1;
 		-moz-transform: translateX(0);
@@ -1148,7 +1466,6 @@ body .ux-notification-light {
 		opacity: 0;
 		-o-transform: translateX(20px);
 	}
-
 	100% {
 		opacity: 1;
 		-o-transform: translateX(0);
@@ -1160,7 +1477,6 @@ body .ux-notification-light {
 		opacity: 0;
 		transform: translateX(20px);
 	}
-
 	100% {
 		opacity: 1;
 		transform: translateX(0);
@@ -1173,12 +1489,12 @@ body .ux-notification-light {
 	-o-animation-name: fadeInRight;
 	animation-name: fadeInRight;
 }
+
 @-webkit-keyframes fadeInUpBig {
 	0% {
 		opacity: 0;
 		-webkit-transform: translateY(2000px);
 	}
-
 	100% {
 		opacity: 1;
 		-webkit-transform: translateY(0);
@@ -1190,7 +1506,6 @@ body .ux-notification-light {
 		opacity: 0;
 		-moz-transform: translateY(2000px);
 	}
-
 	100% {
 		opacity: 1;
 		-moz-transform: translateY(0);
@@ -1202,7 +1517,6 @@ body .ux-notification-light {
 		opacity: 0;
 		-o-transform: translateY(2000px);
 	}
-
 	100% {
 		opacity: 1;
 		-o-transform: translateY(0);
@@ -1214,7 +1528,6 @@ body .ux-notification-light {
 		opacity: 0;
 		transform: translateY(2000px);
 	}
-
 	100% {
 		opacity: 1;
 		transform: translateY(0);
@@ -1227,12 +1540,12 @@ body .ux-notification-light {
 	-o-animation-name: fadeInUpBig;
 	animation-name: fadeInUpBig;
 }
+
 @-webkit-keyframes fadeInDownBig {
 	0% {
 		opacity: 0;
 		-webkit-transform: translateY(-2000px);
 	}
-
 	100% {
 		opacity: 1;
 		-webkit-transform: translateY(0);
@@ -1244,7 +1557,6 @@ body .ux-notification-light {
 		opacity: 0;
 		-moz-transform: translateY(-2000px);
 	}
-
 	100% {
 		opacity: 1;
 		-moz-transform: translateY(0);
@@ -1256,7 +1568,6 @@ body .ux-notification-light {
 		opacity: 0;
 		-o-transform: translateY(-2000px);
 	}
-
 	100% {
 		opacity: 1;
 		-o-transform: translateY(0);
@@ -1268,7 +1579,6 @@ body .ux-notification-light {
 		opacity: 0;
 		transform: translateY(-2000px);
 	}
-
 	100% {
 		opacity: 1;
 		transform: translateY(0);
@@ -1281,45 +1591,45 @@ body .ux-notification-light {
 	-o-animation-name: fadeInDownBig;
 	animation-name: fadeInDownBig;
 }
+
 @-webkit-keyframes fadeInLeftBig {
 	0% {
 		opacity: 0;
 		-webkit-transform: translateX(-2000px);
 	}
-
 	100% {
 		opacity: 1;
 		-webkit-transform: translateX(0);
 	}
 }
+
 @-moz-keyframes fadeInLeftBig {
 	0% {
 		opacity: 0;
 		-moz-transform: translateX(-2000px);
 	}
-
 	100% {
 		opacity: 1;
 		-moz-transform: translateX(0);
 	}
 }
+
 @-o-keyframes fadeInLeftBig {
 	0% {
 		opacity: 0;
 		-o-transform: translateX(-2000px);
 	}
-
 	100% {
 		opacity: 1;
 		-o-transform: translateX(0);
 	}
 }
+
 @keyframes fadeInLeftBig {
 	0% {
 		opacity: 0;
 		transform: translateX(-2000px);
 	}
-
 	100% {
 		opacity: 1;
 		transform: translateX(0);
@@ -1332,12 +1642,12 @@ body .ux-notification-light {
 	-o-animation-name: fadeInLeftBig;
 	animation-name: fadeInLeftBig;
 }
+
 @-webkit-keyframes fadeInRightBig {
 	0% {
 		opacity: 0;
 		-webkit-transform: translateX(2000px);
 	}
-
 	100% {
 		opacity: 1;
 		-webkit-transform: translateX(0);
@@ -1349,7 +1659,6 @@ body .ux-notification-light {
 		opacity: 0;
 		-moz-transform: translateX(2000px);
 	}
-
 	100% {
 		opacity: 1;
 		-moz-transform: translateX(0);
@@ -1361,7 +1670,6 @@ body .ux-notification-light {
 		opacity: 0;
 		-o-transform: translateX(2000px);
 	}
-
 	100% {
 		opacity: 1;
 		-o-transform: translateX(0);
@@ -1373,7 +1681,6 @@ body .ux-notification-light {
 		opacity: 0;
 		transform: translateX(2000px);
 	}
-
 	100% {
 		opacity: 1;
 		transform: translateX(0);
@@ -1386,24 +1693,41 @@ body .ux-notification-light {
 	-o-animation-name: fadeInRightBig;
 	animation-name: fadeInRightBig;
 }
+
 @-webkit-keyframes fadeOut {
-	0% {opacity: 1;}
-	100% {opacity: 0;}
+	0% {
+		opacity: 1;
+	}
+	100% {
+		opacity: 0;
+	}
 }
 
 @-moz-keyframes fadeOut {
-	0% {opacity: 1;}
-	100% {opacity: 0;}
+	0% {
+		opacity: 1;
+	}
+	100% {
+		opacity: 0;
+	}
 }
 
 @-o-keyframes fadeOut {
-	0% {opacity: 1;}
-	100% {opacity: 0;}
+	0% {
+		opacity: 1;
+	}
+	100% {
+		opacity: 0;
+	}
 }
 
 @keyframes fadeOut {
-	0% {opacity: 1;}
-	100% {opacity: 0;}
+	0% {
+		opacity: 1;
+	}
+	100% {
+		opacity: 0;
+	}
 }
 
 .animated.fadeOut {
@@ -1412,45 +1736,45 @@ body .ux-notification-light {
 	-o-animation-name: fadeOut;
 	animation-name: fadeOut;
 }
+
 @-webkit-keyframes fadeOutUp {
 	0% {
 		opacity: 1;
 		-webkit-transform: translateY(0);
 	}
-
 	100% {
 		opacity: 0;
 		-webkit-transform: translateY(-20px);
 	}
 }
+
 @-moz-keyframes fadeOutUp {
 	0% {
 		opacity: 1;
 		-moz-transform: translateY(0);
 	}
-
 	100% {
 		opacity: 0;
 		-moz-transform: translateY(-20px);
 	}
 }
+
 @-o-keyframes fadeOutUp {
 	0% {
 		opacity: 1;
 		-o-transform: translateY(0);
 	}
-
 	100% {
 		opacity: 0;
 		-o-transform: translateY(-20px);
 	}
 }
+
 @keyframes fadeOutUp {
 	0% {
 		opacity: 1;
 		transform: translateY(0);
 	}
-
 	100% {
 		opacity: 0;
 		transform: translateY(-20px);
@@ -1463,12 +1787,12 @@ body .ux-notification-light {
 	-o-animation-name: fadeOutUp;
 	animation-name: fadeOutUp;
 }
+
 @-webkit-keyframes fadeOutDown {
 	0% {
 		opacity: 1;
 		-webkit-transform: translateY(0);
 	}
-
 	100% {
 		opacity: 0;
 		-webkit-transform: translateY(20px);
@@ -1480,7 +1804,6 @@ body .ux-notification-light {
 		opacity: 1;
 		-moz-transform: translateY(0);
 	}
-
 	100% {
 		opacity: 0;
 		-moz-transform: translateY(20px);
@@ -1492,7 +1815,6 @@ body .ux-notification-light {
 		opacity: 1;
 		-o-transform: translateY(0);
 	}
-
 	100% {
 		opacity: 0;
 		-o-transform: translateY(20px);
@@ -1504,7 +1826,6 @@ body .ux-notification-light {
 		opacity: 1;
 		transform: translateY(0);
 	}
-
 	100% {
 		opacity: 0;
 		transform: translateY(20px);
@@ -1517,12 +1838,12 @@ body .ux-notification-light {
 	-o-animation-name: fadeOutDown;
 	animation-name: fadeOutDown;
 }
+
 @-webkit-keyframes fadeOutLeft {
 	0% {
 		opacity: 1;
 		-webkit-transform: translateX(0);
 	}
-
 	100% {
 		opacity: 0;
 		-webkit-transform: translateX(-20px);
@@ -1534,7 +1855,6 @@ body .ux-notification-light {
 		opacity: 1;
 		-moz-transform: translateX(0);
 	}
-
 	100% {
 		opacity: 0;
 		-moz-transform: translateX(-20px);
@@ -1546,7 +1866,6 @@ body .ux-notification-light {
 		opacity: 1;
 		-o-transform: translateX(0);
 	}
-
 	100% {
 		opacity: 0;
 		-o-transform: translateX(-20px);
@@ -1558,7 +1877,6 @@ body .ux-notification-light {
 		opacity: 1;
 		transform: translateX(0);
 	}
-
 	100% {
 		opacity: 0;
 		transform: translateX(-20px);
@@ -1571,12 +1889,12 @@ body .ux-notification-light {
 	-o-animation-name: fadeOutLeft;
 	animation-name: fadeOutLeft;
 }
+
 @-webkit-keyframes fadeOutRight {
 	0% {
 		opacity: 1;
 		-webkit-transform: translateX(0);
 	}
-
 	100% {
 		opacity: 0;
 		-webkit-transform: translateX(20px);
@@ -1588,7 +1906,6 @@ body .ux-notification-light {
 		opacity: 1;
 		-moz-transform: translateX(0);
 	}
-
 	100% {
 		opacity: 0;
 		-moz-transform: translateX(20px);
@@ -1600,7 +1917,6 @@ body .ux-notification-light {
 		opacity: 1;
 		-o-transform: translateX(0);
 	}
-
 	100% {
 		opacity: 0;
 		-o-transform: translateX(20px);
@@ -1612,7 +1928,6 @@ body .ux-notification-light {
 		opacity: 1;
 		transform: translateX(0);
 	}
-
 	100% {
 		opacity: 0;
 		transform: translateX(20px);
@@ -1625,12 +1940,12 @@ body .ux-notification-light {
 	-o-animation-name: fadeOutRight;
 	animation-name: fadeOutRight;
 }
+
 @-webkit-keyframes fadeOutUpBig {
 	0% {
 		opacity: 1;
 		-webkit-transform: translateY(0);
 	}
-
 	100% {
 		opacity: 0;
 		-webkit-transform: translateY(-2000px);
@@ -1642,7 +1957,6 @@ body .ux-notification-light {
 		opacity: 1;
 		-moz-transform: translateY(0);
 	}
-
 	100% {
 		opacity: 0;
 		-moz-transform: translateY(-2000px);
@@ -1654,7 +1968,6 @@ body .ux-notification-light {
 		opacity: 1;
 		-o-transform: translateY(0);
 	}
-
 	100% {
 		opacity: 0;
 		-o-transform: translateY(-2000px);
@@ -1666,7 +1979,6 @@ body .ux-notification-light {
 		opacity: 1;
 		transform: translateY(0);
 	}
-
 	100% {
 		opacity: 0;
 		transform: translateY(-2000px);
@@ -1679,12 +1991,12 @@ body .ux-notification-light {
 	-o-animation-name: fadeOutUpBig;
 	animation-name: fadeOutUpBig;
 }
+
 @-webkit-keyframes fadeOutDownBig {
 	0% {
 		opacity: 1;
 		-webkit-transform: translateY(0);
 	}
-
 	100% {
 		opacity: 0;
 		-webkit-transform: translateY(2000px);
@@ -1696,7 +2008,6 @@ body .ux-notification-light {
 		opacity: 1;
 		-moz-transform: translateY(0);
 	}
-
 	100% {
 		opacity: 0;
 		-moz-transform: translateY(2000px);
@@ -1708,7 +2019,6 @@ body .ux-notification-light {
 		opacity: 1;
 		-o-transform: translateY(0);
 	}
-
 	100% {
 		opacity: 0;
 		-o-transform: translateY(2000px);
@@ -1720,7 +2030,6 @@ body .ux-notification-light {
 		opacity: 1;
 		transform: translateY(0);
 	}
-
 	100% {
 		opacity: 0;
 		transform: translateY(2000px);
@@ -1733,12 +2042,12 @@ body .ux-notification-light {
 	-o-animation-name: fadeOutDownBig;
 	animation-name: fadeOutDownBig;
 }
+
 @-webkit-keyframes fadeOutLeftBig {
 	0% {
 		opacity: 1;
 		-webkit-transform: translateX(0);
 	}
-
 	100% {
 		opacity: 0;
 		-webkit-transform: translateX(-2000px);
@@ -1750,7 +2059,6 @@ body .ux-notification-light {
 		opacity: 1;
 		-moz-transform: translateX(0);
 	}
-
 	100% {
 		opacity: 0;
 		-moz-transform: translateX(-2000px);
@@ -1762,7 +2070,6 @@ body .ux-notification-light {
 		opacity: 1;
 		-o-transform: translateX(0);
 	}
-
 	100% {
 		opacity: 0;
 		-o-transform: translateX(-2000px);
@@ -1774,7 +2081,6 @@ body .ux-notification-light {
 		opacity: 1;
 		transform: translateX(0);
 	}
-
 	100% {
 		opacity: 0;
 		transform: translateX(-2000px);
@@ -1787,45 +2093,45 @@ body .ux-notification-light {
 	-o-animation-name: fadeOutLeftBig;
 	animation-name: fadeOutLeftBig;
 }
+
 @-webkit-keyframes fadeOutRightBig {
 	0% {
 		opacity: 1;
 		-webkit-transform: translateX(0);
 	}
-
 	100% {
 		opacity: 0;
 		-webkit-transform: translateX(2000px);
 	}
 }
+
 @-moz-keyframes fadeOutRightBig {
 	0% {
 		opacity: 1;
 		-moz-transform: translateX(0);
 	}
-
 	100% {
 		opacity: 0;
 		-moz-transform: translateX(2000px);
 	}
 }
+
 @-o-keyframes fadeOutRightBig {
 	0% {
 		opacity: 1;
 		-o-transform: translateX(0);
 	}
-
 	100% {
 		opacity: 0;
 		-o-transform: translateX(2000px);
 	}
 }
+
 @keyframes fadeOutRightBig {
 	0% {
 		opacity: 1;
 		transform: translateX(0);
 	}
-
 	100% {
 		opacity: 0;
 		transform: translateX(2000px);
@@ -1838,21 +2144,19 @@ body .ux-notification-light {
 	-o-animation-name: fadeOutRightBig;
 	animation-name: fadeOutRightBig;
 }
+
 @-webkit-keyframes bounceIn {
 	0% {
 		opacity: 0;
 		-webkit-transform: scale(.3);
 	}
-
 	50% {
 		opacity: 1;
 		-webkit-transform: scale(1.05);
 	}
-
 	70% {
 		-webkit-transform: scale(.9);
 	}
-
 	100% {
 		-webkit-transform: scale(1);
 	}
@@ -1863,16 +2167,13 @@ body .ux-notification-light {
 		opacity: 0;
 		-moz-transform: scale(.3);
 	}
-
 	50% {
 		opacity: 1;
 		-moz-transform: scale(1.05);
 	}
-
 	70% {
 		-moz-transform: scale(.9);
 	}
-
 	100% {
 		-moz-transform: scale(1);
 	}
@@ -1883,16 +2184,13 @@ body .ux-notification-light {
 		opacity: 0;
 		-o-transform: scale(.3);
 	}
-
 	50% {
 		opacity: 1;
 		-o-transform: scale(1.05);
 	}
-
 	70% {
 		-o-transform: scale(.9);
 	}
-
 	100% {
 		-o-transform: scale(1);
 	}
@@ -1903,16 +2201,13 @@ body .ux-notification-light {
 		opacity: 0;
 		transform: scale(.3);
 	}
-
 	50% {
 		opacity: 1;
 		transform: scale(1.05);
 	}
-
 	70% {
 		transform: scale(.9);
 	}
-
 	100% {
 		transform: scale(1);
 	}
@@ -1923,7 +2218,6 @@ body .ux-notification-light {
 		opacity: 0;
 		-webkit-transform: translateY(-2000px);
 	}
-
 	100% {
 		-webkit-transform: translateY(0);
 	}
@@ -1934,7 +2228,6 @@ body .ux-notification-light {
 		opacity: 0;
 		-moz-transform: translateY(-2000px);
 	}
-
 	100% {
 		-moz-transform: translateY(0);
 	}
@@ -1945,7 +2238,6 @@ body .ux-notification-light {
 		opacity: 0;
 		-o-transform: translateY(-2000px);
 	}
-
 	100% {
 		-o-transform: translateY(0);
 	}
@@ -1956,7 +2248,6 @@ body .ux-notification-light {
 		opacity: 0;
 		transform: translateY(-2000px);
 	}
-
 	100% {
 		transform: translateY(0);
 	}
@@ -1974,7 +2265,6 @@ body .ux-notification-light {
 		opacity: 0;
 		-webkit-transform: translateX(-2000px);
 	}
-
 	100% {
 		-webkit-transform: translateX(0);
 	}
@@ -1985,7 +2275,6 @@ body .ux-notification-light {
 		opacity: 0;
 		-moz-transform: translateX(-2000px);
 	}
-
 	100% {
 		-moz-transform: translateX(0);
 	}
@@ -1996,7 +2285,6 @@ body .ux-notification-light {
 		opacity: 0;
 		-o-transform: translateX(-2000px);
 	}
-
 	100% {
 		-o-transform: translateX(0);
 	}
@@ -2007,7 +2295,6 @@ body .ux-notification-light {
 		opacity: 0;
 		transform: translateX(-2000px);
 	}
-
 	100% {
 		transform: translateX(0);
 	}
@@ -2025,7 +2312,6 @@ body .ux-notification-light {
 		opacity: 0;
 		-webkit-transform: translateX(2000px);
 	}
-
 	100% {
 		-webkit-transform: translateX(0);
 	}
@@ -2036,7 +2322,6 @@ body .ux-notification-light {
 		opacity: 0;
 		-moz-transform: translateX(2000px);
 	}
-
 	100% {
 		-moz-transform: translateX(0);
 	}
@@ -2047,7 +2332,6 @@ body .ux-notification-light {
 		opacity: 0;
 		-o-transform: translateX(2000px);
 	}
-
 	100% {
 		-o-transform: translateX(0);
 	}
@@ -2058,7 +2342,6 @@ body .ux-notification-light {
 		opacity: 0;
 		transform: translateX(2000px);
 	}
-
 	100% {
 		transform: translateX(0);
 	}
@@ -2075,7 +2358,6 @@ body .ux-notification-light {
 	0% {
 		-webkit-transform: translateX(0);
 	}
-
 	100% {
 		opacity: 0;
 		-webkit-transform: translateX(-2000px);
@@ -2086,7 +2368,6 @@ body .ux-notification-light {
 	0% {
 		-moz-transform: translateX(0);
 	}
-
 	100% {
 		opacity: 0;
 		-moz-transform: translateX(-2000px);
@@ -2097,7 +2378,6 @@ body .ux-notification-light {
 	0% {
 		-o-transform: translateX(0);
 	}
-
 	100% {
 		opacity: 0;
 		-o-transform: translateX(-2000px);
@@ -2108,7 +2388,6 @@ body .ux-notification-light {
 	0% {
 		transform: translateX(0);
 	}
-
 	100% {
 		opacity: 0;
 		transform: translateX(-2000px);
@@ -2126,7 +2405,6 @@ body .ux-notification-light {
 	0% {
 		-webkit-transform: translateX(0);
 	}
-
 	100% {
 		opacity: 0;
 		-webkit-transform: translateX(2000px);
@@ -2137,7 +2415,6 @@ body .ux-notification-light {
 	0% {
 		-moz-transform: translateX(0);
 	}
-
 	100% {
 		opacity: 0;
 		-moz-transform: translateX(2000px);
@@ -2148,7 +2425,6 @@ body .ux-notification-light {
 	0% {
 		-o-transform: translateX(0);
 	}
-
 	100% {
 		opacity: 0;
 		-o-transform: translateX(2000px);
@@ -2159,7 +2435,6 @@ body .ux-notification-light {
 	0% {
 		transform: translateX(0);
 	}
-
 	100% {
 		opacity: 0;
 		transform: translateX(2000px);
@@ -2177,7 +2452,6 @@ body .ux-notification-light {
 	0% {
 		-webkit-transform: translateY(0);
 	}
-
 	100% {
 		opacity: 0;
 		-webkit-transform: translateY(-2000px);
@@ -2188,7 +2462,6 @@ body .ux-notification-light {
 	0% {
 		-moz-transform: translateY(0);
 	}
-
 	100% {
 		opacity: 0;
 		-moz-transform: translateY(-2000px);
@@ -2199,7 +2472,6 @@ body .ux-notification-light {
 	0% {
 		-o-transform: translateY(0);
 	}
-
 	100% {
 		opacity: 0;
 		-o-transform: translateY(-2000px);
@@ -2210,7 +2482,6 @@ body .ux-notification-light {
 	0% {
 		transform: translateY(0);
 	}
-
 	100% {
 		opacity: 0;
 		transform: translateY(-2000px);
@@ -2230,40 +2501,36 @@ body .ux-notification-light {
 	-o-animation-name: bounceIn;
 	animation-name: bounceIn;
 }
+
 @-webkit-keyframes bounceInUp {
 	0% {
 		opacity: 0;
 		-webkit-transform: translateY(2000px);
 	}
-
 	60% {
 		opacity: 1;
 		-webkit-transform: translateY(-30px);
 	}
-
 	80% {
 		-webkit-transform: translateY(10px);
 	}
-
 	100% {
 		-webkit-transform: translateY(0);
 	}
 }
+
 @-moz-keyframes bounceInUp {
 	0% {
 		opacity: 0;
 		-moz-transform: translateY(2000px);
 	}
-
 	60% {
 		opacity: 1;
 		-moz-transform: translateY(-30px);
 	}
-
 	80% {
 		-moz-transform: translateY(10px);
 	}
-
 	100% {
 		-moz-transform: translateY(0);
 	}
@@ -2274,16 +2541,13 @@ body .ux-notification-light {
 		opacity: 0;
 		-o-transform: translateY(2000px);
 	}
-
 	60% {
 		opacity: 1;
 		-o-transform: translateY(-30px);
 	}
-
 	80% {
 		-o-transform: translateY(10px);
 	}
-
 	100% {
 		-o-transform: translateY(0);
 	}
@@ -2294,16 +2558,13 @@ body .ux-notification-light {
 		opacity: 0;
 		transform: translateY(2000px);
 	}
-
 	60% {
 		opacity: 1;
 		transform: translateY(-30px);
 	}
-
 	80% {
 		transform: translateY(10px);
 	}
-
 	100% {
 		transform: translateY(0);
 	}
@@ -2315,21 +2576,19 @@ body .ux-notification-light {
 	-o-animation-name: bounceInUp;
 	animation-name: bounceInUp;
 }
+
 @-webkit-keyframes bounceInDown {
 	0% {
 		opacity: 0;
 		-webkit-transform: translateY(-2000px);
 	}
-
 	60% {
 		opacity: 1;
 		-webkit-transform: translateY(30px);
 	}
-
 	80% {
 		-webkit-transform: translateY(-10px);
 	}
-
 	100% {
 		-webkit-transform: translateY(0);
 	}
@@ -2340,16 +2599,13 @@ body .ux-notification-light {
 		opacity: 0;
 		-moz-transform: translateY(-2000px);
 	}
-
 	60% {
 		opacity: 1;
 		-moz-transform: translateY(30px);
 	}
-
 	80% {
 		-moz-transform: translateY(-10px);
 	}
-
 	100% {
 		-moz-transform: translateY(0);
 	}
@@ -2360,16 +2616,13 @@ body .ux-notification-light {
 		opacity: 0;
 		-o-transform: translateY(-2000px);
 	}
-
 	60% {
 		opacity: 1;
 		-o-transform: translateY(30px);
 	}
-
 	80% {
 		-o-transform: translateY(-10px);
 	}
-
 	100% {
 		-o-transform: translateY(0);
 	}
@@ -2380,16 +2633,13 @@ body .ux-notification-light {
 		opacity: 0;
 		transform: translateY(-2000px);
 	}
-
 	60% {
 		opacity: 1;
 		transform: translateY(30px);
 	}
-
 	80% {
 		transform: translateY(-10px);
 	}
-
 	100% {
 		transform: translateY(0);
 	}
@@ -2401,21 +2651,19 @@ body .ux-notification-light {
 	-o-animation-name: bounceInDown;
 	animation-name: bounceInDown;
 }
+
 @-webkit-keyframes bounceInLeft {
 	0% {
 		opacity: 0;
 		-webkit-transform: translateX(-2000px);
 	}
-
 	60% {
 		opacity: 1;
 		-webkit-transform: translateX(30px);
 	}
-
 	80% {
 		-webkit-transform: translateX(-10px);
 	}
-
 	100% {
 		-webkit-transform: translateX(0);
 	}
@@ -2426,16 +2674,13 @@ body .ux-notification-light {
 		opacity: 0;
 		-moz-transform: translateX(-2000px);
 	}
-
 	60% {
 		opacity: 1;
 		-moz-transform: translateX(30px);
 	}
-
 	80% {
 		-moz-transform: translateX(-10px);
 	}
-
 	100% {
 		-moz-transform: translateX(0);
 	}
@@ -2446,16 +2691,13 @@ body .ux-notification-light {
 		opacity: 0;
 		-o-transform: translateX(-2000px);
 	}
-
 	60% {
 		opacity: 1;
 		-o-transform: translateX(30px);
 	}
-
 	80% {
 		-o-transform: translateX(-10px);
 	}
-
 	100% {
 		-o-transform: translateX(0);
 	}
@@ -2466,16 +2708,13 @@ body .ux-notification-light {
 		opacity: 0;
 		transform: translateX(-2000px);
 	}
-
 	60% {
 		opacity: 1;
 		transform: translateX(30px);
 	}
-
 	80% {
 		transform: translateX(-10px);
 	}
-
 	100% {
 		transform: translateX(0);
 	}
@@ -2487,21 +2726,19 @@ body .ux-notification-light {
 	-o-animation-name: bounceInLeft;
 	animation-name: bounceInLeft;
 }
+
 @-webkit-keyframes bounceInRight {
 	0% {
 		opacity: 0;
 		-webkit-transform: translateX(2000px);
 	}
-
 	60% {
 		opacity: 1;
 		-webkit-transform: translateX(-30px);
 	}
-
 	80% {
 		-webkit-transform: translateX(10px);
 	}
-
 	100% {
 		-webkit-transform: translateX(0);
 	}
@@ -2512,16 +2749,13 @@ body .ux-notification-light {
 		opacity: 0;
 		-moz-transform: translateX(2000px);
 	}
-
 	60% {
 		opacity: 1;
 		-moz-transform: translateX(-30px);
 	}
-
 	80% {
 		-moz-transform: translateX(10px);
 	}
-
 	100% {
 		-moz-transform: translateX(0);
 	}
@@ -2532,16 +2766,13 @@ body .ux-notification-light {
 		opacity: 0;
 		-o-transform: translateX(2000px);
 	}
-
 	60% {
 		opacity: 1;
 		-o-transform: translateX(-30px);
 	}
-
 	80% {
 		-o-transform: translateX(10px);
 	}
-
 	100% {
 		-o-transform: translateX(0);
 	}
@@ -2552,16 +2783,13 @@ body .ux-notification-light {
 		opacity: 0;
 		transform: translateX(2000px);
 	}
-
 	60% {
 		opacity: 1;
 		transform: translateX(-30px);
 	}
-
 	80% {
 		transform: translateX(10px);
 	}
-
 	100% {
 		transform: translateX(0);
 	}
@@ -2573,20 +2801,18 @@ body .ux-notification-light {
 	-o-animation-name: bounceInRight;
 	animation-name: bounceInRight;
 }
+
 @-webkit-keyframes bounceOut {
 	0% {
 		-webkit-transform: scale(1);
 	}
-
 	25% {
 		-webkit-transform: scale(.95);
 	}
-
 	50% {
 		opacity: 1;
 		-webkit-transform: scale(1.1);
 	}
-
 	100% {
 		opacity: 0;
 		-webkit-transform: scale(.3);
@@ -2597,16 +2823,13 @@ body .ux-notification-light {
 	0% {
 		-moz-transform: scale(1);
 	}
-
 	25% {
 		-moz-transform: scale(.95);
 	}
-
 	50% {
 		opacity: 1;
 		-moz-transform: scale(1.1);
 	}
-
 	100% {
 		opacity: 0;
 		-moz-transform: scale(.3);
@@ -2617,16 +2840,13 @@ body .ux-notification-light {
 	0% {
 		-o-transform: scale(1);
 	}
-
 	25% {
 		-o-transform: scale(.95);
 	}
-
 	50% {
 		opacity: 1;
 		-o-transform: scale(1.1);
 	}
-
 	100% {
 		opacity: 0;
 		-o-transform: scale(.3);
@@ -2637,16 +2857,13 @@ body .ux-notification-light {
 	0% {
 		transform: scale(1);
 	}
-
 	25% {
 		transform: scale(.95);
 	}
-
 	50% {
 		opacity: 1;
 		transform: scale(1.1);
 	}
-
 	100% {
 		opacity: 0;
 		transform: scale(.3);
@@ -2659,16 +2876,15 @@ body .ux-notification-light {
 	-o-animation-name: bounceOut;
 	animation-name: bounceOut;
 }
+
 @-webkit-keyframes bounceOutUp {
 	0% {
 		-webkit-transform: translateY(0);
 	}
-
 	20% {
 		opacity: 1;
 		-webkit-transform: translateY(20px);
 	}
-
 	100% {
 		opacity: 0;
 		-webkit-transform: translateY(-2000px);
@@ -2679,12 +2895,10 @@ body .ux-notification-light {
 	0% {
 		-moz-transform: translateY(0);
 	}
-
 	20% {
 		opacity: 1;
 		-moz-transform: translateY(20px);
 	}
-
 	100% {
 		opacity: 0;
 		-moz-transform: translateY(-2000px);
@@ -2695,12 +2909,10 @@ body .ux-notification-light {
 	0% {
 		-o-transform: translateY(0);
 	}
-
 	20% {
 		opacity: 1;
 		-o-transform: translateY(20px);
 	}
-
 	100% {
 		opacity: 0;
 		-o-transform: translateY(-2000px);
@@ -2711,12 +2923,10 @@ body .ux-notification-light {
 	0% {
 		transform: translateY(0);
 	}
-
 	20% {
 		opacity: 1;
 		transform: translateY(20px);
 	}
-
 	100% {
 		opacity: 0;
 		transform: translateY(-2000px);
@@ -2729,16 +2939,15 @@ body .ux-notification-light {
 	-o-animation-name: bounceOutUp;
 	animation-name: bounceOutUp;
 }
+
 @-webkit-keyframes bounceOutDown {
 	0% {
 		-webkit-transform: translateY(0);
 	}
-
 	20% {
 		opacity: 1;
 		-webkit-transform: translateY(-20px);
 	}
-
 	100% {
 		opacity: 0;
 		-webkit-transform: translateY(2000px);
@@ -2749,12 +2958,10 @@ body .ux-notification-light {
 	0% {
 		-moz-transform: translateY(0);
 	}
-
 	20% {
 		opacity: 1;
 		-moz-transform: translateY(-20px);
 	}
-
 	100% {
 		opacity: 0;
 		-moz-transform: translateY(2000px);
@@ -2765,12 +2972,10 @@ body .ux-notification-light {
 	0% {
 		-o-transform: translateY(0);
 	}
-
 	20% {
 		opacity: 1;
 		-o-transform: translateY(-20px);
 	}
-
 	100% {
 		opacity: 0;
 		-o-transform: translateY(2000px);
@@ -2781,12 +2986,10 @@ body .ux-notification-light {
 	0% {
 		transform: translateY(0);
 	}
-
 	20% {
 		opacity: 1;
 		transform: translateY(-20px);
 	}
-
 	100% {
 		opacity: 0;
 		transform: translateY(2000px);
@@ -2799,16 +3002,15 @@ body .ux-notification-light {
 	-o-animation-name: bounceOutDown;
 	animation-name: bounceOutDown;
 }
+
 @-webkit-keyframes bounceOutLeft {
 	0% {
 		-webkit-transform: translateX(0);
 	}
-
 	20% {
 		opacity: 1;
 		-webkit-transform: translateX(20px);
 	}
-
 	100% {
 		opacity: 0;
 		-webkit-transform: translateX(-2000px);
@@ -2819,12 +3021,10 @@ body .ux-notification-light {
 	0% {
 		-moz-transform: translateX(0);
 	}
-
 	20% {
 		opacity: 1;
 		-moz-transform: translateX(20px);
 	}
-
 	100% {
 		opacity: 0;
 		-moz-transform: translateX(-2000px);
@@ -2835,12 +3035,10 @@ body .ux-notification-light {
 	0% {
 		-o-transform: translateX(0);
 	}
-
 	20% {
 		opacity: 1;
 		-o-transform: translateX(20px);
 	}
-
 	100% {
 		opacity: 0;
 		-o-transform: translateX(-2000px);
@@ -2851,12 +3049,10 @@ body .ux-notification-light {
 	0% {
 		transform: translateX(0);
 	}
-
 	20% {
 		opacity: 1;
 		transform: translateX(20px);
 	}
-
 	100% {
 		opacity: 0;
 		transform: translateX(-2000px);
@@ -2869,16 +3065,15 @@ body .ux-notification-light {
 	-o-animation-name: bounceOutLeft;
 	animation-name: bounceOutLeft;
 }
+
 @-webkit-keyframes bounceOutRight {
 	0% {
 		-webkit-transform: translateX(0);
 	}
-
 	20% {
 		opacity: 1;
 		-webkit-transform: translateX(-20px);
 	}
-
 	100% {
 		opacity: 0;
 		-webkit-transform: translateX(2000px);
@@ -2889,12 +3084,10 @@ body .ux-notification-light {
 	0% {
 		-moz-transform: translateX(0);
 	}
-
 	20% {
 		opacity: 1;
 		-moz-transform: translateX(-20px);
 	}
-
 	100% {
 		opacity: 0;
 		-moz-transform: translateX(2000px);
@@ -2905,12 +3098,10 @@ body .ux-notification-light {
 	0% {
 		-o-transform: translateX(0);
 	}
-
 	20% {
 		opacity: 1;
 		-o-transform: translateX(-20px);
 	}
-
 	100% {
 		opacity: 0;
 		-o-transform: translateX(2000px);
@@ -2921,12 +3112,10 @@ body .ux-notification-light {
 	0% {
 		transform: translateX(0);
 	}
-
 	20% {
 		opacity: 1;
 		transform: translateX(-20px);
 	}
-
 	100% {
 		opacity: 0;
 		transform: translateX(2000px);
@@ -2939,52 +3128,52 @@ body .ux-notification-light {
 	-o-animation-name: bounceOutRight;
 	animation-name: bounceOutRight;
 }
+
 @-webkit-keyframes rotateIn {
 	0% {
 		-webkit-transform-origin: center center;
 		-webkit-transform: rotate(-200deg);
 		opacity: 0;
 	}
-
 	100% {
 		-webkit-transform-origin: center center;
 		-webkit-transform: rotate(0);
 		opacity: 1;
 	}
 }
+
 @-moz-keyframes rotateIn {
 	0% {
 		-moz-transform-origin: center center;
 		-moz-transform: rotate(-200deg);
 		opacity: 0;
 	}
-
 	100% {
 		-moz-transform-origin: center center;
 		-moz-transform: rotate(0);
 		opacity: 1;
 	}
 }
+
 @-o-keyframes rotateIn {
 	0% {
 		-o-transform-origin: center center;
 		-o-transform: rotate(-200deg);
 		opacity: 0;
 	}
-
 	100% {
 		-o-transform-origin: center center;
 		-o-transform: rotate(0);
 		opacity: 1;
 	}
 }
+
 @keyframes rotateIn {
 	0% {
 		transform-origin: center center;
 		transform: rotate(-200deg);
 		opacity: 0;
 	}
-
 	100% {
 		transform-origin: center center;
 		transform: rotate(0);
@@ -2998,13 +3187,13 @@ body .ux-notification-light {
 	-o-animation-name: rotateIn;
 	animation-name: rotateIn;
 }
+
 @-webkit-keyframes rotateInUpLeft {
 	0% {
 		-webkit-transform-origin: left bottom;
 		-webkit-transform: rotate(90deg);
 		opacity: 0;
 	}
-
 	100% {
 		-webkit-transform-origin: left bottom;
 		-webkit-transform: rotate(0);
@@ -3018,7 +3207,6 @@ body .ux-notification-light {
 		-moz-transform: rotate(90deg);
 		opacity: 0;
 	}
-
 	100% {
 		-moz-transform-origin: left bottom;
 		-moz-transform: rotate(0);
@@ -3032,7 +3220,6 @@ body .ux-notification-light {
 		-o-transform: rotate(90deg);
 		opacity: 0;
 	}
-
 	100% {
 		-o-transform-origin: left bottom;
 		-o-transform: rotate(0);
@@ -3046,7 +3233,6 @@ body .ux-notification-light {
 		transform: rotate(90deg);
 		opacity: 0;
 	}
-
 	100% {
 		transform-origin: left bottom;
 		transform: rotate(0);
@@ -3060,13 +3246,13 @@ body .ux-notification-light {
 	-o-animation-name: rotateInUpLeft;
 	animation-name: rotateInUpLeft;
 }
+
 @-webkit-keyframes rotateInDownLeft {
 	0% {
 		-webkit-transform-origin: left bottom;
 		-webkit-transform: rotate(-90deg);
 		opacity: 0;
 	}
-
 	100% {
 		-webkit-transform-origin: left bottom;
 		-webkit-transform: rotate(0);
@@ -3080,7 +3266,6 @@ body .ux-notification-light {
 		-moz-transform: rotate(-90deg);
 		opacity: 0;
 	}
-
 	100% {
 		-moz-transform-origin: left bottom;
 		-moz-transform: rotate(0);
@@ -3094,7 +3279,6 @@ body .ux-notification-light {
 		-o-transform: rotate(-90deg);
 		opacity: 0;
 	}
-
 	100% {
 		-o-transform-origin: left bottom;
 		-o-transform: rotate(0);
@@ -3108,7 +3292,6 @@ body .ux-notification-light {
 		transform: rotate(-90deg);
 		opacity: 0;
 	}
-
 	100% {
 		transform-origin: left bottom;
 		transform: rotate(0);
@@ -3122,13 +3305,13 @@ body .ux-notification-light {
 	-o-animation-name: rotateInDownLeft;
 	animation-name: rotateInDownLeft;
 }
+
 @-webkit-keyframes rotateInUpRight {
 	0% {
 		-webkit-transform-origin: right bottom;
 		-webkit-transform: rotate(-90deg);
 		opacity: 0;
 	}
-
 	100% {
 		-webkit-transform-origin: right bottom;
 		-webkit-transform: rotate(0);
@@ -3142,7 +3325,6 @@ body .ux-notification-light {
 		-moz-transform: rotate(-90deg);
 		opacity: 0;
 	}
-
 	100% {
 		-moz-transform-origin: right bottom;
 		-moz-transform: rotate(0);
@@ -3156,7 +3338,6 @@ body .ux-notification-light {
 		-o-transform: rotate(-90deg);
 		opacity: 0;
 	}
-
 	100% {
 		-o-transform-origin: right bottom;
 		-o-transform: rotate(0);
@@ -3170,7 +3351,6 @@ body .ux-notification-light {
 		transform: rotate(-90deg);
 		opacity: 0;
 	}
-
 	100% {
 		transform-origin: right bottom;
 		transform: rotate(0);
@@ -3184,13 +3364,13 @@ body .ux-notification-light {
 	-o-animation-name: rotateInUpRight;
 	animation-name: rotateInUpRight;
 }
+
 @-webkit-keyframes rotateInDownRight {
 	0% {
 		-webkit-transform-origin: right bottom;
 		-webkit-transform: rotate(90deg);
 		opacity: 0;
 	}
-
 	100% {
 		-webkit-transform-origin: right bottom;
 		-webkit-transform: rotate(0);
@@ -3204,7 +3384,6 @@ body .ux-notification-light {
 		-moz-transform: rotate(90deg);
 		opacity: 0;
 	}
-
 	100% {
 		-moz-transform-origin: right bottom;
 		-moz-transform: rotate(0);
@@ -3218,7 +3397,6 @@ body .ux-notification-light {
 		-o-transform: rotate(90deg);
 		opacity: 0;
 	}
-
 	100% {
 		-o-transform-origin: right bottom;
 		-o-transform: rotate(0);
@@ -3232,7 +3410,6 @@ body .ux-notification-light {
 		transform: rotate(90deg);
 		opacity: 0;
 	}
-
 	100% {
 		transform-origin: right bottom;
 		transform: rotate(0);
@@ -3246,13 +3423,13 @@ body .ux-notification-light {
 	-o-animation-name: rotateInDownRight;
 	animation-name: rotateInDownRight;
 }
+
 @-webkit-keyframes rotateOut {
 	0% {
 		-webkit-transform-origin: center center;
 		-webkit-transform: rotate(0);
 		opacity: 1;
 	}
-
 	100% {
 		-webkit-transform-origin: center center;
 		-webkit-transform: rotate(200deg);
@@ -3266,7 +3443,6 @@ body .ux-notification-light {
 		-moz-transform: rotate(0);
 		opacity: 1;
 	}
-
 	100% {
 		-moz-transform-origin: center center;
 		-moz-transform: rotate(200deg);
@@ -3280,7 +3456,6 @@ body .ux-notification-light {
 		-o-transform: rotate(0);
 		opacity: 1;
 	}
-
 	100% {
 		-o-transform-origin: center center;
 		-o-transform: rotate(200deg);
@@ -3294,7 +3469,6 @@ body .ux-notification-light {
 		transform: rotate(0);
 		opacity: 1;
 	}
-
 	100% {
 		transform-origin: center center;
 		transform: rotate(200deg);
@@ -3308,13 +3482,13 @@ body .ux-notification-light {
 	-o-animation-name: rotateOut;
 	animation-name: rotateOut;
 }
+
 @-webkit-keyframes rotateOutUpLeft {
 	0% {
 		-webkit-transform-origin: left bottom;
 		-webkit-transform: rotate(0);
 		opacity: 1;
 	}
-
 	100% {
 		-webkit-transform-origin: left bottom;
 		-webkit-transform: rotate(-90deg);
@@ -3328,7 +3502,6 @@ body .ux-notification-light {
 		-moz-transform: rotate(0);
 		opacity: 1;
 	}
-
 	100% {
 		-moz-transform-origin: left bottom;
 		-moz-transform: rotate(-90deg);
@@ -3342,7 +3515,6 @@ body .ux-notification-light {
 		-o-transform: rotate(0);
 		opacity: 1;
 	}
-
 	100% {
 		-o-transform-origin: left bottom;
 		-o-transform: rotate(-90deg);
@@ -3356,7 +3528,6 @@ body .ux-notification-light {
 		transform: rotate(0);
 		opacity: 1;
 	}
-
 	100% {
 		transform-origin: left bottom;
 		transform: rotate(-90deg);
@@ -3370,13 +3541,13 @@ body .ux-notification-light {
 	-o-animation-name: rotateOutUpLeft;
 	animation-name: rotateOutUpLeft;
 }
+
 @-webkit-keyframes rotateOutDownLeft {
 	0% {
 		-webkit-transform-origin: left bottom;
 		-webkit-transform: rotate(0);
 		opacity: 1;
 	}
-
 	100% {
 		-webkit-transform-origin: left bottom;
 		-webkit-transform: rotate(90deg);
@@ -3390,7 +3561,6 @@ body .ux-notification-light {
 		-moz-transform: rotate(0);
 		opacity: 1;
 	}
-
 	100% {
 		-moz-transform-origin: left bottom;
 		-moz-transform: rotate(90deg);
@@ -3404,7 +3574,6 @@ body .ux-notification-light {
 		-o-transform: rotate(0);
 		opacity: 1;
 	}
-
 	100% {
 		-o-transform-origin: left bottom;
 		-o-transform: rotate(90deg);
@@ -3418,7 +3587,6 @@ body .ux-notification-light {
 		transform: rotate(0);
 		opacity: 1;
 	}
-
 	100% {
 		transform-origin: left bottom;
 		transform: rotate(90deg);
@@ -3432,13 +3600,13 @@ body .ux-notification-light {
 	-o-animation-name: rotateOutDownLeft;
 	animation-name: rotateOutDownLeft;
 }
+
 @-webkit-keyframes rotateOutUpRight {
 	0% {
 		-webkit-transform-origin: right bottom;
 		-webkit-transform: rotate(0);
 		opacity: 1;
 	}
-
 	100% {
 		-webkit-transform-origin: right bottom;
 		-webkit-transform: rotate(90deg);
@@ -3452,7 +3620,6 @@ body .ux-notification-light {
 		-moz-transform: rotate(0);
 		opacity: 1;
 	}
-
 	100% {
 		-moz-transform-origin: right bottom;
 		-moz-transform: rotate(90deg);
@@ -3466,7 +3633,6 @@ body .ux-notification-light {
 		-o-transform: rotate(0);
 		opacity: 1;
 	}
-
 	100% {
 		-o-transform-origin: right bottom;
 		-o-transform: rotate(90deg);
@@ -3480,7 +3646,6 @@ body .ux-notification-light {
 		transform: rotate(0);
 		opacity: 1;
 	}
-
 	100% {
 		transform-origin: right bottom;
 		transform: rotate(90deg);
@@ -3494,13 +3659,13 @@ body .ux-notification-light {
 	-o-animation-name: rotateOutUpRight;
 	animation-name: rotateOutUpRight;
 }
+
 @-webkit-keyframes rotateOutDownRight {
 	0% {
 		-webkit-transform-origin: right bottom;
 		-webkit-transform: rotate(0);
 		opacity: 1;
 	}
-
 	100% {
 		-webkit-transform-origin: right bottom;
 		-webkit-transform: rotate(-90deg);
@@ -3514,7 +3679,6 @@ body .ux-notification-light {
 		-moz-transform: rotate(0);
 		opacity: 1;
 	}
-
 	100% {
 		-moz-transform-origin: right bottom;
 		-moz-transform: rotate(-90deg);
@@ -3528,7 +3692,6 @@ body .ux-notification-light {
 		-o-transform: rotate(0);
 		opacity: 1;
 	}
-
 	100% {
 		-o-transform-origin: right bottom;
 		-o-transform: rotate(-90deg);
@@ -3542,7 +3705,6 @@ body .ux-notification-light {
 		transform: rotate(0);
 		opacity: 1;
 	}
-
 	100% {
 		transform-origin: right bottom;
 		transform: rotate(-90deg);
@@ -3556,36 +3718,121 @@ body .ux-notification-light {
 	-o-animation-name: rotateOutDownRight;
 	animation-name: rotateOutDownRight;
 }
+
 @-webkit-keyframes hinge {
-	0% { -webkit-transform: rotate(0); -webkit-transform-origin: top left; -webkit-animation-timing-function: ease-in-out; }
-	20%, 60% { -webkit-transform: rotate(80deg); -webkit-transform-origin: top left; -webkit-animation-timing-function: ease-in-out; }
-	40% { -webkit-transform: rotate(60deg); -webkit-transform-origin: top left; -webkit-animation-timing-function: ease-in-out; }
-	80% { -webkit-transform: rotate(60deg) translateY(0); opacity: 1; -webkit-transform-origin: top left; -webkit-animation-timing-function: ease-in-out; }
-	100% { -webkit-transform: translateY(700px); opacity: 0; }
+	0% {
+		-webkit-transform: rotate(0);
+		-webkit-transform-origin: top left;
+		-webkit-animation-timing-function: ease-in-out;
+	}
+	20%,
+	60% {
+		-webkit-transform: rotate(80deg);
+		-webkit-transform-origin: top left;
+		-webkit-animation-timing-function: ease-in-out;
+	}
+	40% {
+		-webkit-transform: rotate(60deg);
+		-webkit-transform-origin: top left;
+		-webkit-animation-timing-function: ease-in-out;
+	}
+	80% {
+		-webkit-transform: rotate(60deg) translateY(0);
+		opacity: 1;
+		-webkit-transform-origin: top left;
+		-webkit-animation-timing-function: ease-in-out;
+	}
+	100% {
+		-webkit-transform: translateY(700px);
+		opacity: 0;
+	}
 }
 
 @-moz-keyframes hinge {
-	0% { -moz-transform: rotate(0); -moz-transform-origin: top left; -moz-animation-timing-function: ease-in-out; }
-	20%, 60% { -moz-transform: rotate(80deg); -moz-transform-origin: top left; -moz-animation-timing-function: ease-in-out; }
-	40% { -moz-transform: rotate(60deg); -moz-transform-origin: top left; -moz-animation-timing-function: ease-in-out; }
-	80% { -moz-transform: rotate(60deg) translateY(0); opacity: 1; -moz-transform-origin: top left; -moz-animation-timing-function: ease-in-out; }
-	100% { -moz-transform: translateY(700px); opacity: 0; }
+	0% {
+		-moz-transform: rotate(0);
+		-moz-transform-origin: top left;
+		-moz-animation-timing-function: ease-in-out;
+	}
+	20%,
+	60% {
+		-moz-transform: rotate(80deg);
+		-moz-transform-origin: top left;
+		-moz-animation-timing-function: ease-in-out;
+	}
+	40% {
+		-moz-transform: rotate(60deg);
+		-moz-transform-origin: top left;
+		-moz-animation-timing-function: ease-in-out;
+	}
+	80% {
+		-moz-transform: rotate(60deg) translateY(0);
+		opacity: 1;
+		-moz-transform-origin: top left;
+		-moz-animation-timing-function: ease-in-out;
+	}
+	100% {
+		-moz-transform: translateY(700px);
+		opacity: 0;
+	}
 }
 
 @-o-keyframes hinge {
-	0% { -o-transform: rotate(0); -o-transform-origin: top left; -o-animation-timing-function: ease-in-out; }
-	20%, 60% { -o-transform: rotate(80deg); -o-transform-origin: top left; -o-animation-timing-function: ease-in-out; }
-	40% { -o-transform: rotate(60deg); -o-transform-origin: top left; -o-animation-timing-function: ease-in-out; }
-	80% { -o-transform: rotate(60deg) translateY(0); opacity: 1; -o-transform-origin: top left; -o-animation-timing-function: ease-in-out; }
-	100% { -o-transform: translateY(700px); opacity: 0; }
+	0% {
+		-o-transform: rotate(0);
+		-o-transform-origin: top left;
+		-o-animation-timing-function: ease-in-out;
+	}
+	20%,
+	60% {
+		-o-transform: rotate(80deg);
+		-o-transform-origin: top left;
+		-o-animation-timing-function: ease-in-out;
+	}
+	40% {
+		-o-transform: rotate(60deg);
+		-o-transform-origin: top left;
+		-o-animation-timing-function: ease-in-out;
+	}
+	80% {
+		-o-transform: rotate(60deg) translateY(0);
+		opacity: 1;
+		-o-transform-origin: top left;
+		-o-animation-timing-function: ease-in-out;
+	}
+	100% {
+		-o-transform: translateY(700px);
+		opacity: 0;
+	}
 }
 
 @keyframes hinge {
-	0% { transform: rotate(0); transform-origin: top left; animation-timing-function: ease-in-out; }
-	20%, 60% { transform: rotate(80deg); transform-origin: top left; animation-timing-function: ease-in-out; }
-	40% { transform: rotate(60deg); transform-origin: top left; animation-timing-function: ease-in-out; }
-	80% { transform: rotate(60deg) translateY(0); opacity: 1; transform-origin: top left; animation-timing-function: ease-in-out; }
-	100% { transform: translateY(700px); opacity: 0; }
+	0% {
+		transform: rotate(0);
+		transform-origin: top left;
+		animation-timing-function: ease-in-out;
+	}
+	20%,
+	60% {
+		transform: rotate(80deg);
+		transform-origin: top left;
+		animation-timing-function: ease-in-out;
+	}
+	40% {
+		transform: rotate(60deg);
+		transform-origin: top left;
+		animation-timing-function: ease-in-out;
+	}
+	80% {
+		transform: rotate(60deg) translateY(0);
+		opacity: 1;
+		transform-origin: top left;
+		animation-timing-function: ease-in-out;
+	}
+	100% {
+		transform: translateY(700px);
+		opacity: 0;
+	}
 }
 
 .animated.hinge {
@@ -3594,26 +3841,51 @@ body .ux-notification-light {
 	-o-animation-name: hinge;
 	animation-name: hinge;
 }
+
 /* originally authored by Nick Pettit - https://github.com/nickpettit/glide */
 
 @-webkit-keyframes rollIn {
-	0% { opacity: 0; -webkit-transform: translateX(-100%) rotate(-120deg); }
-	100% { opacity: 1; -webkit-transform: translateX(0px) rotate(0deg); }
+	0% {
+		opacity: 0;
+		-webkit-transform: translateX(-100%) rotate(-120deg);
+	}
+	100% {
+		opacity: 1;
+		-webkit-transform: translateX(0px) rotate(0deg);
+	}
 }
 
 @-moz-keyframes rollIn {
-	0% { opacity: 0; -moz-transform: translateX(-100%) rotate(-120deg); }
-	100% { opacity: 1; -moz-transform: translateX(0px) rotate(0deg); }
+	0% {
+		opacity: 0;
+		-moz-transform: translateX(-100%) rotate(-120deg);
+	}
+	100% {
+		opacity: 1;
+		-moz-transform: translateX(0px) rotate(0deg);
+	}
 }
 
 @-o-keyframes rollIn {
-	0% { opacity: 0; -o-transform: translateX(-100%) rotate(-120deg); }
-	100% { opacity: 1; -o-transform: translateX(0px) rotate(0deg); }
+	0% {
+		opacity: 0;
+		-o-transform: translateX(-100%) rotate(-120deg);
+	}
+	100% {
+		opacity: 1;
+		-o-transform: translateX(0px) rotate(0deg);
+	}
 }
 
 @keyframes rollIn {
-	0% { opacity: 0; transform: translateX(-100%) rotate(-120deg); }
-	100% { opacity: 1; transform: translateX(0px) rotate(0deg); }
+	0% {
+		opacity: 0;
+		transform: translateX(-100%) rotate(-120deg);
+	}
+	100% {
+		opacity: 1;
+		transform: translateX(0px) rotate(0deg);
+	}
 }
 
 .animated.rollIn {
@@ -3622,51 +3894,48 @@ body .ux-notification-light {
 	-o-animation-name: rollIn;
 	animation-name: rollIn;
 }
+
 /* originally authored by Nick Pettit - https://github.com/nickpettit/glide */
 
 @-webkit-keyframes rollOut {
-    0% {
+	0% {
 		opacity: 1;
 		-webkit-transform: translateX(0px) rotate(0deg);
 	}
-
-    100% {
+	100% {
 		opacity: 0;
 		-webkit-transform: translateX(100%) rotate(120deg);
 	}
 }
 
 @-moz-keyframes rollOut {
-    0% {
+	0% {
 		opacity: 1;
 		-moz-transform: translateX(0px) rotate(0deg);
 	}
-
-    100% {
+	100% {
 		opacity: 0;
 		-moz-transform: translateX(100%) rotate(120deg);
 	}
 }
 
 @-o-keyframes rollOut {
-    0% {
+	0% {
 		opacity: 1;
 		-o-transform: translateX(0px) rotate(0deg);
 	}
-
-    100% {
+	100% {
 		opacity: 0;
 		-o-transform: translateX(100%) rotate(120deg);
 	}
 }
 
 @keyframes rollOut {
-    0% {
+	0% {
 		opacity: 1;
 		transform: translateX(0px) rotate(0deg);
 	}
-
-    100% {
+	100% {
 		opacity: 0;
 		transform: translateX(100%) rotate(120deg);
 	}
@@ -3682,203 +3951,259 @@ body .ux-notification-light {
 /* originally authored by Angelo Rohit - https://github.com/angelorohit */
 
 @-webkit-keyframes lightSpeedIn {
-	0% { -webkit-transform: translateX(100%) skewX(-30deg); opacity: 0; }
-	60% { -webkit-transform: translateX(-20%) skewX(30deg); opacity: 1; }
-	80% { -webkit-transform: translateX(0%) skewX(-15deg); opacity: 1; }
-	100% { -webkit-transform: translateX(0%) skewX(0deg); opacity: 1; }
+	0% {
+		-webkit-transform: translateX(100%) skewX(-30deg);
+		opacity: 0;
+	}
+	60% {
+		-webkit-transform: translateX(-20%) skewX(30deg);
+		opacity: 1;
+	}
+	80% {
+		-webkit-transform: translateX(0%) skewX(-15deg);
+		opacity: 1;
+	}
+	100% {
+		-webkit-transform: translateX(0%) skewX(0deg);
+		opacity: 1;
+	}
 }
 
 @-moz-keyframes lightSpeedIn {
-	0% { -moz-transform: translateX(100%) skewX(-30deg); opacity: 0; }
-	60% { -moz-transform: translateX(-20%) skewX(30deg); opacity: 1; }
-	80% { -moz-transform: translateX(0%) skewX(-15deg); opacity: 1; }
-	100% { -moz-transform: translateX(0%) skewX(0deg); opacity: 1; }
+	0% {
+		-moz-transform: translateX(100%) skewX(-30deg);
+		opacity: 0;
+	}
+	60% {
+		-moz-transform: translateX(-20%) skewX(30deg);
+		opacity: 1;
+	}
+	80% {
+		-moz-transform: translateX(0%) skewX(-15deg);
+		opacity: 1;
+	}
+	100% {
+		-moz-transform: translateX(0%) skewX(0deg);
+		opacity: 1;
+	}
 }
 
 @-o-keyframes lightSpeedIn {
-	0% { -o-transform: translateX(100%) skewX(-30deg); opacity: 0; }
-	60% { -o-transform: translateX(-20%) skewX(30deg); opacity: 1; }
-	80% { -o-transform: translateX(0%) skewX(-15deg); opacity: 1; }
-	100% { -o-transform: translateX(0%) skewX(0deg); opacity: 1; }
+	0% {
+		-o-transform: translateX(100%) skewX(-30deg);
+		opacity: 0;
+	}
+	60% {
+		-o-transform: translateX(-20%) skewX(30deg);
+		opacity: 1;
+	}
+	80% {
+		-o-transform: translateX(0%) skewX(-15deg);
+		opacity: 1;
+	}
+	100% {
+		-o-transform: translateX(0%) skewX(0deg);
+		opacity: 1;
+	}
 }
 
 @keyframes lightSpeedIn {
-	0% { transform: translateX(100%) skewX(-30deg); opacity: 0; }
-	60% { transform: translateX(-20%) skewX(30deg); opacity: 1; }
-	80% { transform: translateX(0%) skewX(-15deg); opacity: 1; }
-	100% { transform: translateX(0%) skewX(0deg); opacity: 1; }
+	0% {
+		transform: translateX(100%) skewX(-30deg);
+		opacity: 0;
+	}
+	60% {
+		transform: translateX(-20%) skewX(30deg);
+		opacity: 1;
+	}
+	80% {
+		transform: translateX(0%) skewX(-15deg);
+		opacity: 1;
+	}
+	100% {
+		transform: translateX(0%) skewX(0deg);
+		opacity: 1;
+	}
 }
 
 .animated.lightSpeedIn {
-    -webkit-animation-name: lightSpeedIn;
-    -moz-animation-name: lightSpeedIn;
-    -o-animation-name: lightSpeedIn;
-    animation-name: lightSpeedIn;
-
-    -webkit-animation-timing-function: ease-out;
-    -moz-animation-timing-function: ease-out;
-    -o-animation-timing-function: ease-out;
-    animation-timing-function: ease-out;
+	-webkit-animation-name: lightSpeedIn;
+	-moz-animation-name: lightSpeedIn;
+	-o-animation-name: lightSpeedIn;
+	animation-name: lightSpeedIn;
+	-webkit-animation-timing-function: ease-out;
+	-moz-animation-timing-function: ease-out;
+	-o-animation-timing-function: ease-out;
+	animation-timing-function: ease-out;
 }
 
 .animated.lightSpeedIn {
-    -webkit-animation-duration: 0.5s;
-    -moz-animation-duration: 0.5s;
-    -o-animation-duration: 0.5s;
-    animation-duration: 0.5s;
+	-webkit-animation-duration: 0.5s;
+	-moz-animation-duration: 0.5s;
+	-o-animation-duration: 0.5s;
+	animation-duration: 0.5s;
 }
 
 /* originally authored by Angelo Rohit - https://github.com/angelorohit */
 
 @-webkit-keyframes lightSpeedOut {
-    0% { -webkit-transform: translateX(0%) skewX(0deg); opacity: 1; }
-	100% { -webkit-transform: translateX(100%) skewX(-30deg); opacity: 0; }
+	0% {
+		-webkit-transform: translateX(0%) skewX(0deg);
+		opacity: 1;
+	}
+	100% {
+		-webkit-transform: translateX(100%) skewX(-30deg);
+		opacity: 0;
+	}
 }
 
 @-moz-keyframes lightSpeedOut {
-	0% { -moz-transform: translateX(0%) skewX(0deg); opacity: 1; }
-	100% { -moz-transform: translateX(100%) skewX(-30deg); opacity: 0; }
+	0% {
+		-moz-transform: translateX(0%) skewX(0deg);
+		opacity: 1;
+	}
+	100% {
+		-moz-transform: translateX(100%) skewX(-30deg);
+		opacity: 0;
+	}
 }
 
 @-o-keyframes lightSpeedOut {
-	0% { -o-transform: translateX(0%) skewX(0deg); opacity: 1; }
-	100% { -o-transform: translateX(100%) skewX(-30deg); opacity: 0; }
+	0% {
+		-o-transform: translateX(0%) skewX(0deg);
+		opacity: 1;
+	}
+	100% {
+		-o-transform: translateX(100%) skewX(-30deg);
+		opacity: 0;
+	}
 }
 
 @keyframes lightSpeedOut {
-	0% { transform: translateX(0%) skewX(0deg); opacity: 1; }
-	100% { transform: translateX(100%) skewX(-30deg); opacity: 0; }
+	0% {
+		transform: translateX(0%) skewX(0deg);
+		opacity: 1;
+	}
+	100% {
+		transform: translateX(100%) skewX(-30deg);
+		opacity: 0;
+	}
 }
 
 .animated.lightSpeedOut {
-    -webkit-animation-name: lightSpeedOut;
-    -moz-animation-name: lightSpeedOut;
-    -o-animation-name: lightSpeedOut;
-    animation-name: lightSpeedOut;
-
-    -webkit-animation-timing-function: ease-in;
-    -moz-animation-timing-function: ease-in;
-    -o-animation-timing-function: ease-in;
-    animation-timing-function: ease-in;
+	-webkit-animation-name: lightSpeedOut;
+	-moz-animation-name: lightSpeedOut;
+	-o-animation-name: lightSpeedOut;
+	animation-name: lightSpeedOut;
+	-webkit-animation-timing-function: ease-in;
+	-moz-animation-timing-function: ease-in;
+	-o-animation-timing-function: ease-in;
+	animation-timing-function: ease-in;
 }
 
 .animated.lightSpeedOut {
-    -webkit-animation-duration: 0.25s;
-    -moz-animation-duration: 0.25s;
-    -o-animation-duration: 0.25s;
-    animation-duration: 0.25s;
+	-webkit-animation-duration: 0.25s;
+	-moz-animation-duration: 0.25s;
+	-o-animation-duration: 0.25s;
+	animation-duration: 0.25s;
 }
 
-
-.button_passport
-{
-	background-color            : #6CC655;
-	color                       : white;
-	font-size                   : 16px;
-	line-height                 : 44px;
-	margin-bottom               : 10px;
-	border-radius               : 3px;
-	padding-left                : 44px;
-	background-position         : 7px 7px;
-	background-size             : 30px 30px;
-	background-repeat           : no-repeat;
-	cursor                      : pointer;
-	display                     : block;
-	text-decoration             : none;
-	text-align					: left;
-	width						: 300px;
+.button_passport {
+	background-color: #6CC655;
+	color: white;
+	font-size: 16px;
+	line-height: 44px;
+	margin-bottom: 10px;
+	border-radius: 3px;
+	padding-left: 44px;
+	background-position: 7px 7px;
+	background-size: 30px 30px;
+	background-repeat: no-repeat;
+	cursor: pointer;
+	display: block;
+	text-decoration: none;
+	text-align: left;
+	width: 300px;
 }
 
-.button_passport.google
-{
-	background-color            : #DF4B31;
-	color                       : white;
-	background-image            : url(webapp/google.png);
-}
-.button_passport.google:hover
-{
-	background-color            : #B9341D;
+.button_passport.google {
+	background-color: #DF4B31;
+	color: white;
+	background-image: url(webapp/google.png);
 }
 
-.button_passport.cas
-{
-	background-color            : #EEEEEE;
-	color                       : black;
-	background-image            : url(webapp/cas.png);
+.button_passport.google:hover {
+	background-color: #B9341D;
 }
 
-.button_passport.cas:hover
-{
-	background-color            : #DDDDDD;
+.button_passport.cas {
+	background-color: #EEEEEE;
+	color: black;
+	background-image: url(webapp/cas.png);
 }
 
-.button_passport.omneedia
-{
-	background-color            : lightskyblue;
-	color                       : black;
-	background-image            : url(webapp/omneedia.png);
+.button_passport.cas:hover {
+	background-color: #DDDDDD;
 }
 
-.button_passport.omneedia:hover
-{
-	background-color            : lightcyan;
+.button_passport.omneedia {
+	background-color: lightskyblue;
+	color: black;
+	background-image: url(webapp/omneedia.png);
 }
 
-.button_passport.github
-{
-	background-color            : #cce6ff;
-	color                       : black;
-	background-image            : url(webapp/github.png);
+.button_passport.omneedia:hover {
+	background-color: lightcyan;
 }
 
-.button_passport.github:hover
-{
-	background-color            : lightcyan;
+.button_passport.github {
+	background-color: #cce6ff;
+	color: black;
+	background-image: url(webapp/github.png);
 }
 
-.button_passport.gitlab
-{
-	background-color            : #ffffff;
-	color                       : black;
-	background-image            : url(webapp/cerema.png);
+.button_passport.github:hover {
+	background-color: lightcyan;
 }
 
-.button_passport.gitlab:hover
-{
-	background-color            : beige;
+.button_passport.gitlab {
+	background-color: #ffffff;
+	color: black;
+	background-image: url(webapp/cerema.png);
 }
 
-.button_passport.twitter
-{
-	background-color            : #55ACEE;
-	color                       : white;
-	background-image            : url(webapp/twitter.png);
-}
-.button_passport.twitter:hover
-{
-	background-color            : #178DE8;
+.button_passport.gitlab:hover {
+	background-color: beige;
 }
 
-.button_passport.facebook
-{
-	background-color            : #4963A4;
-	color                       : white;
-	background-image            : url(webapp/facebook.png);
-}
-.button_passport.facebook:hover
-{
-	background-color            : #3A4F82;
+.button_passport.twitter {
+	background-color: #55ACEE;
+	color: white;
+	background-image: url(webapp/twitter.png);
 }
 
-.button_passport.microsoft
-{
-	background-color            : #0072C6;
-	color                       : white;
-	background-image            : url(webapp/windows.png);
+.button_passport.twitter:hover {
+	background-color: #178DE8;
 }
-.button_passport.microsoft:hover
-{
-	background-color            : #005C9E;
+
+.button_passport.facebook {
+	background-color: #4963A4;
+	color: white;
+	background-image: url(webapp/facebook.png);
+}
+
+.button_passport.facebook:hover {
+	background-color: #3A4F82;
+}
+
+.button_passport.microsoft {
+	background-color: #0072C6;
+	color: white;
+	background-image: url(webapp/windows.png);
+}
+
+.button_passport.microsoft:hover {
+	background-color: #005C9E;
 }
 
 /*
@@ -3886,117 +4211,168 @@ IOS like overlay
 */
 
 .ui-ios-overlay {
-  z-index: 99999;
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  width: 200px;
-  height: 200px;
-  margin-left: -100px;
-  margin-top: -100px;
-  filter:progid:DXImageTransform.Microsoft.gradient(startColorstr=#cc000000,endColorstr=#cc000000);
-  background: rgba(0,0,0,0.8);
-    -webkit-border-radius: 20px;
-    -moz-border-radius: 20px;
-    border-radius: 20px;
+	z-index: 99999;
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	width: 200px;
+	height: 200px;
+	margin-left: -100px;
+	margin-top: -100px;
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#cc000000, endColorstr=#cc000000);
+	background: rgba(0, 0, 0, 0.8);
+	-webkit-border-radius: 20px;
+	-moz-border-radius: 20px;
+	border-radius: 20px;
 }
+
 .ui-ios-overlay .title {
-  color: #FFF;
-  font-weight: ;
-  text-align: center;
-  display: block;
-  font-size: 18px;
-  position: absolute;
-  bottom: 30px;
-  left: 0;
-  width: 100%;
+	color: #FFF;
+	font-weight: ;
+	text-align: center;
+	display: block;
+	font-size: 18px;
+	position: absolute;
+	bottom: 30px;
+	left: 0;
+	width: 100%;
 }
+
 .ui-ios-overlay img {
-  display: block;
-  margin: 20% auto 0 auto;
+	display: block;
+	margin: 20% auto 0 auto;
 }
+
 .ui-ios-overlay .spinner {
-  left: 50% !important;
-  top: 40% !important;
+	left: 50% !important;
+	top: 40% !important;
 }
 
 .ios-overlay-show {
-  -webkit-animation-name: ios-overlay-show;
-  -webkit-animation-duration: 750ms;
-  -moz-animation-name: ios-overlay-show;
-  -moz-animation-duration: 750ms;
-  -ms-animation-name: ios-overlay-show;
-  -ms-animation-duration: 750ms;
-  -o-animation-name: ios-overlay-show;
-  -o-animation-duration: 750ms;
-  animation-name: ios-overlay-show;
-  animation-duration: 750ms;
+	-webkit-animation-name: ios-overlay-show;
+	-webkit-animation-duration: 750ms;
+	-moz-animation-name: ios-overlay-show;
+	-moz-animation-duration: 750ms;
+	-ms-animation-name: ios-overlay-show;
+	-ms-animation-duration: 750ms;
+	-o-animation-name: ios-overlay-show;
+	-o-animation-duration: 750ms;
+	animation-name: ios-overlay-show;
+	animation-duration: 750ms;
 }
 
 @-webkit-keyframes ios-overlay-show {
-  0% { opacity: 0; }
-  100% { opacity: 1; }
+	0% {
+		opacity: 0;
+	}
+	100% {
+		opacity: 1;
+	}
 }
+
 @-moz-keyframes ios-overlay-show {
-  0% { opacity: 0; }
-  100% { opacity: 1; }
+	0% {
+		opacity: 0;
+	}
+	100% {
+		opacity: 1;
+	}
 }
+
 @-ms-keyframes ios-overlay-show {
-  0% { opacity: 0; }
-  100% { opacity: 1; }
+	0% {
+		opacity: 0;
+	}
+	100% {
+		opacity: 1;
+	}
 }
+
 @-o-keyframes ios-overlay-show {
-  0% { opacity: 0; }
-  100% { opacity: 1; }
+	0% {
+		opacity: 0;
+	}
+	100% {
+		opacity: 1;
+	}
 }
+
 @keyframes ios-overlay-show {
-  0% { opacity: 0; }
-  100% { opacity: 1; }
+	0% {
+		opacity: 0;
+	}
+	100% {
+		opacity: 1;
+	}
 }
 
 .ios-overlay-hide {
-  -webkit-animation-name: ios-overlay-hide;
-  -webkit-animation-duration: 750ms;
-  -webkit-animation-fill-mode: forwards;
-  -moz-animation-name: ios-overlay-hide;
-  -moz-animation-duration: 750ms;
-  -moz-animation-fill-mode: forwards;
-  -ms-animation-name: ios-overlay-hide;
-  -ms-animation-duration: 750ms;
-  -ms-animation-fill-mode: forwards;
-  -o-animation-name: ios-overlay-hide;
-  -o-animation-duration: 750ms;
-  -o-animation-fill-mode: forwards;
-  animation-name: ios-overlay-hide;
-  animation-duration: 750ms;
-  animation-fill-mode: forwards;
+	-webkit-animation-name: ios-overlay-hide;
+	-webkit-animation-duration: 750ms;
+	-webkit-animation-fill-mode: forwards;
+	-moz-animation-name: ios-overlay-hide;
+	-moz-animation-duration: 750ms;
+	-moz-animation-fill-mode: forwards;
+	-ms-animation-name: ios-overlay-hide;
+	-ms-animation-duration: 750ms;
+	-ms-animation-fill-mode: forwards;
+	-o-animation-name: ios-overlay-hide;
+	-o-animation-duration: 750ms;
+	-o-animation-fill-mode: forwards;
+	animation-name: ios-overlay-hide;
+	animation-duration: 750ms;
+	animation-fill-mode: forwards;
 }
 
 @-webkit-keyframes ios-overlay-hide {
-  0% { opacity: 1; }
-  100% { opacity: 0; }
+	0% {
+		opacity: 1;
+	}
+	100% {
+		opacity: 0;
+	}
 }
+
 @-moz-keyframes ios-overlay-hide {
-  0% { opacity: 1; }
-  100% { opacity: 0; }
+	0% {
+		opacity: 1;
+	}
+	100% {
+		opacity: 0;
+	}
 }
+
 @-ms-keyframes ios-overlay-hide {
-  0% { opacity: 1; }
-  100% { opacity: 0; }
+	0% {
+		opacity: 1;
+	}
+	100% {
+		opacity: 0;
+	}
 }
+
 @-o-keyframes ios-overlay-hide {
-  0% { opacity: 1; }
-  100% { opacity: 0; }
+	0% {
+		opacity: 1;
+	}
+	100% {
+		opacity: 0;
+	}
 }
+
 @keyframes ios-overlay-hide {
-  0% { opacity: 1; }
-  100% { opacity: 0; }
+	0% {
+		opacity: 1;
+	}
+	100% {
+		opacity: 0;
+	}
 }
 
 .overlay_error {
 	background-image: url(webapp/cross.png);
-	background-repeat:no-repeat;
-	background-position:center center;
+	background-repeat: no-repeat;
+	background-position: center center;
 	background-size: 96px 96px;
 	width: 100%;
 	height: 100%;
@@ -4004,14 +4380,15 @@ IOS like overlay
 
 .overlay_check {
 	background-image: url(webapp/check.png);
-	background-repeat:no-repeat;
-	background-position:center center;
+	background-repeat: no-repeat;
+	background-position: center center;
 	background-size: 96px 96px;
 	width: 100%;
 	height: 100%;
 }
 
 /* Icons */
+
 .ux-notification-icon-information {
 	background-image: url(webapp/icon16_info.png);
 }
@@ -4020,15 +4397,15 @@ IOS like overlay
 	background-image: url(webapp/icon16_error.png);
 }
 
-
 /* Using standard theme */
+
 .ux-notification-window .x-window-body {
 	text-align: center;
 	padding: 15px 5px 15px 5px;
 }
 
-
 /* Custom styling */
+
 .ux-notification-light .x-window-header {
 	background-color: transparent;
 }
