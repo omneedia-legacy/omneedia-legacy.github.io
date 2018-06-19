@@ -1,5 +1,5 @@
 /**
- * Version: 0.9.8pi
+ * Version: 0.8.1
  * Build Date: 18-Jul-2016
  * Copyright (c) 2006-2015, Omneedia. (http://www.omneedia.com/). All rights reserved.
  * License: GPL.
@@ -7,9 +7,11 @@
  *
  * CHANGELOG
  * ---------
- * 0.9.8p	Initial commit
+ * 0.8.1	Initial commit
  *
  */
+
+App = {};
 
 // Change Settings REMOTE_API
 if (!window.location.origin)
