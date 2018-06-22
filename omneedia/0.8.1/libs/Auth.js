@@ -101,7 +101,7 @@ Auth = {
 				window.setTimeout(function () {
 					$('.QxLoginBox').remove();
 				}, 1000);
-				App.notify('Auth', "Vous avez bien été identifié mais vous n'avez pas accès a cette application.");
+				App.notify("Vous avez bien été identifié mais vous n'avez pas accès a cette application.");
 			});
 		});
 	},
