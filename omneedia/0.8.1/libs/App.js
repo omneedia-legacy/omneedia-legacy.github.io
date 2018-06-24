@@ -13,6 +13,7 @@
 
 App = {};
 LANGS = [];
+APP_NAMESPACE = Settings.NAMESPACE;
 
 // Change Settings REMOTE_API
 if (!window.location.origin)
