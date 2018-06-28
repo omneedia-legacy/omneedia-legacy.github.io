@@ -20,6 +20,7 @@ else
 	echo $PROXY_HOST >> $OMNEEDIA/.proxy
 fi
 
+
 PUBLIC_IP="`wget -qO- http://ipinfo.io/ip`"
 PLATFORM="`dpkg --print-architecture`"
 
