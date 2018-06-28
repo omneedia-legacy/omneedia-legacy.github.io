@@ -7,9 +7,6 @@ OMNEEDIA_WORKER=$OMNEEDIA/Worker
 rm -rf .tmp/wgetrc || true
 [ -d "$OMNEEDIA" ] || mkdir -p $OMNEEDIA
 
-PUBLIC_IP="`wget -qO- http://ipinfo.io/ip`"
-PLATFORM="`dpkg --print-architecture`"
-
 if [ -z "$PROXY_HOST" ]
 then
     echo "use_proxy = off" >> .tmp/wgetrc
@@ -22,6 +19,9 @@ else
     echo "Acquire::Proxy $PROXY_HOST;" >> /etc/apt.conf
 	echo $PROXY_HOST >> $OMNEEDIA/.proxy
 fi
+
+PUBLIC_IP="`wget -qO- http://ipinfo.io/ip`"
+PLATFORM="`dpkg --print-architecture`"
 
 echo Installing omneedia worker
 echo --------------------------
