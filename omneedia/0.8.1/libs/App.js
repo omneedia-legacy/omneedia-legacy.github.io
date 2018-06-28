@@ -6001,37 +6001,11 @@ if (!Settings.DEBUG) {
 
 
 if (Settings.DEBUG) {
-	window.onerror = function (msg, uri, line, col, obj) {
-		console.error("ERROR " + msg);
-		/*var getStackTrace = function() {
-			var obj = {};
-			Error.captureStackTrace(obj, getStackTrace);
-			return obj.stack;
-		};
-        $('.omneedia-overlay').show();
-        $('#appLoadingFailed').show();
-        var html = [
-			"<b>GURU Meditation"
-			, "An unhandled exception has occurred</b>"
-			, "&nbsp;"
-			, uri
-			, "&nbsp;"
-			, msg
-			, "<small>Line: " + line + " - Col: " + col + '</small>'
-			, "&nbsp;<br>"
-			, getStackTrace()
-		];
-        if (obj) html.push(JSON.stringify(obj.stack, null, 4).replace(/\n/g, "<br>").replace(/[ ]/g, "&nbsp;"));
-        var div = document.createElement('div');
-        div.style.fontSize = "20px";
-        div.style.color = "white";
-        div.style.fontFamily = "Tahoma";
-        div.style.position = "absolute";
-        div.style.left = "20px";
-        div.style.top = "20px";
-        div.innerHTML = html.join('<br>');
-        $("#appLoadingFailed").append(div);*/
-	};
+	var css = document.createElement('link');
+	css.rel = "stylesheet";
+	css.type = "text/css";
+	css.href = "Contents/Resources/webapp.css";
+	document.getElementsByTagName('head')[0].appendChild(css);
 } else {
 	//console.log = function () {};
 }
