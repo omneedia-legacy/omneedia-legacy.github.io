@@ -1,4 +1,4 @@
-
+#!/bin/bash
 
 OMNEEDIA=/omneedia
 OMNEEDIA_WORKER=$OMNEEDIA/Worker
