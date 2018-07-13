@@ -8,7 +8,7 @@ if (Settings.REMOTE_API) {
         document.socket = io.connect(Settings.REMOTE_API, {
             query: "engine=worker&iokey=" + setToken() + '&z=' + window.z,
             secure: true,
-            transports: ['xhr-polling']
+            transports: ['polling']
         });
     else
         document.socket = io.connect(Settings.REMOTE_API, {
