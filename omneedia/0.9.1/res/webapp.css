@@ -8,42 +8,6 @@ omneedia-app {
     background-image: url(webapp/01.jpg);
 }
 
-.css_btn_cancel {
-    font-size: 16px;
-    font-family: Arial;
-    font-weight: normal;
-    -moz-border-radius: 8px;
-    -webkit-border-radius: 8px;
-    border-radius: 8px;
-    border: 1px solid #dcdcdc;
-    padding: 5px 18px;
-    text-decoration: none;
-    background: -webkit-gradient( linear, left top, left bottom, color-stop(5%, #ededed), color-stop(100%, #dfdfdf));
-    background: -moz-linear-gradient( center top, #ededed 5%, #dfdfdf 100%);
-    background: -ms-linear-gradient( top, #ededed 5%, #dfdfdf 100%);
-    filter: progid: DXImageTransform.Microsoft.gradient(startColorstr='#ededed', endColorstr='#dfdfdf');
-    background-color: #ededed;
-    color: #777777;
-    display: inline-block;
-    text-shadow: 1px 1px 0px #ffffff;
-    -webkit-box-shadow: inset 1px 1px 0px 0px #ffffff;
-    -moz-box-shadow: inset 1px 1px 0px 0px #ffffff;
-    box-shadow: inset 1px 1px 0px 0px #ffffff;
-}
-
-.css_btn_cancel:hover {
-    background: -webkit-gradient( linear, left top, left bottom, color-stop(5%, #dfdfdf), color-stop(100%, #ededed));
-    background: -moz-linear-gradient( center top, #dfdfdf 5%, #ededed 100%);
-    background: -ms-linear-gradient( top, #dfdfdf 5%, #ededed 100%);
-    filter: progid: DXImageTransform.Microsoft.gradient(startColorstr='#dfdfdf', endColorstr='#ededed');
-    background-color: #dfdfdf;
-}
-
-.css_btn_cancel:active {
-    position: relative;
-    top: 1px;
-}
-
 #appLoadingFailed {
     background-image: url(webapp/failed.png);
     position: absolute;
@@ -247,7 +211,6 @@ omneedia-app {
     padding-top: 9px;
 }
 
-
 /* Icons */
 
 .ux-notification-icon-information {
@@ -257,7 +220,6 @@ omneedia-app {
 .ux-notification-icon-error {
     background-image: url(webapp/icon16_error.png);
 }
-
 
 /* Using standard theme */
 
@@ -388,7 +350,6 @@ body .ux-notification-light {
 .button_passport.microsoft:hover {
     background-color: #005C9E;
 }
-
 
 /*
 IOS like overlay
@@ -571,7 +532,6 @@ IOS like overlay
     height: 100%;
 }
 
-
 /* Icons */
 
 .ux-notification-icon-information {
@@ -582,14 +542,12 @@ IOS like overlay
     background-image: url(webapp/icon16_error.png);
 }
 
-
 /* Using standard theme */
 
 .ux-notification-window .x-window-body {
     text-align: center;
     padding: 15px 5px 15px 5px;
 }
-
 
 /* Custom styling */
 
@@ -619,7 +577,6 @@ body .ux-notification-light {
     border-left: 1px solid #BBBBBB;
     background: #EEEEEE;
 }
-
 
 /* Notification */
 
@@ -695,4 +652,42 @@ body .ux-notification-light {
     color: black;
     margin-top: 4px;
     text-align: justify;
+}
+
+.css_btn_cancel {
+    cursor: pointer;
+    margin: 10px;
+    border-radius: 5px;
+    text-decoration: none;
+    padding: 10px;
+    font-size: 22px;
+    transition: .3s;
+    -webkit-transition: .3s;
+    -moz-transition: .3s;
+    -o-transition: .3s;
+    display: inline-block;
+}
+
+.css_btn_cancel {
+    cursor: pointer;
+    margin: 10px;
+    border-radius: 5px;
+    text-decoration: none;
+    padding: 10px;
+    font-size: 22px;
+    transition: .3s;
+    -webkit-transition: .3s;
+    -moz-transition: .3s;
+    -o-transition: .3s;
+    display: inline-block;
+}
+
+.blue {
+    color: #55acee;
+    border: 2px #55acee solid;
+}
+
+.blue:hover {
+    background-color: #55acee;
+    color: #fff
 }

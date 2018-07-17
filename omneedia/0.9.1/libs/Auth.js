@@ -51,7 +51,7 @@ Auth = {
         } else div.className = "QxLoginBox animated fadeInDownBig";
         document.getElementsByTagName('body')[0].appendChild(div);
 
-        App.$('<table width="100%" height="100%" border="0"><tr class=CWaitSignOn style="display:none"><td width=100% height=100% valign=middle align="center">En attente des informations d\'identification<br>&nbsp;<br><button class=css_btn_cancel>Annuler</button></td></tr><tr class=CSignOn><td class="QxPassports" width=100% height=100% valign=middle align="center"><div class=qxAboutLogo style="position:absolute;top:10px;width:100%;margin-bottom:10px"></div><big><b>' + Settings.TITLE + '</b></big><br>&nbsp;<br>&nbsp;</td></tr></table>').appendTo('.QxLoginBox');
+        App.$('<table width="100%" height="100%" border="0"><tr class=CWaitSignOn style="display:none"><td width=100% height=100% valign=middle align="center">En attente des informations d\'identification<br>&nbsp;<br><a class="css_btn_cancel blue">Annuler</a></td></tr><tr class=CSignOn><td class="QxPassports" width=100% height=100% valign=middle align="center"><div class=qxAboutLogo style="position:absolute;top:10px;width:100%;margin-bottom:10px"></div><big><b>' + Settings.TITLE + '</b></big><br>&nbsp;<br>&nbsp;<br>&nbsp;</td></tr></table>').appendTo('.QxLoginBox');
 
         for (var jk = 0; jk < Settings.AUTH.passports.length; jk++) {
             if (!Settings.AUTH.passport[Settings.AUTH.passports[jk]]) {
