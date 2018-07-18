@@ -6,7 +6,6 @@ function LetMeIn_Auth(options) {
 	this.on("request", function (req, res) {
 		var _p = this;
 
-		var ip = req.connection.remoteAddress || req.socket.remoteAddress || req.connection.socket.remoteAddress;
 		var OA = {
 			authenticate: function (req, res, callback) {
 				if (typeof req.query.pid == "undefined") {
@@ -25,9 +24,7 @@ function LetMeIn_Auth(options) {
 							pid: req.query.pid
 						}
 					}, function (err, resp, body) {
-						console.log(err);
 						var response = JSON.parse(body.toString('utf-8'));
-						console.log(response.username);
 						callback(null, true, response.username, null);
 					});
 				}

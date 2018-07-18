@@ -1,15 +1,42 @@
 {
+  "_from": "@omneedia/authom",
+  "_id": "@omneedia/authom@1.1.0",
+  "_inBundle": false,
+  "_integrity": "sha512-3YT4n8Iz1liAQMyBMJ4aQGS0gz8+0dc8cggbAABdmEhFRjkj3Pmej16TsModhI+5iWF5wYE63jpEtnnjsY3jHw==",
+  "_location": "/@omneedia/authom",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "tag",
+    "registry": true,
+    "raw": "@omneedia/authom",
+    "name": "@omneedia/authom",
+    "escapedName": "@omneedia%2fauthom",
+    "scope": "@omneedia",
+    "rawSpec": "",
+    "saveSpec": null,
+    "fetchSpec": "latest"
+  },
+  "_requiredBy": [
+    "#USER",
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/@omneedia/authom/-/authom-1.0.1.tgz",
+  "_shasum": "fac52f5eaaa8949c67d41c450bdd7b076c804836",
+  "_spec": "@omneedia/authom",
+  "_where": "/omneedia/builder/builder/var/HyeKufDhXQ_app/Contents/bin",
   "author": {
-    "email": "tr@nslator.jp",
-    "name": "Jed Schmidt"
+    "name": "Jed Schmidt",
+    "email": "tr@nslator.jp"
   },
   "bugs": {
     "url": "https://github.com/Omneedia/authom/issues"
   },
+  "bundleDependencies": false,
   "contributors": [],
   "dependencies": {
     "xcas": "0.1.0"
   },
+  "deprecated": false,
   "description": "Authom Fork for omneedia framework",
   "devDependencies": {},
   "dist": {},
@@ -22,9 +49,7 @@
   "license": "MIT",
   "main": "./lib/authom.js",
   "name": "@omneedia/authom",
-  "optionalDependencies": {},		
-  "readme": "authom\n=======\n\nauthom is an authentication library for node.js. \nThis is a fork for omneedia Framework",
-  "readmeFilename": "README.md",
+  "optionalDependencies": {},
   "repository": {
     "type": "git",
     "url": "git://github.com/omneedia/authom.git"
