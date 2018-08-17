@@ -1,0 +1,693 @@
+omneedia-app {
+    background-color: white;
+}
+
+.NotificationBackground {
+    margin: 0;
+    padding: 0;
+    background-image: url(webapp/01.jpg);
+}
+
+#appLoadingFailed {
+    background-image: url(webapp/failed.png);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 9999999;
+    background-repeat: no-repeat;
+    display: none;
+    background-position: center center;
+}
+
+.omneedia-overlay {
+    background-image: url(webapp/img-overlay.png);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 999999;
+    background-repeat: repeat;
+    display: none;
+}
+
+.QxNotificationBar {
+    background-image: url(webapp/icon-notification-center.png);
+}
+
+.CWaitSignOn {
+    font-family: tahoma;
+    font-size: 20px;
+}
+
+.AboutBoxTitle {
+    text-align: left;
+    width: 100%;
+    font-family: arial;
+    font-size: 20px;
+}
+
+.AboutBoxDescription {
+    padding-top: 1px;
+    text-align: left;
+    width: 100%;
+    font-family: tahoma;
+    font-size: 13px;
+}
+
+.AboutBoxVersion {
+    padding-top: 3px;
+    text-align: left;
+    width: 100%;
+    color: #AAAAAA;
+    font-family: verdana;
+    font-size: 11px;
+}
+
+.AboutBoxCopyright {
+    padding-top: 29px;
+    text-align: left;
+    width: 100%;
+    font-family: tahoma;
+    font-size: 12px;
+}
+
+.AboutBoxLicence {
+    padding: 5px;
+    text-align: justify;
+    width: 100%;
+    font-family: arial;
+    font-size: 8px;
+}
+
+.QxOverlay {
+    position: absolute;
+    z-index: 999;
+    width: 100%;
+    height: 100%;
+    top: 0px;
+    left: 0px;
+    /*background-color: rgba(0,0,255,0.5);	*/
+}
+
+.QxLoginBox {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    margin: -300px 0 0 -200px;
+    z-index: 99999999;
+    width: 400px;
+    height: 600px;
+    border: 2px solid #BBBBBB;
+    background: #EEEEEE;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+}
+
+.QxLoginBox.tablet {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    margin: -300px 0 0 -200px;
+    z-index: 99999999;
+    width: 400px;
+    height: 600px;
+    border: 2px solid #BBBBBB;
+    background: #EEEEEE;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+}
+
+.QxLoginBox.smartphone {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    margin: 0 0 0 0;
+    z-index: 99999999;
+    width: 100%;
+    height: 100%;
+    border: 2px solid #BBBBBB;
+    background: #FFFFFF;
+}
+
+.QxLoginBoxTitle {
+    font-family: Verdana;
+    font-size: 18px;
+}
+
+.qxLoginTable {
+    background-color: #FFFFFF;
+    border: 1px solid black;
+    padding: 0px;
+    font-family: arial;
+    border: 1px solid #CCCCCC;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    border-radius: 0px;
+    border: 0px solid black;
+}
+
+#qxLogin {
+    border: 0px solid black;
+    padding: 10px;
+    font-family: arial;
+    font-size: 18px;
+    outline: none;
+    border: 0px solid black;
+    border-bottom: 1px solid #DDDDDD;
+    width: 100%;
+}
+
+#qxPassword {
+    border: 0px solid black;
+    padding: 10px;
+    font-family: arial;
+    font-size: 18px;
+    outline: none;
+    border: 0px solid black;
+    border-bottom: 1px solid #DDDDDD;
+    width: 100%;
+}
+
+.qxLoginLabel {
+    padding: 10px;
+    font-family: arial;
+    font-size: 12px;
+    font-weight: bold;
+    display: none;
+}
+
+.qx2ndline {
+    /*border-top:1px solid #CCCCCC*/
+}
+
+.qxConnect {
+    font-family: arial;
+    font-size: 18px;
+    width: 100%;
+    text-align: center;
+}
+
+.qxUnkwownUser {
+    background-image: url(webapp/qxlogin.png);
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: 122px 142px;
+    border-radius: 150px;
+    -webkit-border-radius: 150px;
+    -moz-border-radius: 150px;
+    box-shadow: 0 0 8px rgba(0, 0, 0, .8);
+    -webkit-box-shadow: 0 0 8px rgba(0, 0, 0, .8);
+    -moz-box-shadow: 0 0 8px rgba(0, 0, 0, .8);
+    width: 120px;
+    height: 125px;
+}
+
+.qxDefaultUser {
+    padding-top: 9px;
+}
+
+/* Icons */
+
+.ux-notification-icon-information {
+    background-image: url(webapp/icon16_info.png);
+}
+
+.ux-notification-icon-error {
+    background-image: url(webapp/icon16_error.png);
+}
+
+/* Using standard theme */
+
+.ux-notification-window .x-window-body {
+    text-align: center;
+    padding: 15px 5px 15px 5px;
+    width: 200px;
+}
+
+.ux-notification-light .x-window-header {
+    background-color: transparent;
+}
+
+body .ux-notification-light {
+    background-image: url(webapp/fader.png);
+}
+
+.ux-notification-light .x-window-body {
+    text-align: center;
+    padding: 15px 5px 18px 5px;
+    width: 200px;
+    background-color: transparent;
+    border: 0px solid white;
+}
+
+.QxSpinner {
+    width: 220px;
+    height: 20px;
+    background-repeat: no-repeat;
+    background-image: url(webapp/294.GIF);
+    padding: 15px;
+}
+
+.button_passport {
+    background-color: #6CC655;
+    color: white;
+    font-size: 16px;
+    line-height: 44px;
+    margin-bottom: 10px;
+    border-radius: 3px;
+    padding-left: 44px;
+    background-position: 7px 7px;
+    background-size: 30px 30px;
+    background-repeat: no-repeat;
+    cursor: pointer;
+    display: block;
+    text-decoration: none;
+    text-align: left;
+    width: 300px;
+}
+
+.button_passport.google {
+    background-color: #DF4B31;
+    color: white;
+    background-image: url(webapp/google.png);
+}
+
+.button_passport.google:hover {
+    background-color: #B9341D;
+}
+
+.button_passport.cas {
+    background-color: #EEEEEE;
+    color: black;
+    background-image: url(webapp/cas.png);
+}
+
+.button_passport.cas:hover {
+    background-color: #DDDDDD;
+}
+
+.button_passport.omneedia {
+    background-color: lightskyblue;
+    color: black;
+    background-image: url(webapp/omneedia.png);
+}
+
+.button_passport.omneedia:hover {
+    background-color: lightcyan;
+}
+
+.button_passport.github {
+    background-color: #cce6ff;
+    color: black;
+    background-image: url(webapp/github.png);
+}
+
+.button_passport.github:hover {
+    background-color: lightcyan;
+}
+
+.button_passport.gitlab {
+    background-color: #ffffff;
+    color: black;
+    background-image: url(webapp/cerema.png);
+}
+
+.button_passport.gitlab:hover {
+    background-color: beige;
+}
+
+.button_passport.twitter {
+    background-color: #55ACEE;
+    color: white;
+    background-image: url(webapp/twitter.png);
+}
+
+.button_passport.twitter:hover {
+    background-color: #178DE8;
+}
+
+.button_passport.facebook {
+    background-color: #4963A4;
+    color: white;
+    background-image: url(webapp/facebook.png);
+}
+
+.button_passport.facebook:hover {
+    background-color: #3A4F82;
+}
+
+.button_passport.microsoft {
+    background-color: #0072C6;
+    color: white;
+    background-image: url(webapp/windows.png);
+}
+
+.button_passport.microsoft:hover {
+    background-color: #005C9E;
+}
+
+/*
+IOS like overlay
+*/
+
+.ui-ios-overlay {
+    z-index: 99999;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 200px;
+    height: 200px;
+    margin-left: -100px;
+    margin-top: -100px;
+    filter: progid: DXImageTransform.Microsoft.gradient(startColorstr=#cc000000, endColorstr=#cc000000);
+    background: rgba(0, 0, 0, 0.8);
+    -webkit-border-radius: 20px;
+    -moz-border-radius: 20px;
+    border-radius: 20px;
+}
+
+.ui-ios-overlay .title {
+    color: #FFF;
+    font-weight: ;
+    text-align: center;
+    display: block;
+    font-size: 18px;
+    position: absolute;
+    bottom: 30px;
+    left: 0;
+    width: 100%;
+}
+
+.ui-ios-overlay img {
+    display: block;
+    margin: 20% auto 0 auto;
+}
+
+.ui-ios-overlay .spinner {
+    left: 50% !important;
+    top: 40% !important;
+}
+
+.ios-overlay-show {
+    -webkit-animation-name: ios-overlay-show;
+    -webkit-animation-duration: 750ms;
+    -moz-animation-name: ios-overlay-show;
+    -moz-animation-duration: 750ms;
+    -ms-animation-name: ios-overlay-show;
+    -ms-animation-duration: 750ms;
+    -o-animation-name: ios-overlay-show;
+    -o-animation-duration: 750ms;
+    animation-name: ios-overlay-show;
+    animation-duration: 750ms;
+}
+
+@-webkit-keyframes ios-overlay-show {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+@-moz-keyframes ios-overlay-show {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+@-ms-keyframes ios-overlay-show {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+@-o-keyframes ios-overlay-show {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes ios-overlay-show {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+.ios-overlay-hide {
+    -webkit-animation-name: ios-overlay-hide;
+    -webkit-animation-duration: 750ms;
+    -webkit-animation-fill-mode: forwards;
+    -moz-animation-name: ios-overlay-hide;
+    -moz-animation-duration: 750ms;
+    -moz-animation-fill-mode: forwards;
+    -ms-animation-name: ios-overlay-hide;
+    -ms-animation-duration: 750ms;
+    -ms-animation-fill-mode: forwards;
+    -o-animation-name: ios-overlay-hide;
+    -o-animation-duration: 750ms;
+    -o-animation-fill-mode: forwards;
+    animation-name: ios-overlay-hide;
+    animation-duration: 750ms;
+    animation-fill-mode: forwards;
+}
+
+@-webkit-keyframes ios-overlay-hide {
+    0% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+@-moz-keyframes ios-overlay-hide {
+    0% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+@-ms-keyframes ios-overlay-hide {
+    0% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+@-o-keyframes ios-overlay-hide {
+    0% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+@keyframes ios-overlay-hide {
+    0% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+.overlay_error {
+    background-image: url(webapp/cross.png);
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: 96px 96px;
+    width: 100%;
+    height: 100%;
+}
+
+.overlay_check {
+    background-image: url(webapp/check.png);
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: 96px 96px;
+    width: 100%;
+    height: 100%;
+}
+
+/* Icons */
+
+.ux-notification-icon-information {
+    background-image: url(webapp/icon16_info.png);
+}
+
+.ux-notification-icon-error {
+    background-image: url(webapp/icon16_error.png);
+}
+
+/* Using standard theme */
+
+.ux-notification-window .x-window-body {
+    text-align: center;
+    padding: 15px 5px 15px 5px;
+}
+
+/* Custom styling */
+
+.ux-notification-light .x-window-header {
+    background-color: transparent;
+}
+
+body .ux-notification-light {
+    background-image: url(webapp/fader.png);
+}
+
+.ux-notification-light .x-window-body {
+    text-align: center;
+    padding: 15px 5px 20px 5px;
+    background-color: transparent;
+    border: 0px solid white;
+}
+
+.OASlidingPanel {
+    position: absolute;
+    box-shadow: -1px 3px 8px 1px #aaa;
+    right: 0px;
+    top: 25px;
+    z-index: 99999999;
+    width: 435px;
+    height: 100%;
+    border-left: 1px solid #BBBBBB;
+    background: #EEEEEE;
+}
+
+/* Notification */
+
+.OACard {
+    margin: 0px;
+    margin-top: 14px;
+    width: 360px;
+    height: 60px;
+    border: 1px solid #bbbbbb;
+    border-radius: 5px;
+    background: #eeeeee;
+    padding: 0px;
+    box-shadow: -1px 3px 8px 1px #aaa;
+}
+
+.OACardHeader {
+    height: 26px;
+    background: #dddddd;
+    border-radius: 5px 5px 0px 0px;
+    border-radius: 5px 5px 0px 0px;
+    padding-top: 5px;
+}
+
+.OACardTitle {
+    margin-left: 0px;
+    margin-top: 0px;
+    text-align: left;
+    font-family: -apple-system, 'Helvetica Neue', 'Helvetica', 'Arial', 'Lucida Grande', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-weight: 400;
+    font-size: 13px;
+    color: black;
+    display: inline;
+    float: left;
+    cursor: default;
+}
+
+.OACardClose {
+    background-image: url(webapp/close.png);
+    width: 16px;
+    height: 16px;
+    background-repeat: no-repeat;
+    background-size: contain;
+    display: inline;
+    float: right;
+    margin-top: -1px;
+    margin-left: 0px;
+    margin-right: 5px;
+}
+
+.OACardContent {
+    font-family: -apple-system, 'Helvetica Neue', 'Helvetica', 'Arial', 'Lucida Grande', sans-serif;
+    font-size: 13px;
+    font-weight: 10;
+    color: black;
+    padding: 8px;
+    text-align: justify;
+}
+
+.OACardObject {
+    font-family: -apple-system, 'Helvetica Neue', 'Helvetica', 'Arial', 'Lucida Grande', sans-serif;
+    font-size: 13px;
+    font-weight: bold;
+    color: black;
+    text-align: justify;
+}
+
+.OACardSubject {
+    font-family: -apple-system, 'Helvetica Neue', 'Helvetica', 'Arial', 'Lucida Grande', sans-serif;
+    font-size: 13px;
+    font-weight: 1;
+    color: black;
+    margin-top: 4px;
+    text-align: justify;
+}
+
+.css_btn_cancel {
+    cursor: pointer;
+    margin: 10px;
+    border-radius: 5px;
+    text-decoration: none;
+    padding: 10px;
+    font-size: 22px;
+    transition: .3s;
+    -webkit-transition: .3s;
+    -moz-transition: .3s;
+    -o-transition: .3s;
+    display: inline-block;
+}
+
+.css_btn_cancel {
+    cursor: pointer;
+    margin: 10px;
+    border-radius: 5px;
+    text-decoration: none;
+    padding: 10px;
+    font-size: 22px;
+    transition: .3s;
+    -webkit-transition: .3s;
+    -moz-transition: .3s;
+    -o-transition: .3s;
+    display: inline-block;
+}
+
+.blue {
+    color: #55acee;
+    border: 2px #55acee solid;
+}
+
+.blue:hover {
+    background-color: #55acee;
+    color: #fff
+}
