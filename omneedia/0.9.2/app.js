@@ -24,11 +24,11 @@ if (!Settings.REMOTE_API) Settings.REMOTE_API = document.getElementsByTagName('b
 
 // Define App
 App = {
-    version: '0.9.1',
+    version: '0.9.2',
     versionDetail: {
         major: 0,
         minor: 9,
-        patch: 1
+        patch: 2
     }
 };
 
