@@ -569,3 +569,18 @@ Ext.override(Ext.data.proxy.Ajax, {
         'z': window.z
     }
 });
+
+GURU_MEDITATION_FATAL = false;
+
+Ext.util.Observable.observe(Ext.data.Connection, {
+    requestexception: function (conn, response, options) {
+        if (!GURU_MEDITATION_FATAL) {
+            GURU_MEDITATION_FATAL = true;
+            setTimeout(function () {
+                alert('Votre session a été déconnectée. Veuillez vous authentifier à nouveau.');
+                return location.reload();
+            }, 1000);
+            App.blur('body');
+        }
+    }
+});

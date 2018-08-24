@@ -9,10 +9,11 @@ Auth = {
             });
         } else {
             if (!Settings.REMOTE_AUTH) Settings.REMOTE_AUTH = "";
-            var divo = document.createElement('div');
+
+            /*var divo = document.createElement('div');
             divo.className = "QxOverlay";
             divo.style.zIndex = "99999999999999999";
-            document.getElementsByTagName('body')[0].appendChild(divo);
+            document.getElementsByTagName('body')[0].appendChild(divo);*/
 
             Auth.window = window.open(Settings.REMOTE_AUTH + "/logout", "_blank");
             __INTERVAL__ = window.setInterval(function () {
@@ -40,18 +41,26 @@ Auth = {
         var divo = document.createElement('div');
         divo.className = "QxOverlay";
         document.getElementsByTagName('body')[0].appendChild(divo);
+        try {
+            App.get("window").close();
+        } catch (e) {
 
-        var div = document.createElement('div');
+        };
 
-        if (Settings.TYPE == "mobile") {
-            if (App.isPhone)
-                div.className = "QxLoginBox smartphone animated fadeInDownBig";
-            else
-                div.className = "QxLoginBox tablet animated fadeInDownBig";
-        } else div.className = "QxLoginBox animated fadeInDownBig";
-        document.getElementsByTagName('body')[0].appendChild(div);
+        if (!document.getElementById('__AUTH__LOGIN__BOX')) {
+            var div = document.createElement('div');
+            div.id = "__AUTH__LOGIN__BOX";
+            if (Settings.TYPE == "mobile") {
+                if (App.isPhone)
+                    div.className = "QxLoginBox smartphone animated";
+                else
+                    div.className = "QxLoginBox tablet animated";
+            } else div.className = "QxLoginBox animated";
+            document.getElementsByTagName('body')[0].appendChild(div);
+        } else App.$('#__AUTH__LOGIN__BOX').removeClass('bounceOutDown');
+        App.$('#__AUTH__LOGIN__BOX').addClass('fadeInDownBig');
 
-        App.$('<table width="100%" height="100%" border="0"><tr class=CWaitSignOn style="display:none"><td width=100% height=100% valign=middle align="center">En attente des informations d\'identification<br>&nbsp;<br><a class="css_btn_cancel blue">Annuler</a></td></tr><tr class=CSignOn><td class="QxPassports" width=100% height=100% valign=middle align="center"><div class=qxAboutLogo style="position:absolute;top:10px;width:100%;margin-bottom:10px"></div><big><b>' + Settings.TITLE + '</b></big><br>&nbsp;<br>&nbsp;<br>&nbsp;</td></tr></table>').appendTo('.QxLoginBox');
+        App.$('#__AUTH__LOGIN__BOX').html('<table width="100%" height="100%" border="0"><tr class=CWaitSignOn style="display:none"><td width=100% height=100% valign=middle align="center">En attente des informations d\'identification<br>&nbsp;<br><a class="css_btn_cancel blue">Annuler</a></td></tr><tr class=CSignOn><td class="QxPassports" width=100% height=100% valign=middle align="center"><div class=qxAboutLogo style="position:absolute;top:10px;width:100%;margin-bottom:10px"></div><big><b>' + Settings.TITLE + '</b></big><br>&nbsp;<br>&nbsp;<br>&nbsp;</td></tr></table>');
 
         for (var jk = 0; jk < Settings.AUTH.passports.length; jk++) {
             if (!Settings.AUTH.passport[Settings.AUTH.passports[jk]]) {
@@ -86,9 +95,9 @@ Auth = {
                 Auth.User = JSON.parse(response);
                 App.$('.QxOverlay').remove();
                 App.unblur('.x-panel');
-                App.$('.QxLoginBox').addClass('bounceOutDown');
+                App.$('#__AUTH__LOGIN__BOX').removeClass('fadeInDownBig').addClass('bounceOutDown');
                 window.setTimeout(function () {
-                    App.$('.QxLoginBox').remove();
+                    //App.$(div).remove();
                 }, 1000);
                 if (Settings.TYPE != "mobile") {
                     Ext.getCmp('GlobalMenuUser').setText(Auth.User.mail.split('@')[0]);
@@ -97,9 +106,9 @@ Auth = {
                 if (fn) fn(Auth.User);
             });
             document.socket.on('#failedauth', function (response) {
-                App.$('.QxLoginBox').addClass('bounceOutDown');
+                App.$('#__AUTH__LOGIN__BOX').removeClass('fadeInDownBig').addClass('bounceOutDown');
                 window.setTimeout(function () {
-                    App.$('.QxLoginBox').remove();
+                    //App.$('#__AUTH__LOGIN__BOX').remove();
                 }, 1000);
                 App.notify('Auth', "Vous avez bien été identifié mais vous n'avez pas accès a cette application.");
             });
