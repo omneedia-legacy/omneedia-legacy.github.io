@@ -1,15 +1,17 @@
 module.exports = {
-    request: function(o, cb) {
+    request: function (o, cb) {
         var request = require('request');
         try {
-            if (global.CFG.current.proxy) var R = request.defaults({ proxy: global.CFG.current.proxy });
+            if (global.CFG.current.proxy) var R = request.defaults({
+                proxy: global.CFG.current.proxy
+            });
             else var R = request;
         } catch (e) {
             var R = request;
         };
         return R(o, cb);
     },
-    connect: function(name, fn) {
+    connect: function (name, fn) {
         var shortid = require('shortid');
         name = name.split('cloud://')[1];
         var uri = "https://" + name.split('/')[0].split('@')[1] + '/';
@@ -43,15 +45,15 @@ module.exports = {
             branch: branch,
             version: version
         };
-        this.request(options, function(e, r, b) {
+        this.request(options, function (e, r, b) {
             if (e) return fn('SERVER_UNREACHABLE', null);
             if (r.statusCode != 200) return fn('CONNECTION_REFUSED', null);
             fn(null, o);
         });
     },
-    query: function(name, sql, fn) {
+    query: function (name, sql, fn) {
         var p = this;
-        this.connect(name, function(err, q) {
+        this.connect(name, function (err, q) {
             if (err) return fn(err, null);
             q.options.method = "POST";
             q.options.form = {
@@ -61,7 +63,7 @@ module.exports = {
                 version: q.version,
                 sql: q.options.headers.PID + new Buffer(sql).toString('base64')
             };
-            p.request(q.options, function(e, r, b) {
+            p.request(q.options, function (e, r, b) {
                 if (e) return fn('{"ERR":' + JSON.stringify(e) + '}', null);
                 var result = JSON.parse(b);
                 if (result.ERR) return fn(result, null);
@@ -69,9 +71,9 @@ module.exports = {
             })
         });
     },
-    model: function(name, sql, fn) {
+    model: function (name, sql, fn) {
         var p = this;
-        this.connect(name, function(err, q) {
+        this.connect(name, function (err, q) {
             if (err) return fn(err, null);
             q.options.method = "POST";
             q.options.form = {
@@ -82,7 +84,7 @@ module.exports = {
                 version: q.version,
                 sql: q.options.headers.PID + new Buffer(sql).toString('base64')
             };
-            p.request(q.options, function(e, r, b) {
+            p.request(q.options, function (e, r, b) {
                 if (e) return fn('{"ERR":' + JSON.stringify(e) + '}', null);
                 var result = JSON.parse(b);
                 if (result.ERR) return fn(result, null);
@@ -90,9 +92,9 @@ module.exports = {
             })
         });
     },
-    store: function(name, sql, fn) {
+    store: function (name, sql, fn) {
         var p = this;
-        this.connect(name, function(err, q) {
+        this.connect(name, function (err, q) {
             if (err) return fn(err, null);
             q.options.method = "POST";
             q.options.form = {
@@ -103,7 +105,7 @@ module.exports = {
                 version: q.version,
                 sql: q.options.headers.PID + new Buffer(sql).toString('base64')
             };
-            p.request(q.options, function(e, r, b) {
+            p.request(q.options, function (e, r, b) {
                 if (e) return fn('{"ERR":' + JSON.stringify(e) + '}', null);
                 var result = JSON.parse(b);
                 if (result.ERR) return fn(result, null);
@@ -111,9 +113,9 @@ module.exports = {
             })
         });
     },
-    del: function(name, tb, ndx, cb) {
+    del: function (name, tb, ndx, cb) {
         var p = this;
-        this.connect(name, function(err, q) {
+        this.connect(name, function (err, q) {
             if (err) return fn(err, null);
             q.options.method = "POST";
             q.options.form = {
@@ -125,7 +127,7 @@ module.exports = {
                 db: q.db,
                 version: q.version
             };
-            p.request(q.options, function(e, r, b) {
+            p.request(q.options, function (e, r, b) {
                 if (e) return fn('{"ERR":' + JSON.stringify(e) + '}', null);
                 var result = JSON.parse(b);
                 if (result.ERR) return fn(result, null);
@@ -133,9 +135,9 @@ module.exports = {
             })
         });
     },
-    posts: function(name, tb, o, ndx, results, cb) {
+    posts: function (name, tb, o, ndx, results, cb) {
         var _p = this;
-        this.post(name, tb, o[ndx], function(e, r) {
+        this.post(name, tb, o[ndx], function (e, r) {
             if (ndx + 1 < o.length) {
                 if (e) results.push(e);
                 else results.push(r);
@@ -147,9 +149,9 @@ module.exports = {
             };
         });
     },
-    showColumns: function(name, tb, cb) {
+    showColumns: function (name, tb, cb) {
         var p = this;
-        this.connect(name, function(err, q) {
+        this.connect(name, function (err, q) {
             if (err) return cb(err, null);
             q.options.method = "POST";
             q.options.form = {
@@ -160,7 +162,7 @@ module.exports = {
                 db: q.db,
                 version: q.version
             };
-            p.request(q.options, function(e, r, b) {
+            p.request(q.options, function (e, r, b) {
                 if (e) return cb(e, null);
                 var result = JSON.parse(b);
                 if (result.ERR) return cb(result, null);
@@ -168,7 +170,7 @@ module.exports = {
             })
         });
     },
-    post: function(name, tb, o, cb) {
+    post: function (name, tb, o, cb) {
 
         var p = this;
 
@@ -191,7 +193,7 @@ module.exports = {
                 if (str.indexOf('’') > -1) str = str.replace(/’/g, "'");
             } catch (e) {};
             try {
-                var obj = '\'' + str.replace(/[\0\x08\x09\x1a\n\r"'\\\%]/g, function(char) {
+                var obj = '\'' + str.replace(/[\0\x08\x09\x1a\n\r"'\\\%]/g, function (char) {
                     //console.log('o');
                     switch (char) {
                         case "\0":
@@ -236,7 +238,7 @@ module.exports = {
             function isDate(d) {
                 return (d instanceof Date && !isNaN(date.valueOf()));
             };
-            String.prototype.toDate = function() {
+            String.prototype.toDate = function () {
                 try {
                     var mydate = this.split('T')[0];
                     var mytime = this.split('T')[1].split('Z')[0];
@@ -254,7 +256,9 @@ module.exports = {
                 }
             };
 
-            function pad(n) { return n < 10 ? '0' + n : n };
+            function pad(n) {
+                return n < 10 ? '0' + n : n
+            };
             try {
                 if (!isDate(d)) d = d.toDate();
             } catch (e) {};
@@ -275,10 +279,12 @@ module.exports = {
                     getBase64(fld, x, ob, cb);
                     return;
                 };
-                var request = App.using('request').defaults({ encoding: null });
+                var request = App.using('request').defaults({
+                    encoding: null
+                });
                 if (path.indexOf('url(') > -1) path = path.substr(path.indexOf('url(') + 1, path.length - 1);
                 if (path.indexOf('://') > -1)
-                    request.get(path, function(error, response, body) {
+                    request.get(path, function (error, response, body) {
                         if (!error && response.statusCode == 200) {
                             data = "data:" + response.headers["content-type"] + ";base64," + new Buffer(body, 'binary').toString('base64');
                             ob[fld[x].Field] = data;
@@ -300,7 +306,7 @@ module.exports = {
         var all_o = [];
         for (var el in o) all_o.push(el);
         var ISDBX = 0;
-        this.showColumns(name, tb, function(e, response) {
+        this.showColumns(name, tb, function (e, response) {
             var r = [];
             var _fields = [];
             var _boolean = [];
@@ -317,7 +323,7 @@ module.exports = {
                 if ((tytpe == "LONGTEXT") || (tytpe.indexOf('BLOB') > -1) || (tytpe.indexOf('BINARY') > -1)) _fields.push(response[i]);
             };
             o = zobj;
-            getBase64(_fields, 0, o, function() {
+            getBase64(_fields, 0, o, function () {
                 if (r.length > 0) {
                     var ndx = r[0].Column_name;
                     if (!o[ndx]) {
@@ -362,7 +368,7 @@ module.exports = {
                         };
                         var sql = "INSERT INTO " + tb + " (" + fields.join(',') + ") VALUES (" + values.join(',') + ")";
                         console.log(sql);
-                        p.query(name, sql, function(err, rows) {
+                        p.query(name, sql, function (err, rows) {
                             //console.log(err);
                             if (rows) {
                                 err = null;
@@ -379,7 +385,7 @@ module.exports = {
                         };
                         sql += params.join(' AND ');
                         console.log(sql);
-                        p.query(name, sql, function(err, rows) {
+                        p.query(name, sql, function (err, rows) {
                             if (rows.length == 0) {
                                 console.log('_____ INSERT');
                                 var fields = [];
@@ -422,7 +428,7 @@ module.exports = {
                                 };
                                 var sql = "INSERT INTO " + tb + " (" + fields.join(',') + ") VALUES (" + values.join(',') + ")";
                                 console.log(sql);
-                                p.query(name, sql, function(err, rows) {
+                                p.query(name, sql, function (err, rows) {
                                     if (rows) {
                                         err = null;
                                         rows.method = "INSERT";
@@ -464,7 +470,7 @@ module.exports = {
                                 };
                                 var sql = "UPDATE " + tb + " SET " + fields.join(',') + " WHERE " + params.join(' AND ');
                                 console.log(sql);
-                                p.query(name, sql, function(err, rows) {
+                                p.query(name, sql, function (err, rows) {
                                     if (rows) {
                                         err = null;
                                         rows.method = "UPDATE";

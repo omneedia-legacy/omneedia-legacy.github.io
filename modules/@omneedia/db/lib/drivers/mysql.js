@@ -53,7 +53,7 @@ module.exports = {
                 // something more advanced with your connection configuration, then
                 // you should check carefully as to whether this is actually going to do
                 // what you think it should do.
-                client = mysql.createConnection(client.config);
+                client = db.createConnection(client.config);
                 replaceClientOnDisconnect(client);
                 connection.connect(function (error) {
                     if (error) {
@@ -89,7 +89,7 @@ module.exports = {
             };
         });
     },
-    model: function (name, sql, fn) {
+    model: function (name, sql, fn, o) {
         function getMySQLType(typ) {
             var types = require('mysql2').Types;
             for (var el in types) {
@@ -119,6 +119,8 @@ module.exports = {
                 q.query(sql2, function (err, rows, fields) {
                     if (!err) {
                         var total = rows.length;
+                        if (o) sql = sql2 + ' limit ' + o.start + ',' + o.limit;
+                        console.log(sql);
                         q.query(sql, function (err, rows, fields) {
                             if (!err) {
                                 model.success = true;
@@ -130,6 +132,7 @@ module.exports = {
                                     var typ = getMySQLType(field.columnType).toLowerCase();
                                     if (typ == "var_string") typ = "string";
                                     if (typ == "long") typ = "int";
+                                    if (typ == "longlong") typ = "int";
                                     if (typ == "newdecimal") typ = "float";
                                     if (typ == "blob") typ = "string";
                                     if (typ == "tiny") typ = "boolean";
@@ -358,6 +361,7 @@ module.exports = {
                 var all_o = [];
                 for (var el in o) all_o.push(el);
                 q.query("SHOW COLUMNS FROM " + tb, function (e, response) {
+                    console.log(e);
                     var r = [];
                     var _fields = [];
                     var _boolean = [];
