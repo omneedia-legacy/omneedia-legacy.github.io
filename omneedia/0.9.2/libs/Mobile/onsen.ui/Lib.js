@@ -1,6 +1,6 @@
 App.apply(App, {
     control: {
-        create: function(el, data, methods, sss) {
+        create: function (el, data, methods, sss) {
             var obj = {};
             obj.template = el;
             obj.data = data;
@@ -28,7 +28,7 @@ App.apply(App, {
      * Implement the application (MVC)
      * 
      */
-    application: function(o) {
+    application: function (o) {
         this.config = o;
 
         if (o.launch) o.launch();
@@ -42,7 +42,7 @@ App.apply(App, {
                 var classname = req[ndx].split('.')[1];
                 var url = Settings.REMOTE_API + Settings.API_REMOTE[classname];
             };
-            App.request(url, function(e, b) {
+            App.request(url, function (e, b) {
                 App.stacks.requires[req[ndx]] = b;
                 window.eval(b);
                 loadRequire(req, ndx + 1, cb);
@@ -54,11 +54,11 @@ App.apply(App, {
             if (App.stacks.controllers[ctrl[ndx]]) return loadControllers(ctrl, ndx + 1, cb);
             if (!Settings.DEBUG) return loadControllers(ctrl, ndx + 1, cb);
             var url = Settings.PATHS['Contents'] + '/controller/' + ctrl[ndx] + '.js';
-            App.request(url, function(e, b) {
+            App.request(url, function (e, b) {
                 App.stacks.controllers[ctrl[ndx]] = b;
                 window.eval(b);
                 var Require = App.controller[ctrl[ndx]].require;
-                loadRequire(Require, 0, function() {
+                loadRequire(Require, 0, function () {
                     loadControllers(ctrl, ndx + 1, cb);
                 });
             });
@@ -69,11 +69,11 @@ App.apply(App, {
             if (App.stacks.viewControllers[ctrl[ndx]]) return loadViewControllers(ctrl, ndx + 1, cb);
             if (!Settings.DEBUG) return loadViewControllers(ctrl, ndx + 1, cb);
             var url = Settings.PATHS['Contents'] + '/view/' + ctrl[ndx] + '/' + ctrl[ndx] + '.js';
-            App.request(url, function(e, b) {
+            App.request(url, function (e, b) {
                 App.stacks.viewControllers[ctrl[ndx]] = b;
                 window.eval(b);
                 var Require = App.viewController[ctrl[ndx]].require;
-                loadRequire(Require, 0, function() {
+                loadRequire(Require, 0, function () {
                     loadViewControllers(ctrl, ndx + 1, cb);
                 });
             });
@@ -115,7 +115,7 @@ App.apply(App, {
                 App.controller[maincontroller].isLoaded = true;
             };
 
-            document.addEventListener('show', function(event) {
+            document.addEventListener('show', function (event) {
 
                 var page = event.target;
                 if (Settings.DEBUG) {
@@ -160,7 +160,7 @@ App.apply(App, {
                     };
                 }
             });
-            document.addEventListener('hide', function(event) {
+            document.addEventListener('hide', function (event) {
                 for (var i = 0; i < o.viewControllers.length; i++) {
                     if (o.viewControllers[i] == event.target.id) {
                         var ctrl = App.viewController[o.viewControllers[i]];
@@ -196,7 +196,7 @@ App.apply(App, {
                     };
                 }
             });
-            document.addEventListener('destroy', function(event) {
+            document.addEventListener('destroy', function (event) {
                 for (var i = 0; i < o.viewControllers.length; i++) {
                     if (o.viewControllers[i] == event.target.id) {
                         var ctrl = App.viewController[o.viewControllers[i]];
@@ -232,7 +232,7 @@ App.apply(App, {
                     };
                 }
             });
-            document.addEventListener('init', function(event) {
+            document.addEventListener('init', function (event) {
 
                 var page = event.target;
                 var langs = page.getElementsByTagName('lang');
@@ -318,11 +318,11 @@ App.apply(App, {
                 };
             });
         };
-        document.addEventListener("deviceready", function() {
+        document.addEventListener("deviceready", function () {
             if (window.StatusBar) StatusBar.hide();
-            App.getAcceptedLangs(function(lang) {
-                App.loadLang(lang, function() {
-                    loadControllers(o.controllers, 0, function() {
+            App.getAcceptedLangs(function (lang) {
+                App.loadLang(lang, function () {
+                    loadControllers(o.controllers, 0, function () {
                         loadViewControllers(o.viewControllers, 0, initMainController);
                     });
                 })
@@ -336,10 +336,10 @@ App.apply(App, {
      * 
      */
     controller: {
-        define: function(name, obj) {
+        define: function (name, obj) {
             var me = this;
             obj.isLoaded = false;
-            obj.control = function(o) {
+            obj.control = function (o) {
                 obj.controls = o;
             };
             App.controller[name] = obj;
@@ -352,16 +352,16 @@ App.apply(App, {
      * 
      */
     viewController: {
-        define: function(name, obj) {
+        define: function (name, obj) {
             var me = this;
             obj.isLoaded = false;
-            obj.control = function(o) {
+            obj.control = function (o) {
                 obj.controls = o;
             };
             App.viewController[name] = obj;
         }
     },
-    init: function(view, onload) {
+    init: function (view, onload) {
 
         var maincontroller = -1;
         var me = this;
@@ -375,8 +375,8 @@ App.apply(App, {
         if (window.ons) {
             // ONSEN UI Support
 
-            if (Kickstart) Kickstart.load(function() {
-                window.setTimeout(function() {
+            if (Kickstart) Kickstart.load(function () {
+                window.setTimeout(function () {
                     function kickem() {
                         var navig = document.createElement('ons-navigator');
                         navig.id = "Navigator";
@@ -397,29 +397,6 @@ App.apply(App, {
 
             return;
         };
-        window.setTimeout(function() {
-            function kickem() {
-                // IONIC Support
-                if (document.getElementsByTagName('html')[0].textContent.indexOf('ion') > -1) {
-                    if (Settings.DEBUG) {
-                        window.setTimeout(function() {
-                            App.request(Settings.PATHS.Contents + '/../app.html', function(e, r) {
-                                if (!r) {
-                                    var ion = document.createElement('ion-app');
-                                    document.getElementsByTagName('body')[0].appendChild(ion);
-                                };
-                                App.$(r).appendTo(App.$('body'));
-                                console.log(me);
-                                if (me.launch) me.launch();
-                            });
-                        }, 1000);
-                    };
 
-                };
-            };
-            if (onload) onload();
-            if (Kickstart) Kickstart.load(kickem);
-
-        }, 1000);
     }
 });

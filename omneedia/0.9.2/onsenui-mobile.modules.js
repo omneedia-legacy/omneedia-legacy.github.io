@@ -4,6 +4,6 @@
     "libs/Query.js",
     "libs/Auth.js",
     "libs/DB.js",
-    "libs/Mobile/Lib-onsenui.js",
+    "libs/Mobile/onsen.ui/Lib.js",
     "libs/VueComponent.js"
 ]
