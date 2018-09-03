@@ -20,7 +20,21 @@ App.apply(App, {
             function errorCallback(o) {
                 cb(navigator.language || navigator.userLanguage);
             };
-            navigator.globalization.getPreferredLanguage(successCallback, errorCallback);
+            if (navigator.globalization) navigator.globalization.getPreferredLanguage(successCallback, errorCallback);
+            else {
+
+                App.request({
+                    url: Settings.REMOTE_API + "i18n"
+                }, function (e, r) {
+                    // fallback to navigator
+                    if (e) cb(navigator.language || navigator.userLanguage);
+                    else {
+                        cb(r);
+                    }
+                });
+
+            }
+
         } else {
             App.request({
                 url: Settings.REMOTE_API + "i18n"
