@@ -115,6 +115,11 @@ App.apply(App, {
                 App.DEFAULT_LANG = App.DEFAULT_LANG.split('|')[0];
                 window.localStorage.setItem('LANG', App.DEFAULT_LANG);
                 window.eval('if (!i18n["' + App.DEFAULT_LANG + '"]) i18n["' + App.DEFAULT_LANG + '"]={};i18n_framework["' + App.DEFAULT_LANG + '"]=function(){' + _LANG.join(' ') + '};');
+                if (App.DEFAULT_LANG.indexOf('-') > -1) {
+                    var a = App.DEFAULT_LANG.split('-')[0].toLowerCase();
+                    var b = App.DEFAULT_LANG.split('-')[1].toUpperCase();
+                    App.DEFAULT_LANG = a + '-' + b;
+                };
                 i18n_framework[App.DEFAULT_LANG]();
                 cb();
             });
@@ -122,6 +127,11 @@ App.apply(App, {
             App.DEFAULT_LANG = App.DEFAULT_LANG.split('|')[0];
             window.localStorage.setItem('LANG', App.DEFAULT_LANG);
             // in PROD, It's always binded to source code
+            if (App.DEFAULT_LANG.indexOf('-') > -1) {
+                var a = App.DEFAULT_LANG.split('-')[0].toLowerCase();
+                var b = App.DEFAULT_LANG.split('-')[1].toUpperCase();
+                App.DEFAULT_LANG = a + '-' + b;
+            };
             i18n_framework[App.DEFAULT_LANG]();
             cb();
         }

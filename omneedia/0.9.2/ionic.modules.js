@@ -4,6 +4,6 @@
     "libs/Query.js",
     "libs/Auth.js",
     "libs/DB.js",
-    "libs/Mobile/Lib.js",
+    "libs/Mobile/ionic/Lib.js",
     "libs/VueComponent.js"
 ]

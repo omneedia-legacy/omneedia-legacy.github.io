@@ -1,0 +1,22 @@
+{
+	"namespace": "Ext.ux.Scheduler",
+	"version": "5.1.3",
+	"description": "Scheduler module.",
+	"license": "MIT",
+	"repositories": {
+	},
+	"package": {
+		"js": [
+			"{version}/Scheduler.js"
+		],
+		"css": [
+			"{version}/res/classic.css"
+		],
+		"html": [
+
+		],
+		"i18n": [
+
+		]		
+	}
+}
