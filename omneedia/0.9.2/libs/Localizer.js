@@ -65,6 +65,7 @@ App.apply(App, {
 
             function addLang() {
                 if (url1.indexOf('.json') > -1) {
+
                     _LANG.push('i18n["' + App.DEFAULT_LANG.split('|')[0] + '"]=Object.assign(i18n["' + App.DEFAULT_LANG.split('|')[0] + '"],' + this.response + ');');
                 } else _LANG.push(this.response);
                 return ll(urls, i + 1, cb);
@@ -88,9 +89,6 @@ App.apply(App, {
         if (window.localStorage['LANG']) App._lang = window.localStorage['LANG'];
         if (!App._lang) {
             for (var i = 0; i < Settings.LANGS.length; i++) {
-                console.log(Settings.LANGS[i].toLowerCase());
-                console.log(lang.toLowerCase());
-                console.log(lang.toLowerCase().indexOf(Settings.LANGS[i].toLowerCase()));
                 if (lang.toLowerCase().indexOf(Settings.LANGS[i].toLowerCase()) > -1) current = Settings.LANGS[i] + '|' + lang;
             };
         } else {
@@ -114,13 +112,13 @@ App.apply(App, {
             ll(Settings['i18n'], 0, function () {
                 App.DEFAULT_LANG = App.DEFAULT_LANG.split('|')[0];
                 window.localStorage.setItem('LANG', App.DEFAULT_LANG);
+
+
                 window.eval('if (!i18n["' + App.DEFAULT_LANG + '"]) i18n["' + App.DEFAULT_LANG + '"]={};i18n_framework["' + App.DEFAULT_LANG + '"]=function(){' + _LANG.join(' ') + '};');
-                if (App.DEFAULT_LANG.indexOf('-') > -1) {
-                    var a = App.DEFAULT_LANG.split('-')[0].toLowerCase();
-                    var b = App.DEFAULT_LANG.split('-')[1].toUpperCase();
-                    App.DEFAULT_LANG = a + '-' + b;
-                };
+                console.log(i18n_framework[App.DEFAULT_LANG]);
+                //return;
                 i18n_framework[App.DEFAULT_LANG]();
+                //return;
                 cb();
             });
         } else {
@@ -131,8 +129,15 @@ App.apply(App, {
                 var a = App.DEFAULT_LANG.split('-')[0].toLowerCase();
                 var b = App.DEFAULT_LANG.split('-')[1].toUpperCase();
                 App.DEFAULT_LANG = a + '-' + b;
+                console.log(a);
+                console.log(b);
+                console.log(App.DEFAULT_LANG);
             };
-            i18n_framework[App.DEFAULT_LANG]();
+            try {
+                i18n_framework[App.DEFAULT_LANG]();
+            } catch (e) {
+
+            };
             cb();
         }
     }
