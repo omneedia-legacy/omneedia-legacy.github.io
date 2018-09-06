@@ -129,14 +129,11 @@ App.apply(App, {
                 var a = App.DEFAULT_LANG.split('-')[0].toLowerCase();
                 var b = App.DEFAULT_LANG.split('-')[1].toUpperCase();
                 App.DEFAULT_LANG = a + '-' + b;
-                console.log(a);
-                console.log(b);
-                console.log(App.DEFAULT_LANG);
             };
             try {
                 i18n_framework[App.DEFAULT_LANG]();
             } catch (e) {
-
+                console.log('ERR: i18n loading error.');
             };
             cb();
         }
