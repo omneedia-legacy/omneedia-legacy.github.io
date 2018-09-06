@@ -3,8 +3,7 @@
 	"version": "1.0.0",
 	"description": "Upload widget",
 	"license": "MIT",
-	"repositories": {
-	},
+	"repositories": {},
 	"package": {
 		"js": [
 			"upload.js"
@@ -16,7 +15,7 @@
 
 		],
 		"i18n": [
-
-		]		
+			"culture/{lang}.json"
+		]
 	}
 }

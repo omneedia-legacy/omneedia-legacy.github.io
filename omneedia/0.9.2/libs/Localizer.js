@@ -70,14 +70,21 @@ App.apply(App, {
 
             function addLang() {
                 if (url1.indexOf('.json') > -1) {
+                    var lng = App.DEFAULT_LANG.split('|')[0];
+                    if (lng.indexOf('-') > -1) {
+                        var a = lng.split('-')[0].toLowerCase();
+                        var b = lng.split('-')[1].toUpperCase();
+                        lng = a + '-' + b;
+                    };
+                    _LANG.push('i18n["' + lng + '"]=Object.assign(i18n["' + lng + '"],' + this.response + ');');
 
-                    _LANG.push('i18n["' + App.DEFAULT_LANG.split('|')[0] + '"]=Object.assign(i18n["' + App.DEFAULT_LANG.split('|')[0] + '"],' + this.response + ');');
-                } else _LANG.push(this.response);
+                } else {
+                    _LANG.push(this.response);
+                };
                 return ll(urls, i + 1, cb);
             };
 
             function failed() {
-                //alert(urls[i]);
                 return ll(urls, i + 1, cb);
             };
             var XHR = new XMLHttpRequest();
@@ -117,13 +124,13 @@ App.apply(App, {
             ll(Settings['i18n'], 0, function () {
                 App.DEFAULT_LANG = App.DEFAULT_LANG.split('|')[0];
                 window.localStorage.setItem('LANG', App.DEFAULT_LANG);
-
-
+                if (App.DEFAULT_LANG.indexOf('-') > -1) {
+                    var a = App.DEFAULT_LANG.split('-')[0].toLowerCase();
+                    var b = App.DEFAULT_LANG.split('-')[1].toUpperCase();
+                    App.DEFAULT_LANG = a + '-' + b;
+                };
                 window.eval('if (!i18n["' + App.DEFAULT_LANG + '"]) i18n["' + App.DEFAULT_LANG + '"]={};i18n_framework["' + App.DEFAULT_LANG + '"]=function(){' + _LANG.join(' ') + '};');
-                console.log(i18n_framework[App.DEFAULT_LANG]);
-                //return;
                 i18n_framework[App.DEFAULT_LANG]();
-                //return;
                 cb();
             });
         } else {

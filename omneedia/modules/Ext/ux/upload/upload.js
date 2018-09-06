@@ -142,8 +142,8 @@ Ext.define('Ext.ux.upload.Panel', {
         trash: "",
         trash_ico: "upload_trash",
         cancel: "Cancel",
-        filename: "Filename",
-        size: "Size",
+        filename: "Fichiers",
+        size: "Taille",
         type: "Type",
         delete: "Supprimer"
     },
