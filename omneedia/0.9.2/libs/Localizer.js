@@ -3,6 +3,11 @@ i18n = {};
 
 _ = function (x) {
     App.DEFAULT_LANG = window.localStorage['LANG'];
+    if (App.DEFAULT_LANG.indexOf('-') > -1) {
+        var a = App.DEFAULT_LANG.split('-')[0].toLowerCase();
+        var b = App.DEFAULT_LANG.split('-')[1].toUpperCase();
+        App.DEFAULT_LANG = a + '-' + b;
+    };
     try {
         return i18n[App.DEFAULT_LANG][x];
     } catch (ex) {
