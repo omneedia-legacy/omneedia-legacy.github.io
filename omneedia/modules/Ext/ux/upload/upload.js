@@ -145,7 +145,8 @@ Ext.define('Ext.ux.upload.Panel', {
         filename: "Fichiers",
         size: "Taille",
         type: "Type",
-        delete: "Supprimer"
+        delete: "Supprimer",
+        dblclick: "Veuillez double-cliquer pour ouvrir le document"
     },
     initComponent: function () {
         var me = this;
@@ -215,7 +216,8 @@ Ext.define('Ext.ux.upload.Panel', {
                     text: me.lang.filename,
                     dataIndex: "filename",
                     flex: 1,
-                    renderer: function (value) {
+                    renderer: function (value, data) {
+                        data.tdAttr = 'data-qtip="' + me.lang.dblclick + '"';
                         return '<div style="margin-top:3px;margin-bottom:3px;">' + value + '</div>'
                     }
                 },
@@ -224,16 +226,19 @@ Ext.define('Ext.ux.upload.Panel', {
                     align: "center",
                     dataIndex: "filetype",
                     width: 100,
-                    renderer: function (value) {
+                    renderer: function (value, data) {
+                        data.tdAttr = 'data-qtip="' + me.lang.dblclick + '"';
                         return '<div style="margin-top:3px;margin-bottom:3px;">' + value + '</div>'
                     }
                 },
                 {
                     text: me.lang.size,
+                    hidden: true,
                     align: "right",
                     dataIndex: "filesize",
                     width: 50,
-                    renderer: function (value) {
+                    renderer: function (value, data) {
+                        data.tdAttr = 'data-qtip="' + me.lang.dblclick + '"';
                         return '<div style="margin-top:3px;margin-bottom:3px;">' + value + '</div>'
                     }
                 }
@@ -254,17 +259,6 @@ Ext.define('Ext.ux.upload.Panel', {
                 },
                 beforeitemcontextmenu: function (view, record, item, index, e) {
                     e.stopEvent();
-                    /*
-                    if (me.readOnly) return;
-                    var gridMenu = Ext.create('Ext.menu.Menu', {
-                        items: [{
-                            text: me.lang.delete,
-                            handler: function () {
-                                view.getStore().remove(record);
-                            }
-                        }]
-                    });
-                    gridMenu.showAt(e.getXY());*/
                 }
             }
         }];
