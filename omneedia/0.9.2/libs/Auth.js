@@ -108,9 +108,9 @@ Auth = {
             document.socket.on('#failedauth', function (response) {
                 App.$('#__AUTH__LOGIN__BOX').removeClass('fadeInDownBig').addClass('bounceOutDown');
                 window.setTimeout(function () {
-                    //App.$('#__AUTH__LOGIN__BOX').remove();
+                    document.getElementsByTagName('body')[0].innerHTML = '<div class="oa_dead_end"></div><div class="oa_dead_end_label">Vous avez bien été identifié mais vous n\'avez pas accès a cette application.</div>';
                 }, 1000);
-                App.notify('Auth', "Vous avez bien été identifié mais vous n'avez pas accès a cette application.");
+                //App.notify('Auth', "Vous avez bien été identifié mais vous n'avez pas accès a cette application.");
             });
         });
     },

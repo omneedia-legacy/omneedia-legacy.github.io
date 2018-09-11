@@ -25,12 +25,13 @@ App.apply(App, {
             }).appendTo(div);
             App.$({
                 type: "div",
-                className: "OACardIcon"
+                className: "qxIcon",
+                style: "float:left;border:0px solid black;margin-top:-2px;margin-left:4px"
             }).appendTo(h);
             App.$({
                 type: "div",
                 className: "OACardTitle",
-                innerHTML: Settings.TITLE.toUpperCase()
+                innerHTML: '&nbsp;' + Settings.TITLE.toUpperCase()
             }).appendTo(h);
             var closer = App.$({
                 type: "div",

@@ -410,6 +410,7 @@ IOS like overlay
     0% {
         opacity: 0;
     }
+
     100% {
         opacity: 1;
     }
@@ -419,6 +420,7 @@ IOS like overlay
     0% {
         opacity: 0;
     }
+
     100% {
         opacity: 1;
     }
@@ -428,6 +430,7 @@ IOS like overlay
     0% {
         opacity: 0;
     }
+
     100% {
         opacity: 1;
     }
@@ -437,6 +440,7 @@ IOS like overlay
     0% {
         opacity: 0;
     }
+
     100% {
         opacity: 1;
     }
@@ -446,6 +450,7 @@ IOS like overlay
     0% {
         opacity: 0;
     }
+
     100% {
         opacity: 1;
     }
@@ -473,6 +478,7 @@ IOS like overlay
     0% {
         opacity: 1;
     }
+
     100% {
         opacity: 0;
     }
@@ -482,6 +488,7 @@ IOS like overlay
     0% {
         opacity: 1;
     }
+
     100% {
         opacity: 0;
     }
@@ -491,6 +498,7 @@ IOS like overlay
     0% {
         opacity: 1;
     }
+
     100% {
         opacity: 0;
     }
@@ -500,6 +508,7 @@ IOS like overlay
     0% {
         opacity: 1;
     }
+
     100% {
         opacity: 0;
     }
@@ -509,6 +518,7 @@ IOS like overlay
     0% {
         opacity: 1;
     }
+
     100% {
         opacity: 0;
     }
@@ -690,4 +700,27 @@ body .ux-notification-light {
 .blue:hover {
     background-color: #55acee;
     color: #fff
+}
+
+.oa_dead_end {
+    background-image: url(webapp/interdit.jpg);
+    background-size: "contain";
+    background-repeat: no-repeat;
+    background-position: center center;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+}
+
+.oa_dead_end_label {
+    position: absolute;
+    text-align: center;
+    top: 10px;
+    left: 0px;
+    width: 100%;
+    height: 100px;
+    font-family: tahoma;
+    font-size: 24px;
 }
