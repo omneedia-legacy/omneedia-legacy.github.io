@@ -16,6 +16,7 @@ Auth = {
             document.getElementsByTagName('body')[0].appendChild(divo);*/
 
             Auth.window = window.open(Settings.REMOTE_AUTH + "/logout", "_blank");
+
             __INTERVAL__ = window.setInterval(function () {
                 if (Settings.REMOTE_AUTH) var a_auth = Settings.REMOTE_AUTH;
                 else var a_auth = "";
@@ -108,7 +109,7 @@ Auth = {
             document.socket.on('#failedauth', function (response) {
                 App.$('#__AUTH__LOGIN__BOX').removeClass('fadeInDownBig').addClass('bounceOutDown');
                 window.setTimeout(function () {
-                    document.getElementsByTagName('body')[0].innerHTML = '<div class="oa_dead_end"></div><div class="oa_dead_end_label">Vous avez bien été identifié mais vous n\'avez pas accès a cette application.</div>';
+                    document.getElementsByTagName('body')[0].outerHTML = '<div class="oa_dead_end"></div><div class="oa_dead_end_label">Vous avez bien été identifié mais vous n\'avez pas accès a cette application.</div>';
                 }, 1000);
                 //App.notify('Auth', "Vous avez bien été identifié mais vous n'avez pas accès a cette application.");
             });
