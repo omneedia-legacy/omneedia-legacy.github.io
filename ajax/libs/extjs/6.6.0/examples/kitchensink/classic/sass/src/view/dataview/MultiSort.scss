@@ -1,0 +1,62 @@
+.dataview-multisort-item {
+    float: left;
+    padding: 8px;
+    margin: 8px 8px 4px 8px;
+}
+
+.x-rtl .dataview-multisort-item {
+    float: right;
+}
+
+.dataview-multisort-item h3 {
+    font-size: 12px;
+    font-weight: normal;
+    text-align: center;
+    padding-top: 5px;
+    margin: 0;
+}
+
+// These get shared by other views
+@if $theme-name == 'theme-graphite' {
+    .x-btn {
+        &.x-btn-focus {
+            .sort-direction-asc:after {
+                color: #ffffff;
+            }
+
+            .sort-direction-desc:after {
+                color: #ffffff;
+            }
+        }
+
+        .sort-direction-desc {
+            margin-top: -5px;
+
+            &:after {
+                content: "\f175";
+                font: 14px/1 FontAwesome;
+                color: #1b1b1b;
+            }
+        }
+
+        .sort-direction-asc {
+            margin-top: -5px;
+
+            &:after {
+                content: "\f176";
+                font: 14px/1 FontAwesome;
+                color: #1b1b1b;
+            }
+        }
+    }
+} @else {
+    .x-btn .sort-direction-asc {
+        background-image: theme-background-image('grid/sort_asc');
+        background-position: 4px center;
+    }
+
+    .x-btn .sort-direction-desc {
+        background-image: theme-background-image('grid/sort_desc');
+        background-position: 4px center;
+    }
+}

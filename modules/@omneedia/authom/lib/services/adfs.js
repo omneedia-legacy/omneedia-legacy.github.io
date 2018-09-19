@@ -16,12 +16,27 @@ function ADFS(options) {
 				};
 				if (!req.query.code) return res.redirect(options.login.authorizationURL + "?client_id=" + options.login.clientID + "&response_type=code&redirect_uri=" + req.protocol + "://" + host + "/auth/adfs&resource=" + req.protocol + "://" + host);
 				var request = require('request');
+				console.log({
+					uri: options.login.tokenURL,
+					method: "POST",
+					form: {
+						grant_type: "authorization_code",
+						client_id: options.login.clientID,
+						client_secret: options.login.clientSecret,
+						redirect_uri: req.protocol + "://" + host + "/auth/adfs",
+						code: req.query.code
+					},
+					tls: {
+						rejectUnauthorized: false
+					}
+				});
 				request({
 					uri: options.login.tokenURL,
 					method: "POST",
 					form: {
 						grant_type: "authorization_code",
 						client_id: options.login.clientID,
+						client_secret: options.login.clientSecret,
 						redirect_uri: req.protocol + "://" + host + "/auth/adfs",
 						code: req.query.code
 					},
@@ -30,22 +45,20 @@ function ADFS(options) {
 					}
 				}, function (e, r, b) {
 					var token;
+
 					if (e) return callback(true, false, e);
 
-					function get(key) {
-						var x = token.search(key);
-						var value = token.substr(x, token.length).split('",')[0];
-						return value.substr(key.length + 3, value.length);
-					};
 					try {
 						var b = JSON.parse(b);
-						token = Buffer.from(b.access_token, 'base64').toString('utf-8');
-
+						var jwt_decode = require('jwt-decode');
+						var token = jwt_decode(b.access_token);
 						var profile = {
-							service: "letmein",
-							username: get('email'),
-							userid: get('username'),
-							org: get('organization')
+							service: "adfs",
+							username: token.login.toLowerCase(),
+							userid: token.login.toLowerCase(),
+							lastname: token.name,
+							firstname: token.firstname,
+							org: token.department
 						};
 
 						callback(null, true, profile, null)
@@ -57,6 +70,8 @@ function ADFS(options) {
 			}
 		};
 		adfs.authenticate(req, res, function (err, status, profile, extended) {
+			console.log(status);
+			console.log(profile);
 			if (err) {
 				_p.emit("error", req, res, err);
 			} else {

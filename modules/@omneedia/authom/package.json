@@ -1,29 +1,34 @@
 {
-  "_from": "@omneedia/authom",
-  "_id": "@omneedia/authom@1.1.0",
+  "_args": [
+    [
+      "@omneedia/authom@1.1.1",
+      "/Users/zucatti/omneedia.app/Contents/MacOS/bin"
+    ]
+  ],
+  "_from": "@omneedia/authom@1.1.1",
+  "_id": "@omneedia/authom@1.1.1",
   "_inBundle": false,
-  "_integrity": "sha512-3YT4n8Iz1liAQMyBMJ4aQGS0gz8+0dc8cggbAABdmEhFRjkj3Pmej16TsModhI+5iWF5wYE63jpEtnnjsY3jHw==",
+  "_integrity": "sha512-wzhck2HV6Fma4T5RRAUNLPuVYKqoqX5aYz7VjI5Ki9PRHltr/yEjT8Ax8MAcsMeNfXUNMtEJd6DarvBpugatmA==",
   "_location": "/@omneedia/authom",
   "_phantomChildren": {},
   "_requested": {
-    "type": "tag",
+    "type": "version",
     "registry": true,
-    "raw": "@omneedia/authom",
+    "raw": "@omneedia/authom@1.1.1",
     "name": "@omneedia/authom",
     "escapedName": "@omneedia%2fauthom",
     "scope": "@omneedia",
-    "rawSpec": "",
+    "rawSpec": "1.1.1",
     "saveSpec": null,
-    "fetchSpec": "latest"
+    "fetchSpec": "1.1.1"
   },
   "_requiredBy": [
-    "#USER",
     "/"
   ],
-  "_resolved": "https://registry.npmjs.org/@omneedia/authom/-/authom-1.0.1.tgz",
+  "_resolved": "https://registry.npmjs.org/@omneedia/authom/-/authom-1.1.1.tgz",
   "_shasum": "fac52f5eaaa8949c67d41c450bdd7b076c804836",
-  "_spec": "@omneedia/authom",
-  "_where": "/omneedia/builder/builder/var/HyeKufDhXQ_app/Contents/bin",
+  "_spec": "1.1.1",
+  "_where": "/Users/zucatti/omneedia.app/Contents/MacOS/bin",
   "author": {
     "name": "Jed Schmidt",
     "email": "tr@nslator.jp"
@@ -34,11 +39,15 @@
   "bundleDependencies": false,
   "contributors": [],
   "dependencies": {
-    "xcas": "0.1.0"
+    "xcas": "0.1.0",
+    "jwt-decode": ""
   },
   "deprecated": false,
   "description": "Authom Fork for omneedia framework",
-  "devDependencies": {},
+  "devDependencies": {
+    "xcas": "0.1.0",
+    "jwt-decode": ""
+  },
   "dist": {},
   "engines": {
     "node": ">=0.6.15"
@@ -55,5 +64,5 @@
     "url": "git://github.com/omneedia/authom.git"
   },
   "scripts": {},
-  "version": "1.1.1"
+  "version": "1.1.2"
 }

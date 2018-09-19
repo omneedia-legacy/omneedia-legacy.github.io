@@ -485,7 +485,7 @@ __QUERY__ = {
             var _key = arr.split('|')[1];
             if (!_key) return false;
             if (_key != key) return false;
-            if (key != __QUERY__.fingerprint) return false;
+            //if (key != __QUERY__.fingerprint) return false;
             arr = arr.split('|')[0].match(/.{1,3}/g);
             var decode = [];
             for (var i = 0; i < arr.length; i++) decode.push(String.fromCharCode(arr[i] * 1 - keyCharAt(key, i)));
@@ -502,7 +502,7 @@ __QUERY__ = {
 
 
             if (o.__SQL__.indexOf('!') > -1) {
-                o.__SQL__ = CYPHER_decode(__QUERY__.fingerprint, o.__SQL__.substr(1, o.__SQL__.length));
+                o.__SQL__ = CYPHER_decode("0mneediaRulez!", o.__SQL__.substr(1, o.__SQL__.length));
             };
 
             // get params
