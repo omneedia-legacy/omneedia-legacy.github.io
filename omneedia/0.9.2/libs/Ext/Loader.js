@@ -17,12 +17,14 @@ App.apply(App, {
         if (window.Kickstart) {
             if (Kickstart.load) Kickstart.load();
         };
-        _p.FORMS = Ext.create('Ext.container.Viewport', {
-            id: "OAContainer",
-            layout: "card",
-            border: false,
-            items: []
-        });
+        if (Settings.TYPE != "mobile") {
+            _p.FORMS = Ext.create('Ext.container.Viewport', {
+                id: "OAContainer",
+                layout: "card",
+                border: false,
+                items: []
+            });
+        };
         Ext.require(Settings.NAMESPACE + '.view.' + o);
         Ext.onReady(function () {
             var kickstarter = Ext.create(Settings.NAMESPACE + '.view.' + o);
