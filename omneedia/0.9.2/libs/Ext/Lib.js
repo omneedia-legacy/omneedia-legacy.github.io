@@ -577,7 +577,7 @@ Ext.util.Observable.observe(Ext.data.Connection, {
         if (!GURU_MEDITATION_FATAL) {
             GURU_MEDITATION_FATAL = true;
             setTimeout(function () {
-                alert('Votre session a été déconnectée. Veuillez vous authentifier à nouveau.');
+                //alert('Un problème est survenu.');
                 return location.reload();
             }, 1000);
             App.blur('body');

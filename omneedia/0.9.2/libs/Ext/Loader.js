@@ -38,10 +38,13 @@ App.apply(App, {
         });
     },
     load: function (fn) {
-        App.getAcceptedLangs(function (lang) {
-            App.loadLang(lang, function () {
-                if (!App.libs) Manifest();
-                else App.require(App.libs, Manifest);
+        App.request('/Contents/registry.json', function (e, r) {
+            Settings.registry = JSON.parse(r);
+            App.getAcceptedLangs(function (lang) {
+                App.loadLang(lang, function () {
+                    if (!App.libs) Manifest();
+                    else App.require(App.libs, Manifest);
+                });
             });
         });
     }
