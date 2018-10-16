@@ -39,7 +39,11 @@ App.apply(App, {
     },
     load: function (fn) {
         App.request('/Contents/registry.json', function (e, r) {
-            Settings.registry = JSON.parse(r);
+            try {
+                Settings.registry = JSON.parse(r);
+            } catch (e) {
+                Settings.registry = {};
+            };
             App.getAcceptedLangs(function (lang) {
                 App.loadLang(lang, function () {
                     if (!App.libs) Manifest();
