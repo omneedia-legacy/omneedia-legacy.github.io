@@ -57,6 +57,13 @@ App.apply(App, {
         return this;
     })(),
     namespaceCache: {},
+    process: {
+        on: function (id, cb) {
+            document.socket.on(id, function (o) {
+                cb(o);
+            });
+        }
+    },
     createNamespace: function (namespace, constructor, extend) {
         var cache = App.namespaceCache,
             ns = cache[namespace],
