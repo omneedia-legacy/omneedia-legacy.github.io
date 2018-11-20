@@ -3,6 +3,10 @@ i18n = {};
 
 _ = function (x) {
     App.DEFAULT_LANG = window.localStorage['LANG'];
+    if (!App.DEFAULT_LANG) {
+        App.DEFAULT_LANG = Settings.LANGS[0] + '|' + Settings.LANGS[0].toLowerCase();
+        window.localStorage['LANG'] = App.DEFAULT_LANG;
+    };
     if (App.DEFAULT_LANG.indexOf('-') > -1) {
         var a = App.DEFAULT_LANG.split('-')[0].toLowerCase();
         var b = App.DEFAULT_LANG.split('-')[1].toUpperCase();
@@ -110,6 +114,7 @@ App.apply(App, {
                 current = App._lang + '|' + App._lang + ',' + App._lang + '-' + App._lang.toUpperCase();
             };
         };
+
         /* Fallback to current */
         if (current == "") {
             if (Settings.LANGS[0].indexOf('-') > -1) {
