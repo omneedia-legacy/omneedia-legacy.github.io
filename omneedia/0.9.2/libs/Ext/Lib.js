@@ -574,13 +574,16 @@ GURU_MEDITATION_FATAL = false;
 
 Ext.util.Observable.observe(Ext.data.Connection, {
     requestexception: function (conn, response, options) {
-        if (!GURU_MEDITATION_FATAL) {
+        /*if (!GURU_MEDITATION_FATAL) {
             GURU_MEDITATION_FATAL = true;
             setTimeout(function () {
                 //alert('Un problème est survenu.');
                 return location.reload();
             }, 1000);
             App.blur('body');
-        }
+        }*/
+        console.log(conn);
+        console.log(response);
+        console.log(options);
     }
 });

@@ -89,6 +89,7 @@ App.apply(App, {
             };
 
             function failed() {
+                console.log('x');
                 return ll(urls, i + 1, cb);
             };
             var XHR = new XMLHttpRequest();
@@ -105,7 +106,7 @@ App.apply(App, {
         if (window.localStorage['LANG']) App._lang = window.localStorage['LANG'];
         if (!App._lang) {
             for (var i = 0; i < Settings.LANGS.length; i++) {
-                if (lang.toLowerCase().indexOf(Settings.LANGS[i].toLowerCase()) > -1) current = Settings.LANGS[i] + '|' + lang;
+                if (lang.toLowerCase().indexOf(Settings.LANGS[i].toLowerCase()) > -1) current = Settings.LANGS[i] + '|' + Settings.LANGS[i];
             };
         } else {
             if (App._lang.indexOf('-') > -1) {
@@ -134,6 +135,7 @@ App.apply(App, {
                     var b = App.DEFAULT_LANG.split('-')[1].toUpperCase();
                     App.DEFAULT_LANG = a + '-' + b;
                 };
+
                 window.eval('if (!i18n["' + App.DEFAULT_LANG + '"]) i18n["' + App.DEFAULT_LANG + '"]={};i18n_framework["' + App.DEFAULT_LANG + '"]=function(){' + _LANG.join(' ') + '};');
                 i18n_framework[App.DEFAULT_LANG]();
                 cb();
