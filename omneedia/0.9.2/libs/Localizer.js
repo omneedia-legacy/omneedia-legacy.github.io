@@ -13,6 +13,7 @@ _ = function (x) {
         App.DEFAULT_LANG = a + '-' + b;
     };
     try {
+        App.DEFAULT_LANG = App.DEFAULT_LANG.split('|')[0];
         return i18n[App.DEFAULT_LANG][x];
     } catch (ex) {
         return x;
