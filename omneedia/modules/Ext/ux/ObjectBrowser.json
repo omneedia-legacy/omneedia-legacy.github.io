@@ -1,0 +1,21 @@
+{
+	"namespace": "Ext.ux.ObjectBrowser",
+	"version": "1.0.0",
+	"description": "Omneedia ObjectBrowser",
+	"license": "MIT",
+	"repositories": {},
+	"package": {
+		"js": [
+			"{version}/ObjectBrowser.js"
+		],
+		"css": [
+
+		],
+		"html": [
+
+		],
+		"i18n": [
+
+		]
+	}
+}

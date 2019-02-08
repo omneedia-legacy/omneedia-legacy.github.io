@@ -1,0 +1,21 @@
+{
+    "namespace": "ux.container",
+    "version": "0.1.0",
+    "description": "XXX",
+    "license": "MIT",
+    "repositories": {},
+    "package": {
+        "js": [
+            "{version}/container.js"
+        ],
+        "css": [
+
+        ],
+        "html": [
+
+        ],
+        "i18n": [
+
+        ]
+    }
+}

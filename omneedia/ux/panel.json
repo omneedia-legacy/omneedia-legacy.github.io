@@ -1,0 +1,21 @@
+{
+    "namespace": "ux.panel",
+    "version": "0.1.0",
+    "description": "XXX",
+    "license": "MIT",
+    "repositories": {},
+    "package": {
+        "js": [
+            "{version}/panel.js"
+        ],
+        "css": [
+
+        ],
+        "html": [
+
+        ],
+        "i18n": [
+
+        ]
+    }
+}
