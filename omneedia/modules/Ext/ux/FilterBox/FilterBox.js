@@ -60,6 +60,8 @@ var TFilterBoxAdd = function (p, s) {
 	});
 
 	p.items.add(panel);
+	p.scrollBy(0, 999999, true);
+
 	var orand = panel.items.items[0];
 	orand.menu.on('click', function (x, e) {
 		x.up().setText(e.text);
@@ -391,10 +393,12 @@ Ext.define("Ext.ux.FilterBox", {
 	extend: 'Ext.Panel',
 	alias: 'widget.FilterBox',
 	initComponent: function () {
-		this.region = "north";
+		//this.region = "north";
+		this.layout = "vbox";
 		this.bodyCls = "BackgroundSystem";
 		this.height = 150;
 		this.width = "100%";
+		this.setScrollable(true);
 		this.items = [];
 		var p = this;
 		this.tbar = ['->', {
