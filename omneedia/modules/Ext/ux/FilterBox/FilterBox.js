@@ -53,7 +53,7 @@ var TFilterBoxMenu = {
 	]
 };
 
-var TFilterBoxAdd = function (p, s) {
+var TFilterBoxAdd = function (p, s, obj) {
 	var me = p;
 	var panel = Ext.create('Ext.ux.FilterItems', {
 		showOperand: s
@@ -69,6 +69,7 @@ var TFilterBoxAdd = function (p, s) {
 	var launch = panel.items.items[16];
 	launch.on('click', function () {
 		var objs = [];
+
 		for (var i = 0; i < p.items.items.length; i++) {
 			var ff = {};
 			var filter = p.items.items[i];
@@ -107,18 +108,23 @@ var TFilterBoxAdd = function (p, s) {
 				var curr_year = d.getFullYear();
 				var my_value = curr_year + '-' + curr_month + '-' + curr_date;
 			} else my_value = nvalue.getValue();
+			try {
+				if (value.isVisible()) {
+					ff.value = ff.value.replace(/ITEM/g, value.getValue());
+				} else {
+					ff.value = ff.value.replace(/ITEM/g, my_value);
+				};
+				if (i > 0) {
+					if (filter.items.items[0].getText() == "ET") ff.operator = " AND ";
+					else ff.operator = " OR ";
+				};
+				objs.push(ff);
+			} catch (e) {
 
-			if (value.isVisible()) {
-				ff.value = ff.value.replace(/ITEM/g, value.getValue());
-			} else {
-				ff.value = ff.value.replace(/ITEM/g, my_value);
 			};
-			if (i > 0) {
-				if (filter.items.items[0].getText() == "ET") ff.operator = " AND ";
-				else ff.operator = " OR ";
-			};
-			objs.push(ff);
+
 		};
+		console.log(JSON.stringify(objs));
 		p.store.getProxy().extraParams.quest = JSON.stringify(objs);
 		p.store.load();
 	});
@@ -255,6 +261,40 @@ var TFilterBoxAdd = function (p, s) {
 			}
 		});
 	};
+	if (obj) {
+		if (obj.field) {
+			panel.items.items[3].menu.up().setText(obj.field);
+			for (var k = 0; k < panel.items.items[3].menu.items.items.length; k++) {
+				var element = panel.items.items[3].menu.items.items[k];
+				if (element.text == obj.field) {
+					panel.items.items[3].menu.items.items[k].fireEvent('click', panel.items.items[3].menu.items.items[k]);
+					var cbo_operand = panel.items.items[5];
+					cbo_operand.setText(obj.operand);
+					cbo_operand.fireEvent('click', cbo_operand);
+
+					if (element._operand == "text") {
+						panel.items.items[7].setValue(obj.value);
+					};
+					if (element._operand == "choice") {
+						panel.items.items[9].getStore().on('load', function (s) {
+							panel.items.items[9].setValue(obj.value);
+						});
+
+
+					};
+					if (element._operand == "date") {
+						panel.items.items[9].setValue(obj.value);
+					};
+					if (element._operand == "boolean") {
+
+					};
+
+				}
+			};
+		};
+
+	};
+
 	if (Ext.getVersion().major >= 5) p.updateLayout();
 	else p.doLayout();
 };
@@ -392,7 +432,17 @@ Ext.define("Ext.ux.FilterItems", {
 Ext.define("Ext.ux.FilterBox", {
 	extend: 'Ext.Panel',
 	alias: 'widget.FilterBox',
+	addFilter: function (item) {
+		if (this.items.items.length > 0) {
+			var old = this.items.items[this.items.items.length - 1];
+			old.items.items[12].hide();
+			old.items.items[14].hide();
+			old.items.items[16].hide();
+			TFilterBoxAdd(this, true, item);
+		} else TFilterBoxAdd(this, false, item);
+	},
 	initComponent: function () {
+
 		//this.region = "north";
 		this.layout = "vbox";
 		this.bodyCls = "BackgroundSystem";
@@ -403,7 +453,13 @@ Ext.define("Ext.ux.FilterBox", {
 		var p = this;
 		this.tbar = ['->', {
 			xtype: "button",
-			text: "reset"
+			text: "reset",
+			handler: function (me) {
+				while (me.up('panel').items.items[0]) {
+					me.up('panel').remove(me.up('panel').items.items[0]);
+				}
+				TFilterBoxAdd(me.up('panel'), false);
+			}
 		}, {
 			xtype: "button",
 			iconCls: "download",
@@ -449,6 +505,8 @@ Ext.define("Ext.ux.FilterBox", {
 						var my_value = curr_year + '-' + curr_month + '-' + curr_date;
 					} else my_value = nvalue.getValue();
 
+					if (!ff.value) return;
+
 					if (value.isVisible()) {
 						ff.value = ff.value.replace(/ITEM/g, value.getValue());
 					} else {
@@ -464,13 +522,24 @@ Ext.define("Ext.ux.FilterBox", {
 				};
 			}
 		}];
-		//this.addEvents('save');
+
 		this.hidden = true;
 		this.callParent(arguments);
 		var me = this;
 		this.on('show', function (p) {
+			function add(obj) {
+				var old = p.items.items[p.items.items.length - 1];
+				old.items.items[12].hide();
+				old.items.items[14].hide();
+				old.items.items[16].hide();
+				TFilterBoxAdd(p, true);
+			};
 			p.removeAll();
-			TFilterBoxAdd(p, false);
+			if (p.default) {
+				TFilterBoxAdd(p, false, p.default);
+				add({});
+			} else TFilterBoxAdd(p, false);
+
 		});
 	}
 });
