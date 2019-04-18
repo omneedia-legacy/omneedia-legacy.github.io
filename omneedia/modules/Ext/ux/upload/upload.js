@@ -154,6 +154,7 @@ Ext.define('Ext.ux.upload.Panel', {
         me.uploadFiles = [];
         this.url = "/";
         this.layout = "fit";
+
         this.getFiles = function () {
             var dta = me.down('grid').items.items[0].getStore().data.items;
             var DTA = [];
@@ -162,6 +163,7 @@ Ext.define('Ext.ux.upload.Panel', {
             };
             return DTA;
         };
+
 
         this.setFiles = function (data) {
             me.down('grid').items.items[0].getStore().loadData(data);
@@ -212,6 +214,14 @@ Ext.define('Ext.ux.upload.Panel', {
             xtype: "grid",
             multiSelect: true,
             tbar: tbar,
+            enableDrop: true,
+            viewConfig: {
+                plugins: {
+                    gridviewdragdrop: {
+                        dragText: 'Drag and drop to reorganize'
+                    }
+                }
+            },
             columns: [{
                     text: me.lang.filename,
                     dataIndex: "filename",
@@ -259,9 +269,33 @@ Ext.define('Ext.ux.upload.Panel', {
                 },
                 beforeitemcontextmenu: function (view, record, item, index, e) {
                     e.stopEvent();
+                },
+                render: function () {
+                    function handlerFunction(ev) {
+
+                        var files = [];
+                        //for (var i = 0; i < x.target.files.length; i++) files.push(x.target.files[i]);
+                        for (var i = 0; i < ev.dataTransfer.files.length; i++) {
+                            files.push(ev.dataTransfer.files[i]);
+                        };
+
+                        var w1 = Ext.create('Ext.ux.upload.Progress', {
+                            modal: true,
+                            _files: files,
+                            _url: me.url,
+                            _parent: me,
+                            _lang: me.lang
+                        });
+                        w1.show();
+
+                    };
+                    var dropArea = me.items.items[0].getEl().dom;
+
+                    dropArea.addEventListener('drop', handlerFunction, false);
                 }
             }
         }];
+
         this.callParent(arguments);
     }
 });
