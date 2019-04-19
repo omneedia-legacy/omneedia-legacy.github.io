@@ -18,6 +18,13 @@ var TFilterBoxMenu = {
 			text: "est inférieur ou égal à"
 		}
 	],
+	menuKeywords: [{
+		text: "Contient au moins un des mots"
+	}, {
+		text: "Contient tous ces mots"
+	}, {
+		text: "ne contient pas ces mots"
+	}],
 	menuBoolean: [{
 			text: "est vrai"
 		},
@@ -97,9 +104,14 @@ var TFilterBoxAdd = function (p, s, obj) {
 			if (option.getText() == "commence par") ff.value = " LIKE \"ITEM%\" ";
 			if (option.getText() == "se termine par") ff.value = " LIKE \"%ITEM\" ";
 
+			if (option.getText() == "Contient au moins un des mots") ff.value = "KW=ITEM";
+			if (option.getText() == "Contient tous ces mots") ff.value = "KW+ITEM";
+			if (option.getText() == "ne contient pas ces mots") ff.value = "KW-ITEM";
+
 			var value = filter.items.items[7];
 			var nvalue = filter.items.items[9];
 			var my_value = "";
+
 			if (nvalue.xtype == "datefield") {
 				var d = nvalue.getValue();
 				//.toISOString().slice(0, 19).split('T')[0];
@@ -124,7 +136,7 @@ var TFilterBoxAdd = function (p, s, obj) {
 			};
 
 		};
-		console.log(JSON.stringify(objs));
+
 		p.store.getProxy().extraParams.quest = JSON.stringify(objs);
 		p.store.load();
 	});
@@ -152,6 +164,7 @@ var TFilterBoxAdd = function (p, s, obj) {
 		panel.items.items[3].menu.add({
 			text: me.fields[i].name,
 			_operand: me.fields[i].type,
+			_handler: me.fields[i].handler,
 			model: me.fields[i].model,
 			value: me.fields[i].value,
 			display: me.fields[i].display,
@@ -176,7 +189,41 @@ var TFilterBoxAdd = function (p, s, obj) {
 							});
 							cbo_operand.menu.add(btn);
 						};
+
 						panel.items.items[7].show();
+						if (x._handler) {
+							panel.items.items[7].getEl().dom.addEventListener('click', function () {
+								if (window[x._handler]) window[x._handler](panel.items.items[7]);
+								else alert(x._handler + ' not found!');
+							});
+						}
+
+						panel.items.items[9].hide();
+					};
+					/*
+					type: keywords
+					*/
+					if (x._operand == "keywords") {
+						for (var j = 0; j < TFilterBoxMenu.menuKeywords.length; j++) {
+							var btn = Ext.create('Ext.menu.Item', {
+								text: TFilterBoxMenu.menuKeywords[j].text,
+								listeners: {
+									click: function (z, e) {
+										z.up().up().setText(z.text);
+									}
+								}
+							});
+							cbo_operand.menu.add(btn);
+						};
+
+						panel.items.items[7].show();
+						if (x._handler) {
+							panel.items.items[7].getEl().dom.addEventListener('click', function () {
+								if (window[x._handler]) window[x._handler](panel.items.items[7]);
+								else alert(x._handler + ' not found!');
+							});
+						}
+
 						panel.items.items[9].hide();
 					};
 					/*
@@ -223,6 +270,40 @@ var TFilterBoxAdd = function (p, s, obj) {
 						else panel.doLayout();
 						panel.items.items[9].show();
 
+					};
+					/*
+					type: tagfield
+					*/
+					if (x._operand == "tagfield") {
+						for (var j = 0; j < TFilterBoxMenu.menuChoix.length; j++) {
+							var btn = Ext.create('Ext.menu.Item', {
+								text: TFilterBoxMenu.menuChoix[j].text,
+								listeners: {
+									click: function (z, e) {
+										z.up().up().setText(z.text);
+									}
+								}
+							});
+							cbo_operand.menu.add(btn);
+						};
+						panel.remove(panel.items.items[9]);
+						panel.insert(9, {
+							xtype: "tagfield",
+							selectOnFocus: false,
+							editable: false,
+							queryMode: 'local',
+							width: 247,
+							store: App.store.create(x.model, {
+								autoLoad: true
+							}),
+							displayField: x.display,
+							valueField: x.value,
+							hidden: false
+						});
+						if (Ext.getVersion().major >= 5) panel.updateLayout();
+						else panel.doLayout();
+						panel.items.items[9].show();
+						panel.items.items[7].hide();
 					};
 					/*
 					type: choice
@@ -493,6 +574,10 @@ Ext.define("Ext.ux.FilterBox", {
 					if (option.getText() == "commence par") ff.value = " LIKE \"ITEM%\" ";
 					if (option.getText() == "se termine par") ff.value = " LIKE \"%ITEM\" ";
 
+					if (option.getText() == "Contient au moins un des mots") ff.value = "=";
+					if (option.getText() == "Contient tous ces mots") ff.value = "+";
+					if (option.getText() == "ne contient pas ces mots") ff.value = "-";
+
 					var value = filter.items.items[7];
 					var nvalue = filter.items.items[9];
 					var my_value = "";
@@ -517,7 +602,6 @@ Ext.define("Ext.ux.FilterBox", {
 						else ff.operator = " OR ";
 					};
 					objs.push(ff);
-					console.log(objs);
 					p.fireEvent('save', objs);
 				};
 			}
