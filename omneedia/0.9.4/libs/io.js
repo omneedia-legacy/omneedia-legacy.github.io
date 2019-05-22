@@ -32,7 +32,8 @@ if (Settings.REMOTE_API) {
                     port: Settings.REMOTE_API.substr(Settings.REMOTE_API.lastIndexOf(':') + 1, 255).match(/\d+/)[0] * 1 * 1
                 });
                 if (!options.port) options.port = 443;
-                window.socket = socketCluster.create(options);
+                //window.socket = socketCluster.create(options);
+                window.socket = socketCluster.create();
                 this.socket = window.socket;
 
                 if (Settings.DEBUG) {
@@ -73,6 +74,7 @@ if (Settings.REMOTE_API) {
             subscribe: function (str, options, cb) {
                 var me = this;
                 var sc = this.socket.subscribe(str, options);
+                this.socket.emit(str);
                 sc.on('subscribe', function (r) {
                     me.socket.emit(str);
                     if (cb) cb(null, r);

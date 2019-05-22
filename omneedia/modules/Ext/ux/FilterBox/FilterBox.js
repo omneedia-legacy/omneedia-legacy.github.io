@@ -343,6 +343,8 @@ var TFilterBoxAdd = function (p, s, obj) {
 		});
 	};
 	if (obj) {
+		if (!obj.value) obj.value = obj.nvalue;
+		if (obj.operator) panel.items.items[0].setText(obj.operator);
 		if (obj.field) {
 			panel.items.items[3].menu.up().setText(obj.field);
 			for (var k = 0; k < panel.items.items[3].menu.items.items.length; k++) {
@@ -364,7 +366,9 @@ var TFilterBoxAdd = function (p, s, obj) {
 
 					};
 					if (element._operand == "date") {
-						panel.items.items[9].setValue(obj.value);
+						if (obj.value instanceof Date && !isNaN(obj.value.valueOf()))
+							panel.items.items[9].setValue(obj.value);
+						else panel.items.items[9].setValue(new Date(obj.value));
 					};
 					if (element._operand == "boolean") {
 
@@ -379,6 +383,179 @@ var TFilterBoxAdd = function (p, s, obj) {
 	if (Ext.getVersion().major >= 5) p.updateLayout();
 	else p.doLayout();
 };
+
+Ext.define('Ext.ux.openSharedFilter', {
+	extend: "Ext.window.Window",
+	alias: 'widget.TOpenSharedFilter',
+	initComponent: function () {
+		var me = this.filterpanel;
+		var T = this.T;
+		this.width = 600;
+		this.height = 380;
+		this.title = "Filtres";
+		this.layout = {
+			type: 'fit'
+		};
+		this.tbar = [];
+		this.bbar = [
+			'->', {
+				text: 'Quitter',
+				itemId: "Exit",
+				handler: function (me) {
+					me.up('window').close();
+				}
+			}, {
+				text: "<b>Ouvrir</b>",
+				itemId: "add_sharedfilter",
+				handler: function (I) {
+					var fn = T.filters.get;
+					var select = App.get(I.up('window'), 'grid').getSelectionModel().getSelection();
+					if (select.length == 0) return;
+					window.localStorage.setItem("filterbox", select[0].data.id);
+
+					fn(select[0].data.id, function (oo) {
+						if (oo.data.length > 0) {
+							oo = JSON.parse(oo.data[0].request);
+							me.removeAll();
+							add(me, oo);
+						};
+						I.up('window').close();
+					});
+
+					function add(p, obj, ndx) {
+						if (!ndx) ndx = 0;
+						if (!obj[ndx]) return;
+						if (ndx == obj.length - 1) var value = true;
+						else var value = false;
+						if (ndx == 0) {
+							TFilterBoxAdd(p, false, obj[ndx]);
+							return add(p, obj, ndx + 1);
+						} else {
+							var old = p.items.items[p.items.items.length - 1];
+							old.items.items[12].hide();
+							old.items.items[14].hide();
+							old.items.items[16].hide();
+							TFilterBoxAdd(p, true, obj[ndx]);
+							add(p, obj, ndx + 1);
+						}
+					};
+
+				}
+			}
+		];
+
+		this.defaults = {
+			split: true
+		};
+
+		this.layout = "fit";
+
+		this.items = [{
+			xtype: "grid",
+			columns: [{
+				header: "Filtre",
+				dataIndex: "name",
+				flex: 1
+			}, {
+				header: "Description",
+				dataIndex: "description",
+				flex: 2
+			}, {
+				header: "Contributeur",
+				dataIndex: "PrenomNom",
+				flex: 1
+			}],
+			store: App.store.create(T.filters.shared_filters, {
+				autoLoad: true
+			})
+		}];
+
+		this.callParent();
+	}
+});
+
+Ext.define('Ext.ux.openFilter', {
+	extend: "Ext.window.Window",
+	alias: 'widget.TOpenFilter',
+	initComponent: function () {
+		var me = this.filterpanel;
+		var T = this.T;
+
+		this.width = 600;
+		this.height = 380;
+		this.title = "Filtres";
+		this.layout = {
+			type: 'fit'
+		};
+		this.tbar = [];
+		this.bbar = [
+			'->', {
+				text: 'Quitter',
+				itemId: "Exit",
+				handler: function (me) {
+					me.up('window').close();
+				}
+			}, {
+				text: "<b>Ouvrir</b>",
+				itemId: "add_sharedfilter",
+				handler: function (I) {
+					var fn = T.filters.get;
+
+					var select = App.get(I.up('window'), 'grid').getSelectionModel().getSelection();
+					if (select.length == 0) return;
+					window.localStorage.setItem("filterbox", select[0].data.id);
+
+					fn(select[0].data.id, function (oo) {
+						if (oo.data.length > 0) {
+							oo = JSON.parse(oo.data[0].request);
+							me.removeAll();
+							add(me, oo);
+						};
+						I.up('window').close();
+					});
+
+					function add(p, obj, ndx) {
+						if (!ndx) ndx = 0;
+						if (!obj[ndx]) return;
+						if (ndx == obj.length - 1) var value = true;
+						else var value = false;
+						if (ndx == 0) {
+							TFilterBoxAdd(p, false, obj[ndx]);
+							return add(p, obj, ndx + 1);
+						} else {
+							var old = p.items.items[p.items.items.length - 1];
+							old.items.items[12].hide();
+							old.items.items[14].hide();
+							old.items.items[16].hide();
+							TFilterBoxAdd(p, true, obj[ndx]);
+							add(p, obj, ndx + 1);
+						}
+					};
+				}
+			}
+		];
+
+		this.defaults = {
+			split: true
+		};
+
+		this.layout = "fit";
+
+		this.items = [{
+			xtype: "grid",
+			columns: [{
+				header: "Filtre",
+				dataIndex: "name",
+				flex: 1
+			}],
+			store: App.store.create(T.filters.my_filters, {
+				autoLoad: true
+			})
+		}];
+
+		this.callParent();
+	}
+});
 
 Ext.define("Ext.ux.FilterItems", {
 	extend: 'Ext.Panel',
@@ -532,85 +709,134 @@ Ext.define("Ext.ux.FilterBox", {
 		this.setScrollable(true);
 		this.items = [];
 		var p = this;
+
 		this.tbar = ['->', {
-			xtype: "button",
-			text: "reset",
-			handler: function (me) {
-				while (me.up('panel').items.items[0]) {
-					me.up('panel').remove(me.up('panel').items.items[0]);
+				xtype: "button",
+				text: "Nouveau",
+				handler: function (me) {
+					while (me.up('panel').items.items[0]) {
+						me.up('panel').remove(me.up('panel').items.items[0]);
+					};
+					TFilterBoxAdd(me.up('panel'), false);
+					window.localStorage.setItem("filterbox", "-");
 				}
-				TFilterBoxAdd(me.up('panel'), false);
+			}, {
+				xtype: "button",
+				iconCls: "upload",
+				text: "<b>Mes filtres</b>",
+				hidden: true,
+				itemId: "btn_my",
+				handler: function (me) {
+
+					return Ext.create('Ext.ux.openFilter', {
+						modal: true,
+						filterpanel: me.up('panel'),
+						T: p
+					}).show().center();
+				}
+			},
+			{
+				xtype: "button",
+				iconCls: "upload",
+				text: "<b>Filtres partagés</b>",
+				hidden: true,
+				itemId: "btn_shared",
+				handler: function (me) {
+					return Ext.create('Ext.ux.openSharedFilter', {
+						modal: true,
+						filterpanel: me.up('panel'),
+						T: p
+					}).show().center();
+				}
+			},
+			{
+				xtype: "button",
+				iconCls: "download",
+				text: "<b>Sauvegarder</b>",
+				handler: function () {
+					var objs = [];
+					var save = [];
+					var Name = window.localStorage.getItem('filterbox');
+
+					for (var i = 0; i < p.items.items.length; i++) {
+						var ff = {};
+						var filter = p.items.items[i];
+
+						var title = filter.items.items[3];
+
+						var item = "";
+						for (var j = 0; j < p.fields.length; j++) {
+							if (title.getText() == p.fields[j].name) item = p.fields[j].field;
+						};
+						ff.name = item;
+
+						var option = filter.items.items[5];
+
+
+						if (option.getText() == "est") ff.value = " = \"ITEM\" ";
+						if (option.getText() == "n'est pas") ff.value = " <> \"ITEM\" ";
+						if (option.getText() == "est supérieur à") ff.value = " > \"ITEM\" ";
+						if (option.getText() == "est inférieur à") ff.value = " < \"ITEM\" ";
+						if (option.getText() == "est supérieur ou égal à") ff.value = " >= \"ITEM\" ";
+						if (option.getText() == "est inférieur ou égal à") ff.value = " <= \"ITEM\" ";
+						if (option.getText() == "est vrai") ff.value = " = 1 ";
+						if (option.getText() == "est faux") ff.value = " = 0 ";
+						if (option.getText() == "contient") ff.value = " LIKE \"%ITEM%\" ";
+						if (option.getText() == "ne contient pas") ff.value = " NOT LIKE \"%ITEM%\" ";
+						if (option.getText() == "commence par") ff.value = " LIKE \"ITEM%\" ";
+						if (option.getText() == "se termine par") ff.value = " LIKE \"%ITEM\" ";
+
+						if (option.getText() == "Contient au moins un des mots") ff.value = "=";
+						if (option.getText() == "Contient tous ces mots") ff.value = "+";
+						if (option.getText() == "ne contient pas ces mots") ff.value = "-";
+
+						var value = filter.items.items[7];
+						var nvalue = filter.items.items[9];
+						var my_value = "";
+						if (nvalue.xtype == "datefield") {
+							var d = nvalue.getValue();
+							//.toISOString().slice(0, 19).split('T')[0];
+							var curr_date = d.getDate();
+							var curr_month = d.getMonth() + 1;
+							var curr_year = d.getFullYear();
+							var my_value = curr_year + '-' + curr_month + '-' + curr_date;
+						} else my_value = nvalue.getValue();
+
+						save.push({
+							field: title.getText(),
+							operand: option.getText(),
+							value: value.getValue(),
+							nvalue: nvalue.getValue(),
+							operator: filter.items.items[0].getText()
+						});
+
+						if (!ff.value) return;
+
+						if (value.isVisible()) {
+							ff.value = ff.value.replace(/ITEM/g, value.getValue());
+						} else {
+							ff.value = ff.value.replace(/ITEM/g, my_value);
+						};
+						if (i > 0) {
+							if (filter.items.items[0].getText() == "ET") ff.operator = " AND ";
+							else ff.operator = " OR ";
+						};
+						objs.push(ff);
+						p.fireEvent('save', objs, save, Name);
+					};
+				}
 			}
-		}, {
-			xtype: "button",
-			iconCls: "download",
-			text: "<b>sauvegarder</b>",
-			handler: function () {
-				var objs = [];
-				for (var i = 0; i < p.items.items.length; i++) {
-					var ff = {};
-					var filter = p.items.items[i];
-
-					var title = filter.items.items[3];
-
-					var item = "";
-					for (var j = 0; j < p.fields.length; j++) {
-						if (title.getText() == p.fields[j].name) item = p.fields[j].field;
-					};
-					ff.name = item;
-
-					var option = filter.items.items[5];
-
-					if (option.getText() == "est") ff.value = " = \"ITEM\" ";
-					if (option.getText() == "n'est pas") ff.value = " <> \"ITEM\" ";
-					if (option.getText() == "est supérieur à") ff.value = " > \"ITEM\" ";
-					if (option.getText() == "est inférieur à") ff.value = " < \"ITEM\" ";
-					if (option.getText() == "est supérieur ou égal à") ff.value = " >= \"ITEM\" ";
-					if (option.getText() == "est inférieur ou égal à") ff.value = " <= \"ITEM\" ";
-					if (option.getText() == "est vrai") ff.value = " = 1 ";
-					if (option.getText() == "est faux") ff.value = " = 0 ";
-					if (option.getText() == "contient") ff.value = " LIKE \"%ITEM%\" ";
-					if (option.getText() == "ne contient pas") ff.value = " NOT LIKE \"%ITEM%\" ";
-					if (option.getText() == "commence par") ff.value = " LIKE \"ITEM%\" ";
-					if (option.getText() == "se termine par") ff.value = " LIKE \"%ITEM\" ";
-
-					if (option.getText() == "Contient au moins un des mots") ff.value = "=";
-					if (option.getText() == "Contient tous ces mots") ff.value = "+";
-					if (option.getText() == "ne contient pas ces mots") ff.value = "-";
-
-					var value = filter.items.items[7];
-					var nvalue = filter.items.items[9];
-					var my_value = "";
-					if (nvalue.xtype == "datefield") {
-						var d = nvalue.getValue();
-						//.toISOString().slice(0, 19).split('T')[0];
-						var curr_date = d.getDate();
-						var curr_month = d.getMonth() + 1;
-						var curr_year = d.getFullYear();
-						var my_value = curr_year + '-' + curr_month + '-' + curr_date;
-					} else my_value = nvalue.getValue();
-
-					if (!ff.value) return;
-
-					if (value.isVisible()) {
-						ff.value = ff.value.replace(/ITEM/g, value.getValue());
-					} else {
-						ff.value = ff.value.replace(/ITEM/g, my_value);
-					};
-					if (i > 0) {
-						if (filter.items.items[0].getText() == "ET") ff.operator = " AND ";
-						else ff.operator = " OR ";
-					};
-					objs.push(ff);
-					p.fireEvent('save', objs);
-				};
-			}
-		}];
+		];
 
 		this.hidden = true;
 		this.callParent(arguments);
 		var me = this;
 		this.on('show', function (p) {
+			this._p = p;
+			if (this.filters.my_filters) App.get(this, 'button#btn_my').show();
+			if (this.filters.shared_filters) App.get(this, 'button#btn_shared').show();
+			window.localStorage.setItem("filterbox", "-");
+
 			function add(obj) {
 				var old = p.items.items[p.items.items.length - 1];
 				old.items.items[12].hide();

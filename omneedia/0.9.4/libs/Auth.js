@@ -10,13 +10,9 @@ Auth = {
         } else {
             if (!Settings.REMOTE_AUTH) Settings.REMOTE_AUTH = "";
 
-            /*var divo = document.createElement('div');
-            divo.className = "QxOverlay";
-            divo.style.zIndex = "99999999999999999";
-            document.getElementsByTagName('body')[0].appendChild(divo);*/
-
+            window.localStorage.removeItem('socketCluster.authToken');
             Auth.window = window.open(Settings.REMOTE_AUTH + "/logout", "_blank");
-
+            return;
             __INTERVAL__ = window.setInterval(function () {
                 if (Settings.REMOTE_AUTH) var a_auth = Settings.REMOTE_AUTH;
                 else var a_auth = "";
