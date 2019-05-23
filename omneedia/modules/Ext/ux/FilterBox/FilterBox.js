@@ -408,6 +408,7 @@ Ext.define('Ext.ux.openSharedFilter', {
 				text: "<b>Ouvrir</b>",
 				itemId: "add_sharedfilter",
 				handler: function (I) {
+					window.localStorage.setItem("filterbox", "-");
 					var fn = T.filters.get;
 					var select = App.get(I.up('window'), 'grid').getSelectionModel().getSelection();
 					if (select.length == 0) return;
@@ -712,7 +713,8 @@ Ext.define("Ext.ux.FilterBox", {
 
 		this.tbar = ['->', {
 				xtype: "button",
-				text: "Nouveau",
+				text: "<b>Nouveau</b>",
+				iconCls: "new",
 				handler: function (me) {
 					while (me.up('panel').items.items[0]) {
 						me.up('panel').remove(me.up('panel').items.items[0]);
@@ -757,7 +759,8 @@ Ext.define("Ext.ux.FilterBox", {
 					var objs = [];
 					var save = [];
 					var Name = window.localStorage.getItem('filterbox');
-
+					alert('x');
+					console.log(p.items.items.length);
 					for (var i = 0; i < p.items.items.length; i++) {
 						var ff = {};
 						var filter = p.items.items[i];
@@ -810,7 +813,7 @@ Ext.define("Ext.ux.FilterBox", {
 							operator: filter.items.items[0].getText()
 						});
 
-						if (!ff.value) return;
+						if (!ff.value) return p.fireEvent('save', objs, save, Name);
 
 						if (value.isVisible()) {
 							ff.value = ff.value.replace(/ITEM/g, value.getValue());
@@ -822,9 +825,12 @@ Ext.define("Ext.ux.FilterBox", {
 							else ff.operator = " OR ";
 						};
 						objs.push(ff);
-						p.fireEvent('save', objs, save, Name);
+
 					};
+
+					p.fireEvent('save', objs, save, Name);
 				}
+
 			}
 		];
 
