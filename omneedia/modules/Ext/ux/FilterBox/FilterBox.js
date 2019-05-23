@@ -759,8 +759,7 @@ Ext.define("Ext.ux.FilterBox", {
 					var objs = [];
 					var save = [];
 					var Name = window.localStorage.getItem('filterbox');
-					alert('x');
-					console.log(p.items.items.length);
+
 					for (var i = 0; i < p.items.items.length; i++) {
 						var ff = {};
 						var filter = p.items.items[i];
