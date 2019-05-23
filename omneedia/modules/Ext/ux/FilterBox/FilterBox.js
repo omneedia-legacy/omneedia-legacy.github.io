@@ -191,11 +191,26 @@ var TFilterBoxAdd = function (p, s, obj) {
 						};
 
 						panel.items.items[7].show();
-						if (x._handler) {
+						/*if (x._handler) {
 							panel.items.items[7].getEl().dom.addEventListener('click', function () {
 								if (window[x._handler]) window[x._handler](panel.items.items[7]);
 								else alert(x._handler + ' not found!');
 							});
+						}*/
+						if (x._handler) {
+							try {
+								panel.items.items[7].getEl().dom.addEventListener('click', function () {
+									if (window[x._handler]) window[x._handler](panel.items.items[7]);
+									else alert(x._handler + ' not found!');
+								});
+							} catch (e) {
+								panel.items.items[7].on('render', function () {
+									panel.items.items[7].getEl().dom.addEventListener('click', function () {
+										if (window[x._handler]) window[x._handler](panel.items.items[7]);
+										else alert(x._handler + ' not found!');
+									});
+								});
+							}
 						}
 
 						panel.items.items[9].hide();
@@ -217,11 +232,24 @@ var TFilterBoxAdd = function (p, s, obj) {
 						};
 
 						panel.items.items[7].show();
+						if (obj) {
+							if (obj.value) panel.items.items[7].setValue(obj.value);
+						}
+
 						if (x._handler) {
-							panel.items.items[7].getEl().dom.addEventListener('click', function () {
-								if (window[x._handler]) window[x._handler](panel.items.items[7]);
-								else alert(x._handler + ' not found!');
-							});
+							try {
+								panel.items.items[7].getEl().dom.addEventListener('click', function () {
+									if (window[x._handler]) window[x._handler](panel.items.items[7]);
+									else alert(x._handler + ' not found!');
+								});
+							} catch (e) {
+								panel.items.items[7].on('render', function () {
+									panel.items.items[7].getEl().dom.addEventListener('click', function () {
+										if (window[x._handler]) window[x._handler](panel.items.items[7]);
+										else alert(x._handler + ' not found!');
+									});
+								});
+							}
 						}
 
 						panel.items.items[9].hide();
