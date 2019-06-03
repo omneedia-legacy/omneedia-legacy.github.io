@@ -440,7 +440,7 @@ Ext.define('Ext.ux.openSharedFilter', {
 					var fn = T.filters.get;
 					var select = App.get(I.up('window'), 'grid').getSelectionModel().getSelection();
 					if (select.length == 0) return;
-					window.localStorage.setItem("filterbox", select[0].data.id);
+					//window.localStorage.setItem("filterbox", select[0].data.id);
 
 					fn(select[0].data.id, function (oo) {
 						if (oo.data.length > 0) {
@@ -739,7 +739,9 @@ Ext.define("Ext.ux.FilterBox", {
 		this.items = [];
 		var p = this;
 
-		this.tbar = ['->', {
+		this.tbar = [{
+				html: ""
+			}, '->', {
 				xtype: "button",
 				text: "<b>Nouveau</b>",
 				iconCls: "new",
