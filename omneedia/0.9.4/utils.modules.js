@@ -1,4 +1,5 @@
 [
+    "utils/socketcluster.js",
     "utils/String.js",
     "utils/Date.js",
     "utils/Persist.js",

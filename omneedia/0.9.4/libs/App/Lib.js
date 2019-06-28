@@ -46,6 +46,7 @@ App.apply(App, {
             if (App.stacks.controllers[ctrl[ndx]]) return loadControllers(ctrl, ndx + 1, cb);
             if (!Settings.DEBUG) return loadControllers(ctrl, ndx + 1, cb);
             var url = Settings.PATHS['Contents'] + '/controller/' + ctrl[ndx] + '.js';
+            alert(url);
             App.request(url, function (e, b) {
                 App.stacks.controllers[ctrl[ndx]] = b;
                 window.eval(b);
@@ -61,6 +62,7 @@ App.apply(App, {
             if (App.stacks.viewControllers[ctrl[ndx]]) return loadViewControllers(ctrl, ndx + 1, cb);
             if (!Settings.DEBUG) return loadViewControllers(ctrl, ndx + 1, cb);
             var url = Settings.PATHS['Contents'] + '/view/' + ctrl[ndx] + '/' + ctrl[ndx] + '.js';
+
             App.request(url, function (e, b) {
                 App.stacks.viewControllers[ctrl[ndx]] = b;
                 window.eval(b);
