@@ -12,25 +12,7 @@ Auth = {
 
             window.localStorage.removeItem('socketCluster.authToken');
             Auth.window = window.open(Settings.REMOTE_AUTH + "/logout", "_blank");
-            return;
-            __INTERVAL__ = window.setInterval(function () {
-                if (Settings.REMOTE_AUTH) var a_auth = Settings.REMOTE_AUTH;
-                else var a_auth = "";
-                Ext.Ajax.request({
-                    url: a_auth + "/account",
-                    method: "POST",
-                    withCredentials: true,
-                    useDefaultXhrHeader: false,
-                    success: function (response, opts) {
-                        window.clearInterval(__INTERVAL__);
-                        location.reload(true);
-                    },
-                    failure: function (response, opts) {
-                        window.clearInterval(__INTERVAL__);
-                        location.reload(true);
-                    }
-                });
-            }, 1000);
+
         }
     },
     doLogin: function (fn) {
@@ -124,24 +106,34 @@ Auth = {
     },
     User: {},
     login: function (fn) {
+        if (!fn) throw "callback not provided";
         if (Settings.REMOTE_AUTH) var a_auth = Settings.REMOTE_AUTH;
         else var a_auth = "";
 
         App.blur('.x-panel');
+        if (window.socket.authState != "authenticated") return Auth.doLogin(fn);
+        App.request({
+            url: a_auth + "/account",
+            method: "POST"
+        }, function (e, r) {
+            if (e) return Auth.doLogin(fn);
+            r = JSON.parse(r);
+            if (r.response == "NOT_LOGIN") return Auth.doLogin(fn);
+            Auth.User = r;
+            App.$('.QxOverlay').remove();
+            App.unblur('.x-panel');
 
-        if (!App.status.isAuthenticated) {
-            if (window.socket.authState != "authenticated") return Auth.doLogin(fn);
-        };
-        Auth.User = window.socket.authToken.user;
-        App.$('.QxOverlay').remove();
-        App.unblur('.x-panel');
+            App.$('.QxLoginBox').addClass('bounceOutDown');
+            App.$('.x-panel').addClass('QxSharp');
+            if (Settings.TYPE == "mobile") App.$('.x-container').addClass('QxSharp');
+            window.setTimeout(function () {
+                App.$('.QxLoginBox').remove();
+            }, 1000);
+            if (fn) fn(Auth.User);
+        });
 
-        App.$('.QxLoginBox').addClass('bounceOutDown');
-        App.$('.x-panel').addClass('QxSharp');
-        if (Settings.TYPE == "mobile") App.$('.x-container').addClass('QxSharp');
-        window.setTimeout(function () {
-            App.$('.QxLoginBox').remove();
-        }, 1000);
-        if (fn) fn(Auth.User);
+
+        // Auth.User = window.socket.authToken.user;
+
     }
 }

@@ -15,12 +15,6 @@ if (Settings.REMOTE_API) {
     App.apply(App, {
         io: {
             socket: {},
-            onConnect: function (s) {
-
-            },
-            onDisconnect: function () {
-
-            },
             connect: function (options) {
                 var me = this;
                 if (!options) options = {};
@@ -53,7 +47,8 @@ if (Settings.REMOTE_API) {
 
                         };
                     };
-                    me.onConnect(s);
+                    var event = new Event('connect');
+                    me.dispatchEvent(event);
                 });
                 this.socket.on('disconnect', function (s) {
                     if (Settings.DEBUG) {
@@ -67,7 +62,8 @@ if (Settings.REMOTE_API) {
 
                         };
                     };
-                    me.onDisconnect(s);
+                    var event = new Event('disconnect');
+                    me.dispatchEvent(event);
                 });
 
             },

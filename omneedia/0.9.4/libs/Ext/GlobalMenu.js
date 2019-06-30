@@ -239,12 +239,17 @@ Ext.define('omneedia.webapp.GlobalMenu', {
         }, 1000);
         Ext.getCmp('GlobalMenuUser').hide();
         if (Settings.TYPE != "mobile") {
+
             Auth.user(function (o) {
+
                 if (o) {
                     if (o.mail) {
                         Ext.getCmp('GlobalMenuUser').setText(o.mail.split('@')[0]);
                         Ext.getCmp('GlobalMenuUser').show();
-                    };
+                    } else {
+                        Ext.getCmp('GlobalMenuUser').setText('...');
+                        Ext.getCmp('GlobalMenuUser').show();
+                    }
                 }
             });
             for (var i = 0; i < Settings.LANGS.length; i++) {
