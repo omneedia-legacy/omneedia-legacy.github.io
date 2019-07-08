@@ -260,7 +260,10 @@ Ext.define('omneedia.webapp.GlobalMenu', {
                         document.location.reload(true);
                     }
                 });
-                Ext.getCmp('GlobalMenuLang').setText(App.DEFAULT_LANG.toUpperCase());
+                if (App.DEFAULT_LANG) Ext.getCmp('GlobalMenuLang').setText(App.DEFAULT_LANG.toUpperCase());
+                else {
+                    Ext.getCmp('GlobalMenuLang').hide();
+                }
             };
         }
     }

@@ -38,19 +38,20 @@ App.apply(App, {
         });
     },
     load: function (fn) {
-        App.request('/Contents/registry.json', function (e, r) {
+
+        App.request('/registry.json', function (e, r) {
             try {
                 Settings.registry = JSON.parse(r);
             } catch (e) {
                 Settings.registry = {};
             };
-            App.getAcceptedLangs(function (lang) {
-                App.loadLang(lang, function () {
-                    if (!App.libs) Manifest();
-                    else App.require(App.libs, Manifest);
-                });
-            });
+            //            App.getAcceptedLangs(function (lang) {
+            //                App.loadLang(lang, function () {
+            if (!App.libs) Manifest();
+            else App.require(App.libs, Manifest);
         });
+        //            });
+        //        });
     }
 
 });

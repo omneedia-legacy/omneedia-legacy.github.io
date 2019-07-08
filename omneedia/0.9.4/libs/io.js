@@ -48,7 +48,7 @@ if (Settings.REMOTE_API) {
                         };
                     };
                     var event = new Event('connect');
-                    me.dispatchEvent(event);
+                    //me.dispatchEvent(event);
                 });
                 this.socket.on('disconnect', function (s) {
                     if (Settings.DEBUG) {
@@ -63,7 +63,7 @@ if (Settings.REMOTE_API) {
                         };
                     };
                     var event = new Event('disconnect');
-                    me.dispatchEvent(event);
+                    //me.dispatchEvent(event);
                 });
 
             },

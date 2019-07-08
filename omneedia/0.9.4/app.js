@@ -342,6 +342,7 @@ App.apply(App, {
 
         if (!o.method) var method = "GET";
         else var method = o.method;
+        //console.log(o);
         var reqListener = function () {
             if (xhr.status === 200) {
                 cb(null, xhr.responseText, xhr);

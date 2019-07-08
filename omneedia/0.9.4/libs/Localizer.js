@@ -22,6 +22,9 @@ _ = function (x) {
 
 App.apply(App, {
     getAcceptedLangs: function (cb) {
+        return cb();
+
+
         if (Settings.PLATFORM == "mobile") {
             function successCallback(o) {
                 cb(o.value);
@@ -58,6 +61,9 @@ App.apply(App, {
         }
     },
     loadLang: function (lang, cb) {
+        return cb();
+
+
         var _LANG = [];
 
         function ll(urls, i, cb) {
