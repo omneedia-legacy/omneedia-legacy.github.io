@@ -235,9 +235,11 @@ Ext.define('omneedia.webapp.GlobalMenu', {
         });
         this.addDocked(tbar);
         window.setInterval(function () {
-            Ext.getCmp('GlobalMenuDateTime').setText(Ext.Date.format(new Date(), 'D d M Y H:i:s '));
+            Ext.getCmp('GlobalMenuDateTime').setText(moment().format('llll'));
         }, 1000);
+
         Ext.getCmp('GlobalMenuUser').hide();
+
         if (Settings.TYPE != "mobile") {
 
             Auth.user(function (o) {
@@ -251,18 +253,28 @@ Ext.define('omneedia.webapp.GlobalMenu', {
                         Ext.getCmp('GlobalMenuUser').show();
                     }
                 }
+
             });
+
             for (var i = 0; i < Settings.LANGS.length; i++) {
+                if (i == 0) var default_text = Settings.LANGS[i].toUpperCase();
                 Ext.getCmp('GlobalMenuLang').menu.add({
                     text: Settings.LANGS[i].toUpperCase(),
                     handler: function (x) {
-                        window.localStorage['LANG'] = x.text.toLowerCase();
-                        document.location.reload(true);
+                        moment.locale(x.text.toLowerCase());
+                        window.localStorage.LANG = x.text.toLowerCase();
+                        document.body.lang = window.localStorage.LANG;
+                        Ext.getCmp('GlobalMenuLang').setText(document.body.lang.toUpperCase());
                     }
                 });
-                if (App.DEFAULT_LANG) Ext.getCmp('GlobalMenuLang').setText(App.DEFAULT_LANG.toUpperCase());
-                else {
-                    Ext.getCmp('GlobalMenuLang').hide();
+
+                if (window.localStorage.LANG) {
+                    Ext.getCmp('GlobalMenuLang').setText(window.localStorage.LANG.toUpperCase());
+                    moment.locale(window.localStorage.LANG.toUpperCase());
+                } else {
+                    Ext.getCmp('GlobalMenuLang').setText(default_text.toUpperCase());
+                    window.localStorage.LANG = default_text.toLowerCase();
+                    moment.locale(window.localStorage.LANG.toLowerCase());
                 }
             };
         }

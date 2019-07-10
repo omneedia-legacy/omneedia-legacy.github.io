@@ -1,0 +1,38 @@
+{
+  "name": "locale",
+  "alternateName": [
+    "ext-locale"
+  ],
+  "namespace": "Ext",
+  "format": "1",
+  "version": "6.6.0.258",
+  "compatVersion": "6.6.0",
+  "creator": "Sencha",
+  "summary": "Ext JS Modern toolkit locale",
+  "detailedDescription": "Ext JS Modern toolkit locale for localization to a local language",
+  "type": "code",
+  "signatures": [
+    {
+      "name": "Sencha",
+      "uuid": "1d6b0d9c-3333-4e65-885f-5b07a1fc3198",
+      "created": "2018-06-20T05:36:19Z",
+      "algorithm": "SHA1withRSA",
+      "nonce": "+w466c8gU7w\u003d",
+      "signature": "seUwHfcEJ+x3HudRkxcClCKEHEl+hX6G6xJm6gmfoBGRwMgyJq3m5YSD/Agg07WRQyV7paICnMEOlVIRqjhuGxryGm8yOzIhtCkf7jRQ2JPu7HZ+6gQuDbXYgd/Ec2fsvduTGLZ1rIE8APn4umOQAvg3/tXDzNnWDgzDTGkUjiMMo1S49K9k0IrLkbL2ueLKzWNVlMIYWamBZo5XDSlYxOkh380FC12E4SAkXtmZ3BvOPGkHcjPSygOV5XOXO+J8ATEg4JrCQS8bg8ML5zExQ2KH57C0P/Pk/w367fpetJt1H7MpyRIlXhpj8r5cQvLFM91dOQeC++wXKSEPournpQ\u003d\u003d"
+    }
+  ],
+  "framework": "ext",
+  "toolkit": "modern",
+  "output": "${workspace.subpkg.prefix}/${package.name}",
+  "build": {
+    "dir": "${package.output}"
+  },
+  "sass": {
+    "namespace": "Ext",
+    "etc": "${package.dir}/sass/etc/all.scss",
+    "var": "${package.dir}/sass/var",
+    "src": "${package.dir}/sass/src"
+  },
+  "classpath": "${package.dir}/src",
+  "overrides": "${package.dir}/overrides/${package.locale}"
+}

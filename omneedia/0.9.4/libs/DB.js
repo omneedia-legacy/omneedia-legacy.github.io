@@ -18,6 +18,7 @@ App.define("App.DB", {
         },
         get: function (uri, cb, cb2) {
             var db = uri.split('://')[0];
+            if (!Settings.DB) Settings.DB = {};
             if (Settings.DB[db]) {
 
                 var post = [{

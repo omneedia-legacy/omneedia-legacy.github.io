@@ -44,16 +44,17 @@ Auth = {
         for (var jk = 0; jk < Settings.AUTH.passports.length; jk++) {
             if (!Settings.AUTH.passport[Settings.AUTH.passports[jk]]) {
                 Settings.AUTH.passport[Settings.AUTH.passports[jk]] = {
-                    caption: "&nbsp;Sign in with " + Settings.AUTH.passports[jk]
+                    caption: "Sign in with " + Settings.AUTH.passports[jk]
                 }
             } else {
                 if (_(Settings.AUTH.passport[Settings.AUTH.passports[jk]].caption)) sign_in_with = _(Settings.AUTH.passport[Settings.AUTH.passports[jk]].caption);
                 else sign_in_with = "Sign in with " + Settings.AUTH.passports[jk];
                 Settings.AUTH.passport[Settings.AUTH.passports[jk]] = {
-                    caption: '&nbsp;' + sign_in_with
+                    caption: sign_in_with
                 }
             };
-            App.$('.QxPassports').html(App.$('.QxPassports').html() + '<a class="button_passport ' + Settings.AUTH.passports[jk] + '">' + Settings.AUTH.passport[Settings.AUTH.passports[jk]].caption + '</a>');
+            var button = '<a class="button_passport ' + Settings.AUTH.passports[jk] + ' ' + Settings.AUTH.passport[Settings.AUTH.passports[jk]].caption + '">' + '</a>';
+            App.$(button).appendTo(App.$('.QxPassports'));
         };
         App.$('.css_btn_cancel').click(function () {
             App.$('.CWaitSignOn').hide();
@@ -63,7 +64,7 @@ Auth = {
         App.$('.button_passport').click(function (e) {
             App.$('.CWaitSignOn').show();
             App.$('.CSignOn').hide();
-            var target = e.target.className.split('button_passport ')[1];
+            var target = e.target.className.split(' ')[1];
             if (Settings.REMOTE_AUTH)
                 var win = window.open(Settings.REMOTE_AUTH + "/auth/" + target, "_blank", "location=no");
             else {
