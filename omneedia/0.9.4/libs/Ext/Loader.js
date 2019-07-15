@@ -5,6 +5,7 @@
 
 App.apply(App, {
     init: function (o, fn) {
+
         App.__INIT__ = o;
         if (!App.key.get('app.udid')) App.key.set('app.udid', Base64.encode(App.uuid() + '|' + navigator.userAgent));
         App.udid = App.key.get('app.udid');
@@ -16,8 +17,10 @@ App.apply(App, {
         for (var i = 0; i < Settings.LANGS.length; i++) {
             if (i == 0) var default_lang = Settings.LANGS[i].toUpperCase();
         };
-        if (!window.localStorage.LANG) window.localStorage.LANG = default_lang;
-        document.body.lang = window.localStorage.LANG;
+        if (default_lang) {
+            if (!window.localStorage.LANG) window.localStorage.LANG = default_lang;
+        };
+        if (window.localStorage.LANG) document.body.lang = window.localStorage.LANG;
     },
     _kickstart: function (o, fn) {
         var _p = this;
@@ -108,8 +111,6 @@ App.apply(App, {
             };
 
             __loader__();
-
-
 
         });
 

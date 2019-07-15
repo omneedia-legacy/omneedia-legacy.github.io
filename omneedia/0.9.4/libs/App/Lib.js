@@ -271,12 +271,8 @@ App.apply(App, {
             });
         };
 
-        App.getAcceptedLangs(function (lang) {
-            App.loadLang(lang, function () {
-                loadControllers(o.controllers, 0, function () {
-                    loadViewControllers(o.viewControllers, 0, initMainController);
-                });
-            })
+        loadControllers(o.controllers, 0, function () {
+            loadViewControllers(o.viewControllers, 0, initMainController);
         });
 
     },

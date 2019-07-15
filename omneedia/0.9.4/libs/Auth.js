@@ -47,11 +47,11 @@ Auth = {
                     caption: "Sign in with " + Settings.AUTH.passports[jk]
                 }
             } else {
-                if (_(Settings.AUTH.passport[Settings.AUTH.passports[jk]].caption)) sign_in_with = _(Settings.AUTH.passport[Settings.AUTH.passports[jk]].caption);
+                /*if (_(Settings.AUTH.passport[Settings.AUTH.passports[jk]].caption)) sign_in_with = _(Settings.AUTH.passport[Settings.AUTH.passports[jk]].caption);
                 else sign_in_with = "Sign in with " + Settings.AUTH.passports[jk];
                 Settings.AUTH.passport[Settings.AUTH.passports[jk]] = {
                     caption: sign_in_with
-                }
+                }*/
             };
             var button = '<a class="button_passport ' + Settings.AUTH.passports[jk] + ' ' + Settings.AUTH.passport[Settings.AUTH.passports[jk]].caption + '">' + '</a>';
             App.$(button).appendTo(App.$('.QxPassports'));
@@ -71,6 +71,12 @@ Auth = {
                 var win = window.open("/auth/" + target, "_blank");
                 win.focus();
             };
+            window.socket.on('login_error', function (data) {
+                App.$('#__AUTH__LOGIN__BOX').removeClass('fadeInDownBig').addClass('bounceOutDown');
+                window.setTimeout(function () {
+                    document.getElementsByTagName('body')[0].outerHTML = '<div class="oa_dead_end"></div><div class="oa_dead_end_label">Une erreur est survenue dans le processus d\'identification.</div>';
+                }, 1000);
+            });
             window.socket.on('login', function (response) {
                 console.log(response);
                 console.log(window.socket);

@@ -22,6 +22,10 @@ if (!Settings.REMOTE_API) Settings.REMOTE_API = document.getElementsByTagName('b
     if (!Settings.REMOTE_API) Settings.REMOTE_API = window.location.origin;
 }*/
 
+_ = function (str) {
+    return '<span class="' + str + '"></span>';
+};
+
 // Define App
 App = {
     version: '0.9.4',
