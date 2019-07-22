@@ -118,7 +118,7 @@ Auth = {
         else var a_auth = "";
 
         App.blur('.x-panel');
-        if (window.socket.authState != "authenticated") return Auth.doLogin(fn);
+        //if (window.socket.authState != "authenticated") return Auth.doLogin(fn);
         App.request({
             url: a_auth + "/account",
             method: "POST"
