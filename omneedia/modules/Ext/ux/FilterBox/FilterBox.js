@@ -39,6 +39,11 @@ var TFilterBoxMenu = {
 			text: "n'est pas"
 		}
 	],
+	menuChoixMulti: [{
+		text: "contient"
+	}, {
+		text: "ne contient pas"
+	}],
 	menuTexte: [{
 			text: "contient"
 		},
@@ -128,24 +133,33 @@ var TFilterBoxAdd = function (p, s, obj) {
 				};
 				if (i > 0) {
 					if (filter.items.items[0].getText() == "ET") ff.operator = " AND ";
-					else ff.operator = " OR ";
+					if (filter.items.items[0].getText() == "OU") ff.operator = " OR ";
+					if (filter.items.items[0].getText() == ")") ff.operator = " ) ";
+					if (filter.items.items[0].getText() == "ET (") ff.operator = " AND ( ";
+					if (filter.items.items[0].getText() == "OU (") ff.operator = " OR ( ";
+					if (filter.items.items[0].getText() == ") OU (") ff.operator = " ) OR ( ";
+					if (filter.items.items[0].getText() == ") ET (") ff.operator = " ) AND ( ";
 				};
 				objs.push(ff);
 			} catch (e) {
-
+				if (filter.items.items[0].getText() == ")") ff.operator = " ) ";
+				objs.push(ff);
 			};
 
 		};
-
+		//return 
+		console.log(objs);
 		p.store.getProxy().extraParams.quest = JSON.stringify(objs);
 		p.store.load();
 	});
+
 	var addbtn = panel.items.items[12];
 	addbtn.on('click', function () {
 		var old = p.items.items[p.items.items.length - 1];
 		old.items.items[12].hide();
 		old.items.items[14].hide();
 		old.items.items[16].hide();
+
 		TFilterBoxAdd(p, true);
 	});
 	var removebtn = panel.items.items[14];
@@ -153,6 +167,7 @@ var TFilterBoxAdd = function (p, s, obj) {
 		var old = p.items.items[p.items.items.length - 2];
 		old.items.items[12].show();
 		old.items.items[16].show();
+
 
 		if (p.items.items.length == 2)
 			old.items.items[14].hide();
@@ -302,8 +317,8 @@ var TFilterBoxAdd = function (p, s, obj) {
 					/*
 					type: tagfield
 					*/
-					if (x._operand == "tagfield") {
-						for (var j = 0; j < TFilterBoxMenu.menuChoix.length; j++) {
+					if ((x._operand == "tagfield") || (x._operand == "multi")) {
+						for (var j = 0; j < TFilterBoxMenu.menuChoixMulti.length; j++) {
 							var btn = Ext.create('Ext.menu.Item', {
 								text: TFilterBoxMenu.menuChoix[j].text,
 								listeners: {
@@ -349,9 +364,10 @@ var TFilterBoxAdd = function (p, s, obj) {
 							cbo_operand.menu.add(btn);
 						};
 						panel.remove(panel.items.items[9]);
+
 						panel.insert(9, {
 							xtype: "combo",
-							editable: false,
+							editable: true,
 							queryMode: 'local',
 							width: 247,
 							store: App.store.create(x.model, {
@@ -373,7 +389,14 @@ var TFilterBoxAdd = function (p, s, obj) {
 	if (obj) {
 		if (!obj.value) obj.value = obj.nvalue;
 		if (obj.operator) panel.items.items[0].setText(obj.operator);
+		if (obj.operator == ")") {
+			panel.items.items[2].setWidth(584);
+			panel.items.items[3].hide();
+			panel.items.items[5].hide();
+			panel.items.items[7].hide();
+		};
 		if (obj.field) {
+
 			panel.items.items[3].menu.up().setText(obj.field);
 			for (var k = 0; k < panel.items.items[3].menu.items.items.length; k++) {
 				var element = panel.items.items[3].menu.items.items[k];
@@ -599,7 +622,7 @@ Ext.define("Ext.ux.FilterItems", {
 		this.items = [{
 				xtype: "splitbutton",
 				height: 22,
-				width: 50,
+				width: 70,
 				itemId: "FilterNext",
 				hidden: !this.showOperand,
 				menu: new Ext.menu.Menu({
@@ -608,14 +631,39 @@ Ext.define("Ext.ux.FilterItems", {
 						},
 						{
 							text: 'OU'
+						}, {
+							text: 'ET ('
+						}, {
+							text: 'OU ('
+						}, {
+							text: ') ET ('
+						}, {
+							text: ') OU ('
+						}, {
+							text: ')'
 						}
-					]
+					],
+					listeners: {
+						click: function (me, p) {
+							if (p.text == ")") {
+								me.up('panel').items.items[2].setWidth(584);
+								me.up('panel').items.items[3].hide();
+								me.up('panel').items.items[5].hide();
+								me.up('panel').items.items[7].hide();
+							} else {
+								me.up('panel').items.items[2].setWidth(4);
+								me.up('panel').items.items[3].show();
+								me.up('panel').items.items[5].show();
+								me.up('panel').items.items[7].show();
+							}
+						}
+					}
 				})
 			},
 			{
 				html: "&nbsp;",
 				border: false,
-				width: 50,
+				width: 70,
 				hidden: this.showOperand,
 				bodyStyle: 'background:transparent;'
 			},
@@ -710,6 +758,11 @@ Ext.define("Ext.ux.FilterItems", {
 				hidden: false,
 				itemId: "FilterLaunch",
 				height: 22
+			},
+			{
+				html: "&nbsp;",
+				border: false,
+				bodyStyle: 'background:transparent;'
 			}
 		];
 		this.callParent(arguments);
@@ -725,6 +778,7 @@ Ext.define("Ext.ux.FilterBox", {
 			old.items.items[12].hide();
 			old.items.items[14].hide();
 			old.items.items[16].hide();
+
 			TFilterBoxAdd(this, true, item);
 		} else TFilterBoxAdd(this, false, item);
 	},
@@ -786,6 +840,7 @@ Ext.define("Ext.ux.FilterBox", {
 				iconCls: "download",
 				text: "<b>Sauvegarder</b>",
 				handler: function () {
+
 					var objs = [];
 					var save = [];
 					var Name = window.localStorage.getItem('filterbox');
@@ -834,6 +889,7 @@ Ext.define("Ext.ux.FilterBox", {
 							var my_value = curr_year + '-' + curr_month + '-' + curr_date;
 						} else my_value = nvalue.getValue();
 
+
 						save.push({
 							field: title.getText(),
 							operand: option.getText(),
@@ -851,7 +907,12 @@ Ext.define("Ext.ux.FilterBox", {
 						};
 						if (i > 0) {
 							if (filter.items.items[0].getText() == "ET") ff.operator = " AND ";
-							else ff.operator = " OR ";
+							if (filter.items.items[0].getText() == "OU") ff.operator = " OR ";
+							if (filter.items.items[0].getText() == ")") ff.operator = " ) ";
+							if (filter.items.items[0].getText() == "ET (") ff.operator = " AND ( ";
+							if (filter.items.items[0].getText() == "OU (") ff.operator = " OR ( ";
+							if (filter.items.items[0].getText() == ") OU (") ff.operator = " ) OR ( ";
+							if (filter.items.items[0].getText() == ") ET (") ff.operator = " ) AND ( ";
 						};
 						objs.push(ff);
 
@@ -877,6 +938,7 @@ Ext.define("Ext.ux.FilterBox", {
 				old.items.items[12].hide();
 				old.items.items[14].hide();
 				old.items.items[16].hide();
+
 				TFilterBoxAdd(p, true);
 			};
 			p.removeAll();
