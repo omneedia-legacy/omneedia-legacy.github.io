@@ -150,10 +150,10 @@ var TFilterBoxAdd = function (p, s, obj) {
 		};
 		//return 
 		//console.log('------');
-		//console.log(objs);
-		for (var i = 0; i < objs.length; i++) {
+		console.log(objs);
+		/*for (var i = 0; i < objs.length; i++) {
 			objs[i].value = objs[i].value.replace(/'/g, '\\\'');
-		}
+		}*/
 		//return console.log(objs);
 		p.store.getProxy().extraParams.quest = JSON.stringify(objs);
 		p.store.load();
@@ -879,9 +879,9 @@ Ext.define("Ext.ux.FilterBox", {
 						if (option.getText() == "commence par") ff.value = " LIKE \"ITEM%\" ";
 						if (option.getText() == "se termine par") ff.value = " LIKE \"%ITEM\" ";
 
-						if (option.getText() == "Contient au moins un des mots") ff.value = "=";
-						if (option.getText() == "Contient tous ces mots") ff.value = "+";
-						if (option.getText() == "ne contient pas ces mots") ff.value = "-";
+						if (option.getText() == "Contient au moins un des mots") ff.value = "=ITEM";
+						if (option.getText() == "Contient tous ces mots") ff.value = "+ITEM";
+						if (option.getText() == "ne contient pas ces mots") ff.value = "-ITEM";
 
 						var value = filter.items.items[7];
 						var nvalue = filter.items.items[9];
@@ -896,11 +896,12 @@ Ext.define("Ext.ux.FilterBox", {
 						} else my_value = nvalue.getValue();
 
 
+
 						save.push({
 							field: title.getText(),
 							operand: option.getText(),
-							value: value.getValue(),
-							nvalue: nvalue.getValue(),
+							value: value.getValue().replace(/'/g, '\\\''),
+							nvalue: my_value,
 							operator: filter.items.items[0].getText()
 						});
 
@@ -911,6 +912,7 @@ Ext.define("Ext.ux.FilterBox", {
 						} else {
 							ff.value = ff.value.replace(/ITEM/g, my_value);
 						};
+						//ff.value = ff.value.replace(/'/g, '\\\'')
 						if (i > 0) {
 							if (filter.items.items[0].getText() == "ET") ff.operator = " AND ";
 							if (filter.items.items[0].getText() == "OU") ff.operator = " OR ";
@@ -923,7 +925,7 @@ Ext.define("Ext.ux.FilterBox", {
 						objs.push(ff);
 
 					};
-
+					console.log(save);
 					p.fireEvent('save', objs, save, Name);
 				}
 
