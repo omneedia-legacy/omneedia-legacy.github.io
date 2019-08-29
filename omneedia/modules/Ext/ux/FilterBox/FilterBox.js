@@ -131,6 +131,7 @@ var TFilterBoxAdd = function (p, s, obj) {
 				} else {
 					ff.value = ff.value.replace(/ITEM/g, my_value);
 				};
+
 				if (i > 0) {
 					if (filter.items.items[0].getText() == "ET") ff.operator = " AND ";
 					if (filter.items.items[0].getText() == "OU") ff.operator = " OR ";
@@ -148,7 +149,12 @@ var TFilterBoxAdd = function (p, s, obj) {
 
 		};
 		//return 
-		console.log(objs);
+		//console.log('------');
+		//console.log(objs);
+		for (var i = 0; i < objs.length; i++) {
+			objs[i].value = objs[i].value.replace(/'/g, '\\\'');
+		}
+		//return console.log(objs);
 		p.store.getProxy().extraParams.quest = JSON.stringify(objs);
 		p.store.load();
 	});
