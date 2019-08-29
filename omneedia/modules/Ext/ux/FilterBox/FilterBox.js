@@ -896,7 +896,6 @@ Ext.define("Ext.ux.FilterBox", {
 						} else my_value = nvalue.getValue();
 
 
-
 						save.push({
 							field: title.getText(),
 							operand: option.getText(),
@@ -904,6 +903,11 @@ Ext.define("Ext.ux.FilterBox", {
 							nvalue: my_value,
 							operator: filter.items.items[0].getText()
 						});
+
+						if (filter.items.items[0].getText() == ")") {
+							ff.operator = ")";
+							objs.push(ff);
+						};
 
 						if (!ff.value) return p.fireEvent('save', objs, save, Name);
 
@@ -925,7 +929,7 @@ Ext.define("Ext.ux.FilterBox", {
 						objs.push(ff);
 
 					};
-					console.log(save);
+					//return console.log(save);
 					p.fireEvent('save', objs, save, Name);
 				}
 
