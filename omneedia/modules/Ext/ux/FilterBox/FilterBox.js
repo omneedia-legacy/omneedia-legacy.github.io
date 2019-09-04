@@ -105,10 +105,8 @@ var TFilterBoxAdd = function (p, s, obj) {
 			if (option.getText() == "commence par") ff.value = " LIKE \"ITEM%\" ";
 			if (option.getText() == "se termine par") ff.value = " LIKE \"%ITEM\" ";
 
-			if (option.getText() == "Contient au moins un des mots") ff.value = "KW=ITEM";
-			if (option.getText() == "Contient tous ces mots") ff.value = "KW+ITEM";
-			if (option.getText() == "ne contient pas ces mots") ff.value = "KW-ITEM";
-
+			if (option.getText() == "Recherche en texte intégral") ff.value = "ITEM";
+			console.log(ff.value);
 			var value = filter.items.items[7];
 			var nvalue = filter.items.items[9];
 			var my_value = "";
@@ -139,6 +137,7 @@ var TFilterBoxAdd = function (p, s, obj) {
 				};
 				objs.push(ff);
 			} catch (e) {
+				console.log(e);
 				if (filter.items.items[0].getText() == ")") ff.operator = " ) ";
 				objs.push(ff);
 			};
@@ -751,7 +750,7 @@ Ext.define("Ext.ux.FilterItems", {
 			},
 			{
 				xtype: "button",
-				text: "Exécuter",
+				text: "<b>Exécuter</b>",
 				hidden: false,
 				itemId: "FilterLaunch",
 				height: 22
@@ -870,9 +869,7 @@ Ext.define("Ext.ux.FilterBox", {
 						if (option.getText() == "commence par") ff.value = " LIKE \"ITEM%\" ";
 						if (option.getText() == "se termine par") ff.value = " LIKE \"%ITEM\" ";
 
-						if (option.getText() == "Contient au moins un des mots") ff.value = "=ITEM";
-						if (option.getText() == "Contient tous ces mots") ff.value = "+ITEM";
-						if (option.getText() == "ne contient pas ces mots") ff.value = "-ITEM";
+						if (option.getText() == "Recherche en texte intégral") ff.value = "ITEM";
 
 						var value = filter.items.items[7];
 						var nvalue = filter.items.items[9];
