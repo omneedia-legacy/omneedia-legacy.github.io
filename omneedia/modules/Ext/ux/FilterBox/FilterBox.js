@@ -19,11 +19,7 @@ var TFilterBoxMenu = {
 		}
 	],
 	menuKeywords: [{
-		text: "Contient au moins un des mots"
-	}, {
-		text: "Contient tous ces mots"
-	}, {
-		text: "ne contient pas ces mots"
+		text: "Recherche en texte intégral"
 	}],
 	menuBoolean: [{
 			text: "est vrai"
@@ -212,12 +208,6 @@ var TFilterBoxAdd = function (p, s, obj) {
 						};
 
 						panel.items.items[7].show();
-						/*if (x._handler) {
-							panel.items.items[7].getEl().dom.addEventListener('click', function () {
-								if (window[x._handler]) window[x._handler](panel.items.items[7]);
-								else alert(x._handler + ' not found!');
-							});
-						}*/
 						if (x._handler) {
 							try {
 								panel.items.items[7].getEl().dom.addEventListener('click', function () {
@@ -250,6 +240,7 @@ var TFilterBoxAdd = function (p, s, obj) {
 								}
 							});
 							cbo_operand.menu.add(btn);
+							btn.up().up().setText(TFilterBoxMenu.menuKeywords[0].text);
 						};
 
 						panel.items.items[7].show();
