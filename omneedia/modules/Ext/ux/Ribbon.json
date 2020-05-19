@@ -1,0 +1,13 @@
+{
+  "namespace": "Ext.ux.Ribbon",
+  "version": "1.2.9",
+  "description": "Wrapper module to ACE Editor.",
+  "license": "MIT",
+  "repositories": {},
+  "package": {
+    "js": ["Ribbon.js"],
+    "css": [],
+    "html": [],
+    "i18n": []
+  }
+}
